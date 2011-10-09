@@ -7,7 +7,7 @@ set PlayGameCmd=c:\\Python27\\python.exe %~dp0playgame.py
 set Option=-So --engine_seed 42 --player_seed 42 --end_wait=0.25 --verbose --log_dir game_logs --turns 1000 --map_file %~dp0maps\%Map% %*
 
 
-set Bot1="../../Project_2008/AntWar/Debug/AntWar.exe"
+set Bot1="../../Build/AntWar/exe/Debug/AntWar.exe"
 REM set Bot1=./bots/AntWar.exe
 
 REM set Bot1="python %~dp0sample_bots\python\HunterBot.py"
