@@ -1,0 +1,11 @@
+[BG File Test]
+#Ref Test 1
+#Start 15-10-1978
+#End   06-05-1999
+#Location France, Paris, Jussieu
+#Location Angleterre, Londres
+#Desc
+Test Dest Test Desc
+Test Dest Test Desc
+#Roles Scenario Faust
+#Tags Daemon Moulin
