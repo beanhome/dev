@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "Vector2.h"
 #include "Grid.h"
+#include "Timer.h"
 
 enum EDirection
 {
@@ -27,9 +28,13 @@ class World
 		float GetViewRadius() const { return m_fViewRadius; }
 
 		void ReadSetup();
-		void ReadTurn();
+		bool ReadTurn(int iRound = -1);
 
-		void DrawDebug();
+		void DrawDebug() const;
+#ifdef MYDEBUG
+		void Draw() const;
+		int DrawLoop(bool bPostCompute);
+#endif
 
 		//void setup();
 		
@@ -74,6 +79,8 @@ class World
 		*/
 
 		FILE*	m_pInput;
+		vector<uint32> m_aTurnInputFileLoc;
+
 		FILE*	m_pInputSave;
 
 		Grid	m_oGrid;
@@ -84,7 +91,15 @@ class World
 		vector<Vector2> m_aEnemyHills;
 		vector<Vector2> m_aFoods;
 
-		//Timer timer;
+#ifdef MYDEBUG
+		bool m_bKeyDown;
+		float m_fKeyDownTime;
+		float m_fRepeatDelay;
+		float m_fFirstRepeatDelay;
+		float m_fNextRepeatDelay;
+#endif
+
+		Timer m_oTimer;
 };
 
 

@@ -1,15 +1,4 @@
-#include "Utils.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <wtypes.h>
-#include <basetsd.h>
-#include <winbase.h>
-
-FILE* g_MyLog;
-bool g_bVisualDebug = false;
-
+#include "StringUtils.h"
 
 string FormatString(const char* format, ...)
 {

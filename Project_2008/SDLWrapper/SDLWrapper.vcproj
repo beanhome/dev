@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="AntWar"
-	ProjectGUID="{094262E3-A64D-4DA3-B095-0B39ABDE8C88}"
-	RootNamespace="AntWar"
+	Name="SDLWrapper"
+	ProjectGUID="{30646F17-45EB-4B0D-AA17-86ADCA2307A3}"
+	RootNamespace="SDLWrapper"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -18,9 +18,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
-			ConfigurationType="1"
+			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			ConfigurationType="4"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\Src\SDLWrapper"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\AntWar"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -60,18 +60,11 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="msvcrt.lib"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
+				AdditionalDependencies="../../External/SDL/lib/SDL.lib ../../External/SDL/lib/SDLmain.lib $(IntDir)/SDL_Draw.lib ../../External/SDL_ttf/lib/SDL_ttf.lib $(IntDir)/SDL_gfx.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -83,17 +76,14 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
-			ConfigurationType="1"
+			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -116,7 +106,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\AntWar"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -133,19 +124,11 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
+				AdditionalDependencies="../../External/SDL/lib/SDL.lib ../../External/SDL/lib/SDLmain.lib $(IntDir)/SDL_Draw.lib ../../External/SDL_ttf/lib/SDL_ttf.lib $(IntDir)/SDL_gfx.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -155,9 +138,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -173,59 +153,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\Src\AntWar\AntWar.cpp"
+				RelativePath="..\..\Src\SDLWrapper\Graphic.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Src\AntWar\AntWar.h"
+				RelativePath="..\..\Src\SDLWrapper\Graphic.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Src\AntWar\Grid.cpp"
+				RelativePath="..\..\Src\SDLWrapper\InputEvent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Src\AntWar\Grid.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\MyBot.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\Square.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\Square.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\StringUtils.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\StringUtils.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\Timer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\Utils.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\Vector2.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\World.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\AntWar\World.h"
+				RelativePath="..\..\Src\SDLWrapper\InputEvent.h"
 				>
 			</File>
 		</Filter>

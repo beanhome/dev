@@ -40,6 +40,10 @@ class Grid
 		GridArray& operator[](int x);
 		const GridArray& operator[](int x) const;
 
+#ifdef MYDEBUG
+		void Draw() const;
+#endif
+
 	private:
 		Square* m_pBuffer;
 		GridArray* m_aGridArray;

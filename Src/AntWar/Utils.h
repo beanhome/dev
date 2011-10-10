@@ -20,9 +20,20 @@
 #define MYDEBUG
 #endif
 
+typedef unsigned char uint8;
+typedef unsigned short uint16;
 typedef unsigned int uint;
+typedef unsigned long uint32;
+
+typedef signed char sint8;
+typedef signed short sint16;
+typedef signed int sint;
+typedef signed long sint32;
+
+
 typedef wchar_t wchar;
 
+using std::endl;
 using std::string;
 using std::vector;
 using std::map;
@@ -50,12 +61,5 @@ extern FILE* g_MyLog;
 #define CHECK_RETURN(test, format, ...) { if (!(test)) { return; } }
 #define ASSERT(cond)
 #endif
-
-string FormatString(const char* format, ...);
-void Tokenize(const string& s, const string& delimiters, vector<string>& tokens);
-vector<string> Tokenize(const string& s, const string& delimiters = string(" "));
-
-
-extern bool g_bVisualDebug;
 
 #endif

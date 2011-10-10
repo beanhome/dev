@@ -104,7 +104,20 @@ void Grid::NewTurn()
 			m_aGridArray[x][y].NewTurn();
 		}
 	}
-
 }
+
+
+#ifdef MYDEBUG
+void Grid::Draw() const
+{
+	for (uint x=0 ; x<m_iWidth ; ++x)
+	{
+		for (uint y=0 ; y<m_iHeight; ++y)
+		{
+			m_aGridArray[x][y].Draw(x, y, m_iWidth, m_iHeight);
+		}
+	}
+}
+#endif
 
 

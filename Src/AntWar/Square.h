@@ -30,6 +30,10 @@ class Square
 		void SetAntPlayer(int player) { m_iAntPlayer = player; }
 		void SetVisible(bool bVisible = true) { m_bIsVisible = bVisible; }
 
+#ifdef MYDEBUG
+		void Draw(uint x, uint y, uint w, uint h) const;
+#endif
+
 	private:
 		bool m_bIsVisible;
 		bool m_bIsWater;

@@ -1,8 +1,14 @@
 #include "AntWar.h"
+#include "Utils.h"
 
-using namespace std;
+#ifdef MYDEBUG
+#include "Graphic.h"
 
+GraphicEngine ge(1024, 748, 32);
+GraphicFrame gf_pw(&ge, 0, 0, 748, 748);
+GraphicFrame gf_dbg(&ge, 748, 0, 276, 748);
 
+#endif
 
 
 //constructor
@@ -18,16 +24,80 @@ void AntWar::PlayGame()
 
     EndTurn();
 
-    //continues making moves while the game is not over
-    while(true)
-    {
-		m_oWorld.NewTurn();
-		m_oWorld.ReadTurn();
-		//m_oWorld.DrawDebug();
-        m_oWorld.UpdateVisionInformation();
-        MakeMoves();
-        EndTurn();
-    }
+#ifdef MYDEBUG
+	ge.Init();
+#endif
+
+	int iRound = 1;
+
+	while(true)
+	{
+		uint16 iNewRound = iRound;
+
+#ifdef MYDEBUG
+		if (g_bVisualDebug)
+		{
+			while (iNewRound == iRound)
+			{
+				// Reset Data for new turn
+				m_oWorld.NewTurn();
+
+				// GetInfo
+				if (m_oWorld.ReadTurn(iNewRound) == false)
+				{
+					iNewRound--;
+					continue;
+				}
+
+				// Compute
+				m_oWorld.UpdateVisionInformation();
+
+				iNewRound = m_oWorld.DrawLoop(false);
+				if (iNewRound == (uint16)-1)
+					return;
+
+				if (iNewRound == iRound)
+				{
+					// Execute
+					MakeMoves();
+
+					iNewRound = m_oWorld.DrawLoop(true);
+					if (iNewRound == (uint16)-1)
+						return;
+				}
+
+				if (iNewRound == 0)
+					iNewRound = 1;
+			}
+			iRound = iNewRound;
+		}
+		else
+#endif
+		{
+			// Reset Data for new turn
+			m_oWorld.NewTurn();
+
+			// GetInfo
+			if (m_oWorld.ReadTurn() == false)
+				break;
+			
+			// Compute
+			m_oWorld.UpdateVisionInformation();
+
+			// Execute
+			MakeMoves();
+
+			// End Turn
+			EndTurn();
+
+			iRound++;
+		}
+	}
+
+
+#ifdef MYDEBUG
+	ge.Close();
+#endif
 };
 
 //makes the bots moves for the turn

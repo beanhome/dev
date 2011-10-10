@@ -1,16 +1,29 @@
 #include "World.h"
 #include <math.h>
 #include "Square.h"
+#include "Utils.h"
+#include "StringUtils.h"
 
-using namespace std;
+#ifdef MYDEBUG
+#include "Graphic.h"
+#endif
 
 Vector2 vMove[4] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0)};
 
 World::World()
+#ifdef MYDEBUG
+	: m_bKeyDown(false)
+	, m_fKeyDownTime(0.f)
+	, m_fRepeatDelay(0.f)
+	, m_fFirstRepeatDelay(500.f)
+	, m_fNextRepeatDelay(30.f)
+#endif
+
 {
     //gameover = 0;
     m_iTurn = 0;
 
+#ifdef MYDEBUG
 	if (g_bVisualDebug)
 	{
 		fopen_s(&m_pInput, "Input.txt", "rt");
@@ -19,10 +32,13 @@ World::World()
 		m_pInputSave = NULL;
 	}
 	else
+#endif
 	{
 		m_pInput = stdin;
 		fopen_s(&m_pInputSave, "Input.txt", "wt");
 	}
+
+	m_oTimer.Start();
 }
 
 World::~World()
@@ -258,10 +274,23 @@ void World::ReadSetup()
 	m_oGrid.Init(m_iWidth, m_iHeight);
 }
 
-void World::ReadTurn()
+bool World::ReadTurn(int iRound)
 {
+	if (iRound > 0)
+	{
+		if (iRound-1 == m_aTurnInputFileLoc.size())
+		{
+			m_aTurnInputFileLoc.push_back(ftell(m_pInput));
+		}
+		else
+		{
+			fseek(m_pInput, m_aTurnInputFileLoc[iRound-1], SEEK_SET);
+		}
+	}
+
 	string map_data;
-	ReadData(m_pInput, map_data);
+	if (ReadData(m_pInput, map_data) == 1)
+		return false;
 
 	if (m_pInputSave != NULL)
 	{
@@ -283,6 +312,12 @@ void World::ReadTurn()
 	for (uint i=0 ; i<lines.size() ; ++i)
 	{
 		 const char* line = lines[i].c_str();
+
+		 if (strncmp(lines[i].c_str(), "turn", 4) == 0)
+		 {
+			 m_iTurn = atoi(line + 4);
+		 }
+
 		 char* pLastChar;
 
 		 int y = strtol(line+2, &pLastChar, 10);
@@ -320,9 +355,96 @@ void World::ReadTurn()
 			 }
 		 }
 	}
+
+	ASSERT(iRound == -1 || m_iTurn == iRound);
+
+	return true;
 }
 
-void World::DrawDebug()
+#ifdef MYDEBUG
+int World::DrawLoop(bool bPostCompute)
+{
+	bool bContinue = false;
+	uint16 iRound = m_iTurn;
+
+	while(!bContinue)
+	{
+		// Get Select
+		// iSquareSelect ...
+
+		Draw(/*bPostCompute, iSquareSelect*/);
+
+		const InputEvent& oInputEvent = ge.PollEvent();
+
+		if (oInputEvent.IsQuit())
+			return (uint16)-1;
+
+		if (oInputEvent.IsKeyboard())
+		{
+			if (oInputEvent.GetKeyboardEvent() == KeyUp)
+			{
+				m_bKeyDown = false;
+			}
+			else
+			{
+				if (!m_bKeyDown)
+				{
+					m_fKeyDownTime = m_oTimer.GetTime();
+					m_fRepeatDelay = m_fFirstRepeatDelay;
+				}
+				else
+				{
+					if (m_oTimer.GetTime() > m_fKeyDownTime + m_fRepeatDelay)
+					{
+						m_bKeyDown = false;
+						m_fKeyDownTime = m_oTimer.GetTime();
+						m_fRepeatDelay = m_fNextRepeatDelay;
+					}
+				}
+
+				if (!m_bKeyDown)
+				{
+					switch(oInputEvent.GetKeyboardKey())
+					{
+					case KEY_LEFT:
+						if (iRound > 0)
+						{
+							bContinue = true;
+							iRound--;
+						}
+						break;
+
+					case KEY_RIGHT:
+						bContinue = true;
+						iRound++;
+						break;
+
+					case KEY_SPACE:
+						bContinue = true;
+						break;
+					}
+				}
+
+				m_bKeyDown = true;
+			}
+		}
+	}
+
+	return iRound;}
+
+void World::Draw() const
+{
+	ge.Clear();
+
+	m_oGrid.Draw();
+
+	gf_pw.Print((sint16)gf_pw.GetWidth() / 2, 10, 16, Center, 0, 0, 0, "Turn %d", m_iTurn);
+
+	ge.Flip();
+}
+#endif
+
+void World::DrawDebug() const
 {
 	for (uint y=0 ; y<m_iHeight ; ++y)
 	{

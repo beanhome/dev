@@ -80,8 +80,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
