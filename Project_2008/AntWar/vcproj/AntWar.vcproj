@@ -191,6 +191,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Src\AntWar\Square.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Src\AntWar\Square.h"
 				>
 			</File>

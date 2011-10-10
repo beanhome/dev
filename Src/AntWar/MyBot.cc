@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	}
 
     AntWar aw;
-    aw.playGame();
+    aw.PlayGame();
 
     return 0;
 }

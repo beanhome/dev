@@ -9,10 +9,12 @@ struct AntWar
 
     AntWar();
 
-    void playGame();    //plays a single game of Ants
+    void PlayGame();    //plays a single game of Ants
 
     void MakeMoves();   //makes moves for a single turn
-    void EndTurn();     //indicates to the engine that it has made its moves
+	
+	void ExecMove(const Vector2 &loc, EDirection direction);
+    void EndTurn();
 };
 
 #endif //ANTWAR_H

@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-struct Square;
+class Square;
 
 class Grid;
 
@@ -19,6 +19,7 @@ class GridArray
 
 	public:
 		Square& operator[](int x);
+		const Square& operator[](int x) const;
 
 	private:
 		int m_iSize;
@@ -34,8 +35,10 @@ class Grid
 		~Grid();
 
 		void Init(uint iWidth, uint iHeight);
+		void NewTurn();
 
 		GridArray& operator[](int x);
+		const GridArray& operator[](int x) const;
 
 	private:
 		Square* m_pBuffer;

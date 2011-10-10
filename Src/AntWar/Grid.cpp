@@ -24,7 +24,15 @@ void GridArray::Init(int size, Square* pBuff)
 Square& GridArray::operator[](int i)
 {
 	while (i<0) i += m_iSize;
-	while (i>m_iSize) i -= m_iSize;
+	while (i>=m_iSize) i -= m_iSize;
+
+	return m_pBuffer[i];
+}
+
+const Square& GridArray::operator[](int i) const
+{
+	while (i<0) i += m_iSize;
+	while (i>=m_iSize) i -= m_iSize;
 
 	return m_pBuffer[i];
 }
@@ -47,6 +55,26 @@ Grid::~Grid()
 		delete [] m_aGridArray;
 }
 
+GridArray& Grid::operator[](int x)
+{
+	ASSERT(m_pBuffer != NULL);
+
+	while (x<0) x += m_iWidth;
+	while ((uint)x>=m_iWidth) x -= m_iWidth;
+
+	return m_aGridArray[x];
+}
+
+const GridArray& Grid::operator[](int x) const
+{
+	ASSERT(m_pBuffer != NULL);
+
+	while (x<0) x += m_iWidth;
+	while ((uint)x>=m_iWidth) x -= m_iWidth;
+
+	return m_aGridArray[x];
+}
+
 
 void Grid::Init(uint iWidth, uint iHeight)
 {
@@ -67,12 +95,16 @@ void Grid::Init(uint iWidth, uint iHeight)
 	}
 }
 
-GridArray& Grid::operator[](int x)
+void Grid::NewTurn()
 {
-	assert(m_pBuffer != NULL);
+	for (uint x=0 ; x<m_iWidth ; ++x)
+	{
+		for (uint y=0 ; y<m_iHeight; ++y)
+		{
+			m_aGridArray[x][y].NewTurn();
+		}
+	}
 
-	while (x<0) x += m_iWidth;
-	while (x>m_iWidth) x -= m_iWidth;
-
-	return m_aGridArray[x];
 }
+
+

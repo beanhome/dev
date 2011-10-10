@@ -14,6 +14,7 @@ World::World()
 	if (g_bVisualDebug)
 	{
 		fopen_s(&m_pInput, "Input.txt", "rt");
+		ASSERT(m_pInput != NULL);
 		rewind(m_pInput);
 		m_pInputSave = NULL;
 	}
@@ -28,22 +29,40 @@ World::~World()
 {
 }
 
-void World::Reset()
+void World::NewTurn()
 {
+	m_oGrid.NewTurn();
 
+	m_aFriendAnts.clear();
+	m_aEnemyAnts.clear();
+	m_aFriendHills.clear();
+	m_aEnemyHills.clear();
+	m_aFoods.clear();
 }
 
-//outputs move information to the engine
-/*
-void World::makeMove(const Vector2 &loc, int direction)
+bool World::IsEmpty(Vector2 pos) const
 {
-    cout << "o " << loc.row << " " << loc.col << " " << cDirChar[direction] << endl;
+	return !m_oGrid[pos.x][pos.y].IsWater() && !m_oGrid[pos.x][pos.y].HasAnt();
+}
 
-    Vector2 nLoc = getLocation(loc, direction);
-    grid[nLoc.row][nLoc.col].ant = grid[loc.row][loc.col].ant;
-    grid[loc.row][loc.col].ant = -1;
+
+bool World::IsWater(Vector2 pos) const
+{
+	return m_oGrid[pos.x][pos.y].IsWater();
+}
+
+bool World::HasAnt(Vector2 pos) const
+{
+	return m_oGrid[pos.x][pos.y].HasAnt();
+}
+
+
+void World::ExecMove(const Vector2 &loc, EDirection direction)
+{
+    Vector2 nLoc = GetLocation(loc, direction);
+    m_oGrid[nLoc.x][nLoc.y].SetAntPlayer(m_oGrid[loc.x][loc.y].GetAntPlayer());
+    m_oGrid[loc.x][loc.y].SetAntPlayer(-1);
 };
-*/
 
 //returns the euclidean distance between two locations with the edges wrapped
 float World::Distance(const Vector2 &loc1, const Vector2 &loc2)
@@ -61,6 +80,21 @@ Vector2 World::GetLocation(const Vector2 &loc, EDirection dir)
     return Vector2( (loc.x + vMove[dir].x + m_iWidth) % m_iWidth,
                      (loc.y + vMove[dir].y + m_iHeight) % m_iHeight );
 };
+
+EDirection World::GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc)
+{
+	int iHori = targetLoc.x - startLoc.x;
+	int iVert = targetLoc.y - startLoc.y;
+
+	if (abs(iHori) > abs(iVert))
+	{
+		return (iHori > 0 ? Est : West);
+	}
+	else
+	{
+		return (iVert > 0 ? South : North);
+	}
+}
 
 /*
     This function will update update the lastSeen value for any squares currently
@@ -254,46 +288,36 @@ void World::ReadTurn()
 		 int y = strtol(line+2, &pLastChar, 10);
 		 int x = strtol(pLastChar, &pLastChar, 10);
 
-		 switch (line[0])
+		 m_oGrid[x][y].Init(line, pLastChar);
+
+		 switch (m_oGrid[x][y].GetAntPlayer())
 		 {
-			 case 'w': // water
-				 m_oGrid[x][y].isVisible = true;
-				 m_oGrid[x][y].isWater = true;
-				 break;
+			 case -1:	break;
+			 case 0:	m_aFriendAnts.push_back(Vector2(x, y));
+			 default:	m_aEnemyAnts.push_back(Vector2(x, y));
+		 }
 
-			 case 'f': // food
-				 m_oGrid[x][y].isVisible = true;
-				 m_oGrid[x][y].isFood = true;
-				 break;
+		 switch (m_oGrid[x][y].GetHillPlayer())
+		 {
+			 case -1:	break;
+			 case 0:	m_aFriendHills.push_back(Vector2(x, y));
+			 default:	m_aEnemyHills.push_back(Vector2(x, y));
+		 }
 
-			 case 'h': // hill
-				 m_oGrid[x][y].isVisible = true;
-				 m_oGrid[x][y].isHill = true;
-				 m_oGrid[x][y].hillPlayer = strtol(pLastChar, &pLastChar, 10);
-				 break;
+		 if (m_oGrid[x][y].IsFood())
+			 m_aFoods.push_back(Vector2(x, y));
 
-			 case 'a': // live ant
-				 m_oGrid[x][y].isVisible = true;
-				 m_oGrid[x][y].ant = strtol(pLastChar, &pLastChar, 10);
-
-				 if (m_oGrid[x][y].ant == 0)
+		 if (m_oGrid[x][y].HasFriendAnt())
+		 {
+			 int r = (int)sqrt(m_fViewRadius);
+			 for (int lx = -r ; lx < r+1 ; ++lx)
+			 {
+				 for (int ly = -r ; ly < r+1 ; ++ly)
 				 {
-					 int r = (int)sqrt(m_fViewRadius);
-					 for (int lx = -r ; lx < r+1 ; ++lx)
-					 {
-						 for (int ly = -r ; ly < r+1 ; ++ly)
-						 {
-							 if ((int)Distance(Vector2(x, y), Vector2(x+lx, y+ly)) <= r)
-								 m_oGrid[x+lx][y+ly].isVisible = true;
-						 }
-					 }
+					 if ((int)Distance(Vector2(x, y), Vector2(x+lx, y+ly)) <= r)
+						 m_oGrid[x+lx][y+ly].SetVisible(true);
 				 }
-				 break;
-
-			 case 'd': // dead ant
-				 m_oGrid[x][y].isVisible = true;
-				 m_oGrid[x][y].deadAnts.push_back(strtol(pLastChar, &pLastChar, 10));
-				 break;
+			 }
 		 }
 	}
 }
@@ -306,19 +330,19 @@ void World::DrawDebug()
 		{
 			char c = '?';
 
-			if (m_oGrid[x][y].isVisible)
+			if (m_oGrid[x][y].IsVisible())
 			{
-				if (m_oGrid[x][y].isWater)
+				if (m_oGrid[x][y].IsWater())
 					c = '%';
-				else if (m_oGrid[x][y].isFood)
+				else if (m_oGrid[x][y].IsFood())
 					c = '*';
-				else if (m_oGrid[x][y].isHill && m_oGrid[x][y].ant == -1)
-					c = '0' + m_oGrid[x][y].hillPlayer;
-				else if (m_oGrid[x][y].isHill && m_oGrid[x][y].ant != -1)
-					c = 'A' + m_oGrid[x][y].hillPlayer;
-				else if (m_oGrid[x][y].ant != -1)
-					c = 'a' + m_oGrid[x][y].hillPlayer;
-				else if (m_oGrid[x][y].deadAnts.size() > 0)
+				else if (m_oGrid[x][y].IsHill() && m_oGrid[x][y].HasAnt() == false)
+					c = '0' + m_oGrid[x][y].GetHillPlayer();
+				else if (m_oGrid[x][y].IsHill() && m_oGrid[x][y].HasAnt())
+					c = 'A' + m_oGrid[x][y].GetHillPlayer();
+				else if (m_oGrid[x][y].HasAnt())
+					c = 'a' + m_oGrid[x][y].GetAntPlayer();
+				else if (m_oGrid[x][y].HasDeadAnt())
 					c = '!';
 				else
 					c = '.';

@@ -5,9 +5,6 @@
 #include "Vector2.h"
 #include "Grid.h"
 
-//
-//const int DIRECTIONS[4][2] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };      //{N, E, S, W}
-
 enum EDirection
 {
 	North,
@@ -19,13 +16,15 @@ enum EDirection
 };
 
 const char cDirChar[4] = {'N', 'E', 'S', 'W'};
-extern Vector2 vMove[4];// = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0)};
+extern Vector2 vMove[4];
 
 class World
 {
 	public:
 		World();
 		~World();
+
+		float GetViewRadius() const { return m_fViewRadius; }
 
 		void ReadSetup();
 		void ReadTurn();
@@ -34,12 +33,20 @@ class World
 
 		//void setup();
 		
-		void Reset();
+		void NewTurn();
 
-		//void makeMove(const Vector2 &loc, int direction);
+		bool IsEmpty(Vector2 pos) const;
+		bool IsWater(Vector2 pos) const;
+		bool HasAnt(Vector2 pos) const;
+
+		const vector<Vector2>& GetFriendAnts() const { return m_aFriendAnts; }
+		const vector<Vector2>& GetFoods() const { return m_aFoods; }
+
+		void ExecMove(const Vector2 &loc, EDirection direction);
 
 		float Distance(const Vector2 &loc1, const Vector2 &loc2);
 		Vector2 GetLocation(const Vector2 &startLoc, EDirection direction);
+		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc);
 
 	    void UpdateVisionInformation();
 
@@ -71,7 +78,11 @@ class World
 
 		Grid	m_oGrid;
 
-		//std::vector<Vector2> myAnts, enemyAnts, myHills, enemyHills, food;
+		vector<Vector2> m_aFriendAnts;
+		vector<Vector2> m_aEnemyAnts;
+		vector<Vector2> m_aFriendHills;
+		vector<Vector2> m_aEnemyHills;
+		vector<Vector2> m_aFoods;
 
 		//Timer timer;
 };
