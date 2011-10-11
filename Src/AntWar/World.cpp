@@ -90,6 +90,16 @@ float World::Distance(const Vector2 &loc1, const Vector2 &loc2)
     return sqrt((float)dr*dr + (float)dc*dc);
 };
 
+int World::DistanceSq(const Vector2 &loc1, const Vector2 &loc2)
+{
+	uint d1 = abs(loc1.x-loc2.x);
+	uint d2 = abs(loc1.y-loc2.y);
+	int dr = min(d1, m_iWidth-d1);
+	int dc = min(d2, m_iHeight-d2);
+	return (dr*dr + dc*dc);
+}
+
+
 //returns the new location from moving in a given direction with the edges wrapped
 Vector2 World::GetLocation(const Vector2 &loc, EDirection dir)
 {
@@ -262,7 +272,7 @@ void World::ReadSetup()
 		else if (strncmp(lines[i].c_str(), "turns", pos) == 0)
 			m_iMaxTurn = val;
 		else if (strncmp(lines[i].c_str(), "viewradius2", pos) == 0)
-			m_fViewRadius = (float)val;
+			m_iViewRadiusSq = val;
 		else if (strncmp(lines[i].c_str(), "attackradius2", pos) == 0)
 			m_fAttackRadius = (float)val;
 		else if (strncmp(lines[i].c_str(), "spawnradius2", pos) == 0)
@@ -311,49 +321,51 @@ bool World::ReadTurn(int iRound)
 
 	for (uint i=0 ; i<lines.size() ; ++i)
 	{
-		 const char* line = lines[i].c_str();
+		const char* line = lines[i].c_str();
 
-		 if (strncmp(lines[i].c_str(), "turn", 4) == 0)
-		 {
-			 m_iTurn = atoi(line + 4);
-		 }
+		if (strncmp(lines[i].c_str(), "turn", 4) == 0)
+		{
+			m_iTurn = atoi(line + 4);
+		}
 
-		 char* pLastChar;
+		char* pLastChar;
 
-		 int y = strtol(line+2, &pLastChar, 10);
-		 int x = strtol(pLastChar, &pLastChar, 10);
+		int y = strtol(line+2, &pLastChar, 10);
+		int x = strtol(pLastChar, &pLastChar, 10);
 
-		 m_oGrid[x][y].Init(line, pLastChar);
+		m_oGrid[x][y].Init(line, pLastChar, iRound);
 
-		 switch (m_oGrid[x][y].GetAntPlayer())
-		 {
-			 case -1:	break;
-			 case 0:	m_aFriendAnts.push_back(Vector2(x, y));
-			 default:	m_aEnemyAnts.push_back(Vector2(x, y));
-		 }
+		switch (m_oGrid[x][y].GetAntPlayer())
+		{
+			case -1:	break;
+			case 0:		m_aFriendAnts.push_back(Ant(x, y, 0));
+			default:	m_aEnemyAnts.push_back(Ant(x, y, m_oGrid[x][y].GetAntPlayer()));
+		}
 
-		 switch (m_oGrid[x][y].GetHillPlayer())
-		 {
-			 case -1:	break;
-			 case 0:	m_aFriendHills.push_back(Vector2(x, y));
-			 default:	m_aEnemyHills.push_back(Vector2(x, y));
-		 }
+		switch (m_oGrid[x][y].GetHillPlayer())
+		{
+			case -1:	break;
+			case 0:		m_aFriendHills.push_back(Vector2(x, y));
+			default:	m_aEnemyHills.push_back(Vector2(x, y));
+		}
 
-		 if (m_oGrid[x][y].IsFood())
-			 m_aFoods.push_back(Vector2(x, y));
+		if (m_oGrid[x][y].IsFood())
+			m_aFoods.push_back(Vector2(x, y));
 
-		 if (m_oGrid[x][y].HasFriendAnt())
-		 {
-			 int r = (int)sqrt(m_fViewRadius);
-			 for (int lx = -r ; lx < r+1 ; ++lx)
-			 {
-				 for (int ly = -r ; ly < r+1 ; ++ly)
-				 {
-					 if ((int)Distance(Vector2(x, y), Vector2(x+lx, y+ly)) <= r)
-						 m_oGrid[x+lx][y+ly].SetVisible(true);
-				 }
-			 }
-		 }
+		if (m_oGrid[x][y].HasFriendAnt())
+		{
+			for (int lx = -m_iViewRadiusSq ; lx < m_iViewRadiusSq+1 ; ++lx)
+			{
+				for (int ly = -m_iViewRadiusSq ; ly < m_iViewRadiusSq+1 ; ++ly)
+				{
+					if (DistanceSq(Vector2(x, y), Vector2(x+lx, y+ly)) <= m_iViewRadiusSq)
+					{
+						m_oGrid[x+lx][y+ly].SetVisible(true);
+						m_oGrid[x+lx][y+ly].SetDiscovered(m_iTurn);
+					}
+				}
+			}
+		}
 	}
 
 	ASSERT(iRound == -1 || m_iTurn == iRound);
@@ -369,11 +381,6 @@ int World::DrawLoop(bool bPostCompute)
 
 	while(!bContinue)
 	{
-		// Get Select
-		// iSquareSelect ...
-
-		Draw(/*bPostCompute, iSquareSelect*/);
-
 		const InputEvent& oInputEvent = ge.PollEvent();
 
 		if (oInputEvent.IsQuit())
@@ -428,17 +435,48 @@ int World::DrawLoop(bool bPostCompute)
 				m_bKeyDown = true;
 			}
 		}
+
+		int i = -1;
+		int j = -1;
+
+		if (oInputEvent.IsMouse())
+		{
+			uint16 x, y;
+			oInputEvent.GetMouseMove(x, y);
+
+			i = x * m_oGrid.GetWidth() / gf_pw.GetWidth();
+			j = y * m_oGrid.GetHeight() / gf_pw.GetHeight();
+
+			if (i < 0 || i > (int)m_oGrid.GetWidth())
+				i = -1;
+
+			if (j < 0 || j > (int)m_oGrid.GetHeight())
+				j = -1;
+		}
+
+		Draw(bPostCompute, i, j);
 	}
 
 	return iRound;}
 
-void World::Draw() const
+void World::Draw(bool bPostCompute, int i, int j) const
 {
 	ge.Clear();
 
-	m_oGrid.Draw();
+	m_oGrid.Draw(m_iTurn, i, j);
 
-	gf_pw.Print((sint16)gf_pw.GetWidth() / 2, 10, 16, Center, 0, 0, 0, "Turn %d", m_iTurn);
+	gf_pw.Print((sint16)gf_pw.GetWidth() / 2, 10, 16, Center, 0, 0, 0, "Turn %d %s", m_iTurn, (bPostCompute ? "After Computing" : ""));
+
+	sint16 x = 10;
+	sint16 y = 10;
+	sint16 yl = 10;
+
+	if (i != -1 && j != -1)
+	{
+		gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Square %d %d", i, j);
+		y += yl;
+		m_oGrid[i][j].PrintInfo(x, y, yl, m_iTurn);
+	}
 
 	ge.Flip();
 }

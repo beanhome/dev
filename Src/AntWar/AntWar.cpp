@@ -13,9 +13,9 @@ GraphicFrame gf_dbg(&ge, 748, 0, 276, 748);
 
 //constructor
 AntWar::AntWar()
+	: m_oWorld()
 {
-
-};
+}
 
 //plays a single game of Ants.
 void AntWar::PlayGame()
@@ -61,6 +61,9 @@ void AntWar::PlayGame()
 					// Execute
 					MakeMoves();
 
+					// End Turn
+					EndTurn();
+
 					iNewRound = m_oWorld.DrawLoop(true);
 					if (iNewRound == (uint16)-1)
 						return;
@@ -103,11 +106,13 @@ void AntWar::PlayGame()
 //makes the bots moves for the turn
 void AntWar::MakeMoves()
 {
+	Navigation m_oNavigation(m_oWorld.GetGrid());
+
 	for (uint i=0 ; i<m_oWorld.GetFriendAnts().size() ; ++i)
 	{
 		EDirection dir = EDirection_MAX;
 
-		const Vector2& pos = m_oWorld.GetFriendAnts()[i];
+		const Vector2& pos = m_oWorld.GetFriendAnts()[i].GetLocation();
 
 		if (dir == EDirection_MAX)
 		{
@@ -115,12 +120,18 @@ void AntWar::MakeMoves()
 			{
 				const Vector2& vFoodLoc = m_oWorld.GetFoods()[j];
 
-				float fDist = m_oWorld.Distance(pos, vFoodLoc);
-
-				if (fDist * fDist < m_oWorld.GetViewRadius())
+				if (m_oWorld.DistanceSq(pos, vFoodLoc) < m_oWorld.GetViewRadiusSq())
 				{
-					dir = m_oWorld.GetDirection(pos, vFoodLoc);
-					Vector2 target = m_oWorld.GetLocation(pos, dir);
+					vector<Vector2> aPath;
+					if (m_oNavigation.FindPath(pos, vFoodLoc, aPath, m_oWorld.GetTurn()))
+					{
+						dir = m_oWorld.GetDirection(pos, aPath[0]);
+					}
+					else
+					{
+						dir = m_oWorld.GetDirection(pos, vFoodLoc);
+						//Vector2 target = m_oWorld.GetLocation(pos, dir);
+					}
 					break;
 				}
 			}
@@ -140,6 +151,7 @@ void AntWar::MakeMoves()
 				if (m_oWorld.IsEmpty(target))
 				{
 					ExecMove(pos, ndir);
+					break;
 				}
 			}
 		}

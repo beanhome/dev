@@ -2,19 +2,22 @@
 #define ANTWAR_H
 
 #include "World.h"
+#include "Navigation.h"
 
-struct AntWar
+class AntWar
 {
-    World m_oWorld;
+	public:
+		AntWar();
 
-    AntWar();
+		void PlayGame();    //plays a single game of Ants
 
-    void PlayGame();    //plays a single game of Ants
+		void MakeMoves();   //makes moves for a single turn
+		
+		void ExecMove(const Vector2 &loc, EDirection direction);
+		void EndTurn();
 
-    void MakeMoves();   //makes moves for a single turn
-	
-	void ExecMove(const Vector2 &loc, EDirection direction);
-    void EndTurn();
+	private:
+		World m_oWorld;
 };
 
 #endif //ANTWAR_H

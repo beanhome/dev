@@ -173,6 +173,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\Src\AntWar\Ant.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Ant.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Src\AntWar\AntWar.cpp"
 				>
 			</File>
@@ -189,7 +197,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Src\AntWar\GridBase.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Src\AntWar\MyBot.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Navigation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Navigation.h"
 				>
 			</File>
 			<File
@@ -214,6 +234,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\AntWar\Utils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Vector2.cpp"
 				>
 			</File>
 			<File
