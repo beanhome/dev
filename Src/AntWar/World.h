@@ -39,8 +39,11 @@ class World
 		bool IsWater(Vector2 pos) const;
 		bool HasAnt(Vector2 pos) const;
 
-		const vector<Ant>& GetFriendAnts() const { return m_aFriendAnts; }
+		const vector<Ant>& GetAnts() const { return m_aAnts; }
+		vector<Ant>& GetAnts() { return m_aAnts; }
 		const vector<Vector2>& GetFoods() const { return m_aFoods; }
+		
+		const vector<Vector2>& GetEnemyHills() const { return m_aEnemyHills; }
 
 		void ExecMove(const Vector2 &loc, EDirection direction);
 
@@ -81,8 +84,7 @@ class World
 
 		Grid				m_oGrid;
 
-		vector<Ant>			m_aFriendAnts;
-		vector<Ant>			m_aEnemyAnts;
+		vector<Ant>			m_aAnts;
 		vector<Vector2>		m_aFriendHills;
 		vector<Vector2>		m_aEnemyHills;
 		vector<Vector2>		m_aFoods;

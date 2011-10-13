@@ -12,6 +12,8 @@ class Ant
 
 		const Vector2& GetLocation() const { return m_vLoc; }
 		int GetPlayer() const { return m_iPlayer; }
+		vector<Vector2>& GetPath() { return m_oPath; }
+
 
 #ifdef MYDEBUG
 		void Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const;
@@ -21,6 +23,8 @@ class Ant
 	private:
 		Vector2 m_vLoc;
 		int m_iPlayer;
+
+		vector<Vector2> m_oPath;
 };
 
 #endif //ANT_H_

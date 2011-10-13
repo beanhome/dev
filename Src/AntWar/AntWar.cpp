@@ -108,11 +108,33 @@ void AntWar::MakeMoves()
 {
 	Navigation m_oNavigation(m_oWorld.GetGrid());
 
-	for (uint i=0 ; i<m_oWorld.GetFriendAnts().size() ; ++i)
+	for (uint i=0 ; i<m_oWorld.GetAnts().size() ; ++i)
 	{
+		Ant& oAnt = m_oWorld.GetAnts()[i];		
+		if (oAnt.GetPlayer() != 0)
+			continue;
+
+		const Vector2& pos = oAnt.GetLocation();
+		oAnt.GetPath().clear();
+
 		EDirection dir = EDirection_MAX;
 
-		const Vector2& pos = m_oWorld.GetFriendAnts()[i].GetLocation();
+		if (dir == EDirection_MAX)
+		{
+			for (uint j=0 ; j<m_oWorld.GetEnemyHills().size() ; ++j)
+			{
+				const Vector2& vHillLoc = m_oWorld.GetEnemyHills()[j];
+
+				if (m_oWorld.DistanceSq(pos, vHillLoc) < m_oWorld.GetViewRadiusSq())
+				{
+					if (m_oNavigation.FindPath(pos, vHillLoc, oAnt.GetPath(), m_oWorld.GetTurn()))
+					{
+						dir = m_oWorld.GetDirection(pos, oAnt.GetPath()[0]);
+					}
+					break;
+				}
+			}
+		}
 
 		if (dir == EDirection_MAX)
 		{
@@ -122,15 +144,9 @@ void AntWar::MakeMoves()
 
 				if (m_oWorld.DistanceSq(pos, vFoodLoc) < m_oWorld.GetViewRadiusSq())
 				{
-					vector<Vector2> aPath;
-					if (m_oNavigation.FindPath(pos, vFoodLoc, aPath, m_oWorld.GetTurn()))
+					if (m_oNavigation.FindPath(pos, vFoodLoc, oAnt.GetPath(), m_oWorld.GetTurn()))
 					{
-						dir = m_oWorld.GetDirection(pos, aPath[0]);
-					}
-					else
-					{
-						dir = m_oWorld.GetDirection(pos, vFoodLoc);
-						//Vector2 target = m_oWorld.GetLocation(pos, dir);
+						dir = m_oWorld.GetDirection(pos, oAnt.GetPath()[0]);
 					}
 					break;
 				}
@@ -150,6 +166,9 @@ void AntWar::MakeMoves()
 				Vector2 target = m_oWorld.GetLocation(pos, ndir);
 				if (m_oWorld.IsEmpty(target))
 				{
+					if (oAnt.GetPath().size() == 0)
+						oAnt.GetPath().push_back(target);
+					
 					ExecMove(pos, ndir);
 					break;
 				}

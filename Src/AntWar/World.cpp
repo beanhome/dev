@@ -49,8 +49,7 @@ void World::NewTurn()
 {
 	m_oGrid.NewTurn();
 
-	m_aFriendAnts.clear();
-	m_aEnemyAnts.clear();
+	m_aAnts.clear();
 	m_aFriendHills.clear();
 	m_aEnemyHills.clear();
 	m_aFoods.clear();
@@ -111,6 +110,12 @@ EDirection World::GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc
 {
 	int iHori = targetLoc.x - startLoc.x;
 	int iVert = targetLoc.y - startLoc.y;
+
+	if (iHori > (int)m_iWidth / 2)
+		iHori -= m_iWidth;
+
+	if (iVert > (int)m_iHeight / 2)
+		iVert -= m_iHeight;
 
 	if (abs(iHori) > abs(iVert))
 	{
@@ -282,6 +287,23 @@ void World::ReadSetup()
 	}
 
 	m_oGrid.Init(m_iWidth, m_iHeight);
+
+	/*
+	for (uint i=0 ; i<m_oGrid.GetSize() ; ++i)
+	{
+		Vector2 vCoord = m_oGrid.GetCoord(i);
+		ASSERT(m_oGrid.GetIndex(vCoord) == i);
+	}
+
+	for (uint i=0 ; i<m_oGrid.GetWidth() ; ++i)
+	{
+		for (uint j=0 ; j<m_oGrid.GetHeight() ; ++j)
+		{
+			uint id = m_oGrid.GetIndex(i, j);
+			ASSERT(m_oGrid.GetCoord(id) == Vector2(i, j));
+		}
+	}
+	*/
 }
 
 bool World::ReadTurn(int iRound)
@@ -338,14 +360,13 @@ bool World::ReadTurn(int iRound)
 		switch (m_oGrid[x][y].GetAntPlayer())
 		{
 			case -1:	break;
-			case 0:		m_aFriendAnts.push_back(Ant(x, y, 0));
-			default:	m_aEnemyAnts.push_back(Ant(x, y, m_oGrid[x][y].GetAntPlayer()));
+			default:	m_aAnts.push_back(Ant(x, y, m_oGrid[x][y].GetAntPlayer()));
 		}
 
 		switch (m_oGrid[x][y].GetHillPlayer())
 		{
 			case -1:	break;
-			case 0:		m_aFriendHills.push_back(Vector2(x, y));
+			case 0:		m_aFriendHills.push_back(Vector2(x, y)); break;
 			default:	m_aEnemyHills.push_back(Vector2(x, y));
 		}
 
@@ -465,6 +486,27 @@ void World::Draw(bool bPostCompute, int i, int j) const
 
 	m_oGrid.Draw(m_iTurn, i, j);
 
+	uint iAntSelected = (uint)-1;
+	for (uint k=0 ; k<m_aAnts.size() ; ++k)
+	{
+		const Ant& oAnt = m_aAnts[k];
+		if (Vector2(i,j) == oAnt.GetLocation())
+		{
+			iAntSelected = k;
+		}
+		else
+		{
+			oAnt.Draw(oAnt.GetLocation().x, oAnt.GetLocation().y, m_oGrid.GetWidth(), m_oGrid.GetHeight(), m_iTurn, false);
+		}
+	}
+
+	if (iAntSelected != (uint)-1)
+	{
+		const Ant& oAnt = m_aAnts[iAntSelected];
+		oAnt.Draw(oAnt.GetLocation().x, oAnt.GetLocation().y, m_oGrid.GetWidth(), m_oGrid.GetHeight(), m_iTurn, true);
+	}
+
+	// Text
 	gf_pw.Print((sint16)gf_pw.GetWidth() / 2, 10, 16, Center, 0, 0, 0, "Turn %d %s", m_iTurn, (bPostCompute ? "After Computing" : ""));
 
 	sint16 x = 10;
@@ -476,6 +518,12 @@ void World::Draw(bool bPostCompute, int i, int j) const
 		gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Square %d %d", i, j);
 		y += yl;
 		m_oGrid[i][j].PrintInfo(x, y, yl, m_iTurn);
+	}
+
+	if (iAntSelected != (uint)-1)
+	{
+		const Ant& oAnt = m_aAnts[iAntSelected];
+		oAnt.PrintInfo(x, y, yl);
 	}
 
 	ge.Flip();

@@ -94,8 +94,22 @@ class GridBase
 			}
 		}
 
+		void Normalize(Vector2& pos) const
+		{
+			Normalize(pos.x, pos.y);
+		}
+
+		void Normalize(int& i, int& j) const
+		{
+			while (i<0) i += m_iWidth;
+			while ((uint)i>=m_iWidth) i -= m_iWidth;
+			while (j<0) j += m_iHeight;
+			while ((uint)j>=m_iHeight) j -= m_iHeight;
+		}
+
 		uint GetIndex(int i, int j) const
 		{
+			Normalize(i, j);
 			return i * GetHeight() + j;
 		}
 
@@ -106,14 +120,17 @@ class GridBase
 
 		Vector2 GetCoord(uint id) const
 		{
-			return Vector2(id / GetHeight(), id % GetHeight());
+			Vector2 pos;
+			GetCoord(id, pos.x, pos.y);
+			return pos;
 		}
 
 		void GetCoord(uint id, int& i, int& j) const
 		{
-			Vector2 pos = GetCoord(id);
-			i = pos.x;
-			j = pos.y;
+			i = id / GetHeight();
+			j = id % GetHeight();
+
+			Normalize(i, j);
 		}
 
 		void GetCoord(uint id, Vector2& pos) const
@@ -124,7 +141,9 @@ class GridBase
 		Vector2 GetCoord(const Vector2& pos, EDirection dir) const
 		{
 			static const Vector2 vMove[EDirection_MAX] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0) };
-			return Vector2(pos.x + vMove[dir].x, pos.y + vMove[dir].y);
+			Vector2 out(pos.x + vMove[dir].x, pos.y + vMove[dir].y);
+			Normalize(out);
+			return out;
 		}
 
 		const TCase&	GetCase(uint id) const							{ ASSERT(id < m_iWidth * m_iHeight); return m_pBuffer[id]; }
@@ -154,6 +173,15 @@ class GridBase
 			while ((uint)x>=m_iWidth) x -= m_iWidth;
 
 			return m_aGridArray[x];
+		}
+
+		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2)
+		{
+			uint d1 = abs(loc1.x-loc2.x);
+			uint d2 = abs(loc1.y-loc2.y);
+			int dr = min(d1, m_iWidth-d1);
+			int dc = min(d2, m_iHeight-d2);
+			return (dr*dr + dc*dc);
 		}
 
 	private:
