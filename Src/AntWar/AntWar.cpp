@@ -1,6 +1,9 @@
 #include "AntWar.h"
 #include "Utils.h"
 
+#include "NavDijkstra.h"
+#include "NavAStar.h"
+
 #ifdef MYDEBUG
 #include "Graphic.h"
 
@@ -106,7 +109,8 @@ void AntWar::PlayGame()
 //makes the bots moves for the turn
 void AntWar::MakeMoves()
 {
-	Navigation m_oNavigation(m_oWorld.GetGrid());
+	//NavDijkstra m_oNavigation(m_oWorld.GetGrid());
+	NavAStar m_oNavigation(m_oWorld.GetGrid());
 
 	for (uint i=0 ; i<m_oWorld.GetAnts().size() ; ++i)
 	{

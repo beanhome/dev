@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		g_bVisualDebug = false;
-		fopen_s(&g_MyLog, "MyLog.txt", "wt");
+		MYFOPEN(g_MyLog, "MyLog.txt", "wt");
 	}
 #endif
 

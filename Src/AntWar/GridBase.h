@@ -179,8 +179,8 @@ class GridBase
 		{
 			uint d1 = abs(loc1.x-loc2.x);
 			uint d2 = abs(loc1.y-loc2.y);
-			int dr = min(d1, m_iWidth-d1);
-			int dc = min(d2, m_iHeight-d2);
+			int dr = min<uint>(d1, m_iWidth-d1);
+			int dc = min<uint>(d2, m_iHeight-d2);
 			return (dr*dr + dc*dc);
 		}
 

@@ -26,7 +26,7 @@ World::World()
 #ifdef MYDEBUG
 	if (g_bVisualDebug)
 	{
-		fopen_s(&m_pInput, "Input.txt", "rt");
+		MYFOPEN(m_pInput, "Input.txt", "rt");
 		ASSERT(m_pInput != NULL);
 		rewind(m_pInput);
 		m_pInputSave = NULL;
@@ -35,7 +35,7 @@ World::World()
 #endif
 	{
 		m_pInput = stdin;
-		fopen_s(&m_pInputSave, "Input.txt", "wt");
+		MYFOPEN(m_pInputSave, "Input.txt", "wt");
 	}
 
 	m_oTimer.Start();

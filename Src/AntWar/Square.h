@@ -15,6 +15,7 @@ class Square
 		bool IsDiscovered(int iTurn) const { return (m_iDiscoveredTurn > -1 && m_iDiscoveredTurn <= iTurn); }
 		bool IsWater() const { return m_bIsWater; }
 		bool IsFood() const { return m_bIsFood; }
+		bool IsBlock() const { return m_iDiscoveredTurn == -1 || m_bIsWater; }
 
 		bool HasAnt() const { return m_iAntPlayer != -1; }
 		bool HasFriendAnt() const { return m_iAntPlayer == 0; }

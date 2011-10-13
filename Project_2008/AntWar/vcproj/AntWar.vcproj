@@ -205,6 +205,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Src\AntWar\NavAStar.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\NavAStar.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\NavDijkstra.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\NavDijkstra.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Src\AntWar\Navigation.cpp"
 				>
 			</File>

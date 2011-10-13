@@ -37,7 +37,6 @@
 
 	struct Timer
     {
-        timeval timer;
         float startTime;
 
         Timer()
@@ -48,16 +47,18 @@
         //starts the timer
         void Start()
         {
-            gettimeofday(&timer, NULL);
-            startTime = timer.tv_sec+(timer.tv_usec/1000000.0);
+			timeval timer;
+			gettimeofday(&timer, NULL);
+            startTime = (float)timer.tv_sec+((float)timer.tv_usec/1000000.0f);
         };
 
         //returns how long it has been since the timer was last started in milliseconds
         float GetTime() const
         {
-            gettimeofday(&timer, NULL);
-            clock_t currentTime = timer.tv_sec+(timer.tv_usec/1000000.0);
-            return (currentTime-startTime)*1000.0;
+			timeval timer;
+			gettimeofday(&timer, NULL);
+            clock_t currentTime = timer.tv_sec+(long)((double)timer.tv_usec/1000000.0);
+            return ((float)currentTime-startTime)*1000.0f;
         };
     };
 #endif

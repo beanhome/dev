@@ -2,7 +2,6 @@
 #define ANTWAR_H
 
 #include "World.h"
-#include "Navigation.h"
 
 class AntWar
 {

@@ -10,6 +10,7 @@ struct Vector2
 };
 
 bool operator==(const Vector2& a, const Vector2& b);
+bool operator!=(const Vector2& a, const Vector2& b);
 bool operator<(const Vector2& a, const Vector2& b);
 bool operator<=(const Vector2& a, const Vector2& b);
 bool operator>(const Vector2& a, const Vector2& b);

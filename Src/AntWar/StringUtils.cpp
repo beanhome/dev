@@ -1,5 +1,11 @@
 #include "StringUtils.h"
 
+#ifndef _WIN32
+#define _vscprintf(f,a) vsprintf(NULL,f,a)
+#define _vsprintf_s_l(b, c, f, l, a) vsnprintf(b, c, f, a)
+#endif
+
+
 string FormatString(const char* format, ...)
 {
 	va_list arglist;

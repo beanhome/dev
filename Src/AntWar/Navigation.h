@@ -12,20 +12,10 @@ class Navigation
 		Navigation(const Grid& oGrid);
 		~Navigation();
 
-		bool FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn);
+		virtual bool FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn) = 0;
 
-	private:
+	protected:
 		const Grid& m_oModelGrid;
-
-		struct Case
-		{
-			int iCount;
-			uint iPreviousCase;
-		};
-		GridBase<Case> m_oPathGrid;
-
-		vector<uint> m_aStep;
-		uint m_iHead, m_iQueue;
 };
 
 

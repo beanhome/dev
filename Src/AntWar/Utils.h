@@ -3,21 +3,25 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <string>
 #include <vector>
 #include <map>
 #include <set>
 
-#include <wtypes.h>
-#include <basetsd.h>
-#include <winbase.h>
+#include <stdarg.h>
 
-#include <assert.h>
 #include <iostream>
 
+#ifdef _WIN32
+#define MYFOPEN(p,f,o) fopen_s(&p,f,o)
+#else
+#define MYFOPEN(p,f,o) p = fopen(f,o)
+#endif
 
 #ifdef _DEBUG
 #define MYDEBUG
+#include <assert.h>
 #endif
 
 typedef unsigned char uint8;
@@ -33,6 +37,8 @@ typedef signed long sint32;
 
 typedef wchar_t wchar;
 
+using std::min;
+using std::max;
 using std::endl;
 using std::string;
 using std::vector;
