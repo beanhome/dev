@@ -6,6 +6,8 @@
 #include "Grid.h"
 #include "Timer.h"
 #include "Ant.h"
+#include "NavDijkstra.h"
+#include "Hill.h"
 
 
 const char cDirChar[EDirection_MAX] = {'N', 'E', 'S', 'W'};
@@ -17,6 +19,11 @@ class World
 		World();
 		~World();
 
+	public:
+		typedef map<int, Ant*> DistAntMap;
+		typedef pair<int, Ant*> DistAntPair;
+
+	public:
 		int GetViewRadiusSq() const { return m_iViewRadiusSq; }
 
 		void ReadSetup();
@@ -39,11 +46,27 @@ class World
 		bool IsWater(Vector2 pos) const;
 		bool HasAnt(Vector2 pos) const;
 
+		uint GetAntCount() const { return m_aDistAnts.size(); }
+
 		const vector<Ant>& GetAnts() const { return m_aAnts; }
 		vector<Ant>& GetAnts() { return m_aAnts; }
+		const Ant& GetAnt(uint i) const { ASSERT(i<m_aAnts.size()); return m_aAnts[i]; }
+		Ant& GetAnt(uint i) { ASSERT(i<m_aAnts.size()); return m_aAnts[i]; }
+		const Ant& GetAnt(Vector2 pos) const { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; }
+		Ant& GetAnt(Vector2 pos) { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; ASSERT(false); return m_aAnts[0]; }
+
+		const DistAntMap& GetAntByDist() const { return m_aDistAnts; }
+		uint GetMinDistCount() const { return m_iMinDistCount; }
+
+		vector<Vector2> GetBestDistCase() const;
+
+		const Hill* GetHill(Vector2 pos) const { for (uint i=0 ; i<m_aHills.size() ; ++i) if (m_aHills[i].GetLocation() == pos) return &m_aHills[i]; return NULL; }
+		Hill* GetHill(Vector2 pos) { for (uint i=0 ; i<m_aHills.size() ; ++i) if (m_aHills[i].GetLocation() == pos) return &m_aHills[i]; return NULL; }
+
 		const vector<Vector2>& GetFoods() const { return m_aFoods; }
 		
-		const vector<Vector2>& GetEnemyHills() const { return m_aEnemyHills; }
+		vector<Vector2> GetFriendHills() const;
+		vector<Vector2> GetEnemyHills() const;
 
 		void ExecMove(const Vector2 &loc, EDirection direction);
 
@@ -52,7 +75,7 @@ class World
 		Vector2 GetLocation(const Vector2 &startLoc, EDirection direction);
 		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc);
 
-	    void UpdateVisionInformation();
+	    void InitData();
 
 
 	private:
@@ -85,9 +108,14 @@ class World
 		Grid				m_oGrid;
 
 		vector<Ant>			m_aAnts;
-		vector<Vector2>		m_aFriendHills;
-		vector<Vector2>		m_aEnemyHills;
+		vector<Hill>		m_aHills;
 		vector<Vector2>		m_aFoods;
+
+		NavDijkstra			m_oHillsDist;
+		DistAntMap			m_aDistAnts;
+		vector<vector<Vector2>> m_aDistCount;
+		uint				m_iMinDistCount;
+		uint				m_iMinDistId;
 
 #ifdef MYDEBUG
 		bool m_bKeyDown;

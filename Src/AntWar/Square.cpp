@@ -94,6 +94,7 @@ void Square::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 		gf_pw.DrawFillRect(xmin+1, ymin+1, width-2, height-2, r, g, b);
 	}
 
+	/*
 	if (m_iHillPlayer > -1)
 	{
 		switch (m_iHillPlayer)
@@ -106,6 +107,7 @@ void Square::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 
 		gf_pw.DrawFillCircle(xmin+width/2, ymin+height/2, width/2+1, r, g, b);
 	}
+	*/
 
 	// Ant Draw self
 	/*

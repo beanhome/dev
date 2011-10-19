@@ -120,6 +120,7 @@ class GridBase
 
 		Vector2 GetCoord(uint id) const
 		{
+			ASSERT(id < m_iWidth * m_iHeight);
 			Vector2 pos;
 			GetCoord(id, pos.x, pos.y);
 			return pos;
@@ -173,6 +174,16 @@ class GridBase
 			while ((uint)x>=m_iWidth) x -= m_iWidth;
 
 			return m_aGridArray[x];
+		}
+
+		const TCase& operator[](const Vector2& coord) const
+		{
+			return GetCase(coord);
+		}
+
+		TCase& operator[](const Vector2& coord)
+		{
+			return GetCase(coord);
 		}
 
 		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2)

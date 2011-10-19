@@ -3,6 +3,8 @@
 
 #ifdef MYDEBUG
 bool  g_bVisualDebug = false;
+#endif
+#ifdef USE_LOG
 FILE* g_MyLog = NULL;
 #endif
 
@@ -21,6 +23,10 @@ int main(int argc, char *argv[])
 		g_bVisualDebug = false;
 		MYFOPEN(g_MyLog, "MyLog.txt", "wt");
 	}
+#else
+#ifdef USE_LOG
+	MYFOPEN(g_MyLog, "MyLog.txt", "wt");
+#endif
 #endif
 
     AntWar aw;

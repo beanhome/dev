@@ -34,7 +34,7 @@ bool NavAStar::FindPath(const Vector2& start, const Vector2& target, vector<Vect
 
 		for (int i=0 ; i<EDirection_MAX ; ++i)
 		{
-			CaseCoord oSideCoord = m_oModelGrid.GetCoord(oCurrentCoord, (EDirection)i);
+			CaseCoord oSideCoord = m_pModelGrid->GetCoord(oCurrentCoord, (EDirection)i);
 			if (oSideCoord == target)
 			{
 				vector<Vector2> aInvPath;
@@ -58,7 +58,7 @@ bool NavAStar::FindPath(const Vector2& start, const Vector2& target, vector<Vect
 				return true;
 			}
 
-			if (m_oModelGrid.GetCase(oSideCoord).IsBlock())
+			if (m_pModelGrid->GetCase(oSideCoord).IsBlock())
 				continue;
 
 			if (m_aCloseList.find(oSideCoord) != m_aCloseList.end())
@@ -97,11 +97,11 @@ int NavAStar::Cost(const Vector2& p1, const Vector2& p2) const
 	int dx = abs(p1.x - p2.x);
 	int dy = abs(p1.y - p2.y);
 
-	if (dx > (int)m_oModelGrid.GetWidth() / 2)
-		dx = (int)m_oModelGrid.GetWidth() - dx;
+	if (dx > (int)m_pModelGrid->GetWidth() / 2)
+		dx = (int)m_pModelGrid->GetWidth() - dx;
 
-	if (dy > (int)m_oModelGrid.GetHeight() / 2)
-		dy = (int)m_oModelGrid.GetHeight() - dy;
+	if (dy > (int)m_pModelGrid->GetHeight() / 2)
+		dy = (int)m_pModelGrid->GetHeight() - dy;
 
 	return dx + dy;
 }

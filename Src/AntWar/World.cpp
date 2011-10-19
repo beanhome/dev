@@ -3,6 +3,8 @@
 #include "Square.h"
 #include "Utils.h"
 #include "StringUtils.h"
+#include "Hill.h"
+#include "NavDijkstra.h"
 
 #ifdef MYDEBUG
 #include "Graphic.h"
@@ -50,9 +52,12 @@ void World::NewTurn()
 	m_oGrid.NewTurn();
 
 	m_aAnts.clear();
-	m_aFriendHills.clear();
-	m_aEnemyHills.clear();
 	m_aFoods.clear();
+
+	for (uint i=0 ; i<m_aHills.size() ; ++i)
+	{
+		m_aHills[i].Reset();
+	}
 }
 
 bool World::IsEmpty(Vector2 pos) const
@@ -71,6 +76,27 @@ bool World::HasAnt(Vector2 pos) const
 	return m_oGrid[pos.x][pos.y].HasAnt();
 }
 
+vector<Vector2> World::GetFriendHills() const
+{
+	vector<Vector2> aLoc;
+
+	for (uint i=0 ; i<m_aHills.size() ; ++i)
+		if (m_aHills[i].GetPlayer() == 0)
+			aLoc.push_back(m_aHills[i].GetLocation());
+
+	return aLoc;
+}
+
+vector<Vector2> World::GetEnemyHills() const
+{
+	vector<Vector2> aLoc;
+
+	for (uint i=0 ; i<m_aHills.size() ; ++i)
+		if (m_aHills[i].GetPlayer() > 0)
+			aLoc.push_back(m_aHills[i].GetLocation());
+
+	return aLoc;
+}
 
 void World::ExecMove(const Vector2 &loc, EDirection direction)
 {
@@ -114,8 +140,14 @@ EDirection World::GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc
 	if (iHori > (int)m_iWidth / 2)
 		iHori -= m_iWidth;
 
+	if (iHori < -((int)m_iWidth) / 2)
+		iHori += m_iWidth;
+
 	if (iVert > (int)m_iHeight / 2)
 		iVert -= m_iHeight;
+
+	if (iVert < -((int)m_iHeight) / 2)
+		iVert += m_iHeight;
 
 	if (abs(iHori) > abs(iVert))
 	{
@@ -127,50 +159,6 @@ EDirection World::GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc
 	}
 }
 
-/*
-    This function will update update the lastSeen value for any squares currently
-    visible by one of your live ants.
-
-    BE VERY CAREFUL IF YOU ARE GOING TO TRY AND MAKE THIS FUNCTION MORE EFFICIENT,
-    THE OBVIOUS WAY OF TRYING TO IMPROVE IT BREAKS USING THE EUCLIDEAN METRIC, FOR
-    A CORRECT MORE EFFICIENT IMPLEMENTATION, TAKE A LOOK AT THE GET_VISION FUNCTION
-    IN ANTS.PY ON THE CONTESTS GITHUB PAGE.
-*/
-void World::UpdateVisionInformation()
-{
-	/*
-    std::queue<Vector2> locQueue;
-    Vector2 sLoc, cLoc, nLoc;
-
-    for(int a=0; a<(int) myAnts.size(); a++)
-    {
-        sLoc = myAnts[a];
-        locQueue.push(sLoc);
-
-        std::vector<std::vector<bool> > visited(rows, std::vector<bool>(cols, false));
-        grid[sLoc.row][sLoc.col].isVisible = 1;
-        visited[sLoc.row][sLoc.col] = 1;
-
-        while(!locQueue.empty())
-        {
-            cLoc = locQueue.front();
-            locQueue.pop();
-
-            for(int d=0; d<TDIRECTIONS; d++)
-            {
-                nLoc = getLocation(cLoc, d);
-
-                if(!visited[nLoc.row][nLoc.col] && distance(sLoc, nLoc) <= viewradius)
-                {
-                    grid[nLoc.row][nLoc.col].isVisible = 1;
-                    locQueue.push(nLoc);
-                }
-                visited[nLoc.row][nLoc.col] = 1;
-            }
-        }
-    }
-	*/
-};
 
 /*
     This is the output function for a state. It will add a char map
@@ -246,6 +234,7 @@ void World::ReadSetup()
 	{
 		fwrite(map_data.c_str(), map_data.size(), 1, m_pInputSave);
 		fputs("ready\n\n", m_pInputSave);
+		fflush(m_pInputSave);
 	}
 
 	vector<string> lines = Tokenize(map_data, "\n");
@@ -328,6 +317,7 @@ bool World::ReadTurn(int iRound)
 	{
 		fwrite(map_data.c_str(), map_data.size(), 1, m_pInputSave);
 		fputs("go\n\n", m_pInputSave);
+		fflush(m_pInputSave);
 	}
 
 	vector<string> lines = Tokenize(map_data, "\n");
@@ -345,6 +335,11 @@ bool World::ReadTurn(int iRound)
 	{
 		const char* line = lines[i].c_str();
 
+		if (strncmp(lines[i].c_str(), "end", 3) == 0)
+		{
+			return false;
+		}
+
 		if (strncmp(lines[i].c_str(), "turn", 4) == 0)
 		{
 			m_iTurn = atoi(line + 4);
@@ -357,17 +352,27 @@ bool World::ReadTurn(int iRound)
 
 		m_oGrid[x][y].Init(line, pLastChar, iRound);
 
-		switch (m_oGrid[x][y].GetAntPlayer())
+		// Ant line
+		int iAntPlayer = m_oGrid[x][y].GetAntPlayer();
+		if (iAntPlayer > -1)
 		{
-			case -1:	break;
-			default:	m_aAnts.push_back(Ant(x, y, m_oGrid[x][y].GetAntPlayer()));
+			//Ant& oAnt = GetAnt(Vector2(x, y));
+			m_aAnts.push_back(Ant(x, y, iAntPlayer));
 		}
 
-		switch (m_oGrid[x][y].GetHillPlayer())
+		int iHillPlayer = m_oGrid[x][y].GetHillPlayer();
+		if (iHillPlayer > -1)
 		{
-			case -1:	break;
-			case 0:		m_aFriendHills.push_back(Vector2(x, y)); break;
-			default:	m_aEnemyHills.push_back(Vector2(x, y));
+			Hill* pHill = GetHill(Vector2(x, y));
+			if (pHill != NULL)
+			{
+				pHill->SetPlayer(iHillPlayer);
+				pHill->SetUpdated();
+			}
+			else
+			{
+				m_aHills.push_back(Hill(Vector2(x, y), iHillPlayer));
+			}
 		}
 
 		if (m_oGrid[x][y].IsFood())
@@ -387,12 +392,80 @@ bool World::ReadTurn(int iRound)
 				}
 			}
 		}
+
+		for (uint k=0 ; k<m_aHills.size() ; ++k)
+		{
+			Hill& oHill = m_aHills[k];
+			if (m_oGrid.GetCase(oHill.GetLocation()).IsVisible() && oHill.IsNotUpdated())
+				oHill.SetPlayer(-1);
+		}
 	}
 
 	ASSERT(iRound == -1 || m_iTurn == iRound);
 
 	return true;
 }
+
+void World::InitData()
+{
+	m_oHillsDist.Init(GetGrid());
+	m_oHillsDist.Explore(GetFriendHills(), GetTurn());
+	m_oHillsDist.PrintDebug();
+
+	m_aDistCount.clear();
+	m_aDistCount.reserve(m_oHillsDist.GetGrid().GetWidth() + m_oHillsDist.GetGrid().GetHeight());
+	for (uint x=0 ; x<m_oHillsDist.GetGrid().GetWidth() ; ++x)
+	{
+		for (uint y=0 ; y<m_oHillsDist.GetGrid().GetHeight() ; ++y)
+		{
+			int iCount = m_oHillsDist.GetGrid()[x][y].iCount;
+			if (iCount >= 0)
+			{
+				if (iCount >= (int)m_aDistCount.size())
+					m_aDistCount.resize(iCount+1);
+
+				m_aDistCount[iCount].push_back(Vector2(x,y));
+			}
+		}
+	}
+
+	m_iMinDistCount = (uint)-1;
+	for (uint i=5 ; i<m_aDistCount.size() ; ++i)
+	{
+		if (m_iMinDistCount == -1 || m_iMinDistCount < m_aDistCount[m_iMinDistId].size())
+		{
+			m_iMinDistId = i;
+			m_iMinDistCount = m_aDistCount[m_iMinDistId].size();
+		}
+	}
+
+	m_aDistAnts.clear();
+	for (uint i=0 ; i<m_aAnts.size() ; ++i)
+	{
+		if (m_aAnts[i].GetPlayer() == 0)
+		{
+			const NavDijkstra::Case& oCase = m_oHillsDist.GetGrid().GetCase(m_aAnts[i].GetLocation());
+			m_aDistAnts.insert(DistAntPair(oCase.iCount, &m_aAnts[i]));
+		}
+	}
+}
+
+vector<Vector2> World::GetBestDistCase() const
+{
+	vector<Vector2> loc;
+
+	for (uint i=0 ; i<m_aDistCount[m_iMinDistId].size() ; ++i)
+	{
+		Vector2 coord = m_aDistCount[m_iMinDistId][i];
+
+		if (m_oGrid.GetCase(coord).HasAnt() == false)
+			loc.push_back(coord);
+	}
+
+	return loc;
+}
+
+
 
 #ifdef MYDEBUG
 int World::DrawLoop(bool bPostCompute)
@@ -486,6 +559,12 @@ void World::Draw(bool bPostCompute, int i, int j) const
 
 	m_oGrid.Draw(m_iTurn, i, j);
 
+	for (uint k=0 ; k<m_aHills.size() ; ++k)
+	{
+		const Hill& oHill = m_aHills[k];
+		oHill.Draw(oHill.GetLocation().x, oHill.GetLocation().y, m_oGrid.GetWidth(), m_oGrid.GetHeight(), m_iTurn, false);
+	}
+
 	uint iAntSelected = (uint)-1;
 	for (uint k=0 ; k<m_aAnts.size() ; ++k)
 	{
@@ -564,133 +643,3 @@ void World::DrawDebug() const
 }
 
 
-#if 0
-
-//input function
-istream& operator>>(istream &is, World &state)
-{
-    int row, col, player;
-    string inputType, junk;
-
-    //finds out which turn it is
-    while(is >> inputType)
-    {
-        if(inputType == "end")
-        {
-            state.gameover = 1;
-            break;
-        }
-        else if(inputType == "turn")
-        {
-            is >> state.turn;
-            break;
-        }
-        else //unknown line
-            getline(is, junk);
-    }
-
-    if(state.turn == 0)
-    {
-        //reads game parameters
-        while(is >> inputType)
-        {
-            if(inputType == "loadtime")
-                is >> state.loadtime;
-            else if(inputType == "turntime")
-                is >> state.turntime;
-            else if(inputType == "rows")
-                is >> state.rows;
-            else if(inputType == "cols")
-                is >> state.cols;
-            else if(inputType == "turns")
-                is >> state.turns;
-            else if(inputType == "viewradius2")
-            {
-                is >> state.viewradius;
-                state.viewradius = sqrt(state.viewradius);
-            }
-            else if(inputType == "attackradius2")
-            {
-                is >> state.attackradius;
-                state.attackradius = sqrt(state.attackradius);
-            }
-            else if(inputType == "spawnradius2")
-            {
-                is >> state.spawnradius;
-                state.spawnradius = sqrt(state.spawnradius);
-            }
-            else if(inputType == "ready") //end of parameter input
-            {
-                state.timer.start();
-                break;
-            }
-            else    //unknown line
-                getline(is, junk);
-        }
-    }
-    else
-    {
-        //reads information about the current turn
-        while(is >> inputType)
-        {
-            if(inputType == "w") //water square
-            {
-                is >> row >> col;
-                state.grid[row][col].isWater = 1;
-            }
-            else if(inputType == "f") //food square
-            {
-                is >> row >> col;
-                state.grid[row][col].isFood = 1;
-                state.food.push_back(Vector2(row, col));
-            }
-            else if(inputType == "a") //live ant square
-            {
-                is >> row >> col >> player;
-                state.grid[row][col].ant = player;
-                if(player == 0)
-                    state.myAnts.push_back(Vector2(row, col));
-                else
-                    state.enemyAnts.push_back(Vector2(row, col));
-            }
-            else if(inputType == "d") //dead ant square
-            {
-                is >> row >> col >> player;
-                state.grid[row][col].deadAnts.push_back(player);
-            }
-            else if(inputType == "h")
-            {
-                is >> row >> col >> player;
-                state.grid[row][col].isHill = 1;
-                state.grid[row][col].hillPlayer = player;
-                if(player == 0)
-                    state.myHills.push_back(Vector2(row, col));
-                else
-                    state.enemyHills.push_back(Vector2(row, col));
-
-            }
-            else if(inputType == "players") //player information
-                is >> state.noPlayers;
-            else if(inputType == "scores") //score information
-            {
-                state.scores = vector<float>(state.noPlayers, 0.0);
-                for(int p=0; p<state.noPlayers; p++)
-                    is >> state.scores[p];
-            }
-            else if(inputType == "go") //end of turn input
-            {
-                if(state.gameover)
-                    is.setstate(std::ios::failbit);
-                else
-                    state.timer.start();
-                break;
-            }
-            else //unknown line
-                getline(is, junk);
-        }
-    }
-
-    return is;
-};
-
-#endif

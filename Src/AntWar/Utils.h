@@ -49,6 +49,9 @@ using std::pair;
 using std::cin;
 using std::cout;
 
+#ifdef _WIN32
+#define USE_LOG
+#endif
 
 #ifdef MYDEBUG
 #include <windows.h>
@@ -62,7 +65,12 @@ extern FILE* g_MyLog;
 #define CHECK_RETURN(test, format, ...) { if (!(test)) { LOG(format, __VA_ARGS__); return; } }
 #define ASSERT(cond) assert(cond)
 #else
-#define LOG(format, ...) { }
+#ifdef USE_LOG
+extern FILE* g_MyLog;
+#define LOG(format, ...) { fprintf(g_MyLog, format, __VA_ARGS__); fflush(g_MyLog); }
+#else
+#define LOG(format, ...)
+#endif
 #define CHECK(test, format, ...) { }
 #define CHECK_RETURN(test, format, ...) { if (!(test)) { return; } }
 #define ASSERT(cond)

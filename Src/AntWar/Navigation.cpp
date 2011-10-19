@@ -3,11 +3,19 @@
 #include "World.h"
 #include "StringUtils.h"
 
+Navigation::Navigation()
+{
+}
+
 Navigation::Navigation(const Grid& oGrid)
-	: m_oModelGrid(oGrid)
+	: m_pModelGrid(&oGrid)
 {
 }
 
 Navigation::~Navigation()
 {}
 
+void Navigation::Init(const Grid& oGrid)
+{
+	m_pModelGrid = &oGrid;
+}

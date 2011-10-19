@@ -53,7 +53,7 @@ void AntWar::PlayGame()
 				}
 
 				// Compute
-				m_oWorld.UpdateVisionInformation();
+				m_oWorld.InitData();
 
 				iNewRound = m_oWorld.DrawLoop(false);
 				if (iNewRound == (uint16)-1)
@@ -88,7 +88,7 @@ void AntWar::PlayGame()
 				break;
 			
 			// Compute
-			m_oWorld.UpdateVisionInformation();
+			m_oWorld.InitData();
 
 			// Execute
 			MakeMoves();
@@ -109,73 +109,130 @@ void AntWar::PlayGame()
 //makes the bots moves for the turn
 void AntWar::MakeMoves()
 {
-	//NavDijkstra m_oNavigation(m_oWorld.GetGrid());
-	NavAStar m_oNavigation(m_oWorld.GetGrid());
+	NavDijkstra m_oNavDijkstra(m_oWorld.GetGrid());
+	NavAStar m_oNavAStar(m_oWorld.GetGrid());
 
-	for (uint i=0 ; i<m_oWorld.GetAnts().size() ; ++i)
+	int   iExplMin = 5;
+	float fExplCoeff = 0.1f;
+
+	int iExpl = max(iExplMin, (int)(m_oWorld.GetAntCount() * fExplCoeff));
+	int iProtect = 0;//max<int>(0, min<int>(m_oWorld.GetMinDistCount(), (int)m_oWorld.GetAntCount() - iExpl));
+	int iGuard = max<int>(0, m_oWorld.GetAntCount() - (iExpl + iProtect));
+
+	vector<Vector2> aLootAnt;
+	World::DistAntMap::const_reverse_iterator begin = m_oWorld.GetAntByDist().rbegin();
+	World::DistAntMap::const_reverse_iterator end = m_oWorld.GetAntByDist().rend();
+	World::DistAntMap::const_reverse_iterator it;
+
+	map<Vector2, Ant*> aExploreAnt;
+	map<Vector2, Ant*> aGuardAnt;
+	map<Vector2, Ant*> aProtectAnt;
+	int i;
+	for (i=0, it=begin  ; it != m_oWorld.GetAntByDist().rend(); ++it, ++i)
 	{
-		Ant& oAnt = m_oWorld.GetAnts()[i];		
-		if (oAnt.GetPlayer() != 0)
-			continue;
+		Ant* pAnt = it->second;
+		Vector2 loc = pAnt->GetLocation();
+		
+		if (i<iExpl)
+			aExploreAnt.insert(pair<Vector2, Ant*>(loc, pAnt));
+		
+		if (i>=iExpl && i<iExpl+iGuard)
+			aGuardAnt.insert(pair<Vector2, Ant*>(loc, pAnt));
 
-		const Vector2& pos = oAnt.GetLocation();
-		oAnt.GetPath().clear();
+		if (i<iExpl+iGuard)
+			aLootAnt.push_back(pAnt->GetLocation());
 
-		EDirection dir = EDirection_MAX;
+		if (i>=iExpl+iGuard)
+			aProtectAnt.insert(pair<Vector2, Ant*>(loc, pAnt));
+	}
 
-		if (dir == EDirection_MAX)
+	vector<Vector2> aLootLoc;
+	aLootLoc.reserve(m_oWorld.GetEnemyHills().size() + m_oWorld.GetFoods().size());
+	for (uint i=0 ; i<m_oWorld.GetEnemyHills().size() ; ++i)
+	{
+		aLootLoc.push_back(m_oWorld.GetEnemyHills()[i]);
+	}
+	for (uint i=0 ; i<m_oWorld.GetFoods().size() ; ++i)
+	{
+		aLootLoc.push_back(m_oWorld.GetFoods()[i]);
+	}
+
+	if (aLootLoc.size())
+	{
+		m_oNavDijkstra.Explore(aLootLoc, aLootAnt, m_oWorld.GetTurn());
+
+#ifdef MYDEBUG
+		m_oNavDijkstra.PrintDebug();
+#endif
+
+		typedef map<Vector2, set<Path>> AllPathMap;
+		typedef pair<Vector2, set<Path>> AllPathPair;
+		AllPathMap aAllPath;
+		for (uint i=0 ; i<aLootAnt.size() ; ++i)
 		{
-			for (uint j=0 ; j<m_oWorld.GetEnemyHills().size() ; ++j)
+			Vector2 antloc = aLootAnt[i];
+			Path oPath;
+			if (m_oNavDijkstra.GetPath(antloc, oPath))
 			{
-				const Vector2& vHillLoc = m_oWorld.GetEnemyHills()[j];
-
-				if (m_oWorld.DistanceSq(pos, vHillLoc) < m_oWorld.GetViewRadiusSq())
+				Vector2 start = oPath.GetStart();
+				AllPathMap::iterator it = aAllPath.find(start);
+				if (it == aAllPath.end())
 				{
-					if (m_oNavigation.FindPath(pos, vHillLoc, oAnt.GetPath(), m_oWorld.GetTurn()))
-					{
-						dir = m_oWorld.GetDirection(pos, oAnt.GetPath()[0]);
-					}
-					break;
+					pair<AllPathMap::iterator, bool> res = aAllPath.insert(AllPathPair(start, set<Path>()));
+					it = res.first;
 				}
+				it->second.insert(oPath);
 			}
 		}
 
-		if (dir == EDirection_MAX)
+		for (AllPathMap::const_iterator it = aAllPath.begin() ; it != aAllPath.end() ; ++it)
 		{
-			for (uint j=0 ; j<m_oWorld.GetFoods().size() ; ++j)
-			{
-				const Vector2& vFoodLoc = m_oWorld.GetFoods()[j];
+			const Path& oPath = *(it->second.begin());
+			Ant& oAnt = m_oWorld.GetAnt(oPath.GetTarget());
+			ASSERT(oAnt.GetPlayer() == 0);
+			if (oAnt.GetPath().size() == 0)
+				oAnt.GetPath() = oPath.GetListInverse();
 
-				if (m_oWorld.DistanceSq(pos, vFoodLoc) < m_oWorld.GetViewRadiusSq())
-				{
-					if (m_oNavigation.FindPath(pos, vFoodLoc, oAnt.GetPath(), m_oWorld.GetTurn()))
-					{
-						dir = m_oWorld.GetDirection(pos, oAnt.GetPath()[0]);
-					}
-					break;
-				}
-			}
+			map<Vector2, Ant*>::iterator found;
+			found = aExploreAnt.find(oPath.GetTarget());
+			if (found != aExploreAnt.end())
+				aExploreAnt.erase(found);
+			found = aGuardAnt.find(oPath.GetTarget());
+			if (found != aGuardAnt.end())
+				aGuardAnt.erase(found);
 		}
+	}
 
-		if (dir == EDirection_MAX)
-		{
-			dir = (EDirection)(rand() % EDirection_MAX);
-		}
+	// Explore Ant
+	for (map<Vector2, Ant*>::iterator it = aExploreAnt.begin() ; it != aExploreAnt.end() ; ++it)
+	{
+		m_oNavDijkstra.FindNearest(it->first, NavDijkstra::Undiscovered, it->second->GetPath(), m_oWorld.GetTurn());
+	}
 
-		if (dir != EDirection_MAX)
+	// Guard Ant
+	for (map<Vector2, Ant*>::iterator it = aGuardAnt.begin() ; it != aGuardAnt.end() ; ++it)
+	{
+		m_oNavDijkstra.FindNearest(it->first, NavDijkstra::Unvisible, it->second->GetPath(), m_oWorld.GetTurn());
+	}
+
+	// Protect Ant
+	for (map<Vector2, Ant*>::iterator it = aProtectAnt.begin() ; it != aProtectAnt.end() ; ++it)
+	{
+		m_oNavDijkstra.FindNearest(it->first, m_oWorld.GetBestDistCase(), it->second->GetPath(), m_oWorld.GetTurn());
+	}
+
+	// move
+	for (it=begin, i=0 ; it != m_oWorld.GetAntByDist().rend(); ++it, ++i)
+	{
+		Ant* pAnt = it->second;
+		if (pAnt->GetPath().size() > 0)
 		{
-			for (uint k=0 ; k<(uint)EDirection_MAX ; ++k)
+			EDirection dir;
+			Vector2 target = pAnt->GetPath()[0];
+			if (m_oWorld.IsEmpty(target))
 			{
-				EDirection ndir = (EDirection)(((uint)dir+k)%(uint)EDirection_MAX);
-				Vector2 target = m_oWorld.GetLocation(pos, ndir);
-				if (m_oWorld.IsEmpty(target))
-				{
-					if (oAnt.GetPath().size() == 0)
-						oAnt.GetPath().push_back(target);
-					
-					ExecMove(pos, ndir);
-					break;
-				}
+				dir = m_oWorld.GetDirection(pAnt->GetLocation(), target);
+				ExecMove(pAnt->GetLocation(), dir);
 			}
 		}
 	}

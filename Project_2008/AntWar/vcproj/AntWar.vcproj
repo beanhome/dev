@@ -201,6 +201,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Src\AntWar\Hill.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Hill.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Src\AntWar\MyBot.cc"
 				>
 			</File>
@@ -226,6 +234,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Src\AntWar\Navigation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Path.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\AntWar\Path.h"
 				>
 			</File>
 			<File
