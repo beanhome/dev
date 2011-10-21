@@ -5,6 +5,8 @@
 #include "Vector2.h"
 #include "Path.h"
 
+class World;
+
 enum Role
 {
 	None,
@@ -32,6 +34,8 @@ class Ant
 		Role			GetRole() const { return m_eRole; }
 		void			SetRole(Role eRole) { m_eRole = eRole; }
 
+		void			TestAnts(const World& oWorld);
+
 #ifdef MYDEBUG
 		void			Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const;
 		void			PrintInfo(sint16& x, sint16& y, sint16 yl) const;
@@ -43,6 +47,9 @@ class Ant
 
 		Role			m_eRole;
 		Path			m_oPath;
+
+		vector<Vector2> m_aEnemyAnts;
+		vector<Vector2> m_aAllieAnts;
 
 		static const char* s_Role[Role_MAX];
 };

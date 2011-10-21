@@ -1,6 +1,7 @@
 #include "Ant.h"
 
 #include "Utils.h"
+#include "World.h"
 
 #ifdef MYDEBUG
 #include "Graphic.h"
@@ -20,6 +21,27 @@ Ant::Ant(Vector2 loc, int iPlayer)
 	, m_iPlayer(iPlayer)
 	, m_eRole(None)
 {}
+
+void Ant::TestAnts(const World& oWorld)
+{
+	for (uint i=0 ; i<oWorld.GetAntCount() ; ++i)
+	{
+		const Ant& oAnt = oWorld.GetAnt(i);
+		if (oWorld.DistanceSq(oAnt.GetLocation(), GetLocation()) < oWorld.GetViewRadiusSq())
+		{
+			if (oAnt.GetPlayer() > 0)
+				m_aEnemyAnts.push_back(oAnt.GetLocation());
+			else
+				m_aAllieAnts.push_back(oAnt.GetLocation());
+		}
+	}
+
+	if (m_aEnemyAnts.size() > 0)
+	{
+		m_eRole = (m_aEnemyAnts.size() > m_aAllieAnts.size() ? Flee : Attack);
+	}
+}
+
 
 
 

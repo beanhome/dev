@@ -108,7 +108,7 @@ void World::ExecMove(const Vector2 &loc, EDirection direction)
 };
 
 //returns the euclidean distance between two locations with the edges wrapped
-float World::Distance(const Vector2 &loc1, const Vector2 &loc2)
+float World::Distance(const Vector2 &loc1, const Vector2 &loc2) const
 {
     uint d1 = abs(loc1.x-loc2.x);
     uint d2 = abs(loc1.y-loc2.y);
@@ -117,7 +117,7 @@ float World::Distance(const Vector2 &loc1, const Vector2 &loc2)
     return sqrt((float)dr*dr + (float)dc*dc);
 };
 
-int World::DistanceSq(const Vector2 &loc1, const Vector2 &loc2)
+int World::DistanceSq(const Vector2 &loc1, const Vector2 &loc2) const
 {
 	uint d1 = abs(loc1.x-loc2.x);
 	uint d2 = abs(loc1.y-loc2.y);
@@ -444,7 +444,7 @@ bool World::ReadTurn(int iRound)
 void World::InitData()
 {
 	m_oHillsDist.Create(GetGrid());
-	m_oHillsDist.Explore(GetFriendHills(), GetTurn());
+	m_oHillsDist.Explore(GetFriendHills(), 0, GetTurn());
 	//m_oHillsDist.PrintDebug();
 
 
@@ -456,6 +456,29 @@ void World::InitData()
 		m_aDistAnts.insert(DistAntPair(oCase.iCount, &m_aAnts[i]));
 	}
 }
+
+
+void World::GetFriendAnt(vector<Vector2>& aAnts) const
+{
+	for (uint i=0 ; i<m_aAnts.size() ; ++i)
+	{
+		const Ant& oAnt = m_aAnts[i];
+		if (oAnt.GetPlayer() == 0)
+			aAnts.push_back(oAnt.GetLocation());
+	}
+}
+
+
+void World::GetEnemyAnt(vector<Vector2>& aAnts) const
+{
+	for (uint i=0 ; i<m_aAnts.size() ; ++i)
+	{
+		const Ant& oAnt = m_aAnts[i];
+		if (oAnt.GetPlayer() > 0)
+			aAnts.push_back(oAnt.GetLocation());
+	}
+}
+
 
 /*
 vector<Vector2> World::GetBestDistCase() const

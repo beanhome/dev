@@ -210,7 +210,7 @@ bool NavDijkstra::FindNearest(const Vector2& start, const vector<Vector2>& aTarg
 
 
 
-void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iTurn)
+void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iMax, int iTurn)
 {
 	Init(start, iTurn);
 
@@ -220,8 +220,10 @@ void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iTurn)
 		uint id = m_aStep[m_iHead];
 
 		Case& oCase = m_oPathGrid.GetCase(id);
-
 		ASSERT(oCase.iCount != BLOCK);
+		if (iMax > 0 && oCase.iCount == iMax)
+			continue;
+
 		Vector2 vCoord = m_oPathGrid.GetCoord(id);
 		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 
@@ -231,6 +233,7 @@ void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iTurn)
 		{
 			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%iMax));
 			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
+
 			if (oSideCase.iCount == BLANK)
 			{
 				oSideCase.iCount = oCase.iCount + 1;
@@ -258,7 +261,7 @@ void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iTurn)
 	}
 }
 
-void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iTurn)
+void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iMax, int iTurn)
 {
 	Init(start, iTurn);
 
@@ -270,6 +273,9 @@ void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& t
 		Case& oCase = m_oPathGrid.GetCase(id);
 
 		ASSERT(oCase.iCount != BLOCK);
+		if (iMax > 0 && oCase.iCount == iMax)
+			continue;
+
 		Vector2 vCoord = m_oPathGrid.GetCoord(id);
 		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 

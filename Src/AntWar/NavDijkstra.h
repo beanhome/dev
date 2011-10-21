@@ -47,13 +47,14 @@ class NavDijkstra : public Navigation
 		virtual bool				FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn);
 		int							FindNearest(const Vector2& start, int type, Path& aPath, int iTurn);
 		bool						FindNearest(const Vector2& start, const vector<Vector2>& aTarget, Path& aPath, int iTurn);
-		void						Explore(const vector<Vector2>& start, int iTurn) { Explore(start, vector<Vector2>(), iTurn); }
-		void						Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iTurn);
-		void						Explore(const vector<Vector2>& start, int type, int iTurn);
+		void						Explore(const vector<Vector2>& start, int iMax, int iTurn) { Explore(start, vector<Vector2>(), iMax, iTurn); }
+		void						Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iMax, int iTurn);
+		void						Explore(const vector<Vector2>& start, int type, int iMax, int iTurn);
 
 		bool						GetPath(const Vector2& vTarget, Path& oPath) const;
 
 		const GridBase<Case>&		GetGrid() const { return m_oPathGrid; }
+		const Case&					GetCase(const Vector2& coord) const { return m_oPathGrid.GetCase(coord); }
 		void						PrintDebug() const;
 
 

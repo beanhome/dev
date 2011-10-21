@@ -56,6 +56,9 @@ class World
 		const Ant& GetAnt(Vector2 pos) const { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; }
 		Ant& GetAnt(Vector2 pos) { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; ASSERT(false); return m_aAnts[0]; }
 
+		void GetFriendAnt(vector<Vector2>& aAnts) const;
+		void GetEnemyAnt(vector<Vector2>& aAnts) const;
+
 		const DistAntMap& GetAntByDist() const { return m_aDistAnts; }
 		//uint GetMinDistCount() const { return m_iMinDistCount; }
 
@@ -71,8 +74,8 @@ class World
 
 		void ExecMove(const Vector2 &loc, EDirection direction);
 
-		float Distance(const Vector2 &loc1, const Vector2 &loc2);
-		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2);
+		float Distance(const Vector2 &loc1, const Vector2 &loc2) const;
+		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2) const;
 		Vector2 GetLocation(const Vector2 &startLoc, EDirection direction);
 		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc);
 

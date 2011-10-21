@@ -120,14 +120,11 @@ void AntWar::MakeMoves()
 	int iProtect = 0;//max<int>(0, min<int>(m_oWorld.GetMinDistCount(), (int)m_oWorld.GetAntCount() - iExpl));
 	int iGuard = max<int>(0, iAntCount - (iExpl + iProtect));
 
-	vector<Vector2> aLootAnt;
 	World::DistAntMap::const_reverse_iterator begin = m_oWorld.GetAntByDist().rbegin();
 	World::DistAntMap::const_reverse_iterator end = m_oWorld.GetAntByDist().rend();
 	World::DistAntMap::const_reverse_iterator it;
 
-	map<Vector2, Ant*> aExploreAnt;
-	map<Vector2, Ant*> aGuardAnt;
-	map<Vector2, Ant*> aProtectAnt;
+	// Default Explore / Guard / Protect
 	int i;
 	for (i=0, it=begin  ; it != end ; ++it, ++i)
 	{
@@ -143,13 +140,23 @@ void AntWar::MakeMoves()
 		if (i>=iExpl && i<iExpl+iGuard)
 			pAnt->SetRole(Guard);
 
-		if (i<iExpl+iGuard)
-			aLootAnt.push_back(pAnt->GetLocation());
-
 		if (i>=iExpl+iGuard)
 			pAnt->SetRole(Protect);
 	}
 
+
+	// Attack
+	for (uint i=0 ; i<m_oWorld.GetAntCount() ; ++i)
+	{
+		Ant& oAnt = m_oWorld.GetAnt(i);
+		if (oAnt.GetPlayer() == 0)
+			oAnt.TestAnts(m_oWorld);
+	}
+
+	// TODO : Make attack group
+
+
+	// Loot
 	vector<Vector2> aLootLoc;
 	aLootLoc.reserve(m_oWorld.GetEnemyHills().size() + m_oWorld.GetFoods().size());
 	for (uint i=0 ; i<m_oWorld.GetEnemyHills().size() ; ++i)
@@ -163,7 +170,17 @@ void AntWar::MakeMoves()
 
 	if (aLootLoc.size())
 	{
-		m_oNavDijkstra.Explore(aLootLoc, aLootAnt, m_oWorld.GetTurn());
+		vector<Vector2> aLootAnt;
+		for (uint i=0 ; i<m_oWorld.GetAntCount() ; ++i)
+		{
+			Ant& oAnt = m_oWorld.GetAnt(i);
+			if (oAnt.GetPlayer() > 0) continue;
+			if (oAnt.GetRole() == Attack) continue;
+
+			aLootAnt.push_back(oAnt.GetLocation());
+		}
+	
+		m_oNavDijkstra.Explore(aLootLoc, aLootAnt, 0, m_oWorld.GetTurn());
 
 #ifdef MYDEBUG
 		//m_oNavDijkstra.PrintDebug();
@@ -174,9 +191,8 @@ void AntWar::MakeMoves()
 		AllPathMap aAllPath;
 		for (uint i=0 ; i<aLootAnt.size() ; ++i)
 		{
-			Vector2 antloc = aLootAnt[i];
 			Path oPath;
-			if (m_oNavDijkstra.GetPath(antloc, oPath))
+			if (m_oNavDijkstra.GetPath(aLootAnt[i], oPath))
 			{
 				Vector2 start = oPath.GetStart();
 				AllPathMap::iterator it = aAllPath.find(start);
@@ -202,6 +218,9 @@ void AntWar::MakeMoves()
 		}
 	}
 
+
+
+	// Compute Path
 	for (i=0 ; i<(int)m_oWorld.GetAntCount() ; ++i)
 	{
 		Ant& oAnt = m_oWorld.GetAnt(i);
@@ -230,7 +249,7 @@ void AntWar::MakeMoves()
 		//}
 	}
 
-	// move
+	// Exec Move
 	for (it=begin, i=0 ; it != m_oWorld.GetAntByDist().rend(); ++it, ++i)
 	{
 		Ant* pAnt = it->second;

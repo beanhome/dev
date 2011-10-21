@@ -19,7 +19,7 @@ Hill::Hill(const Vector2& loc, int iPlayer, const Grid& oGrid)
 void Hill::Init(int iTurn)
 {
 	vector<Vector2> pos(1, GetLocation());
-	m_oDefense.Explore(pos, NavDijkstra::Undiscovered, iTurn);
+	m_oDefense.Explore(pos, NavDijkstra::Undiscovered, 0, iTurn);
 
 	m_aDefenseCount.clear();
 	m_aDefenseCount.reserve(m_oDefense.GetGrid().GetWidth() + m_oDefense.GetGrid().GetHeight());
