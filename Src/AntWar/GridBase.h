@@ -11,6 +11,13 @@ enum EDirection
 	South,
 	West,
 
+	CardDirCount,
+
+	NorthEst = 4,
+	SouthEst,
+	SouthWest,
+	NorthWest,
+
 	EDirection_MAX
 };
 
@@ -141,7 +148,7 @@ class GridBase
 
 		Vector2 GetCoord(const Vector2& pos, EDirection dir) const
 		{
-			static const Vector2 vMove[EDirection_MAX] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0) };
+			static const Vector2 vMove[EDirection_MAX] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1), Vector2(-1, -1) };
 			Vector2 out(pos.x + vMove[dir].x, pos.y + vMove[dir].y);
 			Normalize(out);
 			return out;

@@ -10,7 +10,7 @@
 #include "Hill.h"
 
 
-const char cDirChar[EDirection_MAX] = {'N', 'E', 'S', 'W'};
+const char cDirChar[CardDirCount] = {'N', 'E', 'S', 'W'};
 extern Vector2 vMove[EDirection_MAX];
 
 class World
@@ -20,7 +20,7 @@ class World
 		~World();
 
 	public:
-		typedef map<int, Ant*> DistAntMap;
+		typedef multimap<int, Ant*> DistAntMap;
 		typedef pair<int, Ant*> DistAntPair;
 
 	public:
@@ -29,9 +29,10 @@ class World
 		void ReadSetup();
 		bool ReadTurn(int iRound = -1);
 
-		void DrawDebug() const;
+		void PrintDebug() const;
+		void PrintInfluence() const;
 #ifdef MYDEBUG
-		void Draw(bool bPostCompute, int i, int j) const;
+		void Draw(bool bPostCompute, int i, int j, DrawMode mode) const;
 		int DrawLoop(bool bPostCompute);
 #endif
 
@@ -56,12 +57,12 @@ class World
 		Ant& GetAnt(Vector2 pos) { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; ASSERT(false); return m_aAnts[0]; }
 
 		const DistAntMap& GetAntByDist() const { return m_aDistAnts; }
-		uint GetMinDistCount() const { return m_iMinDistCount; }
+		//uint GetMinDistCount() const { return m_iMinDistCount; }
 
-		vector<Vector2> GetBestDistCase() const;
+		//vector<Vector2> GetBestDistCase() const;
 
-		const Hill* GetHill(Vector2 pos) const { for (uint i=0 ; i<m_aHills.size() ; ++i) if (m_aHills[i].GetLocation() == pos) return &m_aHills[i]; return NULL; }
-		Hill* GetHill(Vector2 pos) { for (uint i=0 ; i<m_aHills.size() ; ++i) if (m_aHills[i].GetLocation() == pos) return &m_aHills[i]; return NULL; }
+		const Hill* GetHill(Vector2 pos) const { for (uint i=0 ; i<m_aHills.size() ; ++i) if (m_aHills[i]->GetLocation() == pos) return m_aHills[i]; return NULL; }
+		Hill* GetHill(Vector2 pos) { for (uint i=0 ; i<m_aHills.size() ; ++i) if (m_aHills[i]->GetLocation() == pos) return m_aHills[i]; return NULL; }
 
 		const vector<Vector2>& GetFoods() const { return m_aFoods; }
 		
@@ -89,7 +90,7 @@ class World
 		uint				m_iMaxTurn;
 		uint				m_iPlayerCount;
 		
-		float				m_fAttackRadius;
+		int					m_iAttackRadiusSq;
 		float				m_fSpawnRadius;
 		int					m_iViewRadiusSq;
 
@@ -108,24 +109,22 @@ class World
 		Grid				m_oGrid;
 
 		vector<Ant>			m_aAnts;
-		vector<Hill>		m_aHills;
+		vector<Hill*>		m_aHills;
 		vector<Vector2>		m_aFoods;
 
 		NavDijkstra			m_oHillsDist;
 		DistAntMap			m_aDistAnts;
-		vector<vector<Vector2>> m_aDistCount;
-		uint				m_iMinDistCount;
-		uint				m_iMinDistId;
 
 #ifdef MYDEBUG
-		bool m_bKeyDown;
-		float m_fKeyDownTime;
-		float m_fRepeatDelay;
-		float m_fFirstRepeatDelay;
-		float m_fNextRepeatDelay;
+		bool				m_bKeyDown;
+		float				m_fKeyDownTime;
+		float				m_fRepeatDelay;
+		float				m_fFirstRepeatDelay;
+		float				m_fNextRepeatDelay;
 #endif
+		DrawMode			m_eDrawMode;
 
-		Timer m_oTimer;
+		Timer				m_oTimer;
 };
 
 

@@ -4,15 +4,17 @@
 #include "Utils.h"
 #include "StringUtils.h"
 
-NavDijkstra::NavDijkstra()
+NavDijkstra::NavDijkstra(bool bDiagMode)
 	: Navigation()
+	, m_bDiagMode(bDiagMode)
 	, m_iHead(0)
 	, m_iQueue(0)
 {
 }
 
-NavDijkstra::NavDijkstra(const Grid& oGrid)
+NavDijkstra::NavDijkstra(const Grid& oGrid, bool bDiagMode)
 	: Navigation(oGrid)
+	, m_bDiagMode(bDiagMode)
 	, m_iHead(0)
 	, m_iQueue(0)
 {
@@ -23,9 +25,11 @@ NavDijkstra::NavDijkstra(const Grid& oGrid)
 NavDijkstra::~NavDijkstra()
 {}
 
-void NavDijkstra::Init(const Grid& oGrid)
+void NavDijkstra::Create(const Grid& oGrid, bool bDiagMode)
 {
-	Navigation::Init(oGrid);
+	Navigation::Create(oGrid);
+
+	m_bDiagMode = bDiagMode;
 
 	m_iHead = 0;
 	m_iQueue = 0;
@@ -34,24 +38,39 @@ void NavDijkstra::Init(const Grid& oGrid)
 	m_oPathGrid.Init(m_pModelGrid->GetWidth(), m_pModelGrid->GetHeight());
 }
 
+void NavDijkstra::Init(const Vector2& start, int iTurn)
+{
+	vector<Vector2> pos(1, start);
+	Init(pos, iTurn);
+}
 
-bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn)
+void NavDijkstra::Init(const vector<Vector2>& start, int iTurn)
 {
 	// Initialisation
 	for (uint id=0 ; id<m_oPathGrid.GetSize() ; ++id)
 	{
 		const Square& square = m_pModelGrid->GetCase(id);
-		bool bBlock = !square.IsDiscovered(iTurn) || square.IsWater();
+		bool bBlock = square.IsBlock(iTurn);
 		m_oPathGrid.GetCase(id).iCount = (bBlock ? BLOCK : BLANK);
 		m_oPathGrid.GetCase(id).iPreviousCase = (uint)-1;
 	}
 
-	uint iStartId = m_oPathGrid.GetIndex(start.x, start.y);
-	m_oPathGrid.GetCase(iStartId).iCount = START;
+	for (uint i=0 ; i<start.size() ; ++i)
+	{
+		uint iStartId = m_oPathGrid.GetIndex(start[i]);
+		m_oPathGrid.GetCase(iStartId).iCount = START;
+		m_aStep[i] = iStartId;
+	}
 
-	m_aStep[0] = iStartId;
 	m_iHead = 0;
-	m_iQueue = 1;
+	m_iQueue = start.size();
+}
+
+
+
+bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn)
+{
+	Init(start, iTurn);
 
 	// Compute
 	for (m_iHead = 0 ; m_iHead < m_aStep.size() && m_iHead < m_iQueue ; ++m_iHead)
@@ -61,12 +80,13 @@ bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, vector<V
 		Case& oCase = m_oPathGrid.GetCase(id);
 
 		ASSERT(oCase.iCount != BLOCK);
+		Vector2 vCoord = m_oPathGrid.GetCoord(id);
+		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 
-		for (int dir = 0 ; dir < EDirection_MAX ; ++dir)
+		int dir_offset = rand() % CardDirCount;
+		for (int dir = 0 ; dir < CardDirCount ; ++dir)
 		{
-			Vector2 vCoord = m_oPathGrid.GetCoord(id);
-			ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
-			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)dir);
+			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%CardDirCount));
 			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
 			if (oSideCase.iCount == BLANK)
 			{
@@ -79,15 +99,7 @@ bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, vector<V
 
 			if (vSideCoord == target)
 			{
-				aPath.resize(oCase.iCount+1);
-				Vector2 pos = vSideCoord;
-				for (uint k=aPath.size()-1 ; k<aPath.size() ; --k)
-				{
-					aPath[k] = pos;
-					pos = m_oPathGrid.GetCoord(m_oPathGrid.GetCase(aPath[k]).iPreviousCase);
-				}
-
-
+				GetPath(vSideCoord, aPath);
 				return true;
 			}
 		}
@@ -97,23 +109,9 @@ bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, vector<V
 }
 
 
-int NavDijkstra::FindNearest(const Vector2& start, int type, vector<Vector2>& aPath, int iTurn)
+int NavDijkstra::FindNearest(const Vector2& start, int type, Path& aPath, int iTurn)
 {
-	// Initialisation
-	for (uint id=0 ; id<m_oPathGrid.GetSize() ; ++id)
-	{
-		const Square& square = m_pModelGrid->GetCase(id);
-		bool bBlock = !square.IsDiscovered(iTurn) || square.IsWater();
-		m_oPathGrid.GetCase(id).iCount = (bBlock ? BLOCK : BLANK);
-		m_oPathGrid.GetCase(id).iPreviousCase = (uint)-1;
-	}
-
-	uint iStartId = m_oPathGrid.GetIndex(start.x, start.y);
-	m_oPathGrid.GetCase(iStartId).iCount = START;
-
-	m_aStep[0] = iStartId;
-	m_iHead = 0;
-	m_iQueue = 1;
+	Init(start, iTurn);
 
 	// Browse
 	for (m_iHead = 0 ; m_iHead < m_aStep.size() && m_iHead < m_iQueue ; ++m_iHead)
@@ -123,12 +121,13 @@ int NavDijkstra::FindNearest(const Vector2& start, int type, vector<Vector2>& aP
 		Case& oCase = m_oPathGrid.GetCase(id);
 
 		ASSERT(oCase.iCount != BLOCK);
+		Vector2 vCoord = m_oPathGrid.GetCoord(id);
+		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 
-		for (int dir = 0 ; dir < EDirection_MAX ; ++dir)
+		int dir_offset = rand() % CardDirCount;
+		for (int dir = 0 ; dir < CardDirCount ; ++dir)
 		{
-			Vector2 vCoord = m_oPathGrid.GetCoord(id);
-			ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
-			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)dir);
+			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%CardDirCount));
 			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
 			if (oSideCase.iCount == BLANK)
 			{
@@ -140,30 +139,25 @@ int NavDijkstra::FindNearest(const Vector2& start, int type, vector<Vector2>& aP
 			}
 
 			const Square& square = m_pModelGrid->GetCase(vSideCoord);
-
-			int sqtype = None;
-
-			if (!square.IsDiscovered(iTurn))	sqtype |= Undiscovered;
-			if (!square.IsVisible())			sqtype |= Unvisible;
-			if (square.IsFood())				sqtype |= Food;
-			if (square.IsEnemyHill())			sqtype |= EnemyHill;
-			if (square.HasEnemyAnt())			sqtype |= EnemyAnt;
-			if (square.IsFriendHill())			sqtype |= FriendHill;
-			if (square.HasFriendAnt())			sqtype |= FriendAnt;
-
-			if (type & sqtype)
+			if (!square.IsWater())
 			{
-				aPath.resize(oCase.iCount+1);
-				aPath[aPath.size()-1] = vSideCoord;
-				Vector2 pos = vCoord;
-				for (uint k=aPath.size()-2 ; k<aPath.size() ; --k)
-				{
-					aPath[k] = pos;
-					oCase = m_oPathGrid.GetCase(aPath[k]);
-					pos = m_oPathGrid.GetCoord(oCase.iPreviousCase);
-				}
+				int sqtype = None;
 
-				return sqtype;
+				if (!square.IsDiscovered(iTurn))	sqtype |= Undiscovered;
+				if (!square.IsVisible())			sqtype |= Unvisible;
+				if (square.IsFood())				sqtype |= Food;
+				if (square.IsEnemyHill())			sqtype |= EnemyHill;
+				if (square.HasEnemyAnt())			sqtype |= EnemyAnt;
+				if (square.IsFriendHill())			sqtype |= FriendHill;
+				if (square.HasFriendAnt())			sqtype |= FriendAnt;
+
+				if (type & sqtype)
+				{
+
+					GetPath((sqtype & Undiscovered ? vCoord : vSideCoord), aPath);
+					ASSERT(aPath.GetLength() > 0);
+					return sqtype;
+				}
 			}
 		}
 	}
@@ -171,23 +165,9 @@ int NavDijkstra::FindNearest(const Vector2& start, int type, vector<Vector2>& aP
 	return None;
 }
 
-bool NavDijkstra::FindNearest(const Vector2& start, const vector<Vector2>& aTarget, vector<Vector2>& aPath, int iTurn)
+bool NavDijkstra::FindNearest(const Vector2& start, const vector<Vector2>& aTarget, Path& aPath, int iTurn)
 {
-	// Initialisation
-	for (uint id=0 ; id<m_oPathGrid.GetSize() ; ++id)
-	{
-		const Square& square = m_pModelGrid->GetCase(id);
-		bool bBlock = !square.IsDiscovered(iTurn) || square.IsWater();
-		m_oPathGrid.GetCase(id).iCount = (bBlock ? BLOCK : BLANK);
-		m_oPathGrid.GetCase(id).iPreviousCase = (uint)-1;
-	}
-
-	uint iStartId = m_oPathGrid.GetIndex(start.x, start.y);
-	m_oPathGrid.GetCase(iStartId).iCount = START;
-
-	m_aStep[0] = iStartId;
-	m_iHead = 0;
-	m_iQueue = 1;
+	Init(start, iTurn);
 
 	// Browse
 	for (m_iHead = 0 ; m_iHead < m_aStep.size() && m_iHead < m_iQueue ; ++m_iHead)
@@ -197,12 +177,13 @@ bool NavDijkstra::FindNearest(const Vector2& start, const vector<Vector2>& aTarg
 		Case& oCase = m_oPathGrid.GetCase(id);
 
 		ASSERT(oCase.iCount != BLOCK);
+		Vector2 vCoord = m_oPathGrid.GetCoord(id);
+		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 
-		for (int dir = 0 ; dir < EDirection_MAX ; ++dir)
+		int dir_offset = rand() % CardDirCount;
+		for (int dir = 0 ; dir < CardDirCount ; ++dir)
 		{
-			Vector2 vCoord = m_oPathGrid.GetCoord(id);
-			ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
-			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)dir);
+			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%CardDirCount));
 			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
 			if (oSideCase.iCount == BLANK)
 			{
@@ -217,16 +198,7 @@ bool NavDijkstra::FindNearest(const Vector2& start, const vector<Vector2>& aTarg
 			{
 				if (vSideCoord == aTarget[i])
 				{
-					aPath.resize(oCase.iCount+1);
-					aPath[aPath.size()-1] = vSideCoord;
-					Vector2 pos = vCoord;
-					for (uint k=aPath.size()-2 ; k<aPath.size() ; --k)
-					{
-						aPath[k] = pos;
-						oCase = m_oPathGrid.GetCase(aPath[k]);
-						pos = m_oPathGrid.GetCoord(oCase.iPreviousCase);
-					}
-
+					GetPath(vSideCoord, aPath);
 					return true;
 				}
 			}
@@ -238,26 +210,9 @@ bool NavDijkstra::FindNearest(const Vector2& start, const vector<Vector2>& aTarg
 
 
 
-void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iTurn)
+void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iTurn)
 {
-	// Initialisation
-	for (uint id=0 ; id<m_oPathGrid.GetSize() ; ++id)
-	{
-		const Square& square = m_pModelGrid->GetCase(id);
-		bool bBlock = !square.IsDiscovered(iTurn) || square.IsWater();
-		m_oPathGrid.GetCase(id).iCount = (bBlock ? BLOCK : BLANK);
-		m_oPathGrid.GetCase(id).iPreviousCase = (uint)-1;
-	}
-
-	for (uint i=0 ; i<start.size() ; ++i)
-	{
-		uint iStartId = m_oPathGrid.GetIndex(start[i]);
-		m_oPathGrid.GetCase(iStartId).iCount = START;
-		m_aStep[i] = iStartId;
-	}
-
-	m_iHead = 0;
-	m_iQueue = start.size();
+	Init(start, iTurn);
 
 	// Browse
 	for (m_iHead = 0 ; m_iHead < m_aStep.size() && m_iHead < m_iQueue ; ++m_iHead)
@@ -267,12 +222,62 @@ void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& t
 		Case& oCase = m_oPathGrid.GetCase(id);
 
 		ASSERT(oCase.iCount != BLOCK);
+		Vector2 vCoord = m_oPathGrid.GetCoord(id);
+		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 
-		for (int dir = 0 ; dir < EDirection_MAX ; ++dir)
+		int iMax = (m_bDiagMode ? EDirection_MAX : CardDirCount);
+		int dir_offset = rand() % iMax;
+		for (int dir = 0 ; dir < iMax ; ++dir)
 		{
-			Vector2 vCoord = m_oPathGrid.GetCoord(id);
-			ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
-			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)dir);
+			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%iMax));
+			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
+			if (oSideCase.iCount == BLANK)
+			{
+				oSideCase.iCount = oCase.iCount + 1;
+				oSideCase.iPreviousCase = id;
+
+				int sqtype = None;
+
+				const Square& square = m_pModelGrid->GetCase(vSideCoord);
+
+				if (!square.IsDiscovered(iTurn))	sqtype |= Undiscovered;
+				if (!square.IsVisible())			sqtype |= Unvisible;
+				if (square.IsFood())				sqtype |= Food;
+				if (square.IsEnemyHill())			sqtype |= EnemyHill;
+				if (square.HasEnemyAnt())			sqtype |= EnemyAnt;
+				if (square.IsFriendHill())			sqtype |= FriendHill;
+				if (square.HasFriendAnt())			sqtype |= FriendAnt;
+
+				if (! (type & sqtype))
+				{
+					uint iSideId = m_oPathGrid.GetIndex(vSideCoord);
+					m_aStep[m_iQueue++] = iSideId;
+				}
+			}
+		}
+	}
+}
+
+void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iTurn)
+{
+	Init(start, iTurn);
+
+	// Browse
+	for (m_iHead = 0 ; m_iHead < m_aStep.size() && m_iHead < m_iQueue ; ++m_iHead)
+	{
+		uint id = m_aStep[m_iHead];
+
+		Case& oCase = m_oPathGrid.GetCase(id);
+
+		ASSERT(oCase.iCount != BLOCK);
+		Vector2 vCoord = m_oPathGrid.GetCoord(id);
+		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
+
+		int iMax = (m_bDiagMode ? EDirection_MAX : CardDirCount);
+		int dir_offset = rand() % iMax;
+		for (int dir = 0 ; dir < iMax ; ++dir)
+		{
+			Vector2 vSideCoord = m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%iMax));
 			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
 			if (oSideCase.iCount == BLANK)
 			{
@@ -295,6 +300,8 @@ void NavDijkstra::Explore(const vector<Vector2>& start, const vector<Vector2>& t
 		}
 	}
 }
+
+
 
 bool NavDijkstra::GetPath(const Vector2& vTarget, Path& oPath) const
 {

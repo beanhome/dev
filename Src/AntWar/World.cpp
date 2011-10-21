@@ -10,7 +10,7 @@
 #include "Graphic.h"
 #endif
 
-Vector2 vMove[4] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0)};
+Vector2 vMove[EDirection_MAX] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1), Vector2(-1, -1) };
 
 World::World()
 #ifdef MYDEBUG
@@ -20,10 +20,10 @@ World::World()
 	, m_fFirstRepeatDelay(500.f)
 	, m_fNextRepeatDelay(30.f)
 #endif
-
 {
     //gameover = 0;
     m_iTurn = 0;
+	m_eDrawMode = EDM_Normal;
 
 #ifdef MYDEBUG
 	if (g_bVisualDebug)
@@ -45,6 +45,8 @@ World::World()
 
 World::~World()
 {
+	for (uint i=0 ; i<m_aHills.size() ; ++i)
+		delete m_aHills[i];
 }
 
 void World::NewTurn()
@@ -56,7 +58,7 @@ void World::NewTurn()
 
 	for (uint i=0 ; i<m_aHills.size() ; ++i)
 	{
-		m_aHills[i].Reset();
+		m_aHills[i]->Reset();
 	}
 }
 
@@ -81,8 +83,8 @@ vector<Vector2> World::GetFriendHills() const
 	vector<Vector2> aLoc;
 
 	for (uint i=0 ; i<m_aHills.size() ; ++i)
-		if (m_aHills[i].GetPlayer() == 0)
-			aLoc.push_back(m_aHills[i].GetLocation());
+		if (m_aHills[i]->GetPlayer() == 0)
+			aLoc.push_back(m_aHills[i]->GetLocation());
 
 	return aLoc;
 }
@@ -92,8 +94,8 @@ vector<Vector2> World::GetEnemyHills() const
 	vector<Vector2> aLoc;
 
 	for (uint i=0 ; i<m_aHills.size() ; ++i)
-		if (m_aHills[i].GetPlayer() > 0)
-			aLoc.push_back(m_aHills[i].GetLocation());
+		if (m_aHills[i]->GetPlayer() > 0)
+			aLoc.push_back(m_aHills[i]->GetLocation());
 
 	return aLoc;
 }
@@ -268,7 +270,7 @@ void World::ReadSetup()
 		else if (strncmp(lines[i].c_str(), "viewradius2", pos) == 0)
 			m_iViewRadiusSq = val;
 		else if (strncmp(lines[i].c_str(), "attackradius2", pos) == 0)
-			m_fAttackRadius = (float)val;
+			m_iAttackRadiusSq = val;
 		else if (strncmp(lines[i].c_str(), "spawnradius2", pos) == 0)
 			m_fSpawnRadius = (float)val;
 		else if (strncmp(lines[i].c_str(), "player_seed", pos) == 0)
@@ -371,7 +373,7 @@ bool World::ReadTurn(int iRound)
 			}
 			else
 			{
-				m_aHills.push_back(Hill(Vector2(x, y), iHillPlayer));
+				m_aHills.push_back(new Hill(Vector2(x, y), iHillPlayer, GetGrid()));
 			}
 		}
 
@@ -393,13 +395,46 @@ bool World::ReadTurn(int iRound)
 			}
 		}
 
-		for (uint k=0 ; k<m_aHills.size() ; ++k)
+		if (m_oGrid[x][y].HasAnt())
 		{
-			Hill& oHill = m_aHills[k];
-			if (m_oGrid.GetCase(oHill.GetLocation()).IsVisible() && oHill.IsNotUpdated())
-				oHill.SetPlayer(-1);
+			for (int lx = -m_iAttackRadiusSq-1 ; lx < m_iAttackRadiusSq+2 ; ++lx)
+			{
+				for (int ly = -m_iAttackRadiusSq-1 ; ly < m_iAttackRadiusSq+2 ; ++ly)
+				{
+					if (m_oGrid[x][y].HasFriendAnt())
+					{
+						if (DistanceSq(Vector2(x, y), Vector2(x+lx, y+ly)) <= m_iAttackRadiusSq)
+						{
+							m_oGrid[x+lx][y+ly].AddInfluence(m_oGrid[x][y].HasFriendAnt() ? 1 : -1);
+						}
+					}
+					else
+					{
+						for (int dir=0 ; dir<CardDirCount ; ++dir)
+						{
+							if (DistanceSq(m_oGrid.GetCoord(Vector2(x, y), (EDirection)dir), Vector2(x+lx, y+ly)) <= m_iAttackRadiusSq)
+							{
+								m_oGrid[x+lx][y+ly].AddInfluence(m_oGrid[x][y].HasFriendAnt() ? 1 : -1);
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
+
+	for (uint i=0 ; i<m_aHills.size() ; ++i)
+	{
+		Hill& oHill = *m_aHills[i];
+		//oHill.Init(GetTurn());
+		if (m_oGrid.GetCase(oHill.GetLocation()).IsVisible() && oHill.IsNotUpdated())
+			oHill.SetPlayer(-1);
+	}
+
+#ifdef MYDEBUG
+	//PrintInfluence();
+#endif
 
 	ASSERT(iRound == -1 || m_iTurn == iRound);
 
@@ -408,48 +443,21 @@ bool World::ReadTurn(int iRound)
 
 void World::InitData()
 {
-	m_oHillsDist.Init(GetGrid());
+	m_oHillsDist.Create(GetGrid());
 	m_oHillsDist.Explore(GetFriendHills(), GetTurn());
-	m_oHillsDist.PrintDebug();
+	//m_oHillsDist.PrintDebug();
 
-	m_aDistCount.clear();
-	m_aDistCount.reserve(m_oHillsDist.GetGrid().GetWidth() + m_oHillsDist.GetGrid().GetHeight());
-	for (uint x=0 ; x<m_oHillsDist.GetGrid().GetWidth() ; ++x)
-	{
-		for (uint y=0 ; y<m_oHillsDist.GetGrid().GetHeight() ; ++y)
-		{
-			int iCount = m_oHillsDist.GetGrid()[x][y].iCount;
-			if (iCount >= 0)
-			{
-				if (iCount >= (int)m_aDistCount.size())
-					m_aDistCount.resize(iCount+1);
 
-				m_aDistCount[iCount].push_back(Vector2(x,y));
-			}
-		}
-	}
-
-	m_iMinDistCount = (uint)-1;
-	for (uint i=5 ; i<m_aDistCount.size() ; ++i)
-	{
-		if (m_iMinDistCount == -1 || m_iMinDistCount < m_aDistCount[m_iMinDistId].size())
-		{
-			m_iMinDistId = i;
-			m_iMinDistCount = m_aDistCount[m_iMinDistId].size();
-		}
-	}
 
 	m_aDistAnts.clear();
 	for (uint i=0 ; i<m_aAnts.size() ; ++i)
 	{
-		if (m_aAnts[i].GetPlayer() == 0)
-		{
-			const NavDijkstra::Case& oCase = m_oHillsDist.GetGrid().GetCase(m_aAnts[i].GetLocation());
-			m_aDistAnts.insert(DistAntPair(oCase.iCount, &m_aAnts[i]));
-		}
+		const NavDijkstra::Case& oCase = m_oHillsDist.GetGrid().GetCase(m_aAnts[i].GetLocation());
+		m_aDistAnts.insert(DistAntPair(oCase.iCount, &m_aAnts[i]));
 	}
 }
 
+/*
 vector<Vector2> World::GetBestDistCase() const
 {
 	vector<Vector2> loc;
@@ -464,6 +472,7 @@ vector<Vector2> World::GetBestDistCase() const
 
 	return loc;
 }
+*/
 
 
 
@@ -507,22 +516,30 @@ int World::DrawLoop(bool bPostCompute)
 				{
 					switch(oInputEvent.GetKeyboardKey())
 					{
-					case KEY_LEFT:
-						if (iRound > 0)
-						{
+						case KEY_LEFT:
+							if (iRound > 0)
+							{
+								bContinue = true;
+								iRound--;
+							}
+							break;
+
+						case KEY_RIGHT:
 							bContinue = true;
-							iRound--;
-						}
-						break;
+							iRound++;
+							break;
 
-					case KEY_RIGHT:
-						bContinue = true;
-						iRound++;
-						break;
+						case KEY_SPACE:
+							bContinue = true;
+							break;
 
-					case KEY_SPACE:
-						bContinue = true;
-						break;
+						case KEY_F1:
+							m_eDrawMode = EDM_Normal;
+							break;
+
+						case KEY_F2:
+							m_eDrawMode = EDM_Influence;
+							break;
 					}
 				}
 
@@ -548,20 +565,20 @@ int World::DrawLoop(bool bPostCompute)
 				j = -1;
 		}
 
-		Draw(bPostCompute, i, j);
+		Draw(bPostCompute, i, j, m_eDrawMode);
 	}
 
 	return iRound;}
 
-void World::Draw(bool bPostCompute, int i, int j) const
+void World::Draw(bool bPostCompute, int i, int j, DrawMode mode) const
 {
 	ge.Clear();
 
-	m_oGrid.Draw(m_iTurn, i, j);
+	m_oGrid.Draw(m_iTurn, i, j, mode);
 
 	for (uint k=0 ; k<m_aHills.size() ; ++k)
 	{
-		const Hill& oHill = m_aHills[k];
+		const Hill& oHill = *m_aHills[k];
 		oHill.Draw(oHill.GetLocation().x, oHill.GetLocation().y, m_oGrid.GetWidth(), m_oGrid.GetHeight(), m_iTurn, false);
 	}
 
@@ -588,9 +605,13 @@ void World::Draw(bool bPostCompute, int i, int j) const
 	// Text
 	gf_pw.Print((sint16)gf_pw.GetWidth() / 2, 10, 16, Center, 0, 0, 0, "Turn %d %s", m_iTurn, (bPostCompute ? "After Computing" : ""));
 
+	// Info
 	sint16 x = 10;
 	sint16 y = 10;
 	sint16 yl = 10;
+
+	gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Ant count %d", GetAntCount());
+	y+=yl;
 
 	if (i != -1 && j != -1)
 	{
@@ -609,37 +630,55 @@ void World::Draw(bool bPostCompute, int i, int j) const
 }
 #endif
 
-void World::DrawDebug() const
+void World::PrintDebug() const
 {
 	for (uint y=0 ; y<m_iHeight ; ++y)
 	{
+		string line;
 		for (uint x=0 ; x<m_iWidth ; ++x)
 		{
-			char c = '?';
+			line += '?';
 
 			if (m_oGrid[x][y].IsVisible())
 			{
 				if (m_oGrid[x][y].IsWater())
-					c = '%';
+					line += '%';
 				else if (m_oGrid[x][y].IsFood())
-					c = '*';
+					line += '*';
 				else if (m_oGrid[x][y].IsHill() && m_oGrid[x][y].HasAnt() == false)
-					c = '0' + m_oGrid[x][y].GetHillPlayer();
+					line += '0' + m_oGrid[x][y].GetHillPlayer();
 				else if (m_oGrid[x][y].IsHill() && m_oGrid[x][y].HasAnt())
-					c = 'A' + m_oGrid[x][y].GetHillPlayer();
+					line += 'A' + m_oGrid[x][y].GetHillPlayer();
 				else if (m_oGrid[x][y].HasAnt())
-					c = 'a' + m_oGrid[x][y].GetAntPlayer();
+					line += 'a' + m_oGrid[x][y].GetAntPlayer();
 				else if (m_oGrid[x][y].HasDeadAnt())
-					c = '!';
+					line += '!';
 				else
-					c = '.';
+					line += '.';
 			}
 
-			LOG("%c", c);
 		}
-		LOG("\n");
+		LOG("%s\n", line.c_str());
 	}
 	LOG("\n");
 }
 
+void World::PrintInfluence() const
+{
+	for (uint y=0 ; y<m_iHeight ; ++y)
+	{
+		string line;
+		for (uint x=0 ; x<m_iWidth ; ++x)
+		{
+			int iInfl = m_oGrid[x][y].GetAntInfluence();
+
+			if (iInfl == Square::s_iNoInfluence)
+				line += '.';
+			else
+				line += FormatString("%1d", iInfl%10);
+		}
+		LOG("%s\n", line.c_str());
+	}
+	LOG("\n");
+}
 

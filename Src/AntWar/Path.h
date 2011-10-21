@@ -20,8 +20,11 @@ class Path
 		const vector<Vector2>& GetList() const { return m_aPath; }
 		vector<Vector2>& GetList() { return m_aPath; }
 		vector<Vector2> GetListInverse() const;
+		Path GetInverse() const;
 
 		void PushTarget(const Vector2& pos) { m_aPath.push_back(m_vTarget = pos); }
+
+		Vector2 operator[](int i) const { ASSERT(i<(int)m_aPath.size()); return m_aPath[i]; }
 
 	private:
 		Vector2				m_vStart;

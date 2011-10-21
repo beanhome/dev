@@ -226,6 +226,14 @@ void GraphicEngine::Print(sint16 x, sint16 y, uint size, ETextAlign eAlign, uint
 	va_end(oArgs);
 }
 
+void GraphicEngine::Print(sint16 x, sint16 y, uint size, ETextAlign eAlign, const Color& oColor, const char* format, ...)
+{
+	va_list oArgs;
+	va_start(oArgs, format);
+	Print(x, y, size, eAlign, oColor, format, oArgs);
+	va_end(oArgs);
+}
+
 
 GraphicImage* GraphicEngine::LoadBMP(const char* pFileName) const
 {

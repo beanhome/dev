@@ -115,9 +115,10 @@ void AntWar::MakeMoves()
 	int   iExplMin = 5;
 	float fExplCoeff = 0.1f;
 
-	int iExpl = max(iExplMin, (int)(m_oWorld.GetAntCount() * fExplCoeff));
+	int iAntCount = m_oWorld.GetAntCount();
+	int iExpl = max(min(iExplMin, iAntCount), (int)(iAntCount * fExplCoeff));
 	int iProtect = 0;//max<int>(0, min<int>(m_oWorld.GetMinDistCount(), (int)m_oWorld.GetAntCount() - iExpl));
-	int iGuard = max<int>(0, m_oWorld.GetAntCount() - (iExpl + iProtect));
+	int iGuard = max<int>(0, iAntCount - (iExpl + iProtect));
 
 	vector<Vector2> aLootAnt;
 	World::DistAntMap::const_reverse_iterator begin = m_oWorld.GetAntByDist().rbegin();
@@ -128,22 +129,25 @@ void AntWar::MakeMoves()
 	map<Vector2, Ant*> aGuardAnt;
 	map<Vector2, Ant*> aProtectAnt;
 	int i;
-	for (i=0, it=begin  ; it != m_oWorld.GetAntByDist().rend(); ++it, ++i)
+	for (i=0, it=begin  ; it != end ; ++it, ++i)
 	{
 		Ant* pAnt = it->second;
+		if (pAnt->GetPlayer() > 0)
+			continue;
+
 		Vector2 loc = pAnt->GetLocation();
 		
 		if (i<iExpl)
-			aExploreAnt.insert(pair<Vector2, Ant*>(loc, pAnt));
+			pAnt->SetRole(Explore);
 		
 		if (i>=iExpl && i<iExpl+iGuard)
-			aGuardAnt.insert(pair<Vector2, Ant*>(loc, pAnt));
+			pAnt->SetRole(Guard);
 
 		if (i<iExpl+iGuard)
 			aLootAnt.push_back(pAnt->GetLocation());
 
 		if (i>=iExpl+iGuard)
-			aProtectAnt.insert(pair<Vector2, Ant*>(loc, pAnt));
+			pAnt->SetRole(Protect);
 	}
 
 	vector<Vector2> aLootLoc;
@@ -162,7 +166,7 @@ void AntWar::MakeMoves()
 		m_oNavDijkstra.Explore(aLootLoc, aLootAnt, m_oWorld.GetTurn());
 
 #ifdef MYDEBUG
-		m_oNavDijkstra.PrintDebug();
+		//m_oNavDijkstra.PrintDebug();
 #endif
 
 		typedef map<Vector2, set<Path>> AllPathMap;
@@ -190,42 +194,47 @@ void AntWar::MakeMoves()
 			const Path& oPath = *(it->second.begin());
 			Ant& oAnt = m_oWorld.GetAnt(oPath.GetTarget());
 			ASSERT(oAnt.GetPlayer() == 0);
-			if (oAnt.GetPath().size() == 0)
-				oAnt.GetPath() = oPath.GetListInverse();
-
-			map<Vector2, Ant*>::iterator found;
-			found = aExploreAnt.find(oPath.GetTarget());
-			if (found != aExploreAnt.end())
-				aExploreAnt.erase(found);
-			found = aGuardAnt.find(oPath.GetTarget());
-			if (found != aGuardAnt.end())
-				aGuardAnt.erase(found);
+			if (oAnt.GetPath().GetLength() == 0)
+			{
+				oAnt.SetPath(oPath.GetInverse());
+				oAnt.SetRole(Loot);
+			}
 		}
 	}
 
-	// Explore Ant
-	for (map<Vector2, Ant*>::iterator it = aExploreAnt.begin() ; it != aExploreAnt.end() ; ++it)
+	for (i=0 ; i<(int)m_oWorld.GetAntCount() ; ++i)
 	{
-		m_oNavDijkstra.FindNearest(it->first, NavDijkstra::Undiscovered, it->second->GetPath(), m_oWorld.GetTurn());
-	}
+		Ant& oAnt = m_oWorld.GetAnt(i);
 
-	// Guard Ant
-	for (map<Vector2, Ant*>::iterator it = aGuardAnt.begin() ; it != aGuardAnt.end() ; ++it)
-	{
-		m_oNavDijkstra.FindNearest(it->first, NavDijkstra::Unvisible, it->second->GetPath(), m_oWorld.GetTurn());
-	}
+		if (oAnt.GetPlayer() > 0)
+			continue;
 
-	// Protect Ant
-	for (map<Vector2, Ant*>::iterator it = aProtectAnt.begin() ; it != aProtectAnt.end() ; ++it)
-	{
-		m_oNavDijkstra.FindNearest(it->first, m_oWorld.GetBestDistCase(), it->second->GetPath(), m_oWorld.GetTurn());
+		if (oAnt.GetRole() == Explore)
+		{
+			if (m_oNavDijkstra.FindNearest(oAnt.GetLocation(), NavDijkstra::Undiscovered, oAnt.GetPath(), m_oWorld.GetTurn()) == false)
+				oAnt.SetRole(Guard);
+		}
+
+		if (oAnt.GetRole() == Guard)
+		{
+			if (m_oNavDijkstra.FindNearest(oAnt.GetLocation(), NavDijkstra::Unvisible, oAnt.GetPath(), m_oWorld.GetTurn()) == false)
+				oAnt.SetRole(Protect);
+		}
+
+		//if (oAnt.GetRole() == Protect)
+		//{
+		//	if (m_oNavDijkstra.FindNearest(oAnt.GetLocation(), m_oWorld.GetBestDistCase(), oAnt.GetPath(), m_oWorld.GetTurn()) == false)
+		//	{
+
+		//	}
+		//}
 	}
 
 	// move
 	for (it=begin, i=0 ; it != m_oWorld.GetAntByDist().rend(); ++it, ++i)
 	{
 		Ant* pAnt = it->second;
-		if (pAnt->GetPath().size() > 0)
+		if (pAnt->GetPlayer() == 0 && pAnt->GetPath().GetLength() > 0)
 		{
 			EDirection dir;
 			Vector2 target = pAnt->GetPath()[0];

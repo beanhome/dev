@@ -17,13 +17,13 @@ void Grid::NewTurn()
 
 
 #ifdef MYDEBUG
-void Grid::Draw(int iTurn, int i, int j) const
+void Grid::Draw(int iTurn, int i, int j, DrawMode mode) const
 {
 	for (uint x=0 ; x<GetWidth() ; ++x)
 	{
 		for (uint y=0 ; y<GetHeight(); ++y)
 		{
-			GetCase(x, y).Draw(x, y, GetWidth(), GetHeight(), iTurn, (x==i && j==y));
+			GetCase(x, y).Draw(x, y, GetWidth(), GetHeight(), iTurn, (x==i && j==y), mode);
 		}
 	}
 }

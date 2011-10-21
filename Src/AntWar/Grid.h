@@ -3,6 +3,7 @@
 
 #include "Utils.h"
 #include "GridBase.h"
+#include "Square.h"
 
 class Square;
 
@@ -12,7 +13,7 @@ class Grid : public GridBase<Square>
 		void NewTurn();
 
 #ifdef MYDEBUG
-		void Draw(int iTurn, int i, int j) const;
+		void Draw(int iTurn, int i, int j, DrawMode mode) const;
 #endif
 };
 

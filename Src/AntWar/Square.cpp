@@ -17,32 +17,31 @@ Square::Square()
 
 void Square::Init(const char* line, const char* sNext, int iTurn)
 {
-
 	switch (line[0])
 	{
-	case 'w': // water
-		m_bIsWater = true;
-		break;
+		case 'w': // water
+			m_bIsWater = true;
+			break;
 
-	case 'f': // food
-		m_bIsFood = true;
-		break;
+		case 'f': // food
+			m_bIsFood = true;
+			break;
 
-	case 'h': // hill
-		ASSERT(sNext != NULL);
-		m_iHillPlayer = atoi(sNext);
-		break;
+		case 'h': // hill
+			ASSERT(sNext != NULL);
+			m_iHillPlayer = atoi(sNext);
+			break;
 
-	case 'a': // live ant
-		ASSERT(sNext != NULL);
-		m_iAntPlayer = atoi(sNext);
-		break;
+		case 'a': // live ant
+			ASSERT(sNext != NULL);
+			m_iAntPlayer = atoi(sNext);
+			break;
 
-	case 'd': // dead ant
-		ASSERT(sNext != NULL);
-		if (m_aDeadAnts.size() == 0 || m_aDeadAnts[m_aDeadAnts.size()-1].m_iTurn < iTurn)
-			m_aDeadAnts.push_back(DeadAnt(iTurn, atoi(sNext)));
-		break;
+		case 'd': // dead ant
+			ASSERT(sNext != NULL);
+			if (m_aDeadAnts.size() == 0 || m_aDeadAnts[m_aDeadAnts.size()-1].m_iTurn < iTurn)
+				m_aDeadAnts.push_back(DeadAnt(iTurn, atoi(sNext)));
+			break;
 	}
 }
 
@@ -52,10 +51,25 @@ void Square::NewTurn()
 	m_iHillPlayer = -1;
 	m_iAntPlayer = -1;
 	m_bIsVisible = false;
+	m_iAntInfluence = s_iNoInfluence;
 }
 
+void Square::AddInfluence(int iVal)
+{
+	if (m_iAntInfluence == s_iNoInfluence)
+	{
+		m_iAntInfluence = iVal;
+	}
+	else
+	{
+		m_iAntInfluence += iVal;
+	}
+}
+
+
+
 #ifdef MYDEBUG
-void Square::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
+void Square::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect, DrawMode mode) const
 {
 	sint16 xmin = x * gf_pw.GetWidth() / w;
 	sint16 ymin = y * gf_pw.GetHeight() / h;
@@ -64,67 +78,47 @@ void Square::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 	sint16 xmax = xmin + width;
 	sint16 ymax = ymin + height;
 
-	uint8 r = 50;
-	uint8 g = 50;
-	uint8 b = 50;
+	Color oUndiscoverd(50, 50, 50);
+	Color oGroundVisible(200, 200, 200);
+	Color oGroundUnvisible(100, 100, 100);
+	Color oWaterVisible(50, 50, 200);
+	Color oWaterUnvisible(25, 25, 100);
+	Color oFood(255, 255, 64);
 
-	if (IsDiscovered(iTurn))
+	if (mode == EDM_Influence && m_iAntInfluence != s_iNoInfluence)
 	{
-		if (m_bIsWater)
-			b = 200;
-		else
-			r = g = b = 200;
+		int offset = (abs(m_iAntInfluence)+1) * 30;
 
-		if (!m_bIsVisible)
-		{
-			r /= 2;
-			g /= 2;
-			b /= 2;
-		}
+		oGroundVisible.r = (m_iAntInfluence >= 0 ? oGroundVisible.r - offset : oGroundVisible.r);
+		oGroundVisible.g = (m_iAntInfluence <= 0 ? oGroundVisible.g - offset : oGroundVisible.g);
+		oGroundVisible.b = oGroundVisible.b - offset;
 	}
 
-	gf_pw.DrawFillRect(xmin, ymin, width +1, height +1, r, g, b);
+	Color oColor(255, 255, 255);
+	if (IsDiscovered(iTurn))
+	{
+		if (IsWater())
+		{
+			oColor = (IsVisible() ? oWaterVisible : oWaterUnvisible);
+		}
+		else
+		{
+			oColor = (IsVisible() ? oGroundVisible : oGroundUnvisible);
+		}
+	}
+	else
+	{
+		oColor = oUndiscoverd;
+	}
+
+	gf_pw.DrawFillRect(xmin, ymin, width +1, height +1, oColor);
 	if (bSelect)
 		gf_pw.DrawRect(xmin, ymin, width, height, 0, 0, 0);
 
 	if (IsDiscovered(iTurn) && m_bIsFood)
 	{
-		r = g = 255;
-		b = 64;
-		gf_pw.DrawFillRect(xmin+1, ymin+1, width-2, height-2, r, g, b);
+		gf_pw.DrawFillRect(xmin+1, ymin+1, width-2, height-2, oFood);
 	}
-
-	/*
-	if (m_iHillPlayer > -1)
-	{
-		switch (m_iHillPlayer)
-		{
-			case 0:	r = 0;		g = 255,	b = 0;		break;
-			case 1:	r = 0;		g = 0,		b = 255;	break;
-			case 2:	r = 255;	g = 0,		b = 0;		break;
-			case 3:	r = 255;	g = 255,	b = 0;		break;
-		}
-
-		gf_pw.DrawFillCircle(xmin+width/2, ymin+height/2, width/2+1, r, g, b);
-	}
-	*/
-
-	// Ant Draw self
-	/*
-	if (IsDiscovered(iTurn) && m_iAntPlayer > -1)
-	{
-		switch (m_iAntPlayer)
-		{
-			case 0:	r = 0;		g = 128,	b = 0;		break;
-			case 1:	r = 0;		g = 0,		b = 128;	break;
-			case 2:	r = 128;	g = 0,		b = 0;		break;
-			case 3:	r = 128;	g = 128,	b = 0;		break;
-		}
-
-		gf_pw.DrawFillCircle(xmin+width/2, ymin+height/2, width/2-1, r, g, b);
-	}
-	*/
-
 }
 
 void Square::PrintInfo(sint16& x, sint16& y, sint16 yl, int iTurn) const
@@ -174,6 +168,7 @@ void Square::PrintInfo(sint16& x, sint16& y, sint16 yl, int iTurn) const
 		}
 	}
 }
+
 
 #endif
 

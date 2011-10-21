@@ -11,7 +11,7 @@ NavAStar::NavAStar(const Grid& oGrid)
 NavAStar::~NavAStar()
 {}
 
-bool NavAStar::FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn)
+bool NavAStar::FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn)
 {
 	const int BLOCK = -2;
 	const int BLANK = -1;
@@ -32,11 +32,14 @@ bool NavAStar::FindPath(const Vector2& start, const Vector2& target, vector<Vect
 		int iCurrentCost = oCurrentCase.iCost;
 		int iToCaseCost = iCurrentCost - Cost(oCurrentCoord, target);
 
-		for (int i=0 ; i<EDirection_MAX ; ++i)
+		for (int i=0 ; i<CardDirCount ; ++i)
 		{
 			CaseCoord oSideCoord = m_pModelGrid->GetCoord(oCurrentCoord, (EDirection)i);
 			if (oSideCoord == target)
 			{
+				aPath.SetStart(start);
+				aPath.SetTarget(target);
+
 				vector<Vector2> aInvPath;
 				CaseCoord oCoord;
 				CaseCoord oPreviousCoord = oCurrentCoord;
@@ -49,16 +52,16 @@ bool NavAStar::FindPath(const Vector2& start, const Vector2& target, vector<Vect
 					oPreviousCoord = m_aCloseList.find(oCoord)->second.iPrevious;
 				} while (oPreviousCoord != oCoord);
 
-				aPath.resize(aInvPath.size());
-				for (uint i=0 ; i<aPath.size() ; ++i)
+				aPath.GetList().resize(aInvPath.size());
+				for (uint i=0 ; i<aPath.GetList().size() ; ++i)
 				{
-					aPath[i] = aInvPath[aPath.size()-1-i];
+					aPath.GetList()[i] = aInvPath[aPath.GetList().size()-1-i];
 				}
 
 				return true;
 			}
 
-			if (m_pModelGrid->GetCase(oSideCoord).IsBlock())
+			if (m_pModelGrid->GetCase(oSideCoord).IsBlock(iTurn, iToCaseCost))
 				continue;
 
 			if (m_aCloseList.find(oSideCoord) != m_aCloseList.end())

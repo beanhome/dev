@@ -3,6 +3,13 @@
 
 #include "Utils.h"
 
+enum DrawMode
+{
+	EDM_Normal,
+	EDM_Influence,
+};
+
+
 class Square
 {
 	public:
@@ -15,8 +22,6 @@ class Square
 		bool IsDiscovered(int iTurn) const { return (m_iDiscoveredTurn > -1 && m_iDiscoveredTurn <= iTurn); }
 		bool IsWater() const { return m_bIsWater; }
 		bool IsFood() const { return m_bIsFood; }
-		bool IsBlock() const { return m_iDiscoveredTurn == -1 || m_bIsWater; }
-
 		bool HasAnt() const { return m_iAntPlayer != -1; }
 		bool HasFriendAnt() const { return m_iAntPlayer == 0; }
 		bool HasEnemyAnt() const { return m_iAntPlayer > 0; }
@@ -34,10 +39,18 @@ class Square
 		
 		void SetDiscovered(int iTurn) { if (m_iDiscoveredTurn == -1) m_iDiscoveredTurn = iTurn; }
 
+		void AddInfluence(int iVal);
+		int  GetAntInfluence() const { return m_iAntInfluence; }
+
+		bool IsBlock(int iTurn, int iDist=0) const { return (!IsDiscovered(iTurn) || IsWater() || (GetAntInfluence() <= 0) || /*IsFriendHill() ||*/ (iDist == 1 && HasFriendAnt())); }
+
 #ifdef MYDEBUG
-		void Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const;
+		void Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect, DrawMode mode) const;
 		void PrintInfo(sint16& x, sint16& y, sint16 yl, int iTurn) const;
 #endif
+
+	public:
+		static const int s_iNoInfluence = 0x7FFFFFFF;
 
 	private:
 		int m_iDiscoveredTurn;
@@ -48,6 +61,8 @@ class Square
 		int m_iAntPlayer;
 		int m_iHillPlayer;
 
+		int m_iAntInfluence;
+
 		struct DeadAnt
 		{
 			DeadAnt(int iTurn, int iPlayer) : m_iTurn(iTurn), m_iPlayer(iPlayer) {}
@@ -56,6 +71,7 @@ class Square
 			int m_iPlayer;
 		};
 		vector<DeadAnt> m_aDeadAnts;
+
 };
 
 #endif //SQUARE_H_

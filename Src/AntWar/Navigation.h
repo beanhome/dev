@@ -5,6 +5,7 @@
 #include "Grid.h"
 #include "Vector2.h"
 
+class Path;
 
 class Navigation
 {
@@ -13,8 +14,8 @@ class Navigation
 		Navigation(const Grid& oGrid);
 		~Navigation();
 
-		virtual void Init(const Grid& oGrid);
-		virtual bool FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn) = 0;
+		virtual void Create(const Grid& oGrid);
+		virtual bool FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn) = 0;
 
 	protected:
 		const Grid* m_pModelGrid;

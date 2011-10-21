@@ -28,7 +28,7 @@ class NavAStar : public Navigation
 		typedef pair<CaseCoord, Case>	AStartPair;
 
 	public:
-		virtual bool		FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn);
+		virtual bool		FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn);
 
 	private:
 		int					Cost(const Vector2& p1, const Vector2& p2) const;

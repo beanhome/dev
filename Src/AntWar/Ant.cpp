@@ -6,14 +6,19 @@
 #include "Graphic.h"
 #endif
 
+
+const char* Ant::s_Role[Role_MAX] = {"None", "Explore", "Guard", "Protect", "Loot", "Attack", "Flee" };
+
 Ant::Ant(int x, int y, int iPlayer)
 	: m_vLoc(x, y)
 	, m_iPlayer(iPlayer)
+	, m_eRole(None)
 {}
 
 Ant::Ant(Vector2 loc, int iPlayer)
 	: m_vLoc(loc)
 	, m_iPlayer(iPlayer)
+	, m_eRole(None)
 {}
 
 
@@ -52,7 +57,7 @@ void Ant::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 		r = 25; g = 200; b = 128;
 	}
 
-	if (/*bSelect && */m_oPath.size() > 0)
+	if (/*bSelect && */m_oPath.GetLength() > 0)
 	{
 		int i1 = x;
 		int j1 = y;
@@ -60,7 +65,7 @@ void Ant::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 		int j2 = m_oPath[0].y;
 
 
-		for (uint i=0 ; i<m_oPath.size() ; ++i)
+		for (int i=0 ; i<m_oPath.GetLength() ; ++i)
 		{
 			if (i1 == 0 && i2 == w-1)
 			{
@@ -143,7 +148,7 @@ void Ant::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 				gf_pw.DrawLine(x1, y1, x2, y2, r, g, b);
 			}
 
-			if (i+1 == m_oPath.size())
+			if (i+1 == m_oPath.GetLength())
 				break;
 
 			i1 = i2;
@@ -156,17 +161,22 @@ void Ant::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const
 
 void Ant::PrintInfo(sint16& x, sint16& y, sint16 yl) const
 {
-	if (m_oPath.size() > 0)
+	gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Role : %s", s_Role[m_eRole]);
+	y += yl;
+
+	/*
+	if (m_oPath.GetLength() > 0)
 	{
 		gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Path : ");
 		y += yl;
 
-		for (uint i=0 ; i<m_oPath.size() ; ++i)
+		for (int i=0 ; i<m_oPath.GetLength() ; ++i)
 		{
 			gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "%d %d", m_oPath[i].x, m_oPath[i].y);
 			y += yl;
 		}
 	}
+	*/
 }
 
 #endif

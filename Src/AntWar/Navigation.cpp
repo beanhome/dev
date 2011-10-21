@@ -15,7 +15,7 @@ Navigation::Navigation(const Grid& oGrid)
 Navigation::~Navigation()
 {}
 
-void Navigation::Init(const Grid& oGrid)
+void Navigation::Create(const Grid& oGrid)
 {
 	m_pModelGrid = &oGrid;
 }

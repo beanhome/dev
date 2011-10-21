@@ -11,8 +11,8 @@
 class NavDijkstra : public Navigation
 {
 	public:
-		NavDijkstra();
-		NavDijkstra(const Grid& oGrid);
+		NavDijkstra(bool bDiagMode = false);
+		NavDijkstra(const Grid& oGrid, bool bDiagMode = false);
 		~NavDijkstra();
 
 	public:
@@ -39,14 +39,17 @@ class NavDijkstra : public Navigation
 		static const int START = 0;
 
 	public:
-		virtual void				Init(const Grid& oGrid);
+		virtual void				Create(const Grid& oGrid, bool bDiagMode = false);
 
+		void						Init(const Vector2& start, int iTurn);
+		void						Init(const vector<Vector2>& start, int iTurn);
 
-		virtual bool				FindPath(const Vector2& start, const Vector2& target, vector<Vector2>& aPath, int iTurn);
-		int							FindNearest(const Vector2& start, int type, vector<Vector2>& aPath, int iTurn);
-		bool						FindNearest(const Vector2& start, const vector<Vector2>& aTarget, vector<Vector2>& aPath, int iTurn);
+		virtual bool				FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn);
+		int							FindNearest(const Vector2& start, int type, Path& aPath, int iTurn);
+		bool						FindNearest(const Vector2& start, const vector<Vector2>& aTarget, Path& aPath, int iTurn);
 		void						Explore(const vector<Vector2>& start, int iTurn) { Explore(start, vector<Vector2>(), iTurn); }
 		void						Explore(const vector<Vector2>& start, const vector<Vector2>& target, int iTurn);
+		void						Explore(const vector<Vector2>& start, int type, int iTurn);
 
 		bool						GetPath(const Vector2& vTarget, Path& oPath) const;
 
@@ -56,6 +59,7 @@ class NavDijkstra : public Navigation
 
 	private:
 		GridBase<Case>				m_oPathGrid;
+		bool						m_bDiagMode;
 
 		vector<uint>				m_aStep;
 		uint						m_iHead;

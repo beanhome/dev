@@ -26,6 +26,22 @@ vector<Vector2> Path::GetListInverse() const
 	return oPath;
 }
 
+Path Path::GetInverse() const
+{
+	vector<Vector2> oPath;
+	oPath.resize(m_aPath.size());
+
+	if (m_aPath.size() > 0)
+	{
+		for (uint i=0 ; i<m_aPath.size()-1 ; ++i)
+			oPath[i] = m_aPath[m_aPath.size()-i-2];
+		oPath[oPath.size()-1] = m_vStart;
+	}
+
+	return Path(m_vTarget, oPath);
+}
+
+
 
 bool operator==(const Path& a, const Path& b)
 {

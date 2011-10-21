@@ -3,12 +3,16 @@
 
 #include "Utils.h"
 #include "Vector2.h"
+#include "NavDijkstra.h"
+
+class Grid;
 
 class Hill
 {
 	public:
-		Hill(int x, int y, int iPlayer);
-		Hill(Vector2 loc, int iPlayer);
+		Hill(const Vector2& loc, int iPlayer, const Grid& oGrid);
+
+		void Init(int iTurn);
 
 		const Vector2& GetLocation() const { return m_vLoc; }
 		int GetPlayer() const { return m_iPlayer; }
@@ -26,10 +30,17 @@ class Hill
 #endif
 
 	private:
-		Vector2 m_vLoc;
-		int m_iPlayer;
-		bool m_bVisible;
-		bool m_bUpdated;
+		Vector2			m_vLoc;
+		int				m_iPlayer;
+		bool			m_bVisible;
+		bool			m_bUpdated;
+
+		const Grid&		m_oGrid;
+		NavDijkstra		m_oDefense;
+
+		vector<vector<Vector2>> m_aDefenseCount;
+		uint				m_iBestDistDefense;
+
 };
 
 #endif //HILL_H_
