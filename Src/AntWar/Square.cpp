@@ -119,6 +119,18 @@ void Square::Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect, DrawM
 	{
 		gf_pw.DrawFillRect(xmin+1, ymin+1, width-2, height-2, oFood);
 	}
+
+	if (m_aDeadAnts.size() > 0)
+	{
+		for (uint i=0 ; i<m_aDeadAnts.size() ; ++i)
+		{
+			if (m_aDeadAnts[i].m_iTurn == iTurn)
+			{
+				gf_pw.DrawLine(xmin+1, ymin+1, xmax-1, ymax-1, 50, 50, 50);
+				gf_pw.DrawLine(xmin+1, ymax-1, xmax-1, ymin+1, 50, 50, 50);
+			}
+		}
+	}
 }
 
 void Square::PrintInfo(sint16& x, sint16& y, sint16 yl, int iTurn) const
@@ -144,6 +156,12 @@ void Square::PrintInfo(sint16& x, sint16& y, sint16 yl, int iTurn) const
 		y += yl;
 	}
 
+	if (m_iAntInfluence != s_iNoInfluence)
+	{
+		gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Influence of %d", m_iAntInfluence);
+		y += yl;
+	}
+
 	if (m_iAntPlayer > -1)
 	{
 		gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Ant of %d", m_iAntPlayer);
@@ -162,7 +180,7 @@ void Square::PrintInfo(sint16& x, sint16& y, sint16 yl, int iTurn) const
 		{
 			if (m_aDeadAnts[i].m_iTurn <= iTurn)
 			{
-				gf_dbg.Print(x, y+10, yl, LeftTop, 0, 0, 0, "Dead Ant of %d (%d)", m_aDeadAnts[i].m_iPlayer, m_aDeadAnts[i].m_iTurn);
+				gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Dead Ant of %d (%d)", m_aDeadAnts[i].m_iPlayer, m_aDeadAnts[i].m_iTurn);
 				y += yl;
 			}
 		}

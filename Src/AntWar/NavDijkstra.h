@@ -26,6 +26,7 @@ class NavDijkstra : public Navigation
 			EnemyAnt			= 0x0010,
 			FriendHill			= 0x0020,
 			FriendAnt			= 0x0040,
+			Safe				= 0x0040,
 		};
 
 		struct Case
@@ -44,7 +45,7 @@ class NavDijkstra : public Navigation
 		void						Init(const Vector2& start, int iTurn);
 		void						Init(const vector<Vector2>& start, int iTurn);
 
-		virtual bool				FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn);
+		virtual bool				FindPath(const Vector2& start, const Vector2& target, int iDistSq, Path& aPath, int iTurn);
 		int							FindNearest(const Vector2& start, int type, Path& aPath, int iTurn);
 		bool						FindNearest(const Vector2& start, const vector<Vector2>& aTarget, Path& aPath, int iTurn);
 		void						Explore(const vector<Vector2>& start, int iMax, int iTurn) { Explore(start, vector<Vector2>(), iMax, iTurn); }

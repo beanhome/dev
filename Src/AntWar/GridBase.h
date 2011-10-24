@@ -193,7 +193,7 @@ class GridBase
 			return GetCase(coord);
 		}
 
-		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2)
+		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2) const
 		{
 			uint d1 = abs(loc1.x-loc2.x);
 			uint d2 = abs(loc1.y-loc2.y);
@@ -201,6 +201,34 @@ class GridBase
 			int dc = min<uint>(d2, m_iHeight-d2);
 			return (dr*dr + dc*dc);
 		}
+
+		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc) const
+		{
+			int iHori = targetLoc.x - startLoc.x;
+			int iVert = targetLoc.y - startLoc.y;
+
+			if (iHori > (int)m_iWidth / 2)
+				iHori -= m_iWidth;
+
+			if (iHori < -((int)m_iWidth) / 2)
+				iHori += m_iWidth;
+
+			if (iVert > (int)m_iHeight / 2)
+				iVert -= m_iHeight;
+
+			if (iVert < -((int)m_iHeight) / 2)
+				iVert += m_iHeight;
+
+			if (abs(iHori) > abs(iVert))
+			{
+				return (iHori > 0 ? Est : West);
+			}
+			else
+			{
+				return (iVert > 0 ? South : North);
+			}
+		}
+
 
 	private:
 		TCase* m_pBuffer;

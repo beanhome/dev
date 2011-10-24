@@ -5,8 +5,6 @@
 #include "Vector2.h"
 #include "Path.h"
 
-class World;
-
 enum Role
 {
 	None,
@@ -15,10 +13,18 @@ enum Role
 	Protect,
 	Loot,
 	Attack,
+	Help,
 	Flee,
 
 	Role_MAX
 };
+
+class Ant;
+
+typedef multimap<int, Ant*> DistAntMap;
+typedef pair<int, Ant*> DistAntPair;
+
+class World;
 
 class Ant
 {
@@ -26,6 +32,7 @@ class Ant
 		Ant(int x, int y, int iPlayer);
 		Ant(Vector2 loc, int iPlayer);
 
+	public:
 		const Vector2&	GetLocation() const { return m_vLoc; }
 		int				GetPlayer() const { return m_iPlayer; }
 		const Path&		GetPath() const { return m_oPath; }
@@ -35,6 +42,9 @@ class Ant
 		void			SetRole(Role eRole) { m_eRole = eRole; }
 
 		void			TestAnts(const World& oWorld);
+		void			ReachAllies(const World& oWorld);
+
+		const Vector2&	GetFirstEnemy() const { return m_aEnemyAnts.begin()->second->GetLocation(); }
 
 #ifdef MYDEBUG
 		void			Draw(uint x, uint y, uint w, uint h, int iTurn, bool bSelect) const;
@@ -48,8 +58,8 @@ class Ant
 		Role			m_eRole;
 		Path			m_oPath;
 
-		vector<Vector2> m_aEnemyAnts;
-		vector<Vector2> m_aAllieAnts;
+		DistAntMap		m_aEnemyAnts;
+		DistAntMap		m_aAllieAnts;
 
 		static const char* s_Role[Role_MAX];
 };

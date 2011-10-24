@@ -120,9 +120,9 @@ void AntWar::MakeMoves()
 	int iProtect = 0;//max<int>(0, min<int>(m_oWorld.GetMinDistCount(), (int)m_oWorld.GetAntCount() - iExpl));
 	int iGuard = max<int>(0, iAntCount - (iExpl + iProtect));
 
-	World::DistAntMap::const_reverse_iterator begin = m_oWorld.GetAntByDist().rbegin();
-	World::DistAntMap::const_reverse_iterator end = m_oWorld.GetAntByDist().rend();
-	World::DistAntMap::const_reverse_iterator it;
+	DistAntMap::const_reverse_iterator begin = m_oWorld.GetAntByDist().rbegin();
+	DistAntMap::const_reverse_iterator end = m_oWorld.GetAntByDist().rend();
+	DistAntMap::const_reverse_iterator it;
 
 	// Default Explore / Guard / Protect
 	int i;
@@ -153,8 +153,12 @@ void AntWar::MakeMoves()
 			oAnt.TestAnts(m_oWorld);
 	}
 
-	// TODO : Make attack group
-
+	for (uint i=0 ; i<m_oWorld.GetAntCount() ; ++i)
+	{
+		Ant& oAnt = m_oWorld.GetAnt(i);
+		if (oAnt.GetPlayer() == 0)
+			oAnt.ReachAllies(m_oWorld);
+	}
 
 	// Loot
 	vector<Vector2> aLootLoc;
@@ -240,6 +244,19 @@ void AntWar::MakeMoves()
 				oAnt.SetRole(Protect);
 		}
 
+		if (oAnt.GetRole() == Attack || oAnt.GetRole() == Help)
+		{
+			m_oNavAStar.FindPath(oAnt.GetLocation(), oAnt.GetFirstEnemy(), m_oWorld.GetAttackRadiusSq(), oAnt.GetPath(), m_oWorld.GetTurn());
+		}
+
+		if (oAnt.GetRole() == Flee)
+		{
+			if (m_oNavAStar.FindPath(oAnt.GetLocation(), m_oWorld.GetFriendHills()[0], 0, oAnt.GetPath(), m_oWorld.GetTurn()) == false)
+			{
+				// ?
+			}
+		}
+
 		//if (oAnt.GetRole() == Protect)
 		//{
 		//	if (m_oNavDijkstra.FindNearest(oAnt.GetLocation(), m_oWorld.GetBestDistCase(), oAnt.GetPath(), m_oWorld.GetTurn()) == false)
@@ -247,6 +264,11 @@ void AntWar::MakeMoves()
 
 		//	}
 		//}
+
+		if (oAnt.GetPath().GetLength() == 0 && m_oWorld.GetGrid().GetCase(oAnt.GetLocation()).GetAntInfluence() <= 0)
+		{
+			m_oNavDijkstra.FindNearest(oAnt.GetLocation(), NavDijkstra::Safe, oAnt.GetPath(), m_oWorld.GetTurn());
+		}
 	}
 
 	// Exec Move
@@ -260,7 +282,7 @@ void AntWar::MakeMoves()
 			if (m_oWorld.IsEmpty(target))
 			{
 				dir = m_oWorld.GetDirection(pAnt->GetLocation(), target);
-				ExecMove(pAnt->GetLocation(), dir);
+ 				ExecMove(pAnt->GetLocation(), dir);
 			}
 		}
 	}

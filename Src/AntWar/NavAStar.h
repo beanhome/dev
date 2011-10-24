@@ -28,11 +28,12 @@ class NavAStar : public Navigation
 		typedef pair<CaseCoord, Case>	AStartPair;
 
 	public:
-		virtual bool		FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn);
+		virtual bool		FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath, int iTurn);
+		bool				GetPath(const Vector2& vTarget, Path& oPath) const;
 
 	private:
 		int					Cost(const Vector2& p1, const Vector2& p2) const;
-		CaseCoord			GetCheaperOpenCase() const;
+		CaseCoord			GetCheaperOpenCase(const Vector2& target) const;
 
 
 	private:

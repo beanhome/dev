@@ -8,7 +8,7 @@
 #endif
 
 
-const char* Ant::s_Role[Role_MAX] = {"None", "Explore", "Guard", "Protect", "Loot", "Attack", "Flee" };
+const char* Ant::s_Role[Role_MAX] = {"None", "Explore", "Guard", "Protect", "Loot", "Attack", "Help", "Flee" };
 
 Ant::Ant(int x, int y, int iPlayer)
 	: m_vLoc(x, y)
@@ -26,19 +26,59 @@ void Ant::TestAnts(const World& oWorld)
 {
 	for (uint i=0 ; i<oWorld.GetAntCount() ; ++i)
 	{
-		const Ant& oAnt = oWorld.GetAnt(i);
-		if (oWorld.DistanceSq(oAnt.GetLocation(), GetLocation()) < oWorld.GetViewRadiusSq())
+		Ant* pAnt = &((Ant&)oWorld.GetAnt(i));
+		int iDist = oWorld.DistanceSq(pAnt->GetLocation(), GetLocation());
+		if (iDist < oWorld.GetViewRadiusSq())
 		{
-			if (oAnt.GetPlayer() > 0)
-				m_aEnemyAnts.push_back(oAnt.GetLocation());
-			else
-				m_aAllieAnts.push_back(oAnt.GetLocation());
+			if (pAnt->GetLocation() != GetLocation())
+			{
+				if (pAnt->GetPlayer() > 0)
+					m_aEnemyAnts.insert(DistAntPair(iDist, pAnt));
+				else
+					m_aAllieAnts.insert(DistAntPair(iDist, pAnt));
+			}
 		}
 	}
 
-	if (m_aEnemyAnts.size() > 0)
+	if (m_aEnemyAnts.size() > 0 && m_aEnemyAnts.size() != m_aAllieAnts.size()+1)
 	{
-		m_eRole = (m_aEnemyAnts.size() > m_aAllieAnts.size() ? Flee : Attack);
+		m_eRole = (m_aEnemyAnts.size() > m_aAllieAnts.size()+1 ? Flee : Attack);
+	}
+}
+
+void Ant::ReachAllies(const World& oWorld)
+{
+	if (m_eRole == Attack)
+	{
+		DistAntMap::iterator begin = m_aAllieAnts.begin();
+		DistAntMap::iterator end = m_aAllieAnts.end();
+		DistAntMap::iterator it;
+
+		for (it = begin ; it != end ; ++it)
+		{
+			Ant& oAnt = *(it->second);
+
+			if (oAnt.GetPlayer() == 0)
+			{
+				if (oAnt.m_eRole == Flee)
+				{
+					oAnt.m_aEnemyAnts.clear();
+				}
+
+				DistAntMap::iterator nme_begin = m_aEnemyAnts.begin();
+				DistAntMap::iterator nme_end = m_aEnemyAnts.end();
+				DistAntMap::iterator nme_it;
+
+				for (nme_it = nme_begin ; nme_it != nme_end ; ++nme_it)
+				{
+					Ant& oEnemyAnt = *(nme_it->second);
+					int iDist = oWorld.DistanceSq(oEnemyAnt.GetLocation(), GetLocation());
+					oAnt.m_aEnemyAnts.insert(DistAntPair(iDist, &oEnemyAnt));
+				}
+
+				oAnt.m_eRole = Help;
+			}
+		}
 	}
 }
 
@@ -186,9 +226,49 @@ void Ant::PrintInfo(sint16& x, sint16& y, sint16 yl) const
 	gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Role : %s", s_Role[m_eRole]);
 	y += yl;
 
-	/*
+
+	if (m_aEnemyAnts.size() > 0)
+	{
+		gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Enemies : ");
+		y += yl;
+
+		DistAntMap::const_iterator begin = m_aEnemyAnts.begin();
+		DistAntMap::const_iterator end = m_aEnemyAnts.end();
+		DistAntMap::const_iterator it;
+
+		for (it = begin ; it != end ; ++it)
+		{
+			Ant& oAnt = *(it->second);
+
+			gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "   (%d %d)", oAnt.GetLocation().x, oAnt.GetLocation().y);
+			y += yl;
+		}
+	}
+
+	if (m_aAllieAnts.size() > 0)
+	{
+		gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Allies : ");
+		y += yl;
+
+		DistAntMap::const_iterator begin = m_aAllieAnts.begin();
+		DistAntMap::const_iterator end = m_aAllieAnts.end();
+		DistAntMap::const_iterator it;
+
+		for (it = begin ; it != end ; ++it)
+		{
+			Ant& oAnt = *(it->second);
+
+			gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "   (%d %d)", oAnt.GetLocation().x, oAnt.GetLocation().y);
+			y += yl;
+		}
+	}
+
 	if (m_oPath.GetLength() > 0)
 	{
+		gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Next Step : %d %d", m_oPath[0].x, m_oPath[0].y);
+		y += yl;
+
+		/*
 		gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "Path : ");
 		y += yl;
 
@@ -197,8 +277,13 @@ void Ant::PrintInfo(sint16& x, sint16& y, sint16 yl) const
 			gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "%d %d", m_oPath[i].x, m_oPath[i].y);
 			y += yl;
 		}
+		*/
 	}
-	*/
+	else
+	{
+		gf_dbg.Print(x, y, yl, LeftTop, 255, 255, 255, "DONT MOVE !!");
+		y += yl;
+	}
 }
 
 #endif

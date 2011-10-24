@@ -136,6 +136,9 @@ Vector2 World::GetLocation(const Vector2 &loc, EDirection dir)
 
 EDirection World::GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc)
 {
+	return m_oGrid.GetDirection(startLoc, targetLoc);
+
+	/*
 	int iHori = targetLoc.x - startLoc.x;
 	int iVert = targetLoc.y - startLoc.y;
 
@@ -159,6 +162,7 @@ EDirection World::GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc
 	{
 		return (iVert > 0 ? South : North);
 	}
+	*/
 }
 
 
@@ -631,7 +635,7 @@ void World::Draw(bool bPostCompute, int i, int j, DrawMode mode) const
 	// Info
 	sint16 x = 10;
 	sint16 y = 10;
-	sint16 yl = 10;
+	sint16 yl = 20;
 
 	gf_dbg.Print(x, y, yl, LeftTop, 0, 0, 0, "Ant count %d", GetAntCount());
 	y+=yl;

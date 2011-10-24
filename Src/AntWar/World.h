@@ -8,6 +8,7 @@
 #include "Ant.h"
 #include "NavDijkstra.h"
 #include "Hill.h"
+#include <math.h>
 
 
 const char cDirChar[CardDirCount] = {'N', 'E', 'S', 'W'};
@@ -20,11 +21,9 @@ class World
 		~World();
 
 	public:
-		typedef multimap<int, Ant*> DistAntMap;
-		typedef pair<int, Ant*> DistAntPair;
-
-	public:
 		int GetViewRadiusSq() const { return m_iViewRadiusSq; }
+		int GetAttackRadiusSq() const { return m_iAttackRadiusSq; }
+		float GetAttackRadius() const { return (float)sqrt((float)m_iAttackRadiusSq); }
 
 		void ReadSetup();
 		bool ReadTurn(int iRound = -1);

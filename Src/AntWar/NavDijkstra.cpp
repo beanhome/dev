@@ -68,7 +68,7 @@ void NavDijkstra::Init(const vector<Vector2>& start, int iTurn)
 
 
 
-bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn)
+bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, int iDistSq, Path& aPath, int iTurn)
 {
 	Init(start, iTurn);
 
@@ -97,7 +97,8 @@ bool NavDijkstra::FindPath(const Vector2& start, const Vector2& target, Path& aP
 				m_aStep[m_iQueue++] = iSideId;
 			}
 
-			if (vSideCoord == target)
+			int iCurDistSq = m_oPathGrid.DistanceSq(vSideCoord, target);
+			if (vSideCoord == target || iCurDistSq <= iDistSq)
 			{
 				GetPath(vSideCoord, aPath);
 				return true;
@@ -150,11 +151,11 @@ int NavDijkstra::FindNearest(const Vector2& start, int type, Path& aPath, int iT
 				if (square.HasEnemyAnt())			sqtype |= EnemyAnt;
 				if (square.IsFriendHill())			sqtype |= FriendHill;
 				if (square.HasFriendAnt())			sqtype |= FriendAnt;
+				if (square.GetAntInfluence() > 0)	sqtype |= Safe;
 
 				if (type & sqtype)
 				{
-
-					GetPath((sqtype & Undiscovered ? vCoord : vSideCoord), aPath);
+					GetPath((oSideCase.iCount == BLOCK ? vCoord : vSideCoord), aPath);
 					ASSERT(aPath.GetLength() > 0);
 					return sqtype;
 				}
@@ -250,6 +251,7 @@ void NavDijkstra::Explore(const vector<Vector2>& start, int type, int iMax, int 
 				if (square.HasEnemyAnt())			sqtype |= EnemyAnt;
 				if (square.IsFriendHill())			sqtype |= FriendHill;
 				if (square.HasFriendAnt())			sqtype |= FriendAnt;
+				if (square.GetAntInfluence() > 0)	sqtype |= Safe;
 
 				if (! (type & sqtype))
 				{

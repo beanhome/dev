@@ -11,18 +11,17 @@ NavAStar::NavAStar(const Grid& oGrid)
 NavAStar::~NavAStar()
 {}
 
-bool NavAStar::FindPath(const Vector2& start, const Vector2& target, Path& aPath, int iTurn)
+bool NavAStar::FindPath(const Vector2& start, const Vector2& target, int iDistSq, Path& aPath, int iTurn)
 {
-	const int BLOCK = -2;
-	const int BLANK = -1;
-	const int START = 0;
-
 	// init
 	m_aOpenList.clear();
 	m_aCloseList.clear();
 
+	Vector2 oBestCoord;
+
 	int iStartCost = Cost(start, target);
 	m_aCloseList.insert(AStartPair(start, Case(iStartCost, start)));
+	oBestCoord = start;
 
 	CaseCoord oCurrentCoord = start;
 
@@ -32,36 +31,22 @@ bool NavAStar::FindPath(const Vector2& start, const Vector2& target, Path& aPath
 		int iCurrentCost = oCurrentCase.iCost;
 		int iToCaseCost = iCurrentCost - Cost(oCurrentCoord, target);
 
+		EDirection offset = m_pModelGrid->GetDirection(oCurrentCoord, target);
+
 		for (int i=0 ; i<CardDirCount ; ++i)
 		{
-			CaseCoord oSideCoord = m_pModelGrid->GetCoord(oCurrentCoord, (EDirection)i);
-			if (oSideCoord == target)
+			EDirection dir = (EDirection)((offset + i) % CardDirCount);
+
+			CaseCoord oSideCoord = m_pModelGrid->GetCoord(oCurrentCoord, dir);
+			int iCurDistSq = m_pModelGrid->DistanceSq(oSideCoord, target);
+			if (oSideCoord == target || (iCurDistSq <= iDistSq && !m_pModelGrid->GetCase(oSideCoord).IsBlock(iTurn, iToCaseCost+1)))
 			{
-				aPath.SetStart(start);
-				aPath.SetTarget(target);
-
-				vector<Vector2> aInvPath;
-				CaseCoord oCoord;
-				CaseCoord oPreviousCoord = oCurrentCoord;
-				aInvPath.push_back(target);
-				do
-				{
-					oCoord = oPreviousCoord;
-					if (oCoord != start)
-						aInvPath.push_back(oCoord);
-					oPreviousCoord = m_aCloseList.find(oCoord)->second.iPrevious;
-				} while (oPreviousCoord != oCoord);
-
-				aPath.GetList().resize(aInvPath.size());
-				for (uint i=0 ; i<aPath.GetList().size() ; ++i)
-				{
-					aPath.GetList()[i] = aInvPath[aPath.GetList().size()-1-i];
-				}
-
+				m_aCloseList.insert(AStartPair(oSideCoord, Case(iToCaseCost + 1 + Cost(oSideCoord, target), oCurrentCoord)));
+				GetPath(oSideCoord, aPath);
 				return true;
 			}
 
-			if (m_pModelGrid->GetCase(oSideCoord).IsBlock(iTurn, iToCaseCost))
+			if (m_pModelGrid->GetCase(oSideCoord).IsBlock(iTurn, iToCaseCost+1))
 				continue;
 
 			if (m_aCloseList.find(oSideCoord) != m_aCloseList.end())
@@ -85,13 +70,17 @@ bool NavAStar::FindPath(const Vector2& start, const Vector2& target, Path& aPath
 		if (m_aOpenList.size() == 0)
 			break;
 
-		oCurrentCoord = GetCheaperOpenCase();
+		oCurrentCoord = GetCheaperOpenCase(target);
 		AStartMap::iterator it = m_aOpenList.find(oCurrentCoord);
 		m_aCloseList.insert(AStartPair(it->first, it->second));
 		m_aOpenList.erase(it);
 
+		if (m_pModelGrid->DistanceSq(oBestCoord, target) > m_pModelGrid->DistanceSq(oCurrentCoord, target))
+			oBestCoord = oCurrentCoord;
+
 	} while (m_aCloseList.size() > 0);
 
+	GetPath(oBestCoord, aPath);
 	return false;
 }
 
@@ -109,13 +98,14 @@ int NavAStar::Cost(const Vector2& p1, const Vector2& p2) const
 	return dx + dy;
 }
 
-NavAStar::CaseCoord NavAStar::GetCheaperOpenCase() const
+NavAStar::CaseCoord NavAStar::GetCheaperOpenCase(const Vector2& target) const
 {
 	AStartMap::const_iterator begin = m_aOpenList.begin();
 	AStartMap::const_iterator end = m_aOpenList.end();
 	AStartMap::const_iterator it;
 
 	int iBestCost = -1;
+	int iBestDistSq;
 	CaseCoord iBestCase;
 	for (it = begin ; it != end ; ++it)
 	{
@@ -125,8 +115,46 @@ NavAStar::CaseCoord NavAStar::GetCheaperOpenCase() const
 		{
 			iBestCase = it->first;
 			iBestCost = oCase.iCost;
+			iBestDistSq = m_pModelGrid->DistanceSq(iBestCase, target);
+		}
+		else if (oCase.iCost == iBestCost)
+		{
+			int iDistSq = m_pModelGrid->DistanceSq(it->first, target);
+			if (iDistSq < iBestDistSq)
+			{
+				iBestCase = it->first;
+				iBestCost = oCase.iCost;
+				iBestDistSq = iDistSq;
+			}
 		}
 	}
 
 	return iBestCase;
 }
+
+bool NavAStar::GetPath(const Vector2& vTarget, Path& aPath) const
+{
+	aPath.SetTarget(vTarget);
+
+	vector<Vector2> aInvPath;
+	CaseCoord oCoord;
+	CaseCoord oPreviousCoord = vTarget;
+	do
+	{
+		oCoord = oPreviousCoord;
+		oPreviousCoord = m_aCloseList.find(oCoord)->second.iPrevious;
+		if (oPreviousCoord != oCoord)
+			aInvPath.push_back(oCoord);
+	} while (oPreviousCoord != oCoord);
+
+	aPath.GetList().resize(aInvPath.size());
+	for (uint i=0 ; i<aPath.GetList().size() ; ++i)
+	{
+		aPath.GetList()[i] = aInvPath[aPath.GetList().size()-1-i];
+	}
+
+	aPath.SetStart(oPreviousCoord);
+
+	return true;
+}
+
