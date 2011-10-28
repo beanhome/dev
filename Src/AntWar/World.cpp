@@ -62,18 +62,18 @@ void World::NewTurn()
 	}
 }
 
-bool World::IsEmpty(Vector2 pos) const
+bool World::IsEmpty(const Vector2& pos) const
 {
 	return !m_oGrid[pos.x][pos.y].IsWater() && !m_oGrid[pos.x][pos.y].HasAnt();
 }
 
 
-bool World::IsWater(Vector2 pos) const
+bool World::IsWater(const Vector2& pos) const
 {
 	return m_oGrid[pos.x][pos.y].IsWater();
 }
 
-bool World::HasAnt(Vector2 pos) const
+bool World::HasAnt(const Vector2& pos) const
 {
 	return m_oGrid[pos.x][pos.y].HasAnt();
 }
@@ -451,14 +451,41 @@ void World::InitData()
 	m_oHillsDist.Explore(GetFriendHills(), 0, GetTurn());
 	//m_oHillsDist.PrintDebug();
 
-
-
 	m_aDistAnts.clear();
 	for (uint i=0 ; i<m_aAnts.size() ; ++i)
 	{
 		const NavDijkstra::Case& oCase = m_oHillsDist.GetGrid().GetCase(m_aAnts[i].GetLocation());
 		m_aDistAnts.insert(DistAntPair(oCase.iCount, &m_aAnts[i]));
 	}
+}
+
+bool World::WillDied(const Vector2& pos) const
+{
+	const Square& sq = m_oGrid.GetCase(pos);
+	int iPlayer = sq.GetAntPlayer();
+
+	return (iPlayer > -1 ? WillDied(pos, iPlayer) : false);
+}
+
+bool World::WillDied(const Vector2& pos, int iPlayer) const
+{
+	const Square& square = m_oGrid.GetCase(pos);
+	int iBadInfluence = square.GetBadInfluenceFor(iPlayer);
+
+	for (int lx = -m_iAttackRadiusSq-1 ; lx < m_iAttackRadiusSq+2 ; ++lx)
+	{
+		for (int ly = -m_iAttackRadiusSq-1 ; ly < m_iAttackRadiusSq+2 ; ++ly)
+		{
+			const Square& sq = m_oGrid.GetCase(pos.x + lx, pos.y + ly);
+
+			if (sq.GetAntPlayer() > -1 && sq.GetBadInfluenceFor(sq.GetAntPlayer()) <= iBadInfluence)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 

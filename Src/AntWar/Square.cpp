@@ -66,6 +66,17 @@ void Square::AddInfluence(int iVal)
 	}
 }
 
+int Square::GetBadInfluenceFor(int iPlayer) // TODO -> const
+{
+	int iInfluence = 0;
+	for (map<int, int>::iterator it = m_aBadInfluence.begin() ; it != m_aBadInfluence.end() ; ++it)
+	{
+		if (iPlayer != it->first)
+			iInfluence += it->second;
+	}
+
+	return iInfluence;
+}
 
 
 #ifdef MYDEBUG

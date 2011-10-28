@@ -42,9 +42,9 @@ class World
 		
 		void NewTurn();
 
-		bool IsEmpty(Vector2 pos) const;
-		bool IsWater(Vector2 pos) const;
-		bool HasAnt(Vector2 pos) const;
+		bool IsEmpty(const Vector2& pos) const;
+		bool IsWater(const Vector2& pos) const;
+		bool HasAnt(const Vector2& pos) const;
 
 		uint GetAntCount() const { return m_aDistAnts.size(); }
 
@@ -52,8 +52,8 @@ class World
 		vector<Ant>& GetAnts() { return m_aAnts; }
 		const Ant& GetAnt(uint i) const { ASSERT(i<m_aAnts.size()); return m_aAnts[i]; }
 		Ant& GetAnt(uint i) { ASSERT(i<m_aAnts.size()); return m_aAnts[i]; }
-		const Ant& GetAnt(Vector2 pos) const { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; }
-		Ant& GetAnt(Vector2 pos) { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; ASSERT(false); return m_aAnts[0]; }
+		const Ant& GetAnt(const Vector2& pos) const { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; }
+		Ant& GetAnt(const Vector2& pos) { for (uint i=0 ; i<m_aAnts.size() ; ++i) if (m_aAnts[i].GetLocation() == pos) return m_aAnts[i]; ASSERT(false); return m_aAnts[0]; }
 
 		void GetFriendAnt(vector<Vector2>& aAnts) const;
 		void GetEnemyAnt(vector<Vector2>& aAnts) const;
@@ -77,6 +77,10 @@ class World
 		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2) const;
 		Vector2 GetLocation(const Vector2 &startLoc, EDirection direction);
 		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc);
+
+		bool WillDied(const Vector2& pos) const;
+		bool WillDied(const Vector2& pos, int iPlayer) const;
+
 
 	    void InitData();
 

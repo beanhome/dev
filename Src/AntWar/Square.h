@@ -42,6 +42,11 @@ class Square
 		void AddInfluence(int iVal);
 		int  GetAntInfluence() const { return m_iAntInfluence; }
 
+		int  GetBadInfluenceOf(int iPlayer) { return m_aBadInfluence[iPlayer]; }
+		int  GetBadInfluenceFor(int iPlayer);
+		void AddBadInfluence(int iPlayer, int val=1) { m_aBadInfluence[iPlayer] += val; }
+		void RemBadInfluence(int iPlayer, int val=1) { m_aBadInfluence[iPlayer] -= val; }
+
 		bool IsBlock(int iTurn, int iDist=0) const { return (!IsDiscovered(iTurn) || IsWater() || (GetAntInfluence() <= 0) || /*IsFriendHill() ||*/ (iDist == 1 && HasFriendAnt())); }
 
 #ifdef MYDEBUG
@@ -53,15 +58,15 @@ class Square
 		static const int s_iNoInfluence = 0x7FFFFFFF;
 
 	private:
-		int m_iDiscoveredTurn;
-		bool m_bIsVisible;
-		bool m_bIsWater;
-		bool m_bIsFood;
+		int					m_iDiscoveredTurn;
+		bool				m_bIsVisible;
+		bool				m_bIsWater;
+		bool				m_bIsFood;
 
-		int m_iAntPlayer;
-		int m_iHillPlayer;
+		int					m_iAntPlayer;
+		int					m_iHillPlayer;
 
-		int m_iAntInfluence;
+		int					m_iAntInfluence; // deprecated ??
 
 		struct DeadAnt
 		{
@@ -70,7 +75,9 @@ class Square
 			int m_iTurn;
 			int m_iPlayer;
 		};
-		vector<DeadAnt> m_aDeadAnts;
+		vector<DeadAnt>		m_aDeadAnts;
+
+		map<int, int>		m_aBadInfluence;
 
 };
 
