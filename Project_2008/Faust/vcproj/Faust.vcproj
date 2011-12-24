@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Faust"
 	ProjectGUID="{862ECA88-2A8A-4961-9CFC-3EC7A3F9C7A6}"
 	RootNamespace="Faust"
@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\src\Common;&quot;..\..\..\ext\wxWidgets-2.9.2\include&quot;;&quot;..\..\..\ext\wxWidgets-2.9.2\include\msvc&quot;;..\..\..\ext\pgsql\include"
+				AdditionalIncludeDirectories="..\..\..\src\Common;&quot;..\..\..\External\wxWidgets-2.9.2\include&quot;;&quot;..\..\..\External\wxWidgets-2.9.2\include\msvc&quot;;..\..\..\External\pgsql\include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +60,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw29ud_core.lib wxbase29ud.lib comctl32.lib rpcrt4.lib winmm.lib libpq.lib wxmsw29ud_adv.lib wxpngd.lib wxzlib.lib"
-				AdditionalLibraryDirectories="&quot;..\..\..\ext\wxWidgets-2.9.2\lib\vc_lib&quot;;&quot;..\..\..\ext\wxWidgets-2.9.2\contrib\lib&quot;;&quot;..\..\..\ext\wxWidgets-2.9.2\lib&quot;;..\..\..\ext\pgsql\lib"
+				AdditionalLibraryDirectories="&quot;..\..\..\External\wxWidgets-2.9.2\lib\vc_lib&quot;;&quot;..\..\..\External\wxWidgets-2.9.2\contrib\lib&quot;;&quot;..\..\..\External\wxWidgets-2.9.2\lib&quot;;..\..\..\External\pgsql\lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
@@ -89,8 +89,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -114,7 +114,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\..\src\Common;&quot;..\..\..\ext\wxWidgets-2.9.2\include&quot;;&quot;..\..\..\ext\wxWidgets-2.9.2\include\msvc&quot;;..\..\..\ext\pgsql\include"
+				AdditionalIncludeDirectories="..\..\..\src\Common;&quot;..\..\..\External\wxWidgets-2.9.2\include&quot;;&quot;..\..\..\External\wxWidgets-2.9.2\include\msvc&quot;;..\..\..\External\pgsql\include"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -133,7 +133,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw29u_core.lib wxbase29u.lib comctl32.lib rpcrt4.lib winmm.lib libpq.lib wxmsw29u_adv.lib wxpngd.lib wxzlib.lib"
-				AdditionalLibraryDirectories="&quot;..\..\..\ext\wxWidgets-2.9.2\lib\vc_lib&quot;;&quot;..\..\..\ext\wxWidgets-2.9.2\contrib\lib&quot;;&quot;..\..\..\ext\wxWidgets-2.9.2\lib&quot;;..\..\..\ext\pgsql\lib"
+				AdditionalLibraryDirectories="&quot;..\..\..\External\wxWidgets-2.9.2\lib\vc_lib&quot;;&quot;..\..\..\External\wxWidgets-2.9.2\contrib\lib&quot;;&quot;..\..\..\External\wxWidgets-2.9.2\lib&quot;;..\..\..\External\pgsql\lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
@@ -545,10 +545,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\img\ico\Faust.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Faust.rc"
 				>
 			</File>
 			<File

@@ -4,25 +4,25 @@
 //////////////////////////////////////////////////////////////////////////
 
 #define FQ_EVENT_BEGIN								\
-"SELECT	DISTINCT 									\
+"SELECT DISTINCT 									\
   \"Event\".id,										\
   \"Event\".name,									\
   \"Event\".description,							\
-  \"Event\".datation,								\
-  \"Event\".parent,									\
-  (\"Event\".datation).start as start				\
+  \"Event\".start,									\
+  \"Event\".finish,									\
+  \"Event\".parent									\
   FROM 												\
-  \"Event\"	"								
+  \"Event\" "								
 
 //  TODO Join with auth event
 #define FQ_EVENT_COND_NAMEREGEXP					\
 	"\"Event\".name LIKE '%s' "
 
 #define FQ_EVENT_COND_DATE_START					\
-	"(\"Event\".datation).start > '%s' "
+	"\"Event\".start > '%s' "
 
 #define FQ_EVENT_COND_DATE_END						\
-	"(\"Event\".datation).end < '%s' "
+	"\"Event\".finish < '%s' "
 
 #define FQ_EVENT_COND_LAST_START					\
 	"update_date > '%s' "
@@ -31,7 +31,7 @@
 	"update_date < '%s' "
 
 #define FQ_EVENT_COND_DATE_NULL						\
-	"\"Event\".datation IS NULL "
+	"\"Event\".start IS NULL "
 
 #define FQ_EVENT_COND_PARENT						\
 	"(\"Event\".parent = (SELECT id FROM \"Event\" WHERE name = '%s') OR \"Event\".id = (SELECT id FROM \"Event\" WHERE name = '%s')) "
@@ -41,7 +41,7 @@
 //"\"Event\".parent = %d OR \"Event\".id = %d "
 
 #define FQ_EVENT_END								\
-  "ORDER BY	start ASC;"
+  "ORDER BY start ASC;"
 
 //////////////////////////////////////////////////////////////////////////
 

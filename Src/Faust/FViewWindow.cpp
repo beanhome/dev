@@ -123,7 +123,7 @@ void FViewWindow::OnClickApply(wxCommandEvent& WXUNUSED(event))
 		FEvent& oEvent = *pEntry->GetEvent();
 
 		bool res = true;
-		res &= pEntry->ApplyToEvent();
+		/*res &= */pEntry->ApplyToEvent();
 		/*res &= */m_pEditPanel->ApplyModif(oEvent); // TODO return bool
 
 		if (res)

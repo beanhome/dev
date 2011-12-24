@@ -51,6 +51,9 @@ bool FSQLClient::Connect(const string& sHost, const string& sPort, const string&
 		m_bIsWriter = (res[0] == 't' && res[1] == 0);
 	}
 	Clear(pResult);
+
+	Query("SET datestyle TO ISO, DMY;");
+
 #else
 	m_bIsWriter = true;
 #endif

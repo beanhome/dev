@@ -12,7 +12,9 @@ set Bot1="../../Build/AntWar/exe/Release/AntWar.exe"
 REM set Bot1=./bots/AntWar.exe
 
 REM set Bot2="bots\Garion.exe"
-set Bot2="bots\MomoBot_v11.exe"
+REM set Bot2="bots\MomoBot_v11.exe"
+set Bot2="../../Build/AntWar/exe/Release/AntWar.exe"
+
 
 REM set Bot1="python %~dp0sample_bots\python\HunterBot.py"
 REM set Bot2="python %~dp0sample_bots\python\LeftyBot.py"

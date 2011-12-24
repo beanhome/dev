@@ -43,7 +43,7 @@ class Square
 		int  GetAntInfluence() const { return m_iAntInfluence; }
 
 		int  GetBadInfluenceOf(int iPlayer) { return m_aBadInfluence[iPlayer]; }
-		int  GetBadInfluenceFor(int iPlayer);
+		int  GetBadInfluenceFor(int iPlayer) const;
 		void AddBadInfluence(int iPlayer, int val=1) { m_aBadInfluence[iPlayer] += val; }
 		void RemBadInfluence(int iPlayer, int val=1) { m_aBadInfluence[iPlayer] -= val; }
 

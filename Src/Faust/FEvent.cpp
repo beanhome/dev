@@ -347,7 +347,7 @@ bool FEvent::SaveMainInfo()
 
 		string sQuery = "INSERT INTO \"Event\" (name, description";
 		if (!m_oDatation.IsNull())
-			sQuery += ", datation";
+			sQuery += ", start, finish";
 		if (m_uParent > 0)
 			sQuery += ", parent";
 		sQuery += ") ";
@@ -356,7 +356,10 @@ bool FEvent::SaveMainInfo()
 		sQuery += "$TEXT$" + m_sName + "$TEXT$ ";
 		sQuery += ", $TEXT$" + m_sDescription + "$TEXT$ ";
 		if (!m_oDatation.IsNull())
-			sQuery += ", " + m_oDatation.GetFormated() + " ";
+		{
+			sQuery += ", " + (m_oDatation.GetStart().IsNull() ? "NULL " : "'" + string(m_oDatation.GetStart().GetFormated()) + "' ");
+			sQuery += ", " + (m_oDatation.GetEnd().IsNull() ? "NULL " : "'" + string(m_oDatation.GetEnd().GetFormated()) + "' ");
+		}
 		if (IsParentNull() == false)
 			sQuery += GetParentIdString();
 		sQuery += ") ";
@@ -383,7 +386,8 @@ bool FEvent::SaveMainInfo()
 		string sQuery = "UPDATE \"Event\" SET ";
 		sQuery += "name = $TEXT$" + m_sName + "$TEXT$ ";
 		sQuery += ", description = $TEXT$" + m_sDescription + "$TEXT$ ";
-		sQuery += ", datation = " + m_oDatation.GetFormated() + " ";
+		sQuery += ", start = " + (m_oDatation.GetStart().IsNull() ? "NULL " : "'" + string(m_oDatation.GetStart().GetFormated()) + "' ");
+		sQuery += ", finish = " + (m_oDatation.GetEnd().IsNull() ? "NULL " : "'" + string(m_oDatation.GetEnd().GetFormated()) + "' ");
 		sQuery += ", parent = " + GetParentIdString() + " ";
 		sQuery += FormatString(" WHERE id = %d", m_uId);
 		sQuery += ";";
@@ -412,9 +416,15 @@ bool FEvent::LoadMainInfo(PGresult* pResult, int iTuple)
 	assert(col != -1);
 	m_sName = PQgetvalue(pResult, iTuple, col);
 
-	col = PQfnumber(pResult, "datation");
+	col = PQfnumber(pResult, "start");
 	assert(col != -1);
-	m_oDatation = FDatation::ParseResult(PQgetvalue(pResult, iTuple, col));
+	const char* start = PQgetvalue(pResult, iTuple, col);
+
+	col = PQfnumber(pResult, "finish");
+	assert(col != -1);
+	const char* end = PQgetvalue(pResult, iTuple, col);
+
+	m_oDatation = FDatation::ParseResult(start, end);
 
 	col = PQfnumber(pResult, "description");
 	assert(col != -1);

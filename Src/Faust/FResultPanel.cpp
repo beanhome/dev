@@ -99,7 +99,7 @@ bool FResultPanel::ParseFile(const wxString& filename)
 		FEvent* pEvent = NULL;
 
 		PGresult* pResult;
-		FApp::s_oSQLClient.Query(FormatString("SELECT id,name,description,datation,parent FROM \"Event\" WHERE name = '%s'; ", sName.c_str()), &pResult);
+		FApp::s_oSQLClient.Query(FormatString("SELECT id,name,description,start,finish,parent FROM \"Event\" WHERE name = '%s'; ", sName.c_str()), &pResult);
 		if (PQntuples(pResult) == 1)
 		{
 			pEvent = FApp::s_oEventMap.Add(pResult, 0, false);

@@ -8,7 +8,7 @@
 #include "FEventWindow.h"
 #include "FNewRoleDialog.h"
 #include "FRoleWindow.h"
-#include "../../Project_2008/Faust/vcproj/resource.h"
+//#include "../../Project_2008/Faust/vcproj/resource.h"
 
 BEGIN_EVENT_TABLE(FMainFrame, wxFrame)
 	EVT_MENU(ID_AddView,			FMainFrame::OnMenuCreateView)
@@ -56,11 +56,11 @@ FMainFrame::FMainFrame(const wxString& title, const wxPoint& pos, const wxSize& 
 	SetMenuBar(m_pMenuBar);
 
 	m_pToolBar = new wxToolBar(this, wxID_ANY);
-	m_pToolBar->AddTool(ID_AddView, wxT("View"), wxBitmap(IMG_PATH(View, png), wxBITMAP_TYPE_PNG), wxT("New View Page"));
-	m_pToolBar->AddTool(ID_AddEvent, wxT("New"), wxBitmap(IMG_PATH(Add, png), wxBITMAP_TYPE_PNG), wxT("New Event"));
-	m_pToolBar->AddTool(ID_ParseFile, wxT("File"), wxBitmap(IMG_PATH(Parse, png), wxBITMAP_TYPE_PNG), wxT("Parse File"));
-	m_pToolBar->AddTool(ID_CloseTab, wxT("Close Tab"), wxBitmap(IMG_PATH(Close, png), wxBITMAP_TYPE_PNG), wxT("Close Tab"));
-	m_pToolBar->AddTool(ID_Logout, wxT("Logout"), wxBitmap(IMG_PATH(Logout, png), wxBITMAP_TYPE_PNG), wxT("Logout"));
+	//m_pToolBar->AddTool(ID_AddView, wxT("View"), wxBitmap(IMG_PATH(View, png), wxBITMAP_TYPE_PNG), wxT("New View Page"));
+	//m_pToolBar->AddTool(ID_AddEvent, wxT("New"), wxBitmap(IMG_PATH(Add, png), wxBITMAP_TYPE_PNG), wxT("New Event"));
+	//m_pToolBar->AddTool(ID_ParseFile, wxT("File"), wxBitmap(IMG_PATH(Parse, png), wxBITMAP_TYPE_PNG), wxT("Parse File"));
+	//m_pToolBar->AddTool(ID_CloseTab, wxT("Close Tab"), wxBitmap(IMG_PATH(Close, png), wxBITMAP_TYPE_PNG), wxT("Close Tab"));
+	//m_pToolBar->AddTool(ID_Logout, wxT("Logout"), wxBitmap(IMG_PATH(Logout, png), wxBITMAP_TYPE_PNG), wxT("Logout"));
 	m_pToolBar->Realize();
 	SetToolBar(m_pToolBar);
 

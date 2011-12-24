@@ -196,6 +196,50 @@ FDatation FDatation::ParseResult(const char* sLine)
 	return FDatation(FDate(ys, ms, ds), FDate(ye, me, de));
 }
 
+FDatation FDatation::ParseResult(const char* sStart, const char* sEnd)
+{
+	// "1903-02-01" "1906-05-04"	
+
+	if (sStart[0] == 0 && sEnd[0] == 0)
+		return FDatation();
+
+	int ys = -1;
+	int ms = -1;
+	int ds = -1;
+	int ye = -1;
+	int me = -1;
+	int de = -1;
+
+	if (sStart[0] != 0)
+	{
+		assert(strlen(sStart) == 10);
+
+		ys = atoi(sStart+0);
+		ms = atoi(sStart+5)-1;
+		ds = atoi(sStart+8);
+
+		assert(ys != -1);
+		assert(ms != -1);
+		assert(ds != -1);
+	}
+
+	if (sEnd[0] != 0)
+	{
+		assert(strlen(sEnd) == 10);
+
+		ye = atoi(sEnd+0);
+		me = atoi(sEnd+5)-1;
+		de = atoi(sEnd+8);
+
+		assert(ye != -1);
+		assert(me != -1);
+		assert(de != -1);
+	}
+
+	return FDatation(FDate(ys, ms, ds), FDate(ye, me, de));
+}
+
+
 string FDatation::GetFormated() const
 {
 	string sDatation;

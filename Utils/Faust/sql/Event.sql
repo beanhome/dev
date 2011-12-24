@@ -2,8 +2,8 @@
   "Event".id, 
   "Event".name,
   "Event".description,
-  "Event".datation,
-  ("Event".datation).start as start
+  "Event".start,
+  "Event".end
 FROM "Event"
 
 INNER JOIN
@@ -37,9 +37,9 @@ INNER JOIN
 ) AS tag
 ON "Event".id = tag.tag_id
 
-WHERE ("Event".datation).start > '13-08-1754'
-AND ("Event".datation).end < '16-07-2001'
-AND update_date > '17-08-2011'
-AND update_date < '12-09-2011'
+WHERE "Event".start > '11-08-1754'
+AND "Event".end < '12-07-2001'
+AND update_date > '01-01-2011'
+AND update_date < '12-31-2011'
 
-ORDER BY start ASC;
+ORDER BY start;

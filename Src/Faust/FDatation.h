@@ -69,6 +69,7 @@ class FDatation
 
 	public:
 		static FDatation ParseResult(const char* sLine);
+		static FDatation ParseResult(const char* sStart, const char* sEnd);
 
 
 	private:
