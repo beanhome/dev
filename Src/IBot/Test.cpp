@@ -1,0 +1,43 @@
+#include "Utils.h"
+
+#include "GEngine_SDL.h"
+#include "InputEvent_SDL.h"
+#include "Color.h"
+#include "Image.h"
+
+
+int main(int argc, char *argv[])
+{
+	InitLog(argc, argv);
+
+	GEngine_SDL ge(1024, 748, 32);
+
+	bool bContinue = true;
+
+	ImageResource* pImageRes = ge.CreateImageResource(DATA_DIR "/PlanetWar/Images/FleetBlue.bmp");
+	Image* pImage = new Image(&ge, DATA_DIR "/PlanetWar/Images/FleetRed.bmp");
+	pImage->SetPos(300, 200);
+
+	while(bContinue)
+	{
+		const InputEvent& oInputEvent = ge.PollEvent();
+		if (oInputEvent.IsQuit())
+			bContinue = false;
+
+		ge.Clear();
+
+		ge.CanvasBase::DrawRect(10, 10, 100, 100, Color(100, 200, 50));
+		ge.Print(14, 14, 10, LeftTop, 255, 200, 200, "Hello World !");
+
+		ge.DrawImage(*pImageRes, 200, 100, 0.f, 0.5f);
+		pImage->Draw();
+
+		ge.Flip();
+	}
+
+	delete pImage;
+
+    return 0;
+}
+
+

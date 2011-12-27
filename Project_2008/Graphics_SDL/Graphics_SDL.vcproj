@@ -2,10 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="SDL_gfx"
-	ProjectGUID="{FF26830D-66FF-460B-A5D3-F97067183986}"
-	RootNamespace="SDL_gfx"
-	Keyword="Win32Proj"
+	Name="Graphics_SDL"
+	ProjectGUID="{7342F58F-FD29-4218-8A57-A373780269AF}"
+	RootNamespace="Graphics_SDL"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -21,7 +20,7 @@
 			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,12 +40,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\External\SDL\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\Graphics;..\..\Src\Common"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -61,6 +58,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="../../External/SDL/lib/SDL.lib ../../External/SDL/lib/SDLmain.lib $(OutDir)/SDL_Draw.lib ../../External/SDL_ttf/lib/SDL_ttf.lib $(OutDir)/SDL_gfx.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -83,7 +81,7 @@
 			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -105,11 +103,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\External\SDL\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\Graphics;..\..\Src\Common"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -124,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="../../External/SDL/lib/SDL.lib ../../External/SDL/lib/SDLmain.lib $(OutDir)/SDL_Draw.lib ../../External/SDL_ttf/lib/SDL_ttf.lib $(OutDir)/SDL_gfx.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -146,58 +143,46 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="Sources"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_framerate.c"
+				RelativePath="..\..\Src\Graphics_SDL\Font_SDL.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxBlitFunc.c"
+				RelativePath="..\..\Src\Graphics_SDL\GEngine_SDL.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxPrimitives.c"
+				RelativePath="..\..\Src\Graphics_SDL\ImageResource_SDL.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_imageFilter.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_rotozoom.c"
+				RelativePath="..\..\Src\Graphics_SDL\InputEvent_SDL.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="Header Files"
+			Name="Headers"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_framerate.h"
+				RelativePath="..\..\Src\Graphics_SDL\Font_SDL.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxBlitFunc.h"
+				RelativePath="..\..\Src\Graphics_SDL\GEngine_SDL.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxPrimitives.h"
+				RelativePath="..\..\Src\Graphics_SDL\ImageResource_SDL.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxPrimitives_font.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_imageFilter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_rotozoom.h"
+				RelativePath="..\..\Src\Graphics_SDL\InputEvent_SDL.h"
 				>
 			</File>
 		</Filter>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="SDLWrapper"
 	ProjectGUID="{30646F17-45EB-4B0D-AA17-86ADCA2307A3}"
 	RootNamespace="SDLWrapper"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\AntWar"
+				AdditionalIncludeDirectories="..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\Common"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

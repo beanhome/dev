@@ -622,7 +622,8 @@ int World::DrawLoop(bool bPostCompute)
 		Draw(bPostCompute, i, j, m_eDrawMode);
 	}
 
-	return iRound;}
+	return iRound;
+}
 
 void World::Draw(bool bPostCompute, int i, int j, DrawMode mode) const
 {

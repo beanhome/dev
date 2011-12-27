@@ -9,6 +9,16 @@
 
 bool g_bVisualOutput = false;
 
+void InitLog(int argc, char *argv[])
+{
+	for (int i=1 ; i<argc ; ++i)
+	{
+		if (argv[i][0] == '-' && argv[i][1] == 'v')
+			g_bVisualOutput = true;
+	}
+}
+
+
 void Log(const char* format, ...)
 {
 	char output[1024];

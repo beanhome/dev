@@ -2,10 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="SDL_gfx"
-	ProjectGUID="{FF26830D-66FF-460B-A5D3-F97067183986}"
-	RootNamespace="SDL_gfx"
-	Keyword="Win32Proj"
+	Name="Common"
+	ProjectGUID="{C98974EB-8599-4E1A-87EE-2135AA7C48C1}"
+	RootNamespace="Common"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -21,7 +20,7 @@
 			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,12 +40,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\External\SDL\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -83,7 +79,7 @@
 			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
 			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -105,11 +101,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\External\SDL\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -146,58 +139,22 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
+			Name="Sources"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_framerate.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxBlitFunc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxPrimitives.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_imageFilter.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_rotozoom.c"
+				RelativePath="..\..\Src\Common\Utils.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="Header Files"
+			Name="Headers"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_framerate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxBlitFunc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxPrimitives.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_gfxPrimitives_font.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_imageFilter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\External\SDL_gfx\src\SDL_rotozoom.h"
+				RelativePath="..\..\Src\Common\Utils.h"
 				>
 			</File>
 		</Filter>
