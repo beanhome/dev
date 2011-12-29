@@ -5,6 +5,7 @@
 #include "SDL_Draw.h"
 #include "SDL_ttf.h"
 #include "SDL_rotozoom.h"
+#include "SDL_image.h"
 
 
 ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* pPath)
@@ -12,7 +13,7 @@ ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* 
 	, m_pSurface(NULL)
 {
 	/* Load the BMP file into a surface */
-	m_pSurface = SDL_LoadBMP(pPath);
+	m_pSurface = IMG_Load(pPath);
 	if (m_pSurface == NULL)
 	{
 		LOG("Couldn't load %s: %s\n", pPath, SDL_GetError());
