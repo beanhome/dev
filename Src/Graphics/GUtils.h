@@ -4,6 +4,7 @@
 
 enum ETextAlign
 {
+	Undefined = -1,
 	LeftTop,
 	LeftCenter,
 	LeftBottom,

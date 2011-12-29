@@ -18,7 +18,7 @@ Image::Image(CanvasBase* pCanvas, const char* path)
 	, m_iPosY(0)
 	, m_pImageResource(NULL)
 {
-	m_pImageResource = pCanvas->GetGEngine()->CreateImageResource(path);
+	m_pImageResource = pCanvas->GetGEngine()->GetImageResource(path);
 }
 
 Image::~Image()

@@ -7,8 +7,8 @@
 #include "SDL_rotozoom.h"
 
 
-ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, const char* pPath)
-	: ImageResource(pGEngine)
+ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* pPath)
+	: ImageResource(pGEngine, crc, pPath)
 	, m_pSurface(NULL)
 {
 	/* Load the BMP file into a surface */

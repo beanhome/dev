@@ -8,7 +8,7 @@ class GEngine;
 class Resource
 {
 	public:
-		Resource(GEngine* pGEngine);
+		Resource(GEngine* pGEngine, uint32 crc);
 		virtual ~Resource();
 
 	private:

@@ -9,11 +9,11 @@ typedef struct _TTF_Font TTF_Font;
 class Font_SDL : public Font
 {
 	public:
-		Font_SDL(GEngine* pGEngine, const char* path, uint16 size);
+		Font_SDL(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
 		~Font_SDL();
 
 	public:
-		TTF_Font* m_pFont;
+		TTF_Font*		m_pFont;
 };
 
 

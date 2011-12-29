@@ -7,11 +7,12 @@
 class Font : public Resource
 {
 	public:
-		Font(GEngine* pGEngine, uint16 size);
+		Font(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
 		~Font();
 
 	public:
-		uint16 m_iSize;
+		string			m_sPath;
+		uint16			m_iSize;
 };
 
 

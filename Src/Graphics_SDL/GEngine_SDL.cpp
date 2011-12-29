@@ -77,15 +77,15 @@ void GEngine_SDL::Flip()
 	SDL_Flip(m_pScreen);
 }
 
-Font* GEngine_SDL::CreateFontResource(const char* path, uint16 size)
+Font* GEngine_SDL::CreateFontResource(uint32 crc, const char* path, uint16 size)
 {
-	Font* pFont = new Font_SDL(this, path, size);
+	Font* pFont = new Font_SDL(this, crc, path, size);
 	return pFont;
 }
 
-ImageResource* GEngine_SDL::CreateImageResource(const char* path)
+ImageResource* GEngine_SDL::CreateImageResource(uint32 crc, const char* path)
 {
-	ImageResource* pImg = new ImageResource_SDL(this, path);
+	ImageResource* pImg = new ImageResource_SDL(this, crc, path);
 	return pImg;
 }
 
@@ -172,9 +172,9 @@ void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, 
 	Draw_Line(m_pScreen, x1, y1, x2, y2, SDL_MapRGB(m_pScreen->format, r, g, b));
 }
 
-void GEngine_SDL::PrintArgs(sint16 x, sint16 y, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs)
+void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs)
 {
-	Font_SDL* pFont = (Font_SDL*)GetFont(FONT_PATH, size);
+	Font_SDL* pFont = (Font_SDL*)GetFont(sFontPath, size);
 
 	int ln = _vscprintf(format, oArgs) + 1;
 	char* str = new char[ln];

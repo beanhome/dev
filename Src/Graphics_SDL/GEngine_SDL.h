@@ -25,10 +25,10 @@ class GEngine_SDL : public GEngine
 		virtual void 					DrawCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawFillCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					PrintArgs(sint16 x, sint16 y, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs);
+		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs);
 
-		virtual Font*					CreateFontResource(const char* path, uint16 size);
-		virtual ImageResource*			CreateImageResource(const char* path);
+		virtual Font*					CreateFontResource(uint32 crc, const char* path, uint16 size);
+		virtual ImageResource*			CreateImageResource(uint32 crc, const char* path);
 
 
 		const InputEvent&				PollEvent();
