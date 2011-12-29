@@ -17,6 +17,7 @@ class GEngine : public CanvasBase
 		~GEngine();
 
 		GEngine*						GetGEngine() { return this; }
+		const GEngine*					GetGEngine() const { return this; }
 
 		uint16							GetWidth() { return m_iWidth; }
 		uint16							GetHeight() { return m_iHeight; }
