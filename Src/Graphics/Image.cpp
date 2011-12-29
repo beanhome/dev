@@ -3,8 +3,8 @@
 #include "GEngine.h"
 #include "ImageResource.h"
 
-Image::Image(CanvasBase* pCanvas, ImageResource* pImageResource)
-	: m_pCanvas(pCanvas)
+Image::Image(CanvasBase& oCanvas, ImageResource* pImageResource)
+	: m_oCanvas(oCanvas)
 	, m_iPosX(0)
 	, m_iPosY(0)
 	, m_pImageResource(pImageResource)
@@ -12,13 +12,13 @@ Image::Image(CanvasBase* pCanvas, ImageResource* pImageResource)
 
 }
 
-Image::Image(CanvasBase* pCanvas, const char* path)
-	: m_pCanvas(pCanvas)
+Image::Image(CanvasBase& oCanvas, const char* path)
+	: m_oCanvas(oCanvas)
 	, m_iPosX(0)
 	, m_iPosY(0)
 	, m_pImageResource(NULL)
 {
-	m_pImageResource = pCanvas->GetGEngine()->GetImageResource(path);
+	m_pImageResource = m_oCanvas.GetGEngine()->GetImageResource(path);
 }
 
 Image::~Image()
@@ -44,5 +44,5 @@ uint16 Image::GetHeight() const
 
 void Image::Draw() const
 {
-	m_pCanvas->DrawImage(*m_pImageResource, m_iPosX, m_iPosY);
+	m_oCanvas.DrawImage(*m_pImageResource, m_iPosX, m_iPosY);
 }

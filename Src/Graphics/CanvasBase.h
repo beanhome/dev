@@ -71,7 +71,7 @@ class CanvasBase
 			ETextAlign		eAlign;
 			Color			oColor;
 
-			PrintParam() : x(0), y(0), sFontPath(NULL), size(0), eAlign(Undefined), oColor(255, 255, 255) {}
+			PrintParam() : x(0), y(0), sFontPath(NULL), size(0), eAlign(LeftTop), oColor(255, 255, 255) {}
 		}								m_oPrintParam;
 };
 
