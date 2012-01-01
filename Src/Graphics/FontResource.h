@@ -4,11 +4,11 @@
 #include "Utils.h"
 #include "Resource.h"
 
-class Font : public Resource
+class FontResource : public Resource
 {
 	public:
-		Font(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
-		~Font();
+		FontResource(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
+		~FontResource();
 
 	public:
 		string			m_sPath;

@@ -158,7 +158,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\Graphics\Font.cpp"
+				RelativePath="..\..\Src\Graphics\FontResource.cpp"
 				>
 			</File>
 			<File
@@ -208,7 +208,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\Graphics\Font.h"
+				RelativePath="..\..\Src\Graphics\FontResource.h"
 				>
 			</File>
 			<File

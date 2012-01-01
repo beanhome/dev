@@ -7,7 +7,7 @@
 #include "SDL_Draw.h"
 #include "SDL_ttf.h"
 #include "SDL_rotozoom.h"
-#include "Font_SDL.h"
+#include "FontResource_SDL.h"
 #include "ImageResource_SDL.h"
 
 
@@ -79,9 +79,9 @@ void GEngine_SDL::Flip()
 	SDL_Flip(m_pScreen);
 }
 
-Font* GEngine_SDL::CreateFontResource(uint32 crc, const char* path, uint16 size)
+FontResource* GEngine_SDL::CreateFontResource(uint32 crc, const char* path, uint16 size)
 {
-	Font* pFont = new Font_SDL(this, crc, path, size);
+	FontResource* pFont = new FontResource_SDL(this, crc, path, size);
 	return pFont;
 }
 
@@ -200,7 +200,7 @@ void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, 
 
 void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs)
 {
-	Font_SDL* pFont = (Font_SDL*)GetFont(sFontPath, size);
+	FontResource_SDL* pFont = (FontResource_SDL*)GetFontResource(sFontPath, size);
 
 	int ln = _vscprintf(format, oArgs) + 1;
 	char* str = new char[ln];

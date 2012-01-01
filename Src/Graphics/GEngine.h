@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 #include "CanvasBase.h"
-#include "Font.h"
+#include "FontResource.h"
 
 typedef map<uint32, Resource*> ResourceMap;
 typedef pair<uint32, Resource*> ResourcePair;
@@ -34,7 +34,7 @@ class GEngine : public CanvasBase
 		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
 		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
 
-		Font* const						GetFontResource(const char* path, uint16 size);
+		FontResource* const				GetFontResource(const char* path, uint16 size);
 		ImageResource* const			GetImageResource(const char* path);
 
 		bool							AddResource(uint32 crc, Resource* pRes);
@@ -42,9 +42,7 @@ class GEngine : public CanvasBase
 		bool							RemResource(Resource* pRes);
 
 	protected:
-		const Font* const				GetFont(const char* path, uint16 size);
-
-		virtual Font*					CreateFontResource(uint32 crc, const char* path, uint16 size) = 0;
+		virtual FontResource*			CreateFontResource(uint32 crc, const char* path, uint16 size) = 0;
 		virtual ImageResource*			CreateImageResource(uint32 crc, const char* path) = 0;
 
 		uint32							ComputeFontCRC32(const char* path, uint16 size);

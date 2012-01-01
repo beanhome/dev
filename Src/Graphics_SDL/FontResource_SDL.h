@@ -2,15 +2,15 @@
 #define __FONT_SDL_H__
 
 #include "Utils.h"
-#include "Font.h"
+#include "FontResource.h"
 
 typedef struct _TTF_Font TTF_Font;
 
-class Font_SDL : public Font
+class FontResource_SDL : public FontResource
 {
 	public:
-		Font_SDL(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
-		~Font_SDL();
+		FontResource_SDL(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
+		~FontResource_SDL();
 
 	public:
 		TTF_Font*		m_pFont;

@@ -148,7 +148,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\Src\Graphics_SDL\Font_SDL.cpp"
+				RelativePath="..\..\Src\Graphics_SDL\FontResource_SDL.cpp"
 				>
 			</File>
 			<File
@@ -170,7 +170,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\Src\Graphics_SDL\Font_SDL.h"
+				RelativePath="..\..\Src\Graphics_SDL\FontResource_SDL.h"
 				>
 			</File>
 			<File

@@ -75,13 +75,13 @@ uint32 GEngine::ComputeImageCRC32(const char* path)
 	return crc;
 }
 
-Font* const GEngine::GetFontResource(const char* path, uint16 size)
+FontResource* const GEngine::GetFontResource(const char* path, uint16 size)
 {
 	uint32 crc = ComputeFontCRC32(path, size);
 
 	ResourceMap::iterator iter = m_aResources.find(crc);
 
-	return (iter == m_aResources.end() ? CreateFontResource(crc, path, size) : (Font*)iter->second);
+	return (iter == m_aResources.end() ? CreateFontResource(crc, path, size) : (FontResource*)iter->second);
 }
 
 ImageResource* const GEngine::GetImageResource(const char* path)
@@ -93,11 +93,6 @@ ImageResource* const GEngine::GetImageResource(const char* path)
 	return (iter == m_aResources.end() ? CreateImageResource(crc, path) : (ImageResource*)iter->second);
 }
 
-
-const Font* const GEngine::GetFont(const char* path, uint16 size)
-{
-	return GetFontResource(path, size);	
-}
 
 void GEngine::SaveEvent()
 {
