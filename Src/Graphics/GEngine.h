@@ -3,8 +3,8 @@
 
 #include "Utils.h"
 #include "CanvasBase.h"
-#include "FontResource.h"
 
+class Resource;
 typedef map<uint32, Resource*> ResourceMap;
 typedef pair<uint32, Resource*> ResourcePair;
 
@@ -34,19 +34,19 @@ class GEngine : public CanvasBase
 		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
 		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
 
-		FontResource* const				GetFontResource(const char* path, uint16 size);
-		ImageResource* const			GetImageResource(const char* path);
+		template<typename T>
+		T* const						GetResource(const typename T::Desc& oDesc);
 
 		bool							AddResource(uint32 crc, Resource* pRes);
 		bool							RemResource(uint32 crc);
 		bool							RemResource(Resource* pRes);
 
 	protected:
-		virtual FontResource*			CreateFontResource(uint32 crc, const char* path, uint16 size) = 0;
-		virtual ImageResource*			CreateImageResource(uint32 crc, const char* path) = 0;
+		template<typename T>
+		T*								CreateResource(uint32 crc, const typename T::Desc& oDesc);
 
-		uint32							ComputeFontCRC32(const char* path, uint16 size);
-		uint32							ComputeImageCRC32(const char* path);
+		template<typename T>
+		uint32							ComputeResourceCRC32(const typename T::Desc& oDesc);
 
 	protected:
 		uint16							m_iDepth;
@@ -58,6 +58,27 @@ class GEngine : public CanvasBase
 		ResourceMap						m_aResources;
 };
 
+template<typename T>
+T* const GEngine::GetResource(const typename T::Desc& oDesc)
+{
+	uint32 crc = T::ComputeCRC32(oDesc);
+
+	ResourceMap::iterator iter = m_aResources.find(crc);
+
+	return (iter == m_aResources.end() ? CreateResource<T>(crc, oDesc) : (T*)iter->second);
+}
+
+template<typename T>
+T* GEngine::CreateResource(uint32 crc, const typename T::Desc& oDesc)
+{
+	return new T(this, crc, oDesc);
+}
+
+template<typename T>
+uint32 GEngine::ComputeResourceCRC32(const typename T::Desc& oDesc)
+{
+	return T::ComputeCRC32(oDesc);
+}
 
 
 #endif // __GENGINE_H__

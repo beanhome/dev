@@ -7,7 +7,18 @@
 class FontResource : public Resource
 {
 	public:
+		struct Desc
+		{
+			const char* path;
+			uint16 size;
+			Desc(const char* _path, uint16 _size) : path(_path), size(_size) {}
+		};
+		
+		static uint32 ComputeCRC32(const Desc& oDesc);
+
+	public:
 		FontResource(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
+		FontResource(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
 		~FontResource();
 
 	public:

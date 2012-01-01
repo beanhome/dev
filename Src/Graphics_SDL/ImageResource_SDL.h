@@ -10,6 +10,7 @@ class ImageResource_SDL : public ImageResource
 {
 	public:
 		ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* path);
+		ImageResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
 		~ImageResource_SDL();
 
 	public:

@@ -79,18 +79,6 @@ void GEngine_SDL::Flip()
 	SDL_Flip(m_pScreen);
 }
 
-FontResource* GEngine_SDL::CreateFontResource(uint32 crc, const char* path, uint16 size)
-{
-	FontResource* pFont = new FontResource_SDL(this, crc, path, size);
-	return pFont;
-}
-
-ImageResource* GEngine_SDL::CreateImageResource(uint32 crc, const char* path)
-{
-	ImageResource* pImg = new ImageResource_SDL(this, crc, path);
-	return pImg;
-}
-
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y) const
 {
 	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
@@ -200,7 +188,7 @@ void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, 
 
 void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs)
 {
-	FontResource_SDL* pFont = (FontResource_SDL*)GetFontResource(sFontPath, size);
+	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
 
 	int ln = _vscprintf(format, oArgs) + 1;
 	char* str = new char[ln];
@@ -225,44 +213,44 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 
 	switch (eAlign)
 	{
-	case LeftTop:
-	case LeftCenter:
-	case LeftBottom:
-		position.x = x;
-		break;
+		case LeftTop:
+		case LeftCenter:
+		case LeftBottom:
+			position.x = x;
+			break;
 
-	case CenterTop:
-	case Center:
-	case CenterBottom:
-		position.x = x - iWidth / 2;	
-		break;
+		case CenterTop:
+		case Center:
+		case CenterBottom:
+			position.x = x - iWidth / 2;	
+			break;
 
-	case RightTop:
-	case RightCenter:
-	case RightBottom:
-		position.x = x - iWidth;		
-		break;
+		case RightTop:
+		case RightCenter:
+		case RightBottom:
+			position.x = x - iWidth;		
+			break;
 	}
 
 	switch (eAlign)
 	{
-	case LeftTop:
-	case CenterTop:
-	case RightTop:
-		position.y = y;
-		break;
+		case LeftTop:
+		case CenterTop:
+		case RightTop:
+			position.y = y;
+			break;
 
-	case LeftCenter:
-	case Center:
-	case RightCenter:
-		position.y = y - iHeight / 2;
-		break;
+		case LeftCenter:
+		case Center:
+		case RightCenter:
+			position.y = y - iHeight / 2;
+			break;
 
-	case LeftBottom:
-	case CenterBottom:
-	case RightBottom:
-		position.y = y - iHeight;
-		break;
+		case LeftBottom:
+		case CenterBottom:
+		case RightBottom:
+			position.y = y - iHeight;
+			break;
 	}
 
 	SDL_BlitSurface(texte, NULL, m_pScreen, &position); 

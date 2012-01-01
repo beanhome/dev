@@ -1,7 +1,6 @@
 #include "Utils.h"
 #include "GEngine.h"
-#include "CRC32.h"
-
+#include "Resource.h"
 
 GEngine::GEngine(uint16 width, uint16 height, uint16 depth)
 	: CanvasBase(width, height)
@@ -59,40 +58,6 @@ bool GEngine::RemResource(Resource* pRes)
 
 	return false;
 }
-
-uint32 GEngine::ComputeFontCRC32(const char* path, uint16 size)
-{
-	uint32 crc = 0;
-	CRC32::s_oGenerator.FullCRC((uint8*)path, strlen(path), &crc);
-	crc += size;
-	return crc;
-}
-
-uint32 GEngine::ComputeImageCRC32(const char* path)
-{
-	uint32 crc = 0;
-	CRC32::s_oGenerator.FullCRC((uint8*)path, strlen(path), &crc);
-	return crc;
-}
-
-FontResource* const GEngine::GetFontResource(const char* path, uint16 size)
-{
-	uint32 crc = ComputeFontCRC32(path, size);
-
-	ResourceMap::iterator iter = m_aResources.find(crc);
-
-	return (iter == m_aResources.end() ? CreateFontResource(crc, path, size) : (FontResource*)iter->second);
-}
-
-ImageResource* const GEngine::GetImageResource(const char* path)
-{
-	uint32 crc = ComputeImageCRC32(path);
-
-	ResourceMap::iterator iter = m_aResources.find(crc);
-
-	return (iter == m_aResources.end() ? CreateImageResource(crc, path) : (ImageResource*)iter->second);
-}
-
 
 void GEngine::SaveEvent()
 {

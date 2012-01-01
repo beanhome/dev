@@ -12,14 +12,14 @@ Image::Image(CanvasBase& oCanvas, ImageResource* pImageResource)
 
 }
 
-Image::Image(CanvasBase& oCanvas, const char* path)
-	: m_oCanvas(oCanvas)
-	, m_iPosX(0)
-	, m_iPosY(0)
-	, m_pImageResource(NULL)
-{
-	m_pImageResource = m_oCanvas.GetGEngine()->GetImageResource(path);
-}
+//Image::Image(CanvasBase& oCanvas, const char* path)
+//	: m_oCanvas(oCanvas)
+//	, m_iPosX(0)
+//	, m_iPosY(0)
+//	, m_pImageResource(NULL)
+//{
+//	m_pImageResource = m_oCanvas.GetGEngine()->GetImageResource(path);
+//}
 
 Image::~Image()
 {

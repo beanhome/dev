@@ -12,7 +12,6 @@ ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* 
 	: ImageResource(pGEngine, crc, pPath)
 	, m_pSurface(NULL)
 {
-	/* Load the BMP file into a surface */
 	m_pSurface = IMG_Load(pPath);
 	if (m_pSurface == NULL)
 	{
@@ -20,11 +19,27 @@ ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* 
 	}
 	else
 	{
-		//SDL_SetColorKey(m_pSurface, SDL_SRCCOLORKEY, SDL_MapRGB(m_pSurface->format, 255, 255, 255));
 		m_iWidth = m_pSurface->w;
 		m_iHeight = m_pSurface->h;
 	}
 }
+
+ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc)
+	: ImageResource(pGEngine, crc, oDesc)
+	, m_pSurface(NULL)
+{
+	m_pSurface = IMG_Load(oDesc.path);
+	if (m_pSurface == NULL)
+	{
+		LOG("Couldn't load %s: %s\n", oDesc.path, SDL_GetError());
+	}
+	else
+	{
+		m_iWidth = m_pSurface->w;
+		m_iHeight = m_pSurface->h;
+	}
+}
+
 
 ImageResource_SDL::~ImageResource_SDL()
 {

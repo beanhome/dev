@@ -9,12 +9,12 @@ ImageRotoZoom::ImageRotoZoom(CanvasBase& oCanvas, ImageResource* pImageResource)
 
 }
 
-ImageRotoZoom::ImageRotoZoom(CanvasBase& oCanvas, const char* path)
-	: Image(oCanvas, path)
-	, m_fZoom(1.f)
-	, m_fAngle(0.f)
-{
-}
+//ImageRotoZoom::ImageRotoZoom(CanvasBase& oCanvas, const char* path)
+//	: Image(oCanvas, path)
+//	, m_fZoom(1.f)
+//	, m_fAngle(0.f)
+//{
+//}
 
 ImageRotoZoom::~ImageRotoZoom()
 {

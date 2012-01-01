@@ -10,6 +10,7 @@ class FontResource_SDL : public FontResource
 {
 	public:
 		FontResource_SDL(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
+		FontResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
 		~FontResource_SDL();
 
 	public:

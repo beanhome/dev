@@ -8,7 +8,7 @@ class ImageRotoZoom : public Image
 {
 	public:
 		ImageRotoZoom(CanvasBase& oCanvas, ImageResource* pImageResource);
-		ImageRotoZoom(CanvasBase& oCanvas, const char* path);
+		//ImageRotoZoom(CanvasBase& oCanvas, const char* path);
 		virtual ~ImageRotoZoom();
 
 		void						SetZoom(float zoom);

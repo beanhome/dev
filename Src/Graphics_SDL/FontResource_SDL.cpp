@@ -8,6 +8,14 @@ FontResource_SDL::FontResource_SDL(GEngine* pGEngine, uint32 crc, const char* pa
 	m_pFont = TTF_OpenFont(path, m_iSize);
 }
 
+FontResource_SDL::FontResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc)
+	: FontResource(pGEngine, crc, oDesc)
+	, m_pFont(NULL)
+{
+	m_pFont = TTF_OpenFont(oDesc.path, m_iSize);
+}
+
+
 FontResource_SDL::~FontResource_SDL()
 {
 	TTF_CloseFont(m_pFont);

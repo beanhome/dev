@@ -8,18 +8,19 @@ ImageFlipBook::ImageFlipBook(CanvasBase& oCanvas, ImageResource* pImageResource,
 	, m_iColCount(col)
 	, m_iCurrent(-1)
 {
-
-}
-
-ImageFlipBook::ImageFlipBook(CanvasBase& oCanvas, const char* path, uint16 row, uint16 col)
-	: Image(oCanvas, path)
-	, m_iRowCount(row)
-	, m_iColCount(col)
-	, m_iCurrent(-1)
-{
 	assert(row > 0);
 	assert(col > 0);
 }
+
+//ImageFlipBook::ImageFlipBook(CanvasBase& oCanvas, const char* path, uint16 row, uint16 col)
+//	: Image(oCanvas, path)
+//	, m_iRowCount(row)
+//	, m_iColCount(col)
+//	, m_iCurrent(-1)
+//{
+//	assert(row > 0);
+//	assert(col > 0);
+//}
 
 ImageFlipBook::~ImageFlipBook()
 {

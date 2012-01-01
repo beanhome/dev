@@ -10,7 +10,7 @@ class Image
 {
 	public:
 		Image(CanvasBase& oCanvas, ImageResource* pImageResource);
-		Image(CanvasBase& oCanvas, const char* path);
+		//Image(CanvasBase& oCanvas, const char* path);
 		virtual ~Image();
 
 		void						SetPos(sint16 x, sint16 y);

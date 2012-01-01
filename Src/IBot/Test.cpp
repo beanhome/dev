@@ -7,6 +7,7 @@
 #include "ImageRotoZoom.h"
 #include "Canvas.h"
 #include "ImageFlipBook.h"
+#include "ImageResource_SDL.h"
 
 
 int main(int argc, char *argv[])
@@ -19,13 +20,13 @@ int main(int argc, char *argv[])
 
 	bool bContinue = true;
 
-	ImageResource* pImageRes = ge.GetImageResource(DATA_DIR "/PlanetWar/Images/FleetBlue.png");
+	ImageResource* pImageRes = ge.GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(DATA_DIR "/PlanetWar/Images/FleetBlue.png"));
 	
-	ImageFlipBook* pImage = new ImageFlipBook(ge, DATA_DIR "/Test/gb_walk.png", 3, 6);
+	ImageFlipBook* pImage = new ImageFlipBook(ge, ge.GetResource<ImageResource_SDL>(DATA_DIR "/Test/gb_walk.png"), 3, 6);
 	pImage->SetPos(300, 200);
 	pImage->SetCurrent(0);
 
-	ImageRotoZoom* pImage2 = new ImageRotoZoom(canva, DATA_DIR "/PlanetWar/Images/FleetRed.bmp");
+	ImageRotoZoom* pImage2 = new ImageRotoZoom(canva, ge.GetResource<ImageResource_SDL>(DATA_DIR "/PlanetWar/Images/FleetRed.bmp"));
 	pImage2->SetPos(100, 10);
 	pImage2->SetZoom(0.6f);
 	pImage2->SetRotation(75.f);

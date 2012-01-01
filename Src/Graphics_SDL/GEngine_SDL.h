@@ -28,10 +28,6 @@ class GEngine_SDL : public GEngine
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs);
 
-		virtual FontResource*					CreateFontResource(uint32 crc, const char* path, uint16 size);
-		virtual ImageResource*			CreateImageResource(uint32 crc, const char* path);
-
-
 		void							SaveEvent();
 		const InputEvent&				PollEvent();
 		const InputEvent&				WaitEvent();
