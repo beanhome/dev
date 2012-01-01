@@ -28,6 +28,12 @@ void Canvas::DrawImage(const ImageResource& image, sint16 x, sint16 y, float fAn
 	GetGEngine()->DrawImage(image, GetScreenPosX() + x, GetScreenPosY() + y, fAngle, fZoom);
 }
 
+void Canvas::DrawImage(const ImageResource& image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
+{
+	GetGEngine()->DrawImage(image, GetScreenPosX() + x, GetScreenPosY() + y, sx, sy, sw, sh);
+}
+
+
 void Canvas::SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const
 {
 	GetGEngine()->SetPixel(GetScreenPosX() + x, GetScreenPosY() + y, r, g, b);

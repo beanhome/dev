@@ -6,6 +6,7 @@
 #include "Image.h"
 #include "ImageRotoZoom.h"
 #include "Canvas.h"
+#include "ImageFlipBook.h"
 
 
 int main(int argc, char *argv[])
@@ -19,19 +20,28 @@ int main(int argc, char *argv[])
 	bool bContinue = true;
 
 	ImageResource* pImageRes = ge.GetImageResource(DATA_DIR "/PlanetWar/Images/FleetBlue.png");
-	Image* pImage = new Image(ge, DATA_DIR "/PlanetWar/Images/FleetBlue.bmp");
+	
+	ImageFlipBook* pImage = new ImageFlipBook(ge, DATA_DIR "/Test/gb_walk.png", 3, 6);
 	pImage->SetPos(300, 200);
+	pImage->SetCurrent(0);
 
 	ImageRotoZoom* pImage2 = new ImageRotoZoom(canva, DATA_DIR "/PlanetWar/Images/FleetRed.bmp");
 	pImage2->SetPos(100, 10);
 	pImage2->SetZoom(0.6f);
-	pImage2->SetRotation(90.f);
+	pImage2->SetRotation(75.f);
 
 	while(bContinue)
 	{
+		ge.SaveEvent();
 		const InputEvent& oInputEvent = ge.PollEvent();
 		if (oInputEvent.IsQuit())
 			bContinue = false;
+
+		if (oInputEvent.IsKeyboard() && oInputEvent.GetKeyboardEvent() == KeyDown)
+		{
+			if (ge.GetPreviousInputEvent().IsKeyboard() == false || ge.GetPreviousInputEvent().GetKeyboardEvent() != KeyDown)
+				pImage->SetCurrent((pImage->GetCurrent()+1) % 14);
+		}
 
 		ge.Clear();
 

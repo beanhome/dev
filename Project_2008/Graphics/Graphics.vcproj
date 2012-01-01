@@ -170,6 +170,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Graphics\ImageFlipBook.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Graphics\ImageResource.cpp"
 				>
 			</File>
@@ -217,6 +221,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Graphics\Image.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Graphics\ImageFlipBook.h"
 				>
 			</File>
 			<File

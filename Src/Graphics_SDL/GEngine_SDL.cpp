@@ -17,11 +17,13 @@ GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth)
 	Init();
 
 	m_pInputEvent = new InputEvent_SDL;
+	m_pPreviousInputEvent = new InputEvent_SDL;
 }
 
 GEngine_SDL::~GEngine_SDL()
 {
 	delete m_pInputEvent;
+	delete m_pPreviousInputEvent;
 
 	Close();
 }
@@ -102,14 +104,12 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y) con
 	SDL_Rect oLoc;
 	oLoc.x = x - (sint16)image->w / 2;
 	oLoc.y = y - (sint16)image->h / 2;
-	oLoc.w = (sint16)image->w;
-	oLoc.h = (sint16)image->h;
+	oLoc.w = (uint16)image->w;
+	oLoc.h = (uint16)image->h;
 
 	/* Blit onto the screen surface */
 	if(SDL_BlitSurface(image, NULL, m_pScreen, &oLoc) < 0)
-	{
 		LOG("BlitSurface error: %s\n", SDL_GetError());
-	}
 }
 
 
@@ -130,17 +130,43 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, flo
 	SDL_Rect oLoc;
 	oLoc.x = x - (sint16)pOutput->w / 2;
 	oLoc.y = y - (sint16)pOutput->h / 2;
-	oLoc.w = (sint16)pOutput->w;
-	oLoc.h = (sint16)pOutput->h;
+	oLoc.w = (uint16)pOutput->w;
+	oLoc.h = (uint16)pOutput->h;
 
     /* Blit onto the screen surface */
     if(SDL_BlitSurface(pOutput, NULL, m_pScreen, &oLoc) < 0)
-	{
         LOG("BlitSurface error: %s\n", SDL_GetError());
-	}
 
 	SDL_FreeSurface(pOutput);
 }
+
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
+{
+	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
+
+	if (image == NULL)
+		return;
+
+	if (image->format->palette && m_pScreen->format->palette)
+		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
+
+	SDL_Rect oDestRect;
+	oDestRect.x = x - (sint16)sw / 2;
+	oDestRect.y = y - (sint16)sh / 2;
+	oDestRect.w = sw;
+	oDestRect.h = sh;
+
+	SDL_Rect oSrcRect;
+	oSrcRect.x = sx;
+	oSrcRect.y = sy;
+	oSrcRect.w = sw;
+	oSrcRect.h = sh;
+
+	/* Blit onto the screen surface */
+	if(SDL_BlitSurface(image, &oSrcRect, m_pScreen, &oDestRect) < 0)
+		LOG("BlitSurface error: %s\n", SDL_GetError());
+}
+
 
 void GEngine_SDL::SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const
 {
@@ -249,7 +275,6 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 const InputEvent& GEngine_SDL::PollEvent()
 {
 	SDL_PollEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent());
-
 	//m_pInputEvent->GetMouseMove(m_iMouseX, m_iMouseY);
 
 	return *m_pInputEvent;
@@ -259,4 +284,9 @@ const InputEvent& GEngine_SDL::WaitEvent()
 {
 	SDL_WaitEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent());
 	return *m_pInputEvent;
+}
+
+void GEngine_SDL::SaveEvent()
+{
+	*(InputEvent_SDL*)m_pPreviousInputEvent = *(InputEvent_SDL*)m_pInputEvent;
 }

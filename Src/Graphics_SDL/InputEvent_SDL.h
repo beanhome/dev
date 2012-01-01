@@ -11,6 +11,8 @@ class InputEvent_SDL : public InputEvent
 		InputEvent_SDL();
 		~InputEvent_SDL();
 
+		InputEvent_SDL& operator=(const InputEvent_SDL& src);
+
 		bool IsQuit() const;
 		bool IsMouse() const;
 		bool IsKeyboard() const;

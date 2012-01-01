@@ -27,8 +27,12 @@ class GEngine : public CanvasBase
 
 		virtual void					PurgeResource();
 
+		virtual void					SaveEvent();
 		virtual const InputEvent&		PollEvent() = 0;
 		virtual const InputEvent&		WaitEvent() = 0;
+
+		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
+		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
 
 		Font* const						GetFontResource(const char* path, uint16 size);
 		ImageResource* const			GetImageResource(const char* path);
@@ -48,7 +52,9 @@ class GEngine : public CanvasBase
 
 	protected:
 		uint16							m_iDepth;
+
 		InputEvent*						m_pInputEvent;
+		InputEvent*						m_pPreviousInputEvent;
 
 	private:
 		ResourceMap						m_aResources;

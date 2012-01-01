@@ -7,6 +7,7 @@ GEngine::GEngine(uint16 width, uint16 height, uint16 depth)
 	: CanvasBase(width, height)
 	, m_iDepth(depth)
 	, m_pInputEvent(NULL)
+	, m_pPreviousInputEvent(NULL)
 {
 }
 
@@ -97,3 +98,9 @@ const Font* const GEngine::GetFont(const char* path, uint16 size)
 {
 	return GetFontResource(path, size);	
 }
+
+void GEngine::SaveEvent()
+{
+	assert(false);
+}
+

@@ -14,6 +14,14 @@ InputEvent_SDL::~InputEvent_SDL()
 	delete m_pSDLEvent;
 }
 
+InputEvent_SDL& InputEvent_SDL::operator=(const InputEvent_SDL& src)
+{
+	*m_pSDLEvent = *(src.m_pSDLEvent);
+
+	return *this;
+}
+
+
 bool InputEvent_SDL::IsQuit() const
 {
 	return (m_pSDLEvent->type == SDL_QUIT);

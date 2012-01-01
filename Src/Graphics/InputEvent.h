@@ -100,6 +100,8 @@ class InputEvent
 		InputEvent();
 		~InputEvent();
 
+		//virtual InputEvent& operator=(const InputEvent& src) = 0;
+
 		virtual bool IsQuit() const = 0;
 		virtual bool IsMouse() const = 0;
 		virtual bool IsKeyboard() const = 0;
