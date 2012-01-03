@@ -148,6 +148,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Common\Timer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Common\Utils.cpp"
 				>
 			</File>
@@ -159,6 +163,10 @@
 			>
 			<File
 				RelativePath="..\..\Src\Common\CRC32.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Common\Timer.h"
 				>
 			</File>
 			<File
