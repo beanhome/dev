@@ -263,7 +263,7 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 const InputEvent& GEngine_SDL::PollEvent()
 {
 	SDL_PollEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent());
-	//m_pInputEvent->GetMouseMove(m_iMouseX, m_iMouseY);
+	
 
 	return *m_pInputEvent;
 }
@@ -273,6 +273,8 @@ const InputEvent& GEngine_SDL::WaitEvent()
 	SDL_WaitEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent());
 	return *m_pInputEvent;
 }
+
+
 
 void GEngine_SDL::SaveEvent()
 {

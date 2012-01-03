@@ -59,6 +59,9 @@ class CanvasBase
 
 		//virtual bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
 
+		virtual sint32					GetMouseX() const = 0;
+		virtual sint32					GetMouseY() const = 0;
+
 	protected:
 		uint16							m_iWidth;
 		uint16							m_iHeight;

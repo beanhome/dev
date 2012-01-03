@@ -8,6 +8,7 @@
 #include "Canvas.h"
 #include "ImageFlipBook.h"
 #include "ImageResource_SDL.h"
+#include "Timer.h"
 
 
 int main(int argc, char *argv[])
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
 
 	bool bContinue = true;
 
-	ImageResource* pImageRes = ge.GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(DATA_DIR "/PlanetWar/Images/FleetBlue.png"));
+	ImageResource* pImageRes = ge.GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(DATA_DIR "/PlanetWar/Images/Background.bmp"));
 	
 	ImageFlipBook* pImage = new ImageFlipBook(ge, ge.GetResource<ImageResource_SDL>(DATA_DIR "/Test/gb_walk.png"), 3, 6);
 	pImage->SetPos(300, 200);
@@ -31,11 +32,23 @@ int main(int argc, char *argv[])
 	pImage2->SetZoom(0.6f);
 	pImage2->SetRotation(75.f);
 
+	float fDelay = 0.f;
+
 	while(bContinue)
 	{
+		float fps = 1.f/(Timer::Get() - fDelay);
+		fDelay = Timer::Get();
+
 		ge.SaveEvent();
 		const InputEvent& oInputEvent = ge.PollEvent();
+		uint16 mx, my;
+		ge.GetInputEvent().GetMouseMove(mx, my);
+		ge.SetMouse(mx, my);
+
 		if (oInputEvent.IsQuit())
+			bContinue = false;
+
+		if (oInputEvent.IsKeyboard() && oInputEvent.GetKeyboardKey() == KEY_ESC)
 			bContinue = false;
 
 		if (oInputEvent.IsKeyboard() && oInputEvent.GetKeyboardEvent() == KeyDown)
@@ -45,6 +58,7 @@ int main(int argc, char *argv[])
 		}
 
 		ge.Clear();
+		ge.DrawImage(*pImageRes, 400, 400);
 
 		ge.SetPrintParameter(14, 14, FONT_PATH, 10, LeftTop, Color(255, 200, 200));
 		canva.SetPrintPos(0, 0);
@@ -54,13 +68,20 @@ int main(int argc, char *argv[])
 		ge.Print("Hello World !");
 		ge.Print("Next");
 
-		ge.DrawImage(*pImageRes, 200, 100, 0.f, 0.5f);
 
 		pImage->Draw();
 		pImage2->Draw();
 
 		canva.DrawRect(0, 0, canva.GetWidth(), canva.GetHeight(), 20, 100, 255);
 		canva.Print("Autre canva");
+
+		ge.Print(ge.GetWidth()-5, 5, FONT_PATH, 14, RightTop, 200, 200, 255, "%.1f", fps);
+		ge.Print(ge.GetWidth()-5, 20, FONT_PATH, 14, RightTop, 200, 200, 255, "%.3f", Timer::Get());
+
+		ge.DrawFillRect(ge.GetMouseX()-5, ge.GetMouseY()-5, 10, 10, 255, 50, 100);
+
+		ge.Print(ge.GetWidth()-5, 50, FONT_PATH, 14, RightTop, 200, 200, 255, "%d %d", ge.GetMouseX(), ge.GetMouseY());
+		ge.Print(ge.GetWidth()-5, 65, FONT_PATH, 14, RightTop, 200, 200, 255, "%d %d", canva.GetMouseX(), canva.GetMouseY());
 
 		ge.Flip();
 	}

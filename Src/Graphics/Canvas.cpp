@@ -69,6 +69,18 @@ void Canvas::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETe
 	GetGEngine()->PrintArgs(GetScreenPosX() + x, GetScreenPosY() + y, sFontPath, size, eAlign, r, g, b, format, oArgs);
 }
 
+sint32 Canvas::GetMouseX() const
+{
+	return GetGEngine()->GetMouseX() - GetPosX();
+}
+
+sint32 Canvas::GetMouseY() const
+{
+	return GetGEngine()->GetMouseY() - GetPosY();
+}
+
+
+
 #if 0
 bool Canvas::IsMouseOverlapping(sint16 x, sint16 y, uint16 radius)
 {

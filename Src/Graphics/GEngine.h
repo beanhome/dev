@@ -34,6 +34,10 @@ class GEngine : public CanvasBase
 		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
 		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
 
+		void							SetMouse(uint16 x, uint16 y) { m_iMouseX = x; m_iMouseY = y; }
+		sint32							GetMouseX() const { return m_iMouseX; }
+		sint32							GetMouseY() const { return m_iMouseY; }
+
 		template<typename T>
 		T* const						GetResource(const typename T::Desc& oDesc);
 
@@ -56,6 +60,9 @@ class GEngine : public CanvasBase
 
 	private:
 		ResourceMap						m_aResources;
+		uint16							m_iMouseX;
+		uint16							m_iMouseY;
+
 };
 
 template<typename T>

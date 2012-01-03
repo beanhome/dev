@@ -80,6 +80,8 @@ enum EKeyboardKey
 	KEY_DOWN,
 	KEY_LEFT,
 	
+	KEY_ESC,
+
 	KEY_F1,
 	KEY_F2,
 	KEY_F3,

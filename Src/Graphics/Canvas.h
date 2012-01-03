@@ -31,6 +31,9 @@ class Canvas : public CanvasBase
 
 		//bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
 
+		sint32							GetMouseX() const;
+		sint32							GetMouseY() const;
+
 	protected:
 		//void ConvertFrameToGraphic(sint16& x, sint16& y) const;
 		//void ConvertFrameToGraphic(sint16& x, sint16& y, uint16& xl, uint16& yl) const;
