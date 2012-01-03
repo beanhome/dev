@@ -536,38 +536,10 @@
 			Name="Ressource"
 			>
 			<File
-				RelativePath="..\..\..\img\ico\Add.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\img\ico\Close.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\img\ico\Faust.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\img\ico\Logout.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\img\ico\Parse.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\img\ico\View.ico"
+				RelativePath="..\..\..\Data\Faust\img\cancel.png"
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\..\..\img\ico\icon1.ico"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -15,13 +15,14 @@ bool FApp::OnInit()
 
 	m_sConfigPath = CONFIG_FILEPATH;
 
+	InitLog(argc, argv);	
+
 	for (int i=1 ; i<argc ; ++i)
 	{
 		if (argv[i][0] == '-')
 		{
 			switch ((char)argv[i][1])
 			{
-				case 'v':	g_bVisualOutput = true;											break;
 				case 'h':	m_sHost = wxString(argv[i+1]).mb_str(wxConvISO8859_1);			break;
 				case 'p':	m_sPort = wxString(argv[i+1]).mb_str(wxConvISO8859_1);			break;
 				case 'd':	m_sBaseName = wxString(argv[i+1]).mb_str(wxConvISO8859_1);		break;
