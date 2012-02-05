@@ -5,21 +5,58 @@
 
 #include "FEvent.h"
 
+struct EventInfo
+{
+	string sName;
+	string sPrefix;
+	string sSuffix;
+	string sEndLine;
+
+	bool bList;
+	bool bWord;
+
+	EventInfo() : sName(""), sPrefix(""), sSuffix(""), sEndLine(""), bList(false), bWord(false)
+};
+
+enum EventInfoType
+{
+	EIT_Name,
+	EIT_Ref,
+	EIT_StartDate,
+	EIT_EndDate,
+	EIT_Date,
+	EIT_Location,
+	EIT_Desc,
+	EIT_Role,
+	EIT_Tag,
+
+	EventInfoType_MAX
+};
+
 class FFileParser
 {
 	public:
-		FFileParser();
-		FFileParser(const FFileParser& src);
+		FFileParser(const char* path);
 		~FFileParser();
 
-		bool ParseName(FILE* pFile, string& sName) const;
-		bool ParseEvent(FILE* pFile, FEvent& oEvent) const;
+		bool IsEOF() const { return (m_iLine >= m_sData.size()); }
+
+		void ParseParam();
+		bool ParseName(string& sName) const;
+		bool ParseEvent(FEvent& oEvent) const;
 
 	private:
-		bool GetField(FILE* pFile, string& sName, string& sField) const;
+		bool GetField(string& sName, string& sField) const;
 
 
 	private:
+		vector<string>		m_sData;
+		uint				m_iLine;
+
+		EventInfo			m_oInfo[EventInfoType_MAX];
+
+		string				m_sNameStart, m_sNameEnd;
+		string				m_sInfoStart, m_sInfoEnd;
 };
 
 #endif

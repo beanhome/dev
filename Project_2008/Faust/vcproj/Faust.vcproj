@@ -532,14 +532,6 @@
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="Ressource"
-			>
-			<File
-				RelativePath="..\..\..\Data\Faust\img\cancel.png"
-				>
-			</File>
-		</Filter>
 	</Files>
 	<Globals>
 	</Globals>

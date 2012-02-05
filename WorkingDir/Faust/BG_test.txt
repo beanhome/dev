@@ -1,23 +1,32 @@
-[BG File Test]
-#Ref Test 1
-#Start 15-10-1978
-#End   06-05-1999
-#Location France, Paris, Jussieu
-#Location Angleterre, Londres, Whitechapel
-#Desc
-Test Dest Test Desc
-Test Dest Test Desc
-#Roles Scenario Faust
-#Tags Daemon Moulin
 
-[BG File Test 2]
-#Ref Test 1
-#Start 05-03-1998
-#End   16-11-1999
-#Location France, Paris
-#Desc
+-NameStart = "=="
+-NameEnd = "=="
+-InfoStart = "-"
+-InfoEnd = ":"
+
+
+[[BG File Test]]
+<!--Ref: Test 1 -->
+Start: 15-10-1978
+End:   06-05-1999
+Location:
+* France, Paris, Jussieu
+* Angleterre, Londres, Whitechapel
+-Desc:
 Test Dest Test Desc
 Test Dest Test Desc
-#Roles Scenario Faust
-#Tags Daemon Moulin Hello
+-Roles: Scenario Faust
+-Tags: Daemon Moulin
+
+
+[[BG File Test 2]]
+-Ref: Test 1
+-Date: 05-03-1998 16-11-1999
+-Location: France, Paris
+
+Test Dest Test Desc
+Test Dest Test Desc
+
+-Roles: Scenario Faust
+-Tags: Daemon Moulin Hello
 

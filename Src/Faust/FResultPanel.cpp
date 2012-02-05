@@ -86,16 +86,15 @@ bool FResultPanel::ParseFile(const wxString& filename)
 {
 	Freeze();
 
-	FILE* pFile = NULL;
-	fopen_s(&pFile, filename, "rt");
-	if (pFile == NULL)
-		return false;
-
-	FFileParser oParser;
+	FFileParser oParser(filename);
 	string sName;
 
-	while (oParser.ParseName(pFile, sName))
+	oParser.ParseParam();
+
+	while (oParser.IsEOF())
 	{
+		oParser.ParseName(sName);
+
 		FEvent* pEvent = NULL;
 
 		PGresult* pResult;
@@ -110,7 +109,7 @@ bool FResultPanel::ParseFile(const wxString& filename)
 			pEvent->SetName(sName.c_str());
 		}
 
-		oParser.ParseEvent(pFile, *pEvent);
+		oParser.ParseEvent(*pEvent);
 
 		FResultEntry* pEntry = new FResultEntry(m_pResultPanel, pEvent);
 		m_pResultSizer->Add(pEntry, 0, wxEXPAND, 0);
