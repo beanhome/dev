@@ -11,9 +11,16 @@
 #include "Timer.h"
 
 
+#include "IBPlanner.h"
+
+
 int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
+
+	IBPlanner oPlanner;
+
+
 
 	GEngine_SDL ge(1024, 748, 32);
 	Canvas canva(ge, 100, 300, 300, 100);

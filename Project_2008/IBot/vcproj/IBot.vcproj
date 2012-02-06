@@ -173,6 +173,54 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\Src\IBot\IBAction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBActionDef.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBActionDef_BoolToBool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBActionLibrary.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFact.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDataDef.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef_Bool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef_False.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef_True.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactLibrary.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBPlanner.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Src\IBot\Test.cpp"
 				>
 			</File>
@@ -182,6 +230,54 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBAction.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBActionDef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBActionDef_BoolToBool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBActionLibrary.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFact.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDataDef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef_Bool.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef_False.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactDef_True.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBFactLibrary.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\IBPlanner.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
