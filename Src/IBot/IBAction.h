@@ -2,8 +2,8 @@
 #define __IBACTION_H__
 
 #include "Utils.h"
+#include "IBFact.h"
 
-class IBFact;
 class IBActionDef;
 
 class IBAction
@@ -19,8 +19,8 @@ class IBAction
 	private:
 		IBActionDef*			m_pDef;
 		
-		set<IBFact*>			m_aPreCond;
-		set<IBFact*>			m_aPostCond;
+		FactSet					m_aPreCond;
+		FactSet					m_aPostCond;
 };
 
 #endif

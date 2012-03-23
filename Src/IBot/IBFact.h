@@ -11,13 +11,14 @@ class IBFact
 		IBFact();
 		virtual ~IBFact();
 
-		bool				IsTrue() { return Test() == IBF_OK; }
+		virtual bool		IsTrue() = 0;
 
-	protected:
-		IBF_Result			Test() { return m_pDef->Test(); }
+	public:
+		virtual IBF_Result	Test() = 0;
 
 	private:
-		IBFactDef*			m_pDef;
 };
+
+typedef set<IBFact*>	FactSet;
 
 #endif

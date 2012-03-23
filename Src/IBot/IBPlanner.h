@@ -4,9 +4,9 @@
 #include "Utils.h"
 #include "IBFactLibrary.h"
 #include "IBActionLibrary.h"
+#include "IBFact.h"
 
 class IBFactDef;
-class IBFact;
 
 class IBPlanner
 {
@@ -14,10 +14,14 @@ class IBPlanner
 		IBPlanner();
 		virtual ~IBPlanner();
 
+	public:
 		void					InitFactLibrary();
 		void					InitActionLibrary();
 
-		void					AddGoal(IBFactDef* def);
+		void					AddGoal(const string& name);
+		void					AddGoal(const string& name, void* pUserData);
+		void					AddGoal(const string& name, void* pUserData1, void* pUserData2);
+		void					AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
 
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 
@@ -29,8 +33,7 @@ class IBPlanner
 
 		set<IBFactDef*>			m_aGoalsDef;
 		
-		set<IBFact*>			m_aGoals;
-		
+		FactSet					m_aGoals;
 };
 
 #endif

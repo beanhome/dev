@@ -3,9 +3,9 @@
 
 #include "Utils.h"
 
-#include "IBFactDataDef.h"
+#include "IBFactDef1.h"
 
-class IBFactDef_Bool : public IBFactDataDef
+class IBFactDef_Bool : public IBFactDef1
 {
 	public:
 		IBFactDef_Bool();

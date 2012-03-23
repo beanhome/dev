@@ -12,6 +12,9 @@
 
 
 #include "IBPlanner.h"
+#include "IBWorld.h"
+
+IBWorld g_oWorld;
 
 
 int main(int argc, char *argv[])
@@ -20,6 +23,11 @@ int main(int argc, char *argv[])
 
 	IBPlanner oPlanner;
 
+	g_oWorld.Init();
+
+	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCube1(), g_oWorld.GetCube2());
+
+	oPlanner.Step();
 
 
 	GEngine_SDL ge(1024, 748, 32);
@@ -39,6 +47,7 @@ int main(int argc, char *argv[])
 	pImage2->SetZoom(0.6f);
 	pImage2->SetRotation(75.f);
 
+
 	float fDelay = 0.f;
 
 	while(bContinue)
@@ -46,22 +55,26 @@ int main(int argc, char *argv[])
 		float fps = 1.f/(Timer::Get() - fDelay);
 		fDelay = Timer::Get();
 
-		ge.SaveEvent();
-		const InputEvent& oInputEvent = ge.PollEvent();
-		uint16 mx, my;
-		ge.GetInputEvent().GetMouseMove(mx, my);
-		ge.SetMouse(mx, my);
-
-		if (oInputEvent.IsQuit())
-			bContinue = false;
-
-		if (oInputEvent.IsKeyboard() && oInputEvent.GetKeyboardKey() == KEY_ESC)
-			bContinue = false;
-
-		if (oInputEvent.IsKeyboard() && oInputEvent.GetKeyboardEvent() == KeyDown)
+		while (true)
 		{
-			if (ge.GetPreviousInputEvent().IsKeyboard() == false || ge.GetPreviousInputEvent().GetKeyboardEvent() != KeyDown)
-				pImage->SetCurrent((pImage->GetCurrent()+1) % 14);
+			ge.SaveEvent();
+			if (!ge.PollEvent())
+				break;
+			uint16 mx, my;
+			ge.GetInputEvent().GetMouseMove(mx, my);
+			ge.SetMouse(mx, my);
+
+			if (ge.GetInputEvent().IsQuit())
+				bContinue = false;
+
+			if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
+				bContinue = false;
+
+			if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardEvent() == KeyDown)
+			{
+				if (ge.GetPreviousInputEvent().IsKeyboard() == false || ge.GetPreviousInputEvent().GetKeyboardEvent() != KeyDown)
+					pImage->SetCurrent((pImage->GetCurrent()+1) % 14);
+			}
 		}
 
 		ge.Clear();

@@ -3,7 +3,6 @@
 
 IBFact::IBFact()
 {
-
 }
 
 IBFact::~IBFact()
