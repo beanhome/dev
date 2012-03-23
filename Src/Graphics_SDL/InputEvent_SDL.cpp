@@ -90,11 +90,18 @@ EMouseEvent InputEvent_SDL::GetMouseEvent() const
 
 bool InputEvent_SDL::GetMouseMove(uint16& x, uint16& y) const
 {
+	/*
 	if (m_pSDLEvent->type != SDL_MOUSEMOTION)
 		return false;
 
 	x = m_pSDLEvent->motion.x;
 	y = m_pSDLEvent->motion.y;
+	*/
+
+	int get_fX, get_fY;
+	uint8 btnstate = SDL_GetMouseState( &get_fX, &get_fY );
+	x = get_fX;
+	y = get_fY;
 
 	return true;
 }

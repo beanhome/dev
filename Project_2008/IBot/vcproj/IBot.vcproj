@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -168,116 +168,210 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Sources"
+			Name="Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\Src\IBot\IBAction.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBActionDef.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBActionDef_BoolToBool.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBActionLibrary.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFact.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDataDef.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef_Bool.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef_False.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef_True.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactLibrary.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\Src\IBot\IBPlanner.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\Test.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Headers"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBAction.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBActionDef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBActionDef_BoolToBool.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBActionLibrary.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFact.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDataDef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef_Bool.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef_False.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactDef_True.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\IBFactLibrary.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\Src\IBot\IBPlanner.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\Src\IBot\Test.cpp"
+				>
+			</File>
+			<Filter
+				Name="Facts"
+				>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact0.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact0.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact1.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact1.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFact2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef0.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef0.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef1.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef1.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactLibrary.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Fact\IBFactLibrary.h"
+					>
+				</File>
+				<Filter
+					Name="Def"
+					>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_Bool.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_Bool.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_False.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_False.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_True.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_True.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Actions"
+				>
+				<File
+					RelativePath="..\..\..\Src\IBot\Action\IBAction.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Action\IBAction.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Action\IBActionDef.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Action\IBActionDef.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Action\IBActionLibrary.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Action\IBActionLibrary.h"
+					>
+				</File>
+				<Filter
+					Name="Def"
+					>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="World"
+				>
+				<File
+					RelativePath="..\..\..\Src\IBot\World\IBCube.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\World\IBCube.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\World\IBTable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\World\IBTable.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\World\IBWorld.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\World\IBWorld.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

@@ -1,6 +1,6 @@
 #include "IBFactDef_IsOnTable.h"
-#include "IBCube.h"
-#include "IBWorld.h"
+#include "World/IBCube.h"
+#include "World/IBWorld.h"
 
 extern IBWorld g_oWorld;
 

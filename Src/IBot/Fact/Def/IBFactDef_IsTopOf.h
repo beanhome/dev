@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-#include "IBFactDef2.h"
+#include "Fact/IBFactDef2.h"
 
 class IBFactDef_IsTopOf : public IBFactDef2
 {

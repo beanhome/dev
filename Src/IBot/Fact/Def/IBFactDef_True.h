@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-#include "IBFactDef0.h"
+#include "Fact/IBFactDef0.h"
 
 class IBFactDef_True : public IBFactDef0
 {

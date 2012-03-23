@@ -1,13 +1,13 @@
 #include "IBPlanner.h"
 
-#include "IBFact.h"
-#include "IBFactDef_True.h"
-#include "IBFactDef_False.h"
-#include "IBFactDef_Bool.h"
-#include "IBFactDef_IsOnTable.h"
-#include "IBFactDef_IsTopOf.h"
+#include "Fact/IBFact.h"
+#include "Fact/Def/IBFactDef_True.h"
+#include "Fact/Def/IBFactDef_False.h"
+#include "Fact/Def/IBFactDef_Bool.h"
+#include "Fact/Def/IBFactDef_IsOnTable.h"
+#include "Fact/Def/IBFactDef_IsTopOf.h"
 
-#include "IBActionDef_BoolToBool.h"
+#include "Action/Def/IBActionDef_BoolToBool.h"
 
 
 IBPlanner::IBPlanner()

@@ -13,6 +13,7 @@
 
 GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth)
 	: GEngine(width, height, depth)
+	, m_pCursor(NULL)
 {
 	Init();
 
@@ -25,8 +26,114 @@ GEngine_SDL::~GEngine_SDL()
 	delete m_pInputEvent;
 	delete m_pPreviousInputEvent;
 
+	if (m_pCursor != NULL)
+		SDL_FreeCursor(m_pCursor);
+
 	Close();
 }
+
+#if 0
+/* XPM */
+static const char *arrow[] = {
+	/* width height num_colors chars_per_pixel */
+	"    32    32        3            1",
+	/* colors */
+	"X c #000000",
+	". c #ffffff",
+	"  c None",
+	/* pixels */
+	"X                               ",
+	"XX                              ",
+	"X.X                             ",
+	"X..X                            ",
+	"X...X                           ",
+	"X....X                          ",
+	"X.....X                         ",
+	"X......X                        ",
+	"X.......X                       ",
+	"X........X                      ",
+	"X.....XXXXX                     ",
+	"X..X..X                         ",
+	"X.X X..X                        ",
+	"XX  X..X                        ",
+	"X    X..X                       ",
+	"     X..X                       ",
+	"      X..X                      ",
+	"      X..X                      ",
+	"       XX                       ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"                                ",
+	"0,0"
+};
+
+static SDL_Cursor *init_system_cursor(const char *image[])
+{
+	int i, row, col;
+	Uint8 data[4*32];
+	Uint8 mask[4*32];
+	int hot_x, hot_y;
+
+	i = -1;
+	for ( row=0; row<32; ++row ) {
+		for ( col=0; col<32; ++col ) {
+			if ( col % 8 ) {
+				data[i] <<= 1;
+				mask[i] <<= 1;
+			} else {
+				++i;
+				data[i] = mask[i] = 0;
+			}
+			switch (image[4+row][col]) {
+		case 'X':
+			data[i] |= 0x01;
+			mask[i] |= 0x01;
+			break;
+		case '.':
+			mask[i] |= 0x01;
+			break;
+		case ' ':
+			break;
+			}
+		}
+	}
+	sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
+	return SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y);
+}
+#endif
+
+uint8 data[] = {
+	0xFF,
+	0x81,
+	0x81,
+	0x81,
+	0x81,
+	0x81,
+	0x81,
+	0xFF
+};
+
+uint8 mask[] = {
+	0xFF,
+	0xFF,
+	0xFF,
+	0xFF,
+	0xFF,
+	0xFF,
+	0xFF,
+	0xFF,
+};
+
 
 uint GEngine_SDL::Init()
 {
@@ -53,6 +160,11 @@ uint GEngine_SDL::Init()
 		LOG("Erreur d'initialisation de TTF_Init : %s\n", TTF_GetError());
 		return 1;
 	}
+
+	m_pCursor = SDL_CreateCursor(data, mask, 8, 8, 4, 4);
+	SDL_SetCursor(m_pCursor);
+	//SDL_SetCursor(init_system_cursor(arrow));
+
 	return 0;
 }
 
@@ -260,12 +372,9 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 
 
 
-const InputEvent& GEngine_SDL::PollEvent()
+bool GEngine_SDL::PollEvent()
 {
-	SDL_PollEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent());
-	
-
-	return *m_pInputEvent;
+	return (SDL_PollEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent()) != 0);
 }
 
 const InputEvent& GEngine_SDL::WaitEvent()

@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <list>
 
 #include <wtypes.h>
 #include <basetsd.h>
@@ -33,6 +34,7 @@ using std::map;
 using std::multimap;
 using std::set;
 using std::pair;
+using std::list;
 
 void InitLog(int argc, char *argv[]);
 

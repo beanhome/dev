@@ -28,7 +28,7 @@ class GEngine : public CanvasBase
 		virtual void					PurgeResource();
 
 		virtual void					SaveEvent();
-		virtual const InputEvent&		PollEvent() = 0;
+		virtual bool					PollEvent() = 0;
 		virtual const InputEvent&		WaitEvent() = 0;
 
 		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }

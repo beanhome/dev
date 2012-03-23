@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-#include "IBFactDef1.h"
+#include "Fact/IBFactDef1.h"
 
 class IBFactDef_IsOnTable : public IBFactDef1
 {

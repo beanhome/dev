@@ -5,6 +5,7 @@
 #include "GEngine.h"
 
 struct SDL_Surface;
+struct SDL_Cursor;
 
 class ImageResource;
 
@@ -29,7 +30,7 @@ class GEngine_SDL : public GEngine
 		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs);
 
 		void							SaveEvent();
-		const InputEvent&				PollEvent();
+		bool							PollEvent();
 		const InputEvent&				WaitEvent();
 
 	protected:
@@ -38,6 +39,7 @@ class GEngine_SDL : public GEngine
 
 	private:
 		SDL_Surface*					m_pScreen;
+		SDL_Cursor*						m_pCursor;
 };
 
 #endif // __GENGINE_SDL_H__

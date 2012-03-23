@@ -12,7 +12,7 @@
 
 
 #include "IBPlanner.h"
-#include "IBWorld.h"
+#include "World/IBWorld.h"
 
 IBWorld g_oWorld;
 

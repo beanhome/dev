@@ -2,9 +2,9 @@
 #define __IBPLANNER_H__
 
 #include "Utils.h"
-#include "IBFactLibrary.h"
-#include "IBActionLibrary.h"
-#include "IBFact.h"
+#include "Fact/IBFactLibrary.h"
+#include "Fact/IBFact.h"
+#include "Action/IBActionLibrary.h"
 
 class IBFactDef;
 

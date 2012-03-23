@@ -2,7 +2,7 @@
 #define __IBACTION_H__
 
 #include "Utils.h"
-#include "IBFact.h"
+#include "Fact/IBFact.h"
 
 class IBActionDef;
 

@@ -2,7 +2,7 @@
 #define __IBACTIONDEF_BOOLTOBOOL_H__
 
 #include "Utils.h"
-#include "IBActionDef.h"
+#include "Action/IBActionDef.h"
 
 class IBActionDef_BoolToBool : public IBActionDef
 {
