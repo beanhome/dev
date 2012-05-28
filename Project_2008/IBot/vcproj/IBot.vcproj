@@ -196,59 +196,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact0.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact0.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact1.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact1.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact2.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact2.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef0.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef0.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef1.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef1.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef2.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef2.h"
 					>
 				</File>
 				<File
@@ -276,6 +228,14 @@
 					</File>
 					<File
 						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_False.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.h"
 						>
 					</File>
 					<File
@@ -340,6 +300,30 @@
 					</File>
 					<File
 						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.h"
 						>
 					</File>
 				</Filter>

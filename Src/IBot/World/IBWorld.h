@@ -13,9 +13,16 @@ class IBWorld
 
 		void Init();
 
-		IBCube* GetCube1() { return &m_oCube1; }
-		IBCube* GetCube2() { return &m_oCube2; }
-		IBCube* GetCube3() { return &m_oCube3; }
+		IBCube* GetCubeA() { return &m_oCubes[0]; }
+		IBCube* GetCubeB() { return &m_oCubes[1]; }
+		IBCube* GetCubeC() { return &m_oCubes[2]; }
+
+		const IBCube* GetCubeA() const { return &m_oCubes[0]; }
+		const IBCube* GetCubeB() const { return &m_oCubes[1]; }
+		const IBCube* GetCubeC() const { return &m_oCubes[2]; }
+
+		const vector<IBCube>& GetCubes() const { return m_oCubes; }
+		vector<IBCube>& GetCubes() { return m_oCubes; }
 
 		void MoveCubeFromTableToCube(IBCube* pCube, IBCube* pDestCube);
 		void MoveCubeFromCubeToCube(IBCube* pCube, IBCube* pOrigCube, IBCube* pDestCube);
@@ -24,11 +31,12 @@ class IBWorld
 		bool IsCubeOnTable(IBCube* pCube);
 		bool IsCubeOnCube(IBCube* pCube1, IBCube* pCube2);
 
+		void Print() const;
+
 	private:
-		IBTable		m_oTable;
-		IBCube		m_oCube1;
-		IBCube		m_oCube2;
-		IBCube		m_oCube3;
+		IBTable			m_oTable;
+
+		vector<IBCube>	m_oCubes;
 };
 
 #endif

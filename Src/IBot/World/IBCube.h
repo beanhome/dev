@@ -7,15 +7,22 @@ class IBCube
 {
 	public:
 		IBCube();
+		IBCube(const string& name);
 		virtual ~IBCube();
+
+		const string& GetName() const { return m_sName; }
+		void SetName(const string& name) { m_sName = name; }
 
 		void PutCube(IBCube* pCube);
 		void TakeCube();
 		
-		bool IsFree() { return (m_pTopCube == NULL); }
-		bool HasCube(IBCube* pCube) { return (m_pTopCube == pCube); }
+		bool IsFree() const { return (m_pTopCube == NULL); }
+		bool HasCube(IBCube* pCube) const { return (m_pTopCube == pCube); }
+
+		void  Print() const;
 
 	private:
+		string  m_sName;
 		IBCube* m_pTopCube;
 };
 

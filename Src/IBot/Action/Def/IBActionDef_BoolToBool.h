@@ -7,7 +7,7 @@
 class IBActionDef_BoolToBool : public IBActionDef
 {
 	public:
-		IBActionDef_BoolToBool(IBPlanner* pPlanner);
+		IBActionDef_BoolToBool(const string& name, IBPlanner* pPlanner);
 		virtual ~IBActionDef_BoolToBool();
 
 		virtual void		Define();

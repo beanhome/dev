@@ -3,15 +3,15 @@
 
 #include "Utils.h"
 
-#include "Fact/IBFactDef1.h"
+#include "Fact/IBFactDef.h"
 
-class IBFactDef_Bool : public IBFactDef1
+class IBFactDef_Bool : public IBFactDef
 {
 	public:
-		IBFactDef_Bool();
+		IBFactDef_Bool(const string& name);
 		virtual ~IBFactDef_Bool();
 
-		IBF_Result			Test(void* pUserData) { return (*((bool*)pUserData) ? IBF_OK : IBF_FAIL); } 
+		IBF_Result			Test(const vector<void*>& aUserData) { assert(aUserData.size() == 1); return (*((bool*)aUserData[0]) ? IBF_OK : IBF_FAIL); } 
 
 	private:
 };

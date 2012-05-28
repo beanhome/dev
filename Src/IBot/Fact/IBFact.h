@@ -5,18 +5,47 @@
 
 #include "IBFactDef.h"
 
+class IBAction;
+class IBPlanner;
+
 class IBFact
 {
 	public:
-		IBFact();
-		virtual ~IBFact();
+		IBFact(IBFactDef* pDef, vector<void*> aUserData);
+		~IBFact();
 
-		virtual bool		IsTrue() = 0;
+		IBFactDef*					GetFactDef() const { return m_pDef; }
+
+		void						SetCauseAction(IBAction* pAction) { m_pCauseAction = pAction; }
+		IBAction*					GetCauseAction() const { return m_pCauseAction; }
+		bool						HasCauseAction() const { return (m_pCauseAction != NULL); }
+		void						RemoveCauseAction(const IBAction* pAction) { if (m_pCauseAction == pAction) m_pCauseAction = NULL; }
+
+		void						SetEffectAction(IBAction* pAction) { m_pEffectAction = pAction; }
+		IBAction*					GetEffectAction() const { return m_pEffectAction; }
+		bool						HasEffectAction() const { return (m_pEffectAction != NULL); }
+
+		const vector<void*>&		GetUserData() const { return m_aUserData; }
+		const vector<void*>&		GetVariables() const { return m_aUserData; }
+		void*						GetVariable(uint i) const { assert(i<m_aUserData.size()); return m_aUserData[i]; }
+		//void*						GetVariable(uint i) { assert(i<m_aUserData.size()); return m_aUserData[i]; }
+		void						SetVariable(uint i, void* pVar) { assert(i<m_aUserData.size()); m_aUserData[i] = pVar; }
+
+		bool						IsTrue() const { return Test() == IBF_OK; }
+
+		bool						Resolve(IBPlanner* pPlanner);
+		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
+
+		void						Print(int tab) const;
 
 	public:
-		virtual IBF_Result	Test() = 0;
+		IBF_Result					Test() const { return m_pDef->Test(m_aUserData); }
 
-	private:
+	protected:
+		IBFactDef*					m_pDef;
+		vector<void*>				m_aUserData;
+		IBAction*					m_pCauseAction;
+		IBAction*					m_pEffectAction;
 };
 
 typedef set<IBFact*>	FactSet;

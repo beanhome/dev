@@ -3,15 +3,19 @@
 
 #include "Utils.h"
 
-#include "Fact/IBFactDef2.h"
+#include "Fact/IBFactDef.h"
 
-class IBFactDef_IsTopOf : public IBFactDef2
+class IBFactDef_IsTopOf : public IBFactDef
 {
 	public:
-		IBFactDef_IsTopOf();
+		IBFactDef_IsTopOf(const string& name);
 		virtual ~IBFactDef_IsTopOf();
 
-		IBF_Result			Test(void* pUserData1, void* pUserData2);
+		IBF_Result			Test(const vector<void*>& aUserData);
+
+		virtual void		ResolveVariable(vector<void*>& aUserData);
+	
+		virtual void		Print(const vector<void*>& aUserData, int tab) const;
 
 	private:
 };

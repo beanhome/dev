@@ -15,6 +15,8 @@ class IBTable
 		void TakeCube(IBCube* pCube);
 		bool HasCube(IBCube* pCube);
 
+		void Print() const;
+
 	private:
 		set<IBCube*> m_aCube;
 };

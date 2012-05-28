@@ -3,20 +3,43 @@
 
 IBWorld::IBWorld()
 {
+	m_oCubes.resize(3);
 
+	GetCubeA()->SetName("Cube_A");
+	GetCubeB()->SetName("Cube_B");
+	GetCubeC()->SetName("Cube_C");
 }
 
 IBWorld::~IBWorld()
 {
 }
 
+#define WORLD_CONFIG 1
+
 void IBWorld::Init()
 {
-	m_oTable.PutCube(&m_oCube1);
-	m_oTable.PutCube(&m_oCube2);
-	m_oTable.PutCube(&m_oCube3);
-	//m_oCube2.PutCube(&m_oCube1);
+#if WORLD_CONFIG == 0
+	// Config A
+	m_oTable.PutCube(GetCubeA());
+	m_oTable.PutCube(GetCubeB());
+	m_oTable.PutCube(GetCubeC());
+#elif WORLD_CONFIG == 1
+	// ConfigB
+	m_oTable.PutCube(GetCubeA());
+	m_oTable.PutCube(GetCubeB());
+	GetCubeB()->PutCube(GetCubeC());
+#endif
 }
+
+void IBWorld::Print() const
+{
+	m_oTable.Print();
+
+	GetCubeA()->Print();
+	GetCubeB()->Print();
+	GetCubeC()->Print();
+}
+
 
 
 void IBWorld::MoveCubeFromTableToCube(IBCube* pCube, IBCube* pDestCube)

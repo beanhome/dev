@@ -1,4 +1,5 @@
 #include "IBTable.h"
+#include "IBCube.h"
 
 
 IBTable::IBTable()
@@ -25,4 +26,14 @@ void IBTable::TakeCube(IBCube* pCube)
 bool IBTable::HasCube(IBCube* pCube)
 {
 	return (m_aCube.find(pCube) != m_aCube.end());
+}
+
+void IBTable::Print() const
+{
+	LOG("Table : ");
+	for (set<IBCube*>::const_iterator it = m_aCube.begin() ; it != m_aCube.end() ; ++it)
+	{
+		LOG("%s ", (*it)->GetName().c_str());
+	}
+	LOG("\n");
 }

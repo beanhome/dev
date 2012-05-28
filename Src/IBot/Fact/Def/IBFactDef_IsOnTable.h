@@ -3,15 +3,19 @@
 
 #include "Utils.h"
 
-#include "Fact/IBFactDef1.h"
+#include "Fact/IBFactDef.h"
 
-class IBFactDef_IsOnTable : public IBFactDef1
+class IBFactDef_IsOnTable : public IBFactDef
 {
 	public:
-		IBFactDef_IsOnTable();
+		IBFactDef_IsOnTable(const string& name);
 		virtual ~IBFactDef_IsOnTable();
 
-		IBF_Result	Test(void* pUserData2);
+		IBF_Result			Test(const vector<void*>& aUserData);
+
+		virtual void		ResolveVariable(vector<void*>& aUserData);
+
+		virtual void		Print(const vector<void*>& aUserData, int tab) const;
 
 	private:
 };

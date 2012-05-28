@@ -26,6 +26,11 @@ class IBPlanner
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 
 		int						Step();
+		void					Print() const;
+
+
+		int						FindActionToResolve(IBFact* pFact);
+
 
 	private:
 		IBFactLibrary			m_oFactLibrary;

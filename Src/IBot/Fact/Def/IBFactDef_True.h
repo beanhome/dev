@@ -3,15 +3,15 @@
 
 #include "Utils.h"
 
-#include "Fact/IBFactDef0.h"
+#include "Fact/IBFactDef.h"
 
-class IBFactDef_True : public IBFactDef0
+class IBFactDef_True : public IBFactDef
 {
 	public:
-		IBFactDef_True();
+		IBFactDef_True(const string& name);
 		virtual ~IBFactDef_True();
 
-		IBF_Result			Test() { return IBF_OK; }
+		IBF_Result			Test(const vector<void*>& aUserData) { return IBF_OK; }
 };
 
 #endif

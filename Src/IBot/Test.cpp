@@ -25,10 +25,21 @@ int main(int argc, char *argv[])
 
 	g_oWorld.Init();
 
-	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCube1(), g_oWorld.GetCube2());
+	g_oWorld.Print();
 
-	oPlanner.Step();
+	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeA(), g_oWorld.GetCubeB());
+	//oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeB(), g_oWorld.GetCubeC());
 
+	int res = 0;
+	for (uint i=0 ; i<10 && res==0 ; ++i)
+	{
+
+		LOG("\n");
+		LOG("****  %d  ****\n", i);
+		res = oPlanner.Step();
+	}
+
+#if 0
 
 	GEngine_SDL ge(1024, 748, 32);
 	Canvas canva(ge, 100, 300, 300, 100);
@@ -109,6 +120,7 @@ int main(int argc, char *argv[])
 	delete pImage;
 	delete pImage2;
 
+#endif
     return 0;
 }
 
