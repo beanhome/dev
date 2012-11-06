@@ -90,8 +90,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -353,6 +353,18 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Src\IBot\World\IBWorld.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Graph"
+				>
+				<File
+					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerGraph.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerGraph.h"
 					>
 				</File>
 			</Filter>

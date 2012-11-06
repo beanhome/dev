@@ -13,6 +13,7 @@
 
 #include "IBPlanner.h"
 #include "World/IBWorld.h"
+#include "Graph/IBPlannerGraph.h"
 
 IBWorld g_oWorld;
 
@@ -22,6 +23,13 @@ int main(int argc, char *argv[])
 	InitLog(argc, argv);
 
 	IBPlanner oPlanner;
+	IBPlannerGraph oPlannerGraph;
+
+	GEngine_SDL ge(1280, 748, 32);
+	Canvas world_canva(ge, 0, 0, 1280, 128);
+	Canvas graph_canva(ge, 0, 128, 1280, 620);
+	world_canva.SetPrintFont(FONT_PATH, 14);
+	graph_canva.SetPrintFont(FONT_PATH, 14);
 
 	g_oWorld.Init();
 
@@ -30,13 +38,40 @@ int main(int argc, char *argv[])
 	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeA(), g_oWorld.GetCubeB());
 	//oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeB(), g_oWorld.GetCubeC());
 
+	bool bQuit = false;
+
 	int res = 0;
-	for (uint i=0 ; i<10 && res==0 ; ++i)
+	for (uint i=0 ; i<10 && res==0 && !bQuit; ++i)
 	{
+		ge.Clear();
 
 		LOG("\n");
 		LOG("****  %d  ****\n", i);
 		res = oPlanner.Step();
+
+		oPlanner.Print();
+
+		oPlannerGraph.DrawWorld(oPlanner, world_canva);
+		oPlannerGraph.DrawGraph(oPlanner, graph_canva);
+	
+		ge.Flip();
+
+		float fTime = Timer::Get();
+		while  (res == 1 || Timer::Get() < fTime + 1.f)
+		{
+			ge.SaveEvent();
+			if (ge.PollEvent())
+			{
+				if (ge.GetInputEvent().IsQuit())
+					bQuit = true;
+
+				if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
+					bQuit = true;
+
+				if (ge.GetInputEvent().IsKeyboard())
+					break;
+			}
+		}
 	}
 
 #if 0

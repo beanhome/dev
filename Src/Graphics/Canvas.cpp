@@ -13,6 +13,15 @@ Canvas::Canvas(CanvasBase& oParent, sint16 x, sint16 y, uint16 w, uint16 h)
 
 }
 
+Canvas::Canvas(CanvasBase& oParent)
+	: CanvasBase(oParent.GetWidth(), oParent.GetHeight())
+	, m_oParent(oParent)
+	, m_iPosX(0)
+	, m_iPosY(0)
+{
+
+}
+
 Canvas::~Canvas()
 {
 

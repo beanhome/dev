@@ -43,7 +43,7 @@ class CanvasBase
 		void 							DrawFillCircle(sint16 x, sint16 y, sint16 radius, const Color& oColor) const { DrawFillCircle(x, y, radius, oColor.r, oColor.g, oColor.b); }
 
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const = 0;
-		void 							DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, const Color& oColor) const { DrawLine(x1, x2, y1, y2, oColor.r, oColor.g, oColor.b); }
+		void 							DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, const Color& oColor) const { DrawLine(x1, y1, x2, y2, oColor.r, oColor.g, oColor.b); }
 
 		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) = 0;
 		void 							Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... );
@@ -54,7 +54,9 @@ class CanvasBase
 		void 							SetPrintPos(sint16 x, sint16 y);
 		void 							SetPrintFont(const char* sFontPath, uint size = 0);
 		void 							SetPrintSize(uint size);
-						
+
+		const char*						GetPrintFont() const;
+
 		void 							Print(const char* format, ...);
 
 		//virtual bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);

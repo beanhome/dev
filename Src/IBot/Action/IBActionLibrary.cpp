@@ -21,13 +21,21 @@ IBActionLibrary::~IBActionLibrary()
 
 void IBActionLibrary::RegisterActionDef(const string& name, IBActionDef* pActionDef)
 {
+	const char* prefix = "IBActionDef_";
+	const uint len = strlen(prefix);
+	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
+
 	pActionDef->Define();
-	m_oMap.insert(ActionDefPair(name, pActionDef));
+	m_oMap.insert(ActionDefPair(name.c_str()+offset, pActionDef));
 }
 
 IBActionDef* IBActionLibrary::GetActionDef(const string& name)
 {
-	ActionDefMap::iterator it = m_oMap.find(name);
+	const char* prefix = "IBActionDef_";
+	const uint len = strlen(prefix);
+	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
+
+	ActionDefMap::iterator it = m_oMap.find(name.c_str()+offset);
 	return (it != m_oMap.end() ? it->second : NULL);
 }
 

@@ -74,6 +74,11 @@ void CanvasBase::SetPrintFont(const char* sFontPath, uint size)
 		m_oPrintParam.size = size;
 }
 
+const char* CanvasBase::GetPrintFont() const
+{
+	return m_oPrintParam.sFontPath;
+}
+
 void CanvasBase::SetPrintSize(uint size)
 {
 	m_oPrintParam.size = size;

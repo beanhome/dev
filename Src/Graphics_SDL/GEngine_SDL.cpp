@@ -161,8 +161,8 @@ uint GEngine_SDL::Init()
 		return 1;
 	}
 
-	m_pCursor = SDL_CreateCursor(data, mask, 8, 8, 4, 4);
-	SDL_SetCursor(m_pCursor);
+	//m_pCursor = SDL_CreateCursor(data, mask, 8, 8, 4, 4);
+	//SDL_SetCursor(m_pCursor);
 	//SDL_SetCursor(init_system_cursor(arrow));
 
 	return 0;

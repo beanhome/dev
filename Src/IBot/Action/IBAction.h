@@ -7,6 +7,7 @@
 
 class IBActionDef;
 struct FactCondDef;
+class IBPlannerGraph;
 
 class IBAction
 {
@@ -17,10 +18,16 @@ class IBAction
 		typedef map<string, void*> VarMap;
 		typedef pair<string, void*> VarPair;
 
+		friend class IBPlannerGraph;
+
 	public:
 		const VarMap&			GetVariables() const { return m_aVariables; }
 		void*					FindVariables(const string& name) const;
 		void					SetVariable(const string& name, void* val);
+
+		const IBActionDef*		GetDef() const { return m_pDef; }
+
+		const vector<IBFact*>&	GetPreCond() const { return m_aPreCond; }
 
 		bool					Test();
 
@@ -29,6 +36,8 @@ class IBAction
 		void					AddPostCond(uint i, IBFact* pPostCond);
 		void					AddPreCond(uint i, IBFact* pPreCond);
 
+		const FactCondDef&		GetPostConfDefFromFact(IBFact* pPostCond) const;
+		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;
 
 		void					ResolveVariableName(uint i, IBFact* pPreCond);
 		void					AffectPreCondVariable(const string& name, void* data);
@@ -40,8 +49,9 @@ class IBAction
 
 		void					Print(int tab) const;
 		void					PrintVar(const IBAction::VarMap& aUserData, int tab) const;
+		void					Draw(CanvasBase& canva, int& x, int& y, const IBFact* pFact) const;
 
-private:
+	private:
 		IBActionDef*			m_pDef;
 		
 		VarMap					m_aVariables;

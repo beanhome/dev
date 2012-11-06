@@ -23,7 +23,7 @@ void IBTable::TakeCube(IBCube* pCube)
 	m_aCube.erase(pCube);
 }
 
-bool IBTable::HasCube(IBCube* pCube)
+bool IBTable::HasCube(IBCube* pCube) const
 {
 	return (m_aCube.find(pCube) != m_aCube.end());
 }

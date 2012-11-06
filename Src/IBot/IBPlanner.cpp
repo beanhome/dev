@@ -100,8 +100,6 @@ int IBPlanner::Step()
 		res = pFact->Resolve(this);
 	}
 
-	Print();
-
 	return (int)res;
 }
 
@@ -124,3 +122,4 @@ void IBPlanner::Print() const
 	}
 	LOG("\n");
 }
+

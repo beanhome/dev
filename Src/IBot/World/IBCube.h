@@ -18,6 +18,7 @@ class IBCube
 		
 		bool IsFree() const { return (m_pTopCube == NULL); }
 		bool HasCube(IBCube* pCube) const { return (m_pTopCube == pCube); }
+		const IBCube* GetTopCube() const { return m_pTopCube; }
 
 		void  Print() const;
 

@@ -13,7 +13,7 @@ class IBTable
 
 		void PutCube(IBCube* pCube);
 		void TakeCube(IBCube* pCube);
-		bool HasCube(IBCube* pCube);
+		bool HasCube(IBCube* pCube) const;
 
 		void Print() const;
 

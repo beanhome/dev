@@ -13,7 +13,11 @@ IBFactDef::IBFactDef(const string& name, uint iDegree)
 	: m_sName(name)
 	, m_iDegree(iDegree)
 {
+	const char* prefix = "IBFactDef_";
+	const uint len = strlen(prefix);
+	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
 
+	m_sName = name.c_str() + offset;
 }
 
 IBFactDef::~IBFactDef()

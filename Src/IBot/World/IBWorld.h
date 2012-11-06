@@ -24,6 +24,9 @@ class IBWorld
 		const vector<IBCube>& GetCubes() const { return m_oCubes; }
 		vector<IBCube>& GetCubes() { return m_oCubes; }
 
+		const IBTable& GetTable() const { return m_oTable; }
+
+
 		void MoveCubeFromTableToCube(IBCube* pCube, IBCube* pDestCube);
 		void MoveCubeFromCubeToCube(IBCube* pCube, IBCube* pOrigCube, IBCube* pDestCube);
 		void MoveCubeFromCubeToTable(IBCube* pCube, IBCube* pOrigCube);

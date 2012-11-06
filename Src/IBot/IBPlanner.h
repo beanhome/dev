@@ -8,11 +8,15 @@
 
 class IBFactDef;
 
+class IBPlannerGraph;
+
 class IBPlanner
 {
 	public:
 		IBPlanner();
 		virtual ~IBPlanner();
+
+		friend class IBPlannerGraph;
 
 	public:
 		void					InitFactLibrary();
@@ -27,7 +31,6 @@ class IBPlanner
 
 		int						Step();
 		void					Print() const;
-
 
 		int						FindActionToResolve(IBFact* pFact);
 
