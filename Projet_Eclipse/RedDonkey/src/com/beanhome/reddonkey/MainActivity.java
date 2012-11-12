@@ -3,6 +3,7 @@ package com.beanhome.reddonkey;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.widget.TextView;
 
 public class MainActivity extends Activity

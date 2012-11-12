@@ -3,6 +3,7 @@ package com.beanhome.reddonkey;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -86,4 +87,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			}
 		}
 	}
+	
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event)
+	{
+		return mThread.OnTouchEvent(event);
+	}
+
 }

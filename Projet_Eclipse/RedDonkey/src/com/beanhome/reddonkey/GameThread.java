@@ -1,12 +1,13 @@
 package com.beanhome.reddonkey;
 
+import java.util.Vector;
+
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 class GameThread extends Thread
@@ -23,17 +24,42 @@ class GameThread extends Thread
 	private double m_fCurrentTime = 0.f;
 	private double m_fCircleRadius = 0.f;
 	
-	private Bitmap m_Base;
-	private Bitmap m_Big;
+	private Box m_Box;
+	private Vector<Piece> m_aPiece = new Vector<Piece>();
+	
+	private boolean m_bTouch = false;
+	private float m_fTouchX;
+	private float m_fTouchY;
+	
+	enum State
+	{
+		IDLE,
+		DRAG,
+		WAIT,		
+	}
+	
+	private State m_eState;
+
+	private Piece m_oDragPiece;
 	
 	GameThread(SurfaceHolder holder, Context context)
 	{
 		super();
 		m_Holder = holder;
 		m_Context = context;
+		m_Box = new Box(context);
+		m_eState = State.IDLE;
 		
-		m_Base = BitmapFactory.decodeResource(m_Context.getResources(), R.drawable.base);
-		m_Big = BitmapFactory.decodeResource(m_Context.getResources(), R.drawable.big);
+		m_aPiece.add(new Piece(context, 0, 0, 1, 2, R.drawable.long_01, m_Box));
+		m_aPiece.add(new Piece(context, 3, 0, 1, 2, R.drawable.long_02, m_Box));
+		m_aPiece.add(new Piece(context, 1, 0, 2, 2, R.drawable.big, m_Box));
+		m_aPiece.add(new Piece(context, 0, 2, 1, 2, R.drawable.long_03, m_Box));
+		m_aPiece.add(new Piece(context, 3, 2, 1, 2, R.drawable.long_04, m_Box));
+		m_aPiece.add(new Piece(context, 1, 2, 2, 1, R.drawable.long_05, m_Box));
+		m_aPiece.add(new Piece(context, 1, 3, 1, 1, R.drawable.small_01, m_Box));
+		m_aPiece.add(new Piece(context, 2, 3, 1, 1, R.drawable.small_02, m_Box));
+		m_aPiece.add(new Piece(context, 0, 4, 1, 1, R.drawable.small_03, m_Box));
+		m_aPiece.add(new Piece(context, 3, 4, 1, 1, R.drawable.small_04, m_Box));
 	}
 	
 	public void setSurfaceSize(int width, int height)
@@ -91,51 +117,122 @@ class GameThread extends Thread
 
 	private void draw(Canvas canvas, double dt)
 	{
+		canvas.drawColor(Color.BLACK);
+		
+		int x = (canvas.getWidth() - m_Box.GetImageWidth())/2;
+		int y = (canvas.getHeight() - m_Box.GetImageHeight())/2;
+		
+		m_Box.SetImageOrigin(x, y);
+		m_Box.Draw(canvas);
+		
+		for (int i=0 ; i<m_aPiece.size() ; ++i)
+		{
+			m_aPiece.elementAt(i).Draw(canvas);	
+		}
+
+		//m_Box.DrawDebug(canvas);
+		
+		m_fCircleRadius = Math.abs(Math.sin(m_fCurrentTime) * 100.f);
+
 		Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setStyle(Paint.Style.STROKE);
-		paint.setStrokeWidth(1);
-		
+		paint.setStrokeWidth(2);
 		int cx = canvas.getWidth()/2;
 		int cy = canvas.getHeight()/2;
-		
-		canvas.drawColor(Color.BLACK);
-
-		float bx = (canvas.getWidth() - m_Base.getWidth())/2.f;
-		float by = 0.f;
-		canvas.drawBitmap(m_Base, bx, by, paint);
-		
-		float ox = bx + 39.f;
-		float oy = by + 37.f;
-		float s = 96.f;
-		float ow = s * 4.f;
-		float oh = s * 5.f;
-
-		canvas.drawRect(ox, oy, ox+ow, oy+oh, paint);
-		for (int i=1 ; i<4 ; ++i)
-			canvas.drawLine(ox+s*i, oy, ox+s*i, oy+oh, paint);			
-		for (int i=1 ; i<5 ; ++i)
-			canvas.drawLine(ox, oy+s*i, ox+ow, oy+s*i, paint);			
-
-		
-		//canvas.drawBitmap(m_Big, ox, oy, paint);
-		//canvas.drawBitmap(m_Big, ox+m_Big.getWidth(), oy, paint);
-
-		//canvas.drawRect(ox, oy, ox+256.f, oy+320.f, paint);
-		
-		/*
-		canvas.drawBitmap(m_Big,
-				new Rect(0, 0, m_Big.getWidth(), m_Big.getHeight()),
-				new Rect((int)ox, (int)oy, m_Big.getWidth(), m_Big.getHeight()),
-				paint);
-		*/
-		
-		
-		
-		m_fCircleRadius = Math.abs(Math.sin(m_fCurrentTime) * 100.f);
+		if (m_bTouch)
+		{
+			cx = (int)m_fTouchX;
+			cy = (int)m_fTouchY;
+		}
 		
 		canvas.drawCircle(cx, cy, (float)m_fCircleRadius, paint);
+	}
+
+	public boolean OnTouchEvent(MotionEvent event)
+	{
+		int i = m_Box.ScreenToGridX((int)event.getX());
+		int j = m_Box.ScreenToGridY((int)event.getY());
 		
+		Piece piece = m_Box.getPiece(i, j);
+
+		switch (event.getAction())
+		{
+			case MotionEvent.ACTION_DOWN:
+				assert(m_eState != State.DRAG);
+				assert(m_oDragPiece != null);
+				if (piece != null && m_oDragPiece == null)
+				{
+					m_eState = State.DRAG;
+					m_oDragPiece = piece;
+					m_oDragPiece.SetState(Piece.State.DRAG, (int)event.getX(), (int)event.getY());
+					// TODO add offset
+				}
+				break;
+				
+			case MotionEvent.ACTION_MOVE:
+				assert(m_eState != State.IDLE);
+				if (m_oDragPiece != null)
+				{
+					m_oDragPiece.Move((int)event.getX(), (int)event.getY());
+				}
+				break;
+				
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				if (m_oDragPiece != null)
+				{
+					m_oDragPiece.SetState(Piece.State.IDLE);
+					m_oDragPiece = null;
+					m_eState = State.IDLE;
+					// TODO Passer en WAIT si la piece doit encore bouger
+				}
+				break;
+		}
+		
+		/*
+		for (int i=0 ; i<m_aPiece.size() ; ++i)
+		{
+			if (m_aPiece.elementAt(i).Contains((int)event.getX(), (int)event.getY()))
+			{
+				switch (event.getAction())
+				{
+					case MotionEvent.ACTION_DOWN:
+					case MotionEvent.ACTION_MOVE:
+					 	m_aPiece.elementAt(i).SetState(Piece.State.DRAG); 	
+					 	break;
+						
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						m_aPiece.elementAt(i).SetState(Piece.State.IDLE);
+						break;
+				}
+				
+				break;		
+			}
+		}
+		*/
+
+		
+		switch (event.getAction())
+		{
+			case MotionEvent.ACTION_DOWN:
+				m_bTouch = true;
+				break;
+				
+			case MotionEvent.ACTION_MOVE:
+				m_fTouchX = event.getX();
+				m_fTouchY = event.getY();
+				break;
+				
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				m_bTouch = false;
+				break;
+		}
+	
+		return true;
+		//return m_Box.OnTouchEvent(event);
 	}
 
 }
