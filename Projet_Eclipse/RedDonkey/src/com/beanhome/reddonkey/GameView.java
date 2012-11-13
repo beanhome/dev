@@ -88,11 +88,29 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		}
 	}
 	
+	@Override
+	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+	{
+	    setMeasuredDimension(mThread.GetBox().GetImageWidth(), mThread.GetBox().GetImageHeight());
+	}
+
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
 		return mThread.OnTouchEvent(event);
+	}
+	
+	public GameData SaveGame()
+	{
+		GameData game = new GameData();
+		mThread.Save(game);
+		return game;
+	}
+
+	public void LoadGame(GameData game)
+	{
+		mThread.Load(game);		
 	}
 
 }

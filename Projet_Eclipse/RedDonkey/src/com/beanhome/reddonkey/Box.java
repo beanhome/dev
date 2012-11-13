@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.MotionEvent;
 
 public class Box
 {
@@ -45,46 +44,20 @@ public class Box
 		m_Grid = new Piece[m_iGridSizeX][m_iGridSizeY];
 	}
 	
-	public int GetPieceSize()
-	{
-		return m_iPieceSize;
-	}
+	public int GetPieceSize() { return m_iPieceSize; }
+	public int GetImageWidth() { return m_Image.getWidth(); }
+	public int GetImageHeight() { return m_Image.getHeight(); }
 	
-	public int GetImageWidth()
-	{
-		return m_Image.getWidth();
-	}
+	public int GetSizeX() { return m_iGridSizeX; }
+	public int GetSizeY() { return m_iGridSizeY; }
 	
-	public int GetImageHeight()
-	{
-		return m_Image.getHeight();
-	}
+	public void SetImageOrigin(int x, int y) { m_iImageX = x; m_iImageY = y; }
 	
-	public void SetImageOrigin(int x, int y)
-	{
-		m_iImageX = x;
-		m_iImageY = y;
-	}
+	public float GridToScreenX(int i) { return m_iImageX + m_iGridOriginX + (m_iPieceSize * i); }
+	public float GridToScreenY(int i) { return m_iImageY + m_iGridOriginY + (m_iPieceSize * i); }
 	
-	public int GridToScreenX(int i)
-	{
-		return m_iImageX + m_iGridOriginX + (m_iPieceSize * i);
-	}
-	
-	public int GridToScreenY(int i)
-	{
-		return m_iImageY + m_iGridOriginY + (m_iPieceSize * i);
-	}
-	
-	public int ScreenToGridX(int x)
-	{
-		return (x - (m_iImageX + m_iGridOriginX))/m_iPieceSize;
-	}
-
-	public int ScreenToGridY(int y)
-	{
-		return (y - (m_iImageY + m_iGridOriginY))/m_iPieceSize;
-	}
+	public int ScreenToGridX(float x) { return ((int)x - (m_iImageX + m_iGridOriginX))/m_iPieceSize; }
+	public int ScreenToGridY(float y) { return ((int)y - (m_iImageY + m_iGridOriginY))/m_iPieceSize; }
 	
 	public boolean IsInGrid(int x, int y)
 	{
@@ -132,16 +105,27 @@ public class Box
 		{
 			for (int l=j ; l<j+h ; ++l)
 			{
-				assert(m_Grid[k][l] == piece);
+				assert m_Grid[k][l] == piece;
 				m_Grid[k][l] = null;			
+			}
+		}
+	}
+	
+	public void Clear()
+	{
+		for (int i=0 ; i<m_iGridSizeX ; ++i)
+		{
+			for (int j=0 ; j<m_iGridSizeY ; ++j)
+			{
+				m_Grid[i][j] = null;
 			}
 		}
 	}
 	
 	public Piece getPiece(int i, int j)
 	{
-		assert(i>0 && i<m_iGridSizeX);
-		assert(j>0 && j<m_iGridSizeY);
+		assert i>0 && i<m_iGridSizeX;
+		assert j>0 && j<m_iGridSizeY;
 		return m_Grid[i][j];
 	}
 	
@@ -180,33 +164,6 @@ public class Box
 			}
 		}
 
-	}
-	
-	public boolean OnTouchEvent(MotionEvent event)
-	{
-		//int i = ScreenToGridX((int)event.getX());
-		//int j = ScreenToGridY((int)event.getY());
-
-		switch (event.getAction())
-		{
-			/*
-			case MotionEvent.ACTION_DOWN:
-				m_bTouch = true;
-				break;
-				
-			case MotionEvent.ACTION_MOVE:
-				m_fTouchX = event.getX();
-				m_fTouchY = event.getY();
-				break;
-				
-			case MotionEvent.ACTION_UP:
-			case MotionEvent.ACTION_CANCEL:
-				m_bTouch = false;
-				break;
-			*/
-		}
-	
-		return true;
 	}
 	
 
