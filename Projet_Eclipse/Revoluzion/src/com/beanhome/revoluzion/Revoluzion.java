@@ -1,9 +1,5 @@
 package com.beanhome.revoluzion;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Queue;
-
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -12,27 +8,19 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.primitive.Line;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.extension.physics.box2d.util.Vector2Pool;
 import org.andengine.input.sensor.acceleration.AccelerationData;
 import org.andengine.input.sensor.acceleration.IAccelerationListener;
-import org.andengine.opengl.texture.ITexture;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.ITextureRegion;
-import org.andengine.opengl.texture.region.TextureRegionFactory;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
-import org.andengine.util.adt.io.in.IInputStreamOpener;
-import org.andengine.util.debug.Debug;
 
-import android.hardware.SensorManager;
 import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
@@ -54,7 +42,7 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 	private ITextureRegion m_Brick;
 	private BitmapTextureAtlas mBitmapTextureAtlas;
 	
-	private Board2 m_Board;
+	private Board m_Board;
 	private Ball m_Ball;
 	
 	
@@ -91,7 +79,7 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 		scene.setBackground(new SpriteBackground(sprite));
 	
 		
-		m_Board = new Board2(m_BoardTexture, getVertexBufferObjectManager(), scene, mPhysicsWorld);
+		m_Board = new Board(m_BoardTexture, getVertexBufferObjectManager(), scene, mPhysicsWorld);
 		m_Ball = new Ball(m_BallTexture, getVertexBufferObjectManager(), scene, mPhysicsWorld);
 
 		m_oLine = new Line(0.f, 0.f, 0.f, 0.f, 3.f, getVertexBufferObjectManager());

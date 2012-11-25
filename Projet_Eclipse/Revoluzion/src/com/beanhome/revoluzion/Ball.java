@@ -9,9 +9,6 @@ import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-import android.location.Address;
-import android.support.v4.view.VelocityTrackerCompat;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -52,7 +49,6 @@ public class Ball
 		v = v.sub(n.mul(2.f * n.dot(v)));
 		
 		m_Body.setLinearVelocity(v);
-		
 	}
 
 
