@@ -37,7 +37,11 @@ import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 
 public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationListener
 {
@@ -50,7 +54,7 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 	private ITextureRegion m_Brick;
 	private BitmapTextureAtlas mBitmapTextureAtlas;
 	
-	private Board m_Board;
+	private Board2 m_Board;
 	private Ball m_Ball;
 	
 	
@@ -87,7 +91,7 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 		scene.setBackground(new SpriteBackground(sprite));
 	
 		
-		m_Board = new Board(m_BoardTexture, getVertexBufferObjectManager(), scene, mPhysicsWorld);
+		m_Board = new Board2(m_BoardTexture, getVertexBufferObjectManager(), scene, mPhysicsWorld);
 		m_Ball = new Ball(m_BallTexture, getVertexBufferObjectManager(), scene, mPhysicsWorld);
 
 		m_oLine = new Line(0.f, 0.f, 0.f, 0.f, 3.f, getVertexBufferObjectManager());
@@ -95,26 +99,68 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 		scene.attachChild(m_oLine);
 		
 
-		scene.registerUpdateHandler(
-				new IUpdateHandler()
-				{
-					@Override
-					public void onUpdate(float pSecondsElapsed)
-					{
-						Update(pSecondsElapsed);
-					}
+		scene.registerUpdateHandler(new IUpdateHandler()
+		{
+			@Override
+			public void onUpdate(float pSecondsElapsed)
+			{
+				Update(pSecondsElapsed);
+			}
 
-					@Override
-					public void reset()
-					{
-					}
-				});
+			@Override
+			public void reset()
+			{
+			}
+		});
+		
+		mPhysicsWorld.setContactListener(new ContactListener()
+		{
+			@Override
+			public void beginContact(Contact contact)
+			{
+				Log.d("bh", "beginContact");
+				if (contact.getFixtureA().getBody() == m_Ball.GetBody())
+				{
+					m_Ball.DetectContact(contact.getFixtureB(), contact);
+				}
+				else if (contact.getFixtureB().getBody() == m_Ball.GetBody())
+				{
+					m_Ball.DetectContact(contact.getFixtureA(), contact);
+				}
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold)
+			{
+				Log.d("bh", "preSolve");
+			}
+			
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse)
+			{
+				Log.d("bh", "postSolve");
+			}
+			
+			@Override
+			public void endContact(Contact contact)
+			{
+				Log.d("bh", "endContact");
+			}
+		});
 		
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
+
+		/*
 		final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2, vertexBufferObjectManager);
 		final Rectangle roof = new Rectangle(0, 0, CAMERA_WIDTH, 2, vertexBufferObjectManager);
 		final Rectangle left = new Rectangle(0, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
 		final Rectangle right = new Rectangle(CAMERA_WIDTH - 2, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
+		*/
+		final Rectangle ground = new Rectangle(-32, CAMERA_HEIGHT+32, CAMERA_WIDTH+64, 2, vertexBufferObjectManager);
+		final Rectangle roof = new Rectangle(-32, -32, CAMERA_WIDTH+64, 2, vertexBufferObjectManager);
+		final Rectangle left = new Rectangle(-32, -32, 2, CAMERA_HEIGHT+64, vertexBufferObjectManager);
+		final Rectangle right = new Rectangle(CAMERA_WIDTH+32, -32, 2, CAMERA_HEIGHT+64, vertexBufferObjectManager);
+
 
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
@@ -128,6 +174,8 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 		scene.attachChild(right);
 	
 		scene.registerUpdateHandler(this.mPhysicsWorld);
+		
+		//m_Board.ApplyForce(new Vector2(-1, 0));
 
 		return scene;
 	}
@@ -152,7 +200,7 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 
 	private void Update(float fSecondsElapsed)
 	{
-		m_Board.Update(fSecondsElapsed);
+		//m_Board.Update(fSecondsElapsed);
 
 		/*
 		m_fAngle += 100 * fSecondsElapsed;
@@ -173,7 +221,10 @@ public class Revoluzion extends SimpleBaseGameActivity implements IAccelerationL
 	@Override
 	public void onAccelerationChanged(final AccelerationData pAccelerationData)
 	{
-		Vector2 gravity = m_Board.ApplyGravity(new Vector2(pAccelerationData.getX(), pAccelerationData.getY()));
+		//Vector2 gravity = m_Board.ApplyGravity(new Vector2(pAccelerationData.getX(), pAccelerationData.getY()));
+		Vector2 gravity = new Vector2(pAccelerationData.getX(), pAccelerationData.getY());
+		
+		m_Board.ApplyForce(new Vector2(pAccelerationData.getX()*10.f, pAccelerationData.getY()*10.f));
 		
 		m_oLine.setPosition(400.f,  400.f,  400.f+gravity.x*100.f, 400.f+gravity.y*100.f);
 	}
