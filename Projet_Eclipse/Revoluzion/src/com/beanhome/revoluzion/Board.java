@@ -18,17 +18,16 @@ public class Board
 {
 	private Sprite m_Sprite;
 	private Body m_Body;
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 	
 	public Board(ITextureRegion texture, VertexBufferObjectManager manager, Scene scene, PhysicsWorld physworld)
 	{
-		m_Sprite = new Sprite(400-texture.getWidth()*0.5f, 778, texture, manager);
+		m_Sprite = new Sprite(400-texture.getWidth()*0.5f, 760, texture, manager);
 		scene.attachChild(m_Sprite);
 		
-		m_Body = PhysicsFactory.createBoxBody(physworld, m_Sprite, BodyType.DynamicBody, FIXTURE_DEF);
+		m_Body = PhysicsFactory.createBoxBody(physworld, m_Sprite, BodyType.DynamicBody, Revoluzion.FIXT_BOARD_DEF);
 		physworld.registerPhysicsConnector(new PhysicsConnector(m_Sprite, m_Body, true, true));
 		
-		Body Anchor = PhysicsFactory.createCircleBody(physworld, 400, 400, 10, BodyType.StaticBody, FIXTURE_DEF);
+		Body Anchor = PhysicsFactory.createCircleBody(physworld, 400, 400, 10, BodyType.StaticBody, Revoluzion.FIXT_BOARD_DEF);
 		
 		final RevoluteJointDef revoluteJointDef = new RevoluteJointDef();
 		revoluteJointDef.initialize(Anchor, m_Body, Anchor.getWorldCenter());

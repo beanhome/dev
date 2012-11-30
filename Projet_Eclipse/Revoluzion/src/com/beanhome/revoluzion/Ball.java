@@ -20,14 +20,15 @@ public class Ball
 {
 	private Sprite m_Sprite;
 	private Body m_Body;
-	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	
+	private float m_fSpeed = 10.f;
 
 	public Ball(ITextureRegion texture, VertexBufferObjectManager manager, Scene scene, PhysicsWorld physworld)
 	{
 		m_Sprite = new Sprite(200, 200, texture, manager);
 		scene.attachChild(m_Sprite);
 		
-		m_Body = PhysicsFactory.createCircleBody(physworld, m_Sprite, BodyType.DynamicBody, FIXTURE_DEF);
+		m_Body = PhysicsFactory.createCircleBody(physworld, m_Sprite, BodyType.DynamicBody, Revoluzion.FIXT_BALL_DEF);
 		physworld.registerPhysicsConnector(new PhysicsConnector(m_Sprite, m_Body, true, true));
 
 		m_Body.applyLinearImpulse(new Vector2(4.f,  1.5f), new Vector2(.5f, 0.5f));
@@ -43,10 +44,12 @@ public class Ball
 	
 	public void DetectContact(Fixture other, Contact contact)
 	{
-		Vector2 v = m_Body.getLinearVelocity();
+		Vector2 v = m_Body.getLinearVelocity().nor();
 		Vector2 n = contact.getWorldManifold().getNormal();
 		
 		v = v.sub(n.mul(2.f * n.dot(v)));
+		
+		v = v.mul(m_fSpeed);
 		
 		m_Body.setLinearVelocity(v);
 	}
