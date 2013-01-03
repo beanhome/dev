@@ -30,9 +30,10 @@ class IBPlanner
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 
 		int						Step();
-		void					Print() const;
 
 		int						FindActionToResolve(IBFact* pFact);
+
+		const FactSet&			GetGoals() const { return m_aGoals; }
 
 
 	private:

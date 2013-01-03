@@ -1,19 +1,19 @@
 #include "Utils.h"
 
+//#define USE_GRAPH
+
+#ifdef USE_GRAPH
 #include "GEngine_SDL.h"
 #include "InputEvent_SDL.h"
-#include "Color.h"
-#include "Image.h"
-#include "ImageRotoZoom.h"
 #include "Canvas.h"
-#include "ImageFlipBook.h"
-#include "ImageResource_SDL.h"
 #include "Timer.h"
+#endif
 
 
 #include "IBPlanner.h"
 #include "World/IBWorld.h"
 #include "Graph/IBPlannerGraph.h"
+#include "Graph/IBPlannerDebug.h"
 
 IBWorld g_oWorld;
 
@@ -22,38 +22,44 @@ int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 
-	IBPlanner oPlanner;
-	IBPlannerGraph oPlannerGraph;
-
+#ifdef USE_GRAPH
 	GEngine_SDL ge(1280, 748, 32);
 	Canvas world_canva(ge, 0, 0, 1280, 128);
 	Canvas graph_canva(ge, 0, 128, 1280, 620);
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
+#endif
 
+	IBPlanner oPlanner;
+#ifdef USE_GRAPH
+	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, world_canva, graph_canva);
+#else
+	IBPlannerDisplay* oPlannerDisplay = new IBPlannerDebug(oPlanner);
+#endif
+	
 	g_oWorld.Init();
-
 	g_oWorld.Print();
-
 	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeA(), g_oWorld.GetCubeB());
-	//oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeB(), g_oWorld.GetCubeC());
+	//oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeB(), g_oWorld.GetCubeC()); // uncomment to add
+
 
 	bool bQuit = false;
 
 	int res = 0;
 	for (uint i=0 ; i<10 && res==0 && !bQuit; ++i)
 	{
+#ifdef USE_GRAPH
 		ge.Clear();
+#endif
 
 		LOG("\n");
 		LOG("****  %d  ****\n", i);
 		res = oPlanner.Step();
 
-		oPlanner.Print();
-
-		oPlannerGraph.DrawWorld(oPlanner, world_canva);
-		oPlannerGraph.DrawGraph(oPlanner, graph_canva);
+		oPlannerDisplay->DrawWorld();
+		oPlannerDisplay->DrawGraph();
 	
+#ifdef USE_GRAPH
 		ge.Flip();
 
 		float fTime = Timer::Get();
@@ -63,7 +69,10 @@ int main(int argc, char *argv[])
 			if (ge.PollEvent())
 			{
 				if (ge.GetInputEvent().IsQuit())
+				{
 					bQuit = true;
+					break;
+				}
 
 				if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
 					bQuit = true;
@@ -72,90 +81,12 @@ int main(int argc, char *argv[])
 					break;
 			}
 		}
-	}
-
-#if 0
-
-	GEngine_SDL ge(1024, 748, 32);
-	Canvas canva(ge, 100, 300, 300, 100);
-	canva.SetPrintFont(FONT_PATH, 14);
-
-	bool bContinue = true;
-
-	ImageResource* pImageRes = ge.GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(DATA_DIR "/PlanetWar/Images/Background.bmp"));
-	
-	ImageFlipBook* pImage = new ImageFlipBook(ge, ge.GetResource<ImageResource_SDL>(DATA_DIR "/Test/gb_walk.png"), 3, 6);
-	pImage->SetPos(300, 200);
-	pImage->SetCurrent(0);
-
-	ImageRotoZoom* pImage2 = new ImageRotoZoom(canva, ge.GetResource<ImageResource_SDL>(DATA_DIR "/PlanetWar/Images/FleetRed.bmp"));
-	pImage2->SetPos(100, 10);
-	pImage2->SetZoom(0.6f);
-	pImage2->SetRotation(75.f);
-
-
-	float fDelay = 0.f;
-
-	while(bContinue)
-	{
-		float fps = 1.f/(Timer::Get() - fDelay);
-		fDelay = Timer::Get();
-
-		while (true)
-		{
-			ge.SaveEvent();
-			if (!ge.PollEvent())
-				break;
-			uint16 mx, my;
-			ge.GetInputEvent().GetMouseMove(mx, my);
-			ge.SetMouse(mx, my);
-
-			if (ge.GetInputEvent().IsQuit())
-				bContinue = false;
-
-			if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
-				bContinue = false;
-
-			if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardEvent() == KeyDown)
-			{
-				if (ge.GetPreviousInputEvent().IsKeyboard() == false || ge.GetPreviousInputEvent().GetKeyboardEvent() != KeyDown)
-					pImage->SetCurrent((pImage->GetCurrent()+1) % 14);
-			}
-		}
-
-		ge.Clear();
-		ge.DrawImage(*pImageRes, 400, 400);
-
-		ge.SetPrintParameter(14, 14, FONT_PATH, 10, LeftTop, Color(255, 200, 200));
-		canva.SetPrintPos(0, 0);
-
-		ge.CanvasBase::DrawRect(10, 10, 100, 100, Color(100, 200, 50));
-
-		ge.Print("Hello World !");
-		ge.Print("Next");
-
-
-		pImage->Draw();
-		pImage2->Draw();
-
-		canva.DrawRect(0, 0, canva.GetWidth(), canva.GetHeight(), 20, 100, 255);
-		canva.Print("Autre canva");
-
-		ge.Print(ge.GetWidth()-5, 5, FONT_PATH, 14, RightTop, 200, 200, 255, "%.1f", fps);
-		ge.Print(ge.GetWidth()-5, 20, FONT_PATH, 14, RightTop, 200, 200, 255, "%.3f", Timer::Get());
-
-		ge.DrawFillRect(ge.GetMouseX()-5, ge.GetMouseY()-5, 10, 10, 255, 50, 100);
-
-		ge.Print(ge.GetWidth()-5, 50, FONT_PATH, 14, RightTop, 200, 200, 255, "%d %d", ge.GetMouseX(), ge.GetMouseY());
-		ge.Print(ge.GetWidth()-5, 65, FONT_PATH, 14, RightTop, 200, 200, 255, "%d %d", canva.GetMouseX(), canva.GetMouseY());
-
-		ge.Flip();
-	}
-
-	delete pImage;
-	delete pImage2;
-
+#else
+		printf("Press Enter\n");
+		getchar();
 #endif
+	}
+
     return 0;
 }
 

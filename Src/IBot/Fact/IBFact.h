@@ -8,8 +8,6 @@
 class IBAction;
 class IBPlanner;
 
-class CanvasBase;
-
 class IBFact
 {
 	public:
@@ -37,9 +35,6 @@ class IBFact
 
 		bool						Resolve(IBPlanner* pPlanner);
 		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
-
-		void						Print(int tab) const;
-		void						Draw(CanvasBase& canva, int& x, int& y) const;
 
 	public:
 		IBF_Result					Test() const { return m_pDef->Test(m_aUserData); }

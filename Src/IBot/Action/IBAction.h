@@ -3,7 +3,6 @@
 
 #include "Utils.h"
 #include "Fact/IBFact.h"
-//#include "Action/IBActionDef.h"
 
 class IBActionDef;
 struct FactCondDef;
@@ -46,10 +45,6 @@ class IBAction
 
 		bool					Resolve(IBPlanner* pPlanner);
 		float					Valuate();
-
-		void					Print(int tab) const;
-		void					PrintVar(const IBAction::VarMap& aUserData, int tab) const;
-		void					Draw(CanvasBase& canva, int& x, int& y, const IBFact* pFact) const;
 
 	private:
 		IBActionDef*			m_pDef;

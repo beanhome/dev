@@ -357,8 +357,24 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Graph"
+				Name="Display"
 				>
+				<File
+					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDebug.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDebug.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDisplay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDisplay.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerGraph.cpp"
 					>

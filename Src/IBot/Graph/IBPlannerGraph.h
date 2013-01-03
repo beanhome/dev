@@ -3,6 +3,7 @@
 
 #include "Utils.h"
 #include "Color.h"
+#include "IBPlannerDisplay.h"
 
 //#include "Fact/IBFactLibrary.h"
 //#include "Fact/IBFact.h"
@@ -106,22 +107,25 @@ class IBGBox : public IBGBoxBase
 };
 
 
-class IBPlannerGraph
+class IBPlannerGraph : public IBPlannerDisplay
 {
 	public:
-		IBPlannerGraph();
+		IBPlannerGraph(const IBPlanner& oPlanner, CanvasBase& oWorldCanva, CanvasBase& oGraphCanva);
 		virtual ~IBPlannerGraph();
 
 	public:
+		virtual void		DrawWorld();
+		virtual void		DrawGraph();
+
 		void				Init(const IBPlanner& oPlanner, CanvasBase& canva);
 		//void				AddBox(const IBPlanner& oPlanner, IBAction* pAction, Box* pParentBox, uint col);
-		void				DrawWorld(const IBPlanner& oPlanner, CanvasBase& canva);
 		void				DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j);
-		void				DrawGraph(const IBPlanner& oPlanner, CanvasBase& canva);
 		void				Insert(IBGBox* pBox, uint col);
 
 	private:
 		vector<vector<IBGBox*>> m_aBox;
+		CanvasBase&			m_oWorldCanva;
+		CanvasBase&			m_oGraphCanva;
 
 	public:
 		static const uint		s_iMargin;

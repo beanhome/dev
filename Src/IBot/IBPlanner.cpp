@@ -110,16 +110,4 @@ int IBPlanner::FindActionToResolve(IBFact* pFact)
 	return 0;
 }
 
-void IBPlanner::Print() const
-{
-	LOG("\n");
-	LOG("Plan : \n");
-	for (FactSet::const_iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
-	{
-		IBFact* pFact = *it;
-
-		pFact->Print(0);
-	}
-	LOG("\n");
-}
 
