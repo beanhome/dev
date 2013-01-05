@@ -110,7 +110,7 @@ class IBGBox : public IBGBoxBase
 class IBPlannerGraph : public IBPlannerDisplay
 {
 	public:
-		IBPlannerGraph(const IBPlanner& oPlanner, CanvasBase& oWorldCanva, CanvasBase& oGraphCanva);
+		IBPlannerGraph(const IBPlanner& oPlanner, CanvasBase& oGraphCanva);
 		virtual ~IBPlannerGraph();
 
 	public:
@@ -123,7 +123,6 @@ class IBPlannerGraph : public IBPlannerDisplay
 
 	private:
 		vector<vector<IBGBox*>> m_aBox;
-		CanvasBase&			m_oWorldCanva;
 		CanvasBase&			m_oGraphCanva;
 
 	public:

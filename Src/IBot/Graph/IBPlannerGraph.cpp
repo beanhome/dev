@@ -224,9 +224,8 @@ void IBGBox::Draw(CanvasBase& canva) const
 
 
 
-IBPlannerGraph::IBPlannerGraph(const IBPlanner& oPlanner, CanvasBase& oWorldCanva, CanvasBase& oGraphCanva)
+IBPlannerGraph::IBPlannerGraph(const IBPlanner& oPlanner, CanvasBase& oGraphCanva)
 	: IBPlannerDisplay(oPlanner)
-	, m_oWorldCanva(oWorldCanva)
 	, m_oGraphCanva(oGraphCanva)
 {
 	IBPlannerGraph::s_iBoxWidth = IBPlannerGraph::s_iFactWidth + IBPlannerGraph::s_iLinkWidth + IBPlannerGraph::s_iActionWidth;
@@ -286,7 +285,7 @@ void IBPlannerGraph::Init(const IBPlanner& oPlanner, CanvasBase& canva)
 				pBox->GetActionBox()->SetY(pBox->GetY() + (pBox->GetH()-pBox->GetActionBox()->GetH())/2);
 			}
 
-			uint space = pBox->GetH() / pBox->GetFactBox().size();
+			uint space = (pBox->GetFactBox().size() > 0 ? pBox->GetH() / pBox->GetFactBox().size() : 0);
 			for (uint i=0 ; i<pBox->GetFactBox().size() ; ++i)
 			{
 				IBGFactBox* pFactBox =  pBox->GetFactBox()[i];
@@ -348,6 +347,8 @@ void IBPlannerGraph::Insert(IBGBox* pBox, uint col)
 
 void IBPlannerGraph::DrawGraph()
 {
+	m_oGraphCanva.DrawRect(0, 0, m_oGraphCanva.GetWidth(), m_oGraphCanva.GetHeight(), Color(0, 255, 0));
+
 	if (m_aBox.size() > 0)
 	{
 		for (uint row=0 ; row<m_aBox[0].size() ; ++row)
