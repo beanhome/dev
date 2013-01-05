@@ -10,12 +10,19 @@
 #endif
 
 
-#include "IBPlanner.h"
-#include "World/IBWorld.h"
+#include "IBPlannerTest.h"
+#include "World/IBCubeWorld.h"
 #include "Graph/IBPlannerGraph.h"
 #include "Graph/IBPlannerDebug.h"
 
 IBWorld g_oWorld;
+
+
+#ifdef USE_GRAPH
+void DrawWorld(CanvasBase& oWorldCanva);
+void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j);
+#endif
+
 
 
 int main(int argc, char *argv[])
@@ -30,7 +37,7 @@ int main(int argc, char *argv[])
 	graph_canva.SetPrintFont(FONT_PATH, 14);
 #endif
 
-	IBPlanner oPlanner;
+	IBPlannerTest oPlanner;
 #ifdef USE_GRAPH
 	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, world_canva, graph_canva);
 #else
@@ -56,7 +63,10 @@ int main(int argc, char *argv[])
 		LOG("****  %d  ****\n", i);
 		res = oPlanner.Step();
 
-		oPlannerDisplay->DrawWorld();
+		// TODO
+#ifdef USE_GRAPH
+		DrawWorld(world_canva);
+#endif
 		oPlannerDisplay->DrawGraph();
 	
 #ifdef USE_GRAPH
@@ -91,3 +101,40 @@ int main(int argc, char *argv[])
 }
 
 
+#ifdef USE_GRAPH
+void DrawWorld(CanvasBase& oWorldCanva)
+{
+	int size = 48;
+	int space = 32;
+	int line = size*3;
+	int left_space = 32;
+
+	oWorldCanva.DrawLine(left_space, line, left_space + (size*g_oWorld.GetCubes().size()) + ((size+1)*g_oWorld.GetCubes().size()), line, Color(192, 255, 255));
+
+	for (uint i=0 ; i < g_oWorld.GetCubes().size() ; ++i)
+	{
+		IBCube* pCube = &g_oWorld.GetCubes()[i];
+
+		if (g_oWorld.GetTable().HasCube(pCube))
+		{
+			DrawCube(pCube, oWorldCanva, i, 0);
+		}
+	}
+}
+
+void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j)
+{
+	int size = 48;
+	int space = 32;
+	int line = size*3;
+	int left_space = 32;
+
+	canva.DrawRect(left_space + space + i*(size+space), line-(size*(j+1)), size, size, Color(255, 255, 255));
+	canva.Print(left_space + space + i*(size+space) + size/2, line - (size*j) - size/2, canva.GetPrintFont(), 12, Center, Color(255, 255, 255), "%s", pCube->GetName().c_str());
+
+	if (pCube->GetTopCube() != NULL)
+	{
+		DrawCube(pCube->GetTopCube(), canva, i, j+1);
+	}
+}
+#endif

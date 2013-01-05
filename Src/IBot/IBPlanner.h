@@ -19,8 +19,8 @@ class IBPlanner
 		friend class IBPlannerGraph;
 
 	public:
-		void					InitFactLibrary();
-		void					InitActionLibrary();
+		virtual void			InitFactLibrary();
+		virtual void			InitActionLibrary();
 
 		void					AddGoal(const string& name);
 		void					AddGoal(const string& name, void* pUserData);
@@ -36,13 +36,18 @@ class IBPlanner
 		const FactSet&			GetGoals() const { return m_aGoals; }
 
 
-	private:
+	protected:
 		IBFactLibrary			m_oFactLibrary;
 		IBActionLibrary			m_oActionLibrary;
 
+	private:
 		set<IBFactDef*>			m_aGoalsDef;
 		
 		FactSet					m_aGoals;
 };
+
+#define REGISTER_FACT(a) m_oFactLibrary.RegisterFactDef(#a, new a(#a))
+#define REGISTER_ACTION(a) m_oActionLibrary.RegisterActionDef(#a, new a(#a, this))
+
 
 #endif

@@ -114,7 +114,6 @@ class IBPlannerGraph : public IBPlannerDisplay
 		virtual ~IBPlannerGraph();
 
 	public:
-		virtual void		DrawWorld();
 		virtual void		DrawGraph();
 
 		void				Init(const IBPlanner& oPlanner, CanvasBase& canva);

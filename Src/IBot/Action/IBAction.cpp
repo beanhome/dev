@@ -1,8 +1,6 @@
 #include "IBAction.h"
 #include "IBActionDef.h"
 
-#include "World/IBCube.h"
-
 
 IBAction::IBAction(IBActionDef* pDef)
 	: m_pDef(pDef)

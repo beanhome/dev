@@ -1,13 +1,11 @@
 #include "IBPlannerDebug.h"
 
-#include "World\IBWorld.h"
 #include "IBPlanner.h"
 #include "Fact\IBFact.h"
+#include "Fact\IBFactDef.h"
 #include "Action\IBAction.h"
 #include "Action\IBActionDef.h"
-#include "Fact\IBFactDef.h"
-
-extern IBWorld g_oWorld;
+#include "World\IBObject.h"
 
 IBPlannerDebug::IBPlannerDebug(const IBPlanner& oPlanner)
 	: IBPlannerDisplay(oPlanner)
@@ -15,11 +13,6 @@ IBPlannerDebug::IBPlannerDebug(const IBPlanner& oPlanner)
 
 IBPlannerDebug::~IBPlannerDebug()
 {}
-
-void IBPlannerDebug::DrawWorld()
-{
-	g_oWorld.Print();
-}
 
 void IBPlannerDebug::DrawGraph()
 {
@@ -48,7 +41,7 @@ void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 		for (int i=0 ; i<tab ; ++i)
 			LOG("\t");
 
-		LOG("  var %s 0x%x %s\n", it->first.c_str(), it->second, ( it->second != NULL ? ((IBCube*)it->second)->GetName().c_str() : "NULL" ));
+		LOG("  var %s 0x%x %s\n", it->first.c_str(), it->second, ( it->second != NULL ? ((IBObject*)it->second)->GetName().c_str() : "NULL" ));
 	}
 
 	for (uint i=0 ; i<oAction.GetPreCond().size() ; ++i)

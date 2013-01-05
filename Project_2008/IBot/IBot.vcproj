@@ -205,30 +205,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_True.cpp"
 						>
 					</File>
@@ -276,57 +252,17 @@
 						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h"
 						>
 					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.h"
-						>
-					</File>
 				</Filter>
 			</Filter>
 			<Filter
 				Name="World"
 				>
 				<File
-					RelativePath="..\..\Src\IBot\World\IBCube.cpp"
+					RelativePath="..\..\Src\IBot\World\IBObject.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Src\IBot\World\IBCube.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\IBot\World\IBTable.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\IBot\World\IBTable.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\IBot\World\IBWorld.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\IBot\World\IBWorld.h"
+					RelativePath="..\..\Src\IBot\World\IBObject.h"
 					>
 				</File>
 			</Filter>

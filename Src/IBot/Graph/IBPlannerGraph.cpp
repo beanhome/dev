@@ -7,10 +7,8 @@
 #include "Fact\IBFact.h"
 #include "Action\IBAction.h"
 #include "Action\IBActionDef.h"
-#include "World\IBCube.h"
-#include "World\IBWorld.h"
+#include "World\IBObject.h"
 
-extern IBWorld g_oWorld;
 
 const uint	IBPlannerGraph::s_iMargin = 32;
 const uint	IBPlannerGraph::s_iFactWidth = 64;
@@ -76,8 +74,8 @@ void IBGActionBox::Draw(CanvasBase& canva) const
 	{
 		const string& sName = m_pAction->GetDef()->GetVariables()[k];
 
-		const IBCube* pCube = ((const IBCube*)it->second);
-		canva.Print(x+w/2, y+IBPlannerGraph::s_iActionTitleHeight+IBPlannerGraph::s_iActionVarHeight/2 + IBPlannerGraph::s_iActionVarHeight*(k), canva.GetPrintFont(), IBPlannerGraph::s_iActionVarHeight-6, Center, IBPlannerGraph::s_oActionColor, "%s %s", sName.c_str(), pCube->GetName().c_str());
+		const IBObject* pObject = ((const IBObject*)it->second);
+		canva.Print(x+w/2, y+IBPlannerGraph::s_iActionTitleHeight+IBPlannerGraph::s_iActionVarHeight/2 + IBPlannerGraph::s_iActionVarHeight*(k), canva.GetPrintFont(), IBPlannerGraph::s_iActionVarHeight-6, Center, IBPlannerGraph::s_oActionColor, "%s %s", sName.c_str(), pObject->GetName().c_str());
 	}
 }
 
@@ -106,8 +104,8 @@ void IBGFactBox::Draw(CanvasBase& canva) const
 	for (uint i=0 ; i<m_pFact->GetVariables().size() ; ++i)
 	{
 		void* pVar = m_pFact->GetVariable(i);
-		IBCube* pCube = (IBCube*)pVar;
-		canva.Print(x+w/2, y+IBPlannerGraph::s_iFactTitleHeight + IBPlannerGraph::s_iFactVarHeight/2 + i*IBPlannerGraph::s_iFactVarHeight, canva.GetPrintFont(), IBPlannerGraph::s_iFactTitleHeight-6, Center, IBPlannerGraph::s_oFactColor, "%s", pCube->GetName().c_str());
+		IBObject* pObject = (IBObject*)pVar;
+		canva.Print(x+w/2, y+IBPlannerGraph::s_iFactTitleHeight + IBPlannerGraph::s_iFactVarHeight/2 + i*IBPlannerGraph::s_iFactVarHeight, canva.GetPrintFont(), IBPlannerGraph::s_iFactTitleHeight-6, Center, IBPlannerGraph::s_oFactColor, "%s", pObject->GetName().c_str());
 	}
 }
 
@@ -347,41 +345,6 @@ void IBPlannerGraph::Insert(IBGBox* pBox, uint col)
 	}
 }
 
-void IBPlannerGraph::DrawWorld()
-{
-	int size = 48;
-	int space = 32;
-	int line = size*3;
-	int left_space = 32;
-
-	m_oWorldCanva.DrawLine(left_space, line, left_space + (size*g_oWorld.GetCubes().size()) + ((size+1)*g_oWorld.GetCubes().size()), line, Color(192, 255, 255));
-
-	for (uint i=0 ; i < g_oWorld.GetCubes().size() ; ++i)
-	{
-		IBCube* pCube = &g_oWorld.GetCubes()[i];
-
-		if (g_oWorld.GetTable().HasCube(pCube))
-		{
-			DrawCube(pCube, m_oWorldCanva, i, 0);
-		}
-	}
-}
-
-void IBPlannerGraph::DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j)
-{
-	int size = 48;
-	int space = 32;
-	int line = size*3;
-	int left_space = 32;
-
-	canva.DrawRect(left_space + space + i*(size+space), line-(size*(j+1)), size, size, Color(255, 255, 255));
-	canva.Print(left_space + space + i*(size+space) + size/2, line - (size*j) - size/2, canva.GetPrintFont(), 12, Center, Color(255, 255, 255), "%s", pCube->GetName().c_str());
-
-	if (pCube->GetTopCube() != NULL)
-	{
-		DrawCube(pCube->GetTopCube(), canva, i, j+1);
-	}
-}
 
 void IBPlannerGraph::DrawGraph()
 {
@@ -426,8 +389,8 @@ void IBPlannerGraph::DrawGraph()
 				uint i=0;
 				for (IBAction::VarMap::const_iterator it = pBox->m_oActionBox.m_pAction->GetVariables().begin() ; it != pBox->m_oActionBox.m_pAction->GetVariables().end() ; ++it, ++i)
 				{
-					//m_oGraphCanva.Print(pBox->m_oActionBox.x+pBox->m_oActionBox.w/2, pBox->m_oActionBox.y+m_iActionTitleHeight + i*m_iActionVarHeight + m_iActionVarHeight/2, m_oGraphCanva.GetPrintFont(), m_iActionVarHeight-6, Center, m_oActionColor, "%s 0x%x %s", it->first.c_str(), it->second, ( it->second != NULL ? ((IBCube*)it->second)->GetName().c_str() : "NULL" ));
-					m_oGraphCanva.Print(pBox->m_oActionBox.x+pBox->m_oActionBox.w/2, pBox->m_oActionBox.y+m_iActionTitleHeight + i*m_iActionVarHeight + m_iActionVarHeight/2, m_oGraphCanva.GetPrintFont(), m_iActionVarHeight-6, Center, m_oActionColor, "%s %s", it->first.c_str(), ( it->second != NULL ? ((IBCube*)it->second)->GetName().c_str() : "NULL" ));
+					//m_oGraphCanva.Print(pBox->m_oActionBox.x+pBox->m_oActionBox.w/2, pBox->m_oActionBox.y+m_iActionTitleHeight + i*m_iActionVarHeight + m_iActionVarHeight/2, m_oGraphCanva.GetPrintFont(), m_iActionVarHeight-6, Center, m_oActionColor, "%s 0x%x %s", it->first.c_str(), it->second, ( it->second != NULL ? ((IBObject*)it->second)->GetName().c_str() : "NULL" ));
+					m_oGraphCanva.Print(pBox->m_oActionBox.x+pBox->m_oActionBox.w/2, pBox->m_oActionBox.y+m_iActionTitleHeight + i*m_iActionVarHeight + m_iActionVarHeight/2, m_oGraphCanva.GetPrintFont(), m_iActionVarHeight-6, Center, m_oActionColor, "%s %s", it->first.c_str(), ( it->second != NULL ? ((IBObject*)it->second)->GetName().c_str() : "NULL" ));
 				}
 			}
 
@@ -469,7 +432,7 @@ void IBPlannerGraph::DrawGraph()
 				for (uint j=0 ; j<pBox->m_aCondBox[i].m_pFact->GetFactDef()->GetDegree() ; ++j)
 				{
 					void* var = pBox->m_aCondBox[i].m_pFact->GetVariable(j);
-					m_oGraphCanva.Print(pBox->m_aCondBox[i].x+pBox->m_aCondBox[i].w/2, pBox->m_aCondBox[i].y+m_iFactTitleHeight + j*m_iFactVarHeight + m_iFactVarHeight/2, m_oGraphCanva.GetPrintFont(), m_iFactVarHeight-6, Center, m_oFactColor, "%s", ((IBCube*)var)->GetName().c_str());
+					m_oGraphCanva.Print(pBox->m_aCondBox[i].x+pBox->m_aCondBox[i].w/2, pBox->m_aCondBox[i].y+m_iFactTitleHeight + j*m_iFactVarHeight + m_iFactVarHeight/2, m_oGraphCanva.GetPrintFont(), m_iFactVarHeight-6, Center, m_oFactColor, "%s", ((IBObject*)var)->GetName().c_str());
 				}
 			}
 

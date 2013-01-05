@@ -4,21 +4,18 @@
 #include "Fact/Def/IBFactDef_True.h"
 #include "Fact/Def/IBFactDef_False.h"
 #include "Fact/Def/IBFactDef_Bool.h"
-#include "Fact/Def/IBFactDef_IsOnTable.h"
-#include "Fact/Def/IBFactDef_IsTopOf.h"
-#include "Fact/Def/IBFactDef_IsFree.h"
 
 #include "Action/IBAction.h"
 #include "Action/Def/IBActionDef_BoolToBool.h"
-#include "Action/Def/IBActionDef_MoveCubeFromTableToCube.h"
-#include "Action/Def/IBActionDef_MoveCubeFromCubeToCube.h"
-#include "Action/Def/IBActionDef_MoveCubeFromCubeToTable.h"
 
 
 IBPlanner::IBPlanner()
 {
-	InitFactLibrary();
-	InitActionLibrary();
+	REGISTER_FACT(IBFactDef_True);
+	REGISTER_FACT(IBFactDef_False);
+	REGISTER_FACT(IBFactDef_Bool);
+
+	REGISTER_ACTION(IBActionDef_BoolToBool);
 }
 
 IBPlanner::~IBPlanner()
@@ -27,26 +24,13 @@ IBPlanner::~IBPlanner()
 		delete (*it);
 }
 
-#define REGISTER_FACT(a) m_oFactLibrary.RegisterFactDef(#a, new a(#a))
 
 void IBPlanner::InitFactLibrary()
 {
-	REGISTER_FACT(IBFactDef_True);
-	REGISTER_FACT(IBFactDef_False);
-	REGISTER_FACT(IBFactDef_Bool);
-	REGISTER_FACT(IBFactDef_IsOnTable);
-	REGISTER_FACT(IBFactDef_IsFree);
-	REGISTER_FACT(IBFactDef_IsTopOf);
 }
-
-#define REGISTER_ACTION(a) m_oActionLibrary.RegisterActionDef(#a, new a(#a, this))
 
 void IBPlanner::InitActionLibrary()
 {
-	REGISTER_ACTION(IBActionDef_BoolToBool);
-	REGISTER_ACTION(IBActionDef_MoveCubeFromTableToCube);
-	REGISTER_ACTION(IBActionDef_MoveCubeFromCubeToTable);
-	REGISTER_ACTION(IBActionDef_MoveCubeFromCubeToCube);
 }
 
 void IBPlanner::AddGoal(const string& name)

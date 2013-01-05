@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\IBotTest;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\IBotTest;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -159,14 +159,106 @@
 	</References>
 	<Files>
 		<Filter
-			Name="src"
+			Name="Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\Src\IBotTest\IBPlannerTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBotTest\IBPlannerTest.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\IBotTest\Test.cpp"
 				>
 			</File>
+			<Filter
+				Name="Action"
+				>
+				<File
+					RelativePath="..\..\Src\IBotTest\Action\IBActionDef_MoveCubeFromCubeToCube.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Action\IBActionDef_MoveCubeFromCubeToCube.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Action\IBActionDef_MoveCubeFromCubeToTable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Action\IBActionDef_MoveCubeFromCubeToTable.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Action\IBActionDef_MoveCubeFromTableToCube.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Action\IBActionDef_MoveCubeFromTableToCube.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Fact"
+				>
+				<File
+					RelativePath="..\..\Src\IBotTest\Fact\IBFactDef_IsFree.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Fact\IBFactDef_IsFree.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Fact\IBFactDef_IsOnTable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Fact\IBFactDef_IsOnTable.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Fact\IBFactDef_IsTopOf.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\Fact\IBFactDef_IsTopOf.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="World"
+				>
+				<File
+					RelativePath="..\..\Src\IBotTest\World\IBCube.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\World\IBCube.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\World\IBCubeWorld.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\World\IBCubeWorld.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\World\IBTable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBotTest\World\IBTable.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

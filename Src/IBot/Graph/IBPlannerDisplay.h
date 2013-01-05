@@ -10,7 +10,6 @@ class IBPlannerDisplay
 		virtual ~IBPlannerDisplay();
 
 	public:
-		virtual void DrawWorld() = 0;
 		virtual void DrawGraph() = 0;
 
 	protected:

@@ -1,6 +1,6 @@
 #include "IBFactDef_IsTopOf.h"
 #include "World/IBCube.h"
-#include "World/IBWorld.h"
+#include "World/IBCubeWorld.h"
 
 extern IBWorld g_oWorld;
 

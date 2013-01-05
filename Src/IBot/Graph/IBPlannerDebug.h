@@ -14,7 +14,6 @@ class IBPlannerDebug : public IBPlannerDisplay
 		virtual ~IBPlannerDebug();
 
 	public:
-		virtual void DrawWorld();
 		virtual void DrawGraph();
 
 	private:
