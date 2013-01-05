@@ -3,8 +3,6 @@
 
 #include "World/IBCube.h"
 
-#include "CanvasBase.h"
-
 
 IBAction::IBAction(IBActionDef* pDef)
 	: m_pDef(pDef)

@@ -1,6 +1,6 @@
 #include "Utils.h"
 
-//#define USE_GRAPH
+#define USE_GRAPH
 
 #ifdef USE_GRAPH
 #include "GEngine_SDL.h"

@@ -18,9 +18,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="1"
+			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="4"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\Common; C:\dev\Src\IBot"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,17 +60,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -82,17 +75,14 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
-			ConfigurationType="1"
+			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -115,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\Common; C:\dev\Src\IBot"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -133,19 +123,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -155,9 +136,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -173,93 +151,89 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\Src\IBot\IBPlanner.cpp"
+				RelativePath="..\..\Src\IBot\IBPlanner.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Src\IBot\IBPlanner.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Src\IBot\Test.cpp"
+				RelativePath="..\..\Src\IBot\IBPlanner.h"
 				>
 			</File>
 			<Filter
 				Name="Facts"
 				>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact.cpp"
+					RelativePath="..\..\Src\IBot\Fact\IBFact.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFact.h"
+					RelativePath="..\..\Src\IBot\Fact\IBFact.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef.cpp"
+					RelativePath="..\..\Src\IBot\Fact\IBFactDef.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactDef.h"
+					RelativePath="..\..\Src\IBot\Fact\IBFactDef.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactLibrary.cpp"
+					RelativePath="..\..\Src\IBot\Fact\IBFactLibrary.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Fact\IBFactLibrary.h"
+					RelativePath="..\..\Src\IBot\Fact\IBFactLibrary.h"
 					>
 				</File>
 				<Filter
 					Name="Def"
 					>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_Bool.cpp"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_Bool.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_Bool.h"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_Bool.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_False.cpp"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_False.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_False.h"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_False.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.cpp"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.h"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsFree.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.cpp"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.h"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsOnTable.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.cpp"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.h"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_IsTopOf.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_True.cpp"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_True.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Fact\Def\IBFactDef_True.h"
+						RelativePath="..\..\Src\IBot\Fact\Def\IBFactDef_True.h"
 						>
 					</File>
 				</Filter>
@@ -268,62 +242,62 @@
 				Name="Actions"
 				>
 				<File
-					RelativePath="..\..\..\Src\IBot\Action\IBAction.cpp"
+					RelativePath="..\..\Src\IBot\Action\IBAction.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Action\IBAction.h"
+					RelativePath="..\..\Src\IBot\Action\IBAction.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Action\IBActionDef.cpp"
+					RelativePath="..\..\Src\IBot\Action\IBActionDef.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Action\IBActionDef.h"
+					RelativePath="..\..\Src\IBot\Action\IBActionDef.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Action\IBActionLibrary.cpp"
+					RelativePath="..\..\Src\IBot\Action\IBActionLibrary.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Action\IBActionLibrary.h"
+					RelativePath="..\..\Src\IBot\Action\IBActionLibrary.h"
 					>
 				</File>
 				<Filter
 					Name="Def"
 					>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.cpp"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.cpp"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.h"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToCube.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.cpp"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.h"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromCubeToTable.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.cpp"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.h"
+						RelativePath="..\..\Src\IBot\Action\Def\IBActionDef_MoveCubeFromTableToCube.h"
 						>
 					</File>
 				</Filter>
@@ -332,27 +306,27 @@
 				Name="World"
 				>
 				<File
-					RelativePath="..\..\..\Src\IBot\World\IBCube.cpp"
+					RelativePath="..\..\Src\IBot\World\IBCube.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\World\IBCube.h"
+					RelativePath="..\..\Src\IBot\World\IBCube.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\World\IBTable.cpp"
+					RelativePath="..\..\Src\IBot\World\IBTable.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\World\IBTable.h"
+					RelativePath="..\..\Src\IBot\World\IBTable.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\World\IBWorld.cpp"
+					RelativePath="..\..\Src\IBot\World\IBWorld.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\World\IBWorld.h"
+					RelativePath="..\..\Src\IBot\World\IBWorld.h"
 					>
 				</File>
 			</Filter>
@@ -360,27 +334,19 @@
 				Name="Display"
 				>
 				<File
-					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDebug.cpp"
+					RelativePath="..\..\Src\IBot\Graph\IBPlannerDebug.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDebug.h"
+					RelativePath="..\..\Src\IBot\Graph\IBPlannerDebug.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDisplay.cpp"
+					RelativePath="..\..\Src\IBot\Graph\IBPlannerDisplay.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerDisplay.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerGraph.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Src\IBot\Graph\IBPlannerGraph.h"
+					RelativePath="..\..\Src\IBot\Graph\IBPlannerDisplay.h"
 					>
 				</File>
 			</Filter>
