@@ -35,10 +35,13 @@ void ImageFlipBook::SetCurrent(int cur)
 
 void ImageFlipBook::Draw() const
 {
-	sint16 w = m_pImageResource->GetWidth() / m_iColCount;
-	sint16 h = m_pImageResource->GetHeight() / m_iRowCount;
-	sint16 x = w * (m_iCurrent % m_iColCount);
-	sint16 y = h * (m_iCurrent / m_iColCount);
+	if (m_iCurrent != -1)
+	{
+		sint16 w = m_pImageResource->GetWidth() / m_iColCount;
+		sint16 h = m_pImageResource->GetHeight() / m_iRowCount;
+		sint16 x = w * (m_iCurrent % m_iColCount);
+		sint16 y = h * (m_iCurrent / m_iColCount);
 
-	m_oCanvas.DrawImage(*m_pImageResource, m_iPosX, m_iPosY, x, y, w, h);
+		m_oCanvas.DrawImage(*m_pImageResource, m_iPosX, m_iPosY, x, y, w, h);
+	}
 }

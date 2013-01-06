@@ -3,11 +3,16 @@
 
 #include "Utils.h"
 #include "GEngine.h"
+#include "ImageResource_SDL.h"
+#include "FontResource_SDL.h"
 
 struct SDL_Surface;
 struct SDL_Cursor;
 
 class ImageResource;
+class FontResource;
+class ImageResource_SDL;
+class FontResource_SDL;
 
 class GEngine_SDL : public GEngine
 {
@@ -32,6 +37,9 @@ class GEngine_SDL : public GEngine
 		void							SaveEvent();
 		bool							PollEvent();
 		const InputEvent&				WaitEvent();
+
+		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) { return GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(oDesc)); }
+		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) { return GetResource<FontResource_SDL>(FontResource_SDL::Desc(oDesc)); }
 
 	protected:
 		uint 							Init();

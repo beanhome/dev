@@ -3,8 +3,13 @@
 
 #include "Utils.h"
 #include "CanvasBase.h"
+#include "ImageResource.h"
+#include "FontResource.h"
 
 class Resource;
+//class ImageResource;
+//class FontResource;
+
 typedef map<uint32, Resource*> ResourceMap;
 typedef pair<uint32, Resource*> ResourcePair;
 
@@ -40,6 +45,9 @@ class GEngine : public CanvasBase
 
 		template<typename T>
 		T* const						GetResource(const typename T::Desc& oDesc);
+
+		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) = 0;
+		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) = 0;
 
 		bool							AddResource(uint32 crc, Resource* pRes);
 		bool							RemResource(uint32 crc);

@@ -7,8 +7,11 @@
 
 #include "IBPlanner.h"
 #include "Graph/IBPlannerGraph.h"
+#include "Bot.h"
 
 void DrawWorld(CanvasBase& canva);
+
+Bot* pBot;
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +26,8 @@ int main(int argc, char *argv[])
 	Canvas graph_canva(ge, 0, (sint16)(ratio*(float)h), 1280, (uint16)((1.f-ratio)*(float)h));
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
+
+	pBot = new Bot(ge);
 
 	IBPlanner oPlanner;
 	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, graph_canva);
@@ -80,4 +85,6 @@ int main(int argc, char *argv[])
 void DrawWorld(CanvasBase& canva)
 {
 	canva.DrawRect(0, 0, canva.GetWidth(), canva.GetHeight(), Color(255, 0, 0));
+
+	pBot->Draw(canva);
 }
