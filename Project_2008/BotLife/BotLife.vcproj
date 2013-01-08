@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -164,11 +164,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\Src\BotLife\Bot.cpp"
+				RelativePath="..\..\Src\BotLife\BLBot.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\BotLife\Bot.h"
+				RelativePath="..\..\Src\BotLife\BLBot.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\BLWorld.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\BLWorld.h"
 				>
 			</File>
 			<File

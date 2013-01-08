@@ -42,8 +42,21 @@ void Log(const char* format, ...);
 
 #define LOG(format, ...) Log(format, ## __VA_ARGS__)
 
+#ifdef _DEBUG
+#define CHECK(test, format, ...) { if (!(test)) { LOG(format, __VA_ARGS__); } }
+#define CHECK_RETURN(test, format, ...) { if (!(test)) { LOG(format, __VA_ARGS__); return; } }
+#define ASSERT(cond) assert(cond)
+#define FASSERT(cond, format, ...) { if (!cond) { LOG(format, __VA_ARGS__); } assert(cond); }
+#else
+#define CHECK(test, format, ...) { }
+#define CHECK_RETURN(test, format, ...) { if (!(test)) { return; } }
+#define ASSERT(cond)
+#define FASSERT(cond, format, ...)
+#endif
+
+
+
 string FormatString(const char* format, ...);
 
-//extern bool g_bVisualOutput;
 
 #endif

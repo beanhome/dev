@@ -7,11 +7,9 @@
 
 #include "IBPlanner.h"
 #include "Graph/IBPlannerGraph.h"
-#include "Bot.h"
+#include "BLBot.h"
+#include "BLWorld.h"
 
-void DrawWorld(CanvasBase& canva);
-
-Bot* pBot;
 
 int main(int argc, char *argv[])
 {
@@ -27,7 +25,8 @@ int main(int argc, char *argv[])
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
 
-	pBot = new Bot(ge);
+	BLWorld oWorld(world_canva, 20);
+
 
 	IBPlanner oPlanner;
 	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, graph_canva);
@@ -42,49 +41,35 @@ int main(int argc, char *argv[])
 
 	bool bQuit = false;
 
-	int res = 0;
-	for (uint i=0 ; i<10 && res==0 && !bQuit; ++i)
+	float fTime = Timer::Get();
+	float fLastTime = fTime;
+
+	while (!bQuit)
 	{
+		fLastTime = fTime;
+		fTime = Timer::Get();
+		float dt = fTime - fLastTime;
+
 		ge.Clear();
 
-		LOG("\n");
-		LOG("****  %d  ****\n", i);
-		
-		res = oPlanner.Step();
-
-		DrawWorld(world_canva);
+		oWorld.Update(dt);
+		oWorld.Draw();
 		oPlannerDisplay->DrawGraph();
 
 		ge.Flip();
 
-		float fTime = Timer::Get();
-		while  (res == 1 || Timer::Get() < fTime + 1.f)
+		ge.SaveEvent();
+		if (ge.PollEvent())
 		{
-			ge.SaveEvent();
-			if (ge.PollEvent())
-			{
-				if (ge.GetInputEvent().IsQuit())
-				{
-					bQuit = true;
-					break;
-				}
+			if (ge.GetInputEvent().IsQuit()
+			 || ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
+				bQuit = true;
 
-				if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
-					bQuit = true;
-
-				if (ge.GetInputEvent().IsKeyboard())
-					break;
-			}
+			//if (ge.GetInputEvent().IsKeyboard())
+			//	break;
 		}
 	}
 
 	return 0;
 }
 
-
-void DrawWorld(CanvasBase& canva)
-{
-	canva.DrawRect(0, 0, canva.GetWidth(), canva.GetHeight(), Color(255, 0, 0));
-
-	pBot->Draw(canva);
-}
