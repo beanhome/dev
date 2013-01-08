@@ -5,10 +5,11 @@
 #include "Vector2.h"
 #include "Navigation.h"
 #include "Path.h"
+#include "Condition.h"
 
 
-template <typename TCase, typename TCond>
-class NavDijkstra : public Navigation<TCase, TCond>
+template <typename TCase>
+class NavDijkstra : public Navigation<TCase>
 {
 	public:
 		NavDijkstra(bool bDiagMode = false);
@@ -31,7 +32,7 @@ class NavDijkstra : public Navigation<TCase, TCond>
 
 		void						Init(const vector<Vector2>& start);
 
-		virtual bool				FindPath(const vector<Vector2>& start, const TCond& Condition, Path& aPath);
+		virtual bool				FindPath(const vector<Vector2>& start, const Condition<TCase>& Condition, Path& aPath);
 
 		bool						GetPath(const Vector2& vTarget, Path& oPath) const;
 
@@ -49,8 +50,8 @@ class NavDijkstra : public Navigation<TCase, TCond>
 		uint						m_iQueue;
 };
 
-template <typename TCase, typename TCond>
-NavDijkstra<TCase, TCond>::NavDijkstra(bool bDiagMode)
+template <typename TCase>
+NavDijkstra<TCase>::NavDijkstra(bool bDiagMode)
 	: Navigation()
 	, m_bDiagMode(bDiagMode)
 	, m_iHead(0)
@@ -58,8 +59,8 @@ NavDijkstra<TCase, TCond>::NavDijkstra(bool bDiagMode)
 {
 }
 
-template <typename TCase, typename TCond>
-NavDijkstra<TCase, TCond>::NavDijkstra(const Grid& oGrid, bool bDiagMode)
+template <typename TCase>
+NavDijkstra<TCase>::NavDijkstra(const Grid& oGrid, bool bDiagMode)
 	: Navigation(oGrid)
 	, m_oPathGrid(oGrid.IsNormalized())
 	, m_bDiagMode(bDiagMode)
@@ -70,12 +71,12 @@ NavDijkstra<TCase, TCond>::NavDijkstra(const Grid& oGrid, bool bDiagMode)
 	m_oPathGrid.Init(m_pModelGrid->GetWidth(), m_pModelGrid->GetHeight());
 }
 
-template <typename TCase, typename TCond>
-NavDijkstra<TCase, TCond>::~NavDijkstra()
+template <typename TCase>
+NavDijkstra<TCase>::~NavDijkstra()
 {}
 
-template <typename TCase, typename TCond>
-void NavDijkstra<TCase, TCond>::Create(const Grid& oGrid, bool bDiagMode)
+template <typename TCase>
+void NavDijkstra<TCase>::Create(const Grid& oGrid, bool bDiagMode)
 {
 	Navigation::Create(oGrid);
 
@@ -89,8 +90,8 @@ void NavDijkstra<TCase, TCond>::Create(const Grid& oGrid, bool bDiagMode)
 }
 
 
-template <typename TCase, typename TCond>
-void NavDijkstra<TCase, TCond>::Init(const vector<Vector2>& start)
+template <typename TCase>
+void NavDijkstra<TCase>::Init(const vector<Vector2>& start)
 {
 	// Initialisation
 	for (uint id=0 ; id<m_oPathGrid.GetSize() ; ++id)
@@ -115,8 +116,8 @@ void NavDijkstra<TCase, TCond>::Init(const vector<Vector2>& start)
 
 
 
-template <typename TCase, typename TCond>
-bool NavDijkstra<TCase, TCond>::FindPath(const vector<Vector2>& start, const TCond& oCondition, Path& aPath)
+template <typename TCase>
+bool NavDijkstra<TCase>::FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath)
 {
 	Init(start);
 
@@ -149,7 +150,7 @@ bool NavDijkstra<TCase, TCond>::FindPath(const vector<Vector2>& start, const TCo
 				m_aStep[m_iQueue++] = iSideId;
 			}
 
-			if (oCondition.Test(vSideCoord, m_pModelGrid->GetCase(vSideCoord)))
+			if (oCondition.Test(*m_pModelGrid, vSideCoord))
 			{
 				GetPath(vSideCoord, aPath);
 				return true;
@@ -160,8 +161,8 @@ bool NavDijkstra<TCase, TCond>::FindPath(const vector<Vector2>& start, const TCo
 	return false;
 }
 
-template <typename TCase, typename TCond>
-bool NavDijkstra<TCase, TCond>::GetPath(const Vector2& vTarget, Path& oPath) const
+template <typename TCase>
+bool NavDijkstra<TCase>::GetPath(const Vector2& vTarget, Path& oPath) const
 {
 	oPath.SetTarget(vTarget);
 
