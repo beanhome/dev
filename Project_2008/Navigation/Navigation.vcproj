@@ -169,10 +169,6 @@
 				RelativePath="..\..\Src\Navigation\Path.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\Src\Navigation\SquareBase.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

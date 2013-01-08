@@ -22,8 +22,8 @@ class Navigation
 
 		virtual void	Create(const Grid& oGrid) { m_pModelGrid = &oGrid; }
 
-		//bool			FindPath(const Vector2& start, const Vector2& target, Path& aPath);
-		//bool			FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+		bool			FindPath(const Vector2& start, const Vector2& target, Path& aPath);
+		bool			FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
 		bool			FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath);
 
 		virtual bool	FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath) = 0;
@@ -33,7 +33,6 @@ class Navigation
 		const Grid* m_pModelGrid;
 };
 
-/*
 template <typename TCase>
 bool Navigation<TCase>::FindPath(const Vector2& start, const Vector2& target, Path& aPath)
 {
@@ -41,11 +40,10 @@ bool Navigation<TCase>::FindPath(const Vector2& start, const Vector2& target, Pa
 }
 
 template <typename TCase>
-bool Navigation<SquareBase>::FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
+bool Navigation<TCase>::FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
 {
-	return FindPath(start, SquareBase::DistCondition(*m_pModelGrid, target, iDist));
+	return FindPath(start, Cond_Dist<TCase>(target, iDist), aPath);
 }
-*/
 
 template <typename TCase>
 bool Navigation<TCase>::FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath)
