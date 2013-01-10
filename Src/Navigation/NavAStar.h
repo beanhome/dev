@@ -184,9 +184,11 @@ typename NavAStar<TCase>::CaseCoord NavAStar<TCase>::GetCheaperOpenCase(const Ve
 }
 
 template <typename TCase>
-bool NavAStar<TCase>::GetPath(const Vector2& vTarget, Path& aPath) const
+bool NavAStar<TCase>::GetPath(const Vector2& vTarget, Path& oPath) const
 {
-	aPath.PushBack(vTarget);
+	oPath.Clear();
+
+	oPath.PushBack(vTarget);
 
 	CaseCoord oCoord;
 	CaseCoord oPreviousCoord = vTarget;
@@ -195,10 +197,10 @@ bool NavAStar<TCase>::GetPath(const Vector2& vTarget, Path& aPath) const
 		oCoord = oPreviousCoord;
 		oPreviousCoord = m_aCloseList.find(oCoord)->second.iPrevious;
 		if (oPreviousCoord != oCoord)
-			aPath.PushFront(oCoord);
+			oPath.PushFront(oCoord);
 	} while (oPreviousCoord != oCoord);
 
-	aPath.PushFront(oPreviousCoord);
+	oPath.PushFront(oPreviousCoord);
 
 	return true;
 }
