@@ -154,6 +154,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Navigation\NavAStar.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Navigation\NavDijkstra.h"
 				>
 			</File>

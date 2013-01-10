@@ -133,7 +133,7 @@ class GridOp
 			pos = GetCoord(id);
 		}
 
-		bool GetCoord(const Vector2& pos, EDirection dir, Vector2& out)
+		bool GetCoord(const Vector2& pos, EDirection dir, Vector2& out) const
 		{
 			static const Vector2 vMove[EDirection_MAX] = { Vector2(0, -1), Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1), Vector2(-1, -1) };
 			out = Vector2(pos.x + vMove[dir].x, pos.y + vMove[dir].y);

@@ -32,9 +32,11 @@ class NavDijkstra : public Navigation<TCase>
 
 		void						Init(const vector<Vector2>& start);
 
-		virtual bool				FindPath(const vector<Vector2>& start, const Condition<TCase>& Condition, Path& aPath);
+		bool						FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
+		bool						FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath);
+		virtual bool				FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
 
-		bool						GetPath(const Vector2& vTarget, Path& oPath) const;
+		virtual bool				GetPath(const Vector2& vTarget, Path& oPath) const;
 
 		const GridBase<Case>&		GetGrid() const { return m_oPathGrid; }
 		const Case&					GetCase(const Vector2& coord) const { return m_oPathGrid.GetCase(coord); }
@@ -114,6 +116,18 @@ void NavDijkstra<TCase>::Init(const vector<Vector2>& start)
 	m_iQueue = (uint)start.size();
 }
 
+template <typename TCase>
+bool NavDijkstra<TCase>::FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
+{
+	return FindPath(start, Cond_Dist<TCase>(target, iDist), aPath);
+}
+
+template <typename TCase>
+bool NavDijkstra<TCase>::FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath)
+{
+	vector<Vector2> pos(1, start);
+	return FindPath(pos, oCondition, aPath);
+}
 
 
 template <typename TCase>
