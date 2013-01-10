@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <deque>
 #include <map>
 #include <set>
 #include <list>
@@ -30,6 +31,7 @@ typedef wchar_t wchar;
 
 using std::string;
 using std::vector;
+using std::deque;
 using std::map;
 using std::multimap;
 using std::set;

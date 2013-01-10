@@ -178,25 +178,24 @@ bool NavDijkstra<TCase>::FindPath(const vector<Vector2>& start, const Condition<
 template <typename TCase>
 bool NavDijkstra<TCase>::GetPath(const Vector2& vTarget, Path& oPath) const
 {
-	oPath.SetTarget(vTarget);
+	oPath.Clear();
 
 	const Case& oLastCase = m_oPathGrid.GetCase(vTarget);
 	if (oLastCase.iCount < 0)
 		return false;
 
 	uint iLength = oLastCase.iCount;
-
-	oPath.GetList().resize(iLength);
 	Vector2 pos = vTarget;
-	for (uint k=iLength-1 ; k<iLength; --k)
-	{
-		oPath.GetList()[k] = pos;
-		const Case& oCase = m_oPathGrid.GetCase(oPath.GetList()[k]);
 
+	for (uint i=0 ; i<iLength ; ++i)
+	{
+		oPath.PushFront(pos);
+
+		const Case& oCase = m_oPathGrid.GetCase(pos);
 		pos = m_oPathGrid.GetCoord(oCase.iPreviousCase);
 	}
 
-	oPath.SetStart(pos);
+	oPath.PushFront(pos);
 
 	return true;
 }
