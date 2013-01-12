@@ -188,8 +188,6 @@ bool NavAStar<TCase>::GetPath(const Vector2& vTarget, Path& oPath) const
 {
 	oPath.Clear();
 
-	oPath.PushBack(vTarget);
-
 	CaseCoord oCoord;
 	CaseCoord oPreviousCoord = vTarget;
 	do

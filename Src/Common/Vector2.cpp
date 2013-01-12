@@ -44,3 +44,13 @@ bool operator>=(const Vector2& a, const Vector2& b)
 	return !operator<(a, b);
 }
 
+Vector2 operator+(const Vector2& a, const Vector2& b)
+{
+	Vector2 res;
+
+	res.x = a.x + b.x;
+	res.y = a.y + b.y;
+
+	return res;
+}
+

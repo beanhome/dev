@@ -44,6 +44,21 @@ void Path::PushFront(const Vector2& pos)
 	}
 }
 
+const Vector2& Path::GetFirstStep() const
+{
+	ASSERT(m_aPath.size() > 0);
+	return *m_aPath.begin();
+}
+
+const Vector2& Path::PopFront()
+{
+	ASSERT(m_aPath.size() > 0);
+	m_vStart = *m_aPath.begin();
+	m_aPath.pop_front();
+	return m_vStart;
+}
+
+
 /*
 deque<Vector2> Path::GetListInverse() const
 {

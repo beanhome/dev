@@ -19,10 +19,14 @@ class Path
 		void PushBack(const Vector2& pos);
 		void PushFront(const Vector2& pos);
 
+		const Vector2& GetFirstStep() const;
+		const Vector2& PopFront();
+
 		uint GetLength() const { return (uint)m_aPath.size(); }
 		const deque<Vector2>& GetList() const { return m_aPath; }
 		//deque<Vector2> GetListInverse() const;
 		//Path GetInverse() const;
+
 
 
 		Vector2 operator[](int i) const { ASSERT(i<(int)m_aPath.size()); return m_aPath[i]; }
