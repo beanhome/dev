@@ -9,9 +9,10 @@ char* IBF_ResultString[IBF_Result_MAX] =
 };
 
 
-IBFactDef::IBFactDef(const string& name, uint iDegree)
+IBFactDef::IBFactDef(const string& name, uint iDegree, IBPlanner* pPlanner)
 	: m_sName(name)
 	, m_iDegree(iDegree)
+	, m_pPlanner(pPlanner)
 {
 	const char* prefix = "IBFactDef_";
 	const uint len = strlen(prefix);

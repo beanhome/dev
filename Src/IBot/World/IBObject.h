@@ -15,7 +15,7 @@ class IBObject
 
 		void  Print() const;
 
-	private:
+	protected:
 		string  m_sName;
 };
 

@@ -11,7 +11,7 @@
 
 
 const uint	IBPlannerGraph::s_iMargin = 32;
-const uint	IBPlannerGraph::s_iFactWidth = 64;
+const uint	IBPlannerGraph::s_iFactWidth = 80;
 const uint	IBPlannerGraph::s_iFactTitleHeight = 18;
 const uint	IBPlannerGraph::s_iFactVarHeight = 18;
 const uint	IBPlannerGraph::s_iFactHeight = 36;
@@ -72,10 +72,10 @@ void IBGActionBox::Draw(CanvasBase& canva) const
 	int k=0;
 	for (IBAction::VarMap::const_iterator it = m_pAction->GetVariables().begin() ; it != m_pAction->GetVariables().end() ; ++it, ++k)
 	{
-		const string& sName = m_pAction->GetDef()->GetVariables()[k];
+		const string& sName = it->first;
 
 		const IBObject* pObject = ((const IBObject*)it->second);
-		canva.Print(x+w/2, y+IBPlannerGraph::s_iActionTitleHeight+IBPlannerGraph::s_iActionVarHeight/2 + IBPlannerGraph::s_iActionVarHeight*(k), canva.GetPrintFont(), IBPlannerGraph::s_iActionVarHeight-6, Center, IBPlannerGraph::s_oActionColor, "%s %s", sName.c_str(), pObject->GetName().c_str());
+		canva.Print(x+w/2, y+IBPlannerGraph::s_iActionTitleHeight+IBPlannerGraph::s_iActionVarHeight/2 + IBPlannerGraph::s_iActionVarHeight*(k), canva.GetPrintFont(), IBPlannerGraph::s_iActionVarHeight-6, Center, IBPlannerGraph::s_oActionColor, "%s %s", sName.c_str(), (pObject != NULL ? pObject->GetName().c_str() : "NULL"));
 	}
 }
 
@@ -105,7 +105,7 @@ void IBGFactBox::Draw(CanvasBase& canva) const
 	{
 		void* pVar = m_pFact->GetVariable(i);
 		IBObject* pObject = (IBObject*)pVar;
-		canva.Print(x+w/2, y+IBPlannerGraph::s_iFactTitleHeight + IBPlannerGraph::s_iFactVarHeight/2 + i*IBPlannerGraph::s_iFactVarHeight, canva.GetPrintFont(), IBPlannerGraph::s_iFactTitleHeight-6, Center, IBPlannerGraph::s_oFactColor, "%s", pObject->GetName().c_str());
+		canva.Print(x+w/2, y+IBPlannerGraph::s_iFactTitleHeight + IBPlannerGraph::s_iFactVarHeight/2 + i*IBPlannerGraph::s_iFactVarHeight, canva.GetPrintFont(), IBPlannerGraph::s_iFactTitleHeight-6, Center, IBPlannerGraph::s_oFactColor, "%s", (pObject != NULL ? pObject->GetName().c_str() : "NULL"));
 	}
 }
 
@@ -281,7 +281,7 @@ void IBPlannerGraph::Init(const IBPlanner& oPlanner, CanvasBase& canva)
 			{
 				pBox->GetActionBox()->SetX(pBox->GetX() + s_iFactWidth + s_iLinkWidth);
 				pBox->GetActionBox()->SetW(s_iActionWidth);
-				pBox->GetActionBox()->SetH(max(s_iActionMinHeight, s_iActionTitleHeight + pBox->GetFactBox().size() * s_iActionAnchorHeight));
+				pBox->GetActionBox()->SetH(max(s_iActionMinHeight, s_iActionTitleHeight + max(pBox->GetFactBox().size(), pBox->GetActionBox()->GetAction()->GetVariables().size()) * s_iActionAnchorHeight));
 				pBox->GetActionBox()->SetY(pBox->GetY() + (pBox->GetH()-pBox->GetActionBox()->GetH())/2);
 			}
 

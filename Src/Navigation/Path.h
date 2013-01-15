@@ -12,9 +12,10 @@ class Path
 		Path(const Path& oOrig);
 
 		void Clear() { m_bInitialized = false; m_aPath.clear(); }
+		bool IsValid() const { return m_bInitialized; }
 
 		const Vector2& GetStart() const { return m_vStart; }
-		const Vector2& GetTarget() const { return m_aPath.back(); }
+		const Vector2& GetTarget() const { ASSERT(m_bInitialized); return (m_aPath.size() > 0 ? m_aPath.back() : m_vStart); }
 
 		void PushBack(const Vector2& pos);
 		void PushFront(const Vector2& pos);
@@ -27,9 +28,9 @@ class Path
 		//deque<Vector2> GetListInverse() const;
 		//Path GetInverse() const;
 
-
-
 		Vector2 operator[](int i) const { ASSERT(i<(int)m_aPath.size()); return m_aPath[i]; }
+
+		virtual void Print() const;
 
 	private:
 		bool				m_bInitialized;

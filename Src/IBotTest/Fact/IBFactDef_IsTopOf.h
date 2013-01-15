@@ -8,7 +8,7 @@
 class IBFactDef_IsTopOf : public IBFactDef
 {
 	public:
-		IBFactDef_IsTopOf(const string& name);
+		IBFactDef_IsTopOf(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsTopOf();
 
 		IBF_Result			Test(const vector<void*>& aUserData);

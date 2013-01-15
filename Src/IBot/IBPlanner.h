@@ -13,7 +13,7 @@ class IBPlannerGraph;
 class IBPlanner
 {
 	public:
-		IBPlanner();
+		IBPlanner(void* pOwner);
 		virtual ~IBPlanner();
 
 		friend class IBPlannerGraph;
@@ -33,6 +33,7 @@ class IBPlanner
 
 		int						FindActionToResolve(IBFact* pFact);
 
+		void*					GetOwner() const { return m_pOwner; }
 		const FactSet&			GetGoals() const { return m_aGoals; }
 
 
@@ -41,12 +42,13 @@ class IBPlanner
 		IBActionLibrary			m_oActionLibrary;
 
 	private:
+		void*					m_pOwner;
 		set<IBFactDef*>			m_aGoalsDef;
 		
 		FactSet					m_aGoals;
 };
 
-#define REGISTER_FACT(a) m_oFactLibrary.RegisterFactDef(#a, new a(#a))
+#define REGISTER_FACT(a) m_oFactLibrary.RegisterFactDef(#a, new a(#a, this))
 #define REGISTER_ACTION(a) m_oActionLibrary.RegisterActionDef(#a, new a(#a, this))
 
 

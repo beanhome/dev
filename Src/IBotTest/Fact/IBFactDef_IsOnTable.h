@@ -8,7 +8,7 @@
 class IBFactDef_IsOnTable : public IBFactDef
 {
 	public:
-		IBFactDef_IsOnTable(const string& name);
+		IBFactDef_IsOnTable(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsOnTable();
 
 		IBF_Result			Test(const vector<void*>& aUserData);

@@ -1,4 +1,5 @@
 #include "Path.h"
+#include "Utils.h"
 
 Path::Path()
 	: m_bInitialized(false)
@@ -80,6 +81,24 @@ Path Path::GetInverse() const
 	return Path(m_aPath.back(), GetListInverse());
 }
 */
+
+void Path::Print() const
+{
+	if (!m_bInitialized)
+	{
+		LOG("Not initialized\n");
+	}
+	else
+	{
+		LOG("[(%d %d) ->", m_vStart.x, m_vStart.y);
+		for (uint i=0 ; i<m_aPath.size() ; ++i)
+		{
+			LOG(" (%d %d)", m_aPath[i].x, m_aPath[i].y);
+		}
+		LOG("]\n");
+	}
+}
+
 
 
 bool operator==(const Path& a, const Path& b)

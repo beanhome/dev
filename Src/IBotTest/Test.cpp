@@ -30,16 +30,16 @@ int main(int argc, char *argv[])
 	InitLog(argc, argv);
 
 #ifdef USE_GRAPH
-	GEngine_SDL ge(1280, 748, 32);
-	Canvas world_canva(ge, 0, 0, 1280, 128);
-	Canvas graph_canva(ge, 0, 128, 1280, 620);
+	GEngine_SDL ge(1280, 720, 32);
+	Canvas world_canva(ge, 0, 0, 1280, 192);
+	Canvas graph_canva(ge, 0, 192, 1280, 512);
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
 #endif
 
-	IBPlannerTest oPlanner;
+	IBPlannerTest oPlanner(&g_oWorld);
 #ifdef USE_GRAPH
-	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, world_canva, graph_canva);
+	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, graph_canva);
 #else
 	IBPlannerDisplay* oPlannerDisplay = new IBPlannerDebug(oPlanner);
 #endif
@@ -106,7 +106,7 @@ void DrawWorld(CanvasBase& oWorldCanva)
 {
 	int size = 48;
 	int space = 32;
-	int line = size*3;
+	int line = oWorldCanva.GetHeight()-size;
 	int left_space = 32;
 
 	oWorldCanva.DrawLine(left_space, line, left_space + (size*g_oWorld.GetCubes().size()) + ((size+1)*g_oWorld.GetCubes().size()), line, Color(192, 255, 255));
@@ -126,7 +126,7 @@ void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j)
 {
 	int size = 48;
 	int space = 32;
-	int line = size*3;
+	int line = canva.GetHeight()-size;
 	int left_space = 32;
 
 	canva.DrawRect(left_space + space + i*(size+space), line-(size*(j+1)), size, size, Color(255, 255, 255));

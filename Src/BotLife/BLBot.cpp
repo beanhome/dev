@@ -4,6 +4,8 @@
 #include "GEngine.h"
 #include "ImageResource.h"
 #include "BLWorld.h"
+#include "IBPlanner_BL.h"
+#include "World\IBVector2.h"
 
 float BLBot::s_fDirArrayX[4] = { 0.f, 1.f, 0.f, -1.f};
 float BLBot::s_fDirArrayY[4] = { 1.f, 0.f, -1.f, 0.f};
@@ -15,7 +17,12 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	: IBObject("Bot")
 	, m_oWorld(oWorld)
 	, m_pImage(NULL)
+	, m_vPos("Current")
 	, m_eState(Idle)
+	, m_fStateTime(0.f)
+	, m_fStateDelay(0.2f)
+	, m_fStepTime(0.f)
+	, m_fStepDelay(0.2f)
 {
 	m_pImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/Test/Bomberman.png"), 4, 5);
 	m_iWidth = 20;
@@ -23,41 +30,42 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	m_iCenterX = 10;
 	m_iCenterY = 28;
 	m_iAnimImgcount = 5;
-
 	m_pImage->SetCurrent(0);
 
-	m_pNavDijkstra = new NavDijkstra<BLSquare>(m_oWorld.GetGrid(), false);
-	//m_pNavDijkstra->FindPath(Vector2(1, 1), Cond_Dist<BLSquare>(Vector2(14, 14), 0), m_oPath);
-	//m_pNavDijkstra->FindPath(Vector2(1, 1), Vector2(14, 14), 0, m_oPath);
-	m_pNavDijkstra->Navigation::FindPath(Vector2(1, 1), Vector2(14, 14), m_oPath);
-
-	m_pNavAStar = new NavAStar<BLSquare>(m_oWorld.GetGrid(), false);
-	//m_pNavAStar->FindPath(Vector2(1, 1), Vector2(14, 14), 0, m_oPath);
-	//m_pNavAStar->Navigation::FindPath(Vector2(1, 1), Vector2(14, 14), m_oPath);
+	m_pPlanner = new IBPlanner_BL(this);
+	m_pPlanner->AddGoal("IBFactDef_BotAtPos", new IBVector2("Dest", 14, 14));
 }
 
 BLBot::~BLBot()
 {
 	delete m_pImage;
-	delete m_pNavDijkstra;
-	delete m_pNavAStar;
+	delete m_pPlanner;
 }
 
-void BLBot::SetPos(float x, float y)
+void BLBot::SetLoc(float x, float y)
 {
 	m_fLocX = x;
 	m_fLocY = y;
 	
-	m_vPos.x = (int)x / m_oWorld.GetGridSize();
-	m_vPos.y = (int)y / m_oWorld.GetGridSize();
+	//m_vPos.x = (int)x / m_oWorld.GetGridSize();
+	//m_vPos.y = (int)y / m_oWorld.GetGridSize();
 
 	m_pImage->SetPos((sint)x - (m_iCenterX - m_iWidth/2), (sint)y - m_iHeight/2 + (m_iHeight - m_iCenterY));
 }
 
-void BLBot::SetLoc(float i, float j)
+void BLBot::SetPos(int i, int j)
 {
-	SetPos(i * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2, j * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2);
+	//SetLoc((float)(i * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2), (float)(j * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2));
+
+	m_vPos.x = i;
+	m_vPos.y = j;
 }
+
+void BLBot::SetPos(const Vector2& p)
+{
+	m_vPos = p;
+}
+
 
 
 void BLBot::SetState(BotState state, BotDir dir, float delay)
@@ -93,7 +101,7 @@ void BLBot::Update(float dt)
 
 		case Walk:
 			m_pImage->SetCurrent((m_eDir*m_iAnimImgcount) + (int)((float) m_iAnimImgcount * t));
-			SetPos(m_fLocX + s_fDirArrayX[m_eDir] * fSpeed * dt, m_fLocY + s_fDirArrayY[m_eDir] * fSpeed * dt);
+			SetLoc(m_fLocX + s_fDirArrayX[m_eDir] * fSpeed * dt, m_fLocY + s_fDirArrayY[m_eDir] * fSpeed * dt);
 			break;
 
 		case Action:
@@ -106,21 +114,17 @@ void BLBot::Update(float dt)
 
 	if (m_fStateTime > m_fStateDelay)
 	{
-		if (m_oPath.GetLength() > 0 && m_oPath.GetStart() == m_vPos)
-		{
-			m_vTarget = m_oPath.PopFront();
-			m_eDir = ComputeDir(m_vPos, m_vTarget);
-
-			SetState(Walk, m_eDir, 1.f);
-		}
-		else
-		{
-			m_eState = Idle;
-			m_fStateTime = 0.f;
-			m_fStateDelay = -1.f;
-		}
+		m_eState = Idle;
+		m_fStateTime = 0.f;
+		m_fStateDelay = -1.f;
 	}
 
+	m_fStepTime += dt;
+	if (m_fStepTime > m_fStepDelay)
+	{
+		m_pPlanner->Step();
+		m_fStepTime = 0.f;
+	}
 }
 
 
@@ -128,6 +132,7 @@ void BLBot::Draw(CanvasBase& canva) const
 {
 	m_pImage->Draw();
 
+	/*
 	for (uint i=1 ; i<m_oPath.GetLength() ; ++i)
 	{
 		int x1 = m_oPath.GetList()[i-1].x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
@@ -142,4 +147,5 @@ void BLBot::Draw(CanvasBase& canva) const
 
 		canva.DrawRect(x1, y1, m_oWorld.GetGridSize(), m_oWorld.GetGridSize(), 255, 0, 0);
 	}
+	*/
 }

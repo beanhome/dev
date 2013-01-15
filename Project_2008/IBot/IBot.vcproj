@@ -265,6 +265,14 @@
 					RelativePath="..\..\Src\IBot\World\IBObject.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\Src\IBot\World\IBVector2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBot\World\IBVector2.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Display"

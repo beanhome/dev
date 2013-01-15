@@ -17,19 +17,18 @@ int main(int argc, char *argv[])
 
 
 	float ratio = 0.7f;
-	uint h = 980;
+	uint w = 900;
+	uint h = 600;
 
-	GEngine_SDL ge(1280, h, 32);
-	Canvas world_canva(ge, 0, 0, 1280, (uint16)(ratio*(float)h));
-	Canvas graph_canva(ge, 0, (sint16)(ratio*(float)h), 1280, (uint16)((1.f-ratio)*(float)h));
+	GEngine_SDL ge(w, h, 32);
+	Canvas world_canva(ge, 0, 0, w, (uint16)(ratio*(float)h));
+	Canvas graph_canva(ge, 0, (sint16)(ratio*(float)h), w, (uint16)((1.f-ratio)*(float)h));
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
 
 	BLWorld oWorld(world_canva, 20);
 
-
-	IBPlanner oPlanner;
-	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, graph_canva);
+	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oWorld.GetBot().GetPlanner(), graph_canva);
 
 	/*
 	g_oWorld.Init();

@@ -9,7 +9,8 @@
 #include "Action/IBActionDef_MoveCubeFromCubeToTable.h"
 
 
-IBPlannerTest::IBPlannerTest()
+IBPlannerTest::IBPlannerTest(void* pOwner)
+	: IBPlanner(pOwner)
 {
 	REGISTER_FACT(IBFactDef_IsOnTable);
 	REGISTER_FACT(IBFactDef_IsFree);

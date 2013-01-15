@@ -6,7 +6,7 @@ IBObject::IBObject()
 }
 
 IBObject::IBObject(const string& name)
-: m_sName(name)
+	: m_sName(name)
 {
 }
 

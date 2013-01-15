@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation;C:\dev\Src\BotLife"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation"
+				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation;C:\dev\Src\BotLife"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -172,17 +172,77 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\BotLife\BLWorld.cpp"
+				RelativePath="..\..\Src\BotLife\IBPlanner_BL.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\BotLife\BLWorld.h"
+				RelativePath="..\..\Src\BotLife\IBPlanner_BL.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Src\BotLife\Main.cpp"
 				>
 			</File>
+			<Filter
+				Name="Action"
+				>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_FindPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_FindPath.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_FollowPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_FollowPath.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Fact"
+				>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="World"
+				>
+				<File
+					RelativePath="..\..\Src\BotLife\BLWorld.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\BLWorld.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\IBPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\IBPath.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

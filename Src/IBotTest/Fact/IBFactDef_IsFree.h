@@ -8,7 +8,7 @@
 class IBFactDef_IsFree : public IBFactDef
 {
 	public:
-		IBFactDef_IsFree(const string& name);
+		IBFactDef_IsFree(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsFree();
 
 		virtual void			ResolveVariable(vector<void*>& aUserData);

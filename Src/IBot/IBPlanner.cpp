@@ -9,7 +9,8 @@
 #include "Action/Def/IBActionDef_BoolToBool.h"
 
 
-IBPlanner::IBPlanner()
+IBPlanner::IBPlanner(void* pOwner)
+	: m_pOwner(pOwner)
 {
 	REGISTER_FACT(IBFactDef_True);
 	REGISTER_FACT(IBFactDef_False);

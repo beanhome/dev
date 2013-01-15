@@ -1,11 +1,10 @@
 #include "IBFactDef_IsFree.h"
 #include "World/IBCube.h"
 #include "World/IBCubeWorld.h"
+#include "IBPlanner.h"
 
-extern IBWorld g_oWorld;
-
-IBFactDef_IsFree::IBFactDef_IsFree(const string& name)
-	: IBFactDef(name, 1)
+IBFactDef_IsFree::IBFactDef_IsFree(const string& name, IBPlanner* pPlanner)
+	: IBFactDef(name, 1, pPlanner)
 {
 }
 
@@ -23,15 +22,16 @@ IBF_Result IBFactDef_IsFree::Test(const vector<void*>& aUserData)
 
 void IBFactDef_IsFree::ResolveVariable(vector<void*>& aUserData)
 {
+	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
 	assert(aUserData.size() == 1);
 
 	if (aUserData[0] == NULL)
 	{
-		for (uint i=0 ; i<g_oWorld.GetCubes().size() ; ++i)
+		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			if (g_oWorld.GetCubes()[i].IsFree())
+			if (pWorld->GetCubes()[i].IsFree())
 			{
-				aUserData[0] = (void*)&(g_oWorld.GetCubes()[i]);
+				aUserData[0] = (void*)&(pWorld->GetCubes()[i]);
 				break;
 			}
 		}

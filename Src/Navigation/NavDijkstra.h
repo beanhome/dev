@@ -28,28 +28,31 @@ class NavDijkstra : public Navigation<TCase>
 		static const int START = 0;
 
 	public:
-		virtual void				Create(const Grid& oGrid, bool bDiagMode = false);
+		virtual void						Create(const Grid& oGrid, bool bDiagMode = false);
+								
+		void								Init(const vector<Vector2>& start);
+								
+		bool								FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath);
+		bool								FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
+		Navigation<TCase>::State			FindPathStep(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
+								
+		virtual void						FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+		virtual Navigation<TCase>::State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
 
-		void						Init(const vector<Vector2>& start);
-
-		bool						FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
-		bool						FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath);
-		virtual bool				FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
-
-		virtual bool				GetPath(const Vector2& vTarget, Path& oPath) const;
-
-		const GridBase<Case>&		GetGrid() const { return m_oPathGrid; }
-		const Case&					GetCase(const Vector2& coord) const { return m_oPathGrid.GetCase(coord); }
-		void						PrintDebug() const;
+		virtual bool						GetPath(const Vector2& vTarget, Path& oPath) const;
+								
+		const GridBase<Case>&				GetGrid() const { return m_oPathGrid; }
+		const Case&							GetCase(const Vector2& coord) const { return m_oPathGrid.GetCase(coord); }
+		void								PrintDebug() const;
 
 
 	private:
-		GridBase<Case>				m_oPathGrid;
-		bool						m_bDiagMode;
-
-		vector<uint>				m_aStep;
-		uint						m_iHead;
-		uint						m_iQueue;
+		GridBase<Case>						m_oPathGrid;
+		bool								m_bDiagMode;
+								
+		vector<uint>						m_aStep;
+		uint								m_iHead;
+		uint								m_iQueue;
 };
 
 template <typename TCase>
@@ -91,6 +94,19 @@ void NavDijkstra<TCase>::Create(const Grid& oGrid, bool bDiagMode)
 	m_oPathGrid.Init(m_pModelGrid->GetWidth(), m_pModelGrid->GetHeight());
 }
 
+template <typename TCase>
+void NavDijkstra<TCase>::FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
+{
+	vector<Vector2> pos(1, start);
+	Init(pos);
+}
+
+template <typename TCase>
+typename Navigation<TCase>::State NavDijkstra<TCase>::FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
+{
+	vector<Vector2> pos(1, start);
+	return FindPathStep(pos, Cond_Dist<TCase>(target, iDist), aPath);
+}
 
 template <typename TCase>
 void NavDijkstra<TCase>::Init(const vector<Vector2>& start)
@@ -117,9 +133,47 @@ void NavDijkstra<TCase>::Init(const vector<Vector2>& start)
 }
 
 template <typename TCase>
-bool NavDijkstra<TCase>::FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
+typename Navigation<TCase>::State NavDijkstra<TCase>::FindPathStep(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath)
 {
-	return FindPath(start, Cond_Dist<TCase>(target, iDist), aPath);
+	if (m_iHead >= m_aStep.size() || m_iHead >= m_iQueue)
+		return FP_Fail;
+
+	uint id = m_aStep[m_iHead];
+
+	Case& oCase = m_oPathGrid.GetCase(id);
+	Vector2 vCoord = m_oPathGrid.GetCoord(id);
+
+	ASSERT(oCase.iCount != BLOCK);
+	ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
+
+	int iMax = (m_bDiagMode ? EDirection_MAX : CardDirCount);
+	int dir_offset = rand() % iMax;
+	for (int dir = 0 ; dir < iMax ; ++dir)
+	{
+		Vector2 vSideCoord;
+		if (m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%iMax), vSideCoord) == false)
+			continue;
+
+		Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
+		if (oSideCase.iCount == BLANK)
+		{
+			oSideCase.iCount = oCase.iCount + 1;
+			oSideCase.iPreviousCase = id;
+			ASSERT(m_oPathGrid.DistanceSq(m_oPathGrid.GetCoord(id), vSideCoord) <= 2);
+			uint iSideId = m_oPathGrid.GetIndex(vSideCoord);
+			m_aStep[m_iQueue++] = iSideId;
+		}
+
+		if (oCondition.Test(*m_pModelGrid, vSideCoord))
+		{
+			GetPath(vSideCoord, aPath);
+			return FP_Succeed;
+		}
+	}
+
+	++m_iHead;
+
+	return FP_Find;
 }
 
 template <typename TCase>
@@ -129,46 +183,23 @@ bool NavDijkstra<TCase>::FindPath(const Vector2& start, const Condition<TCase>& 
 	return FindPath(pos, oCondition, aPath);
 }
 
-
 template <typename TCase>
 bool NavDijkstra<TCase>::FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath)
 {
 	Init(start);
 
-	// Compute
-	for (m_iHead = 0 ; m_iHead < m_aStep.size() && m_iHead < m_iQueue ; ++m_iHead)
+	while (true)
 	{
-		uint id = m_aStep[m_iHead];
-
-		Case& oCase = m_oPathGrid.GetCase(id);
-		Vector2 vCoord = m_oPathGrid.GetCoord(id);
-
-		ASSERT(oCase.iCount != BLOCK);
-		ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
-
-		int iMax = (m_bDiagMode ? EDirection_MAX : CardDirCount);
-		int dir_offset = rand() % iMax;
-		for (int dir = 0 ; dir < iMax ; ++dir)
+		switch (FindPathStep(start, oCondition, aPath))
 		{
-			Vector2 vSideCoord;
-			if (m_oPathGrid.GetCoord(vCoord, (EDirection)((dir + dir_offset)%iMax), vSideCoord) == false)
-				continue;
-
-			Case& oSideCase = m_oPathGrid.GetCase(vSideCoord);
-			if (oSideCase.iCount == BLANK)
-			{
-				oSideCase.iCount = oCase.iCount + 1;
-				oSideCase.iPreviousCase = id;
-				ASSERT(m_oPathGrid.DistanceSq(m_oPathGrid.GetCoord(id), vSideCoord) <= 2);
-				uint iSideId = m_oPathGrid.GetIndex(vSideCoord);
-				m_aStep[m_iQueue++] = iSideId;
-			}
-
-			if (oCondition.Test(*m_pModelGrid, vSideCoord))
-			{
-				GetPath(vSideCoord, aPath);
+			case FP_Succeed:
 				return true;
-			}
+
+			case FP_Fail:
+				return false;
+
+			default:
+				break;
 		}
 	}
 

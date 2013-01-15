@@ -42,7 +42,11 @@ bool IBFact::Resolve(IBPlanner* pPlanner)
 			}
 			else
 			{
-				return GetCauseAction()->Resolve(pPlanner);
+				if (GetCauseAction()->Resolve(pPlanner) == IBAction::IBA_Destroy)
+				{
+					delete m_pCauseAction;
+					m_pCauseAction = NULL;
+				}
 			}
 			break;
 

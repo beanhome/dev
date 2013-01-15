@@ -34,7 +34,10 @@ class BLWorld
 		uint GetHeight() const { return m_iHeight; }
 		uint GetGridSize() const { return m_iGrid; }
 
+		const BLGrid& GetGrid() const { return m_oGrid; }
 		BLGrid& GetGrid() { return m_oGrid; }
+
+		const BLBot& GetBot() const { return *m_pBot; }
 
 		void Update(float dt);
 		void Draw() const;

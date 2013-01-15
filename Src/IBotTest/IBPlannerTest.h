@@ -6,7 +6,7 @@
 class IBPlannerTest : public IBPlanner
 {
 	public:
-		IBPlannerTest();
+		IBPlannerTest(void* pOwner);
 		virtual ~IBPlannerTest();
 
 	public:

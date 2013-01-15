@@ -1,12 +1,11 @@
 #include "IBFactDef_IsTopOf.h"
 #include "World/IBCube.h"
 #include "World/IBCubeWorld.h"
+#include "IBPlanner.h"
 
-extern IBWorld g_oWorld;
 
-
-IBFactDef_IsTopOf::IBFactDef_IsTopOf(const string& name)
-	: IBFactDef(name, 2)
+IBFactDef_IsTopOf::IBFactDef_IsTopOf(const string& name, IBPlanner* pPlanner)
+	: IBFactDef(name, 2, pPlanner)
 {
 }
 
@@ -18,33 +17,35 @@ IBF_Result IBFactDef_IsTopOf::Test(const vector<void*>& aUserData)
 {
 	assert(aUserData.size() == 2);
 
+	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
 	IBCube* pCube1 = (IBCube*)aUserData[0];
 	IBCube* pCube2 = (IBCube*)aUserData[1];
 
 	if (pCube1 == NULL || pCube2 == NULL)
 		return IBF_UNKNOW;
 
-	return (g_oWorld.IsCubeOnCube(pCube1, pCube2) ? IBF_OK : IBF_FAIL);
+	return (pWorld->IsCubeOnCube(pCube1, pCube2) ? IBF_OK : IBF_FAIL);
 }
 
 void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 {
 	assert(aUserData.size() == 2);
 
+	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
 	IBCube* pCubeTop = (IBCube*)aUserData[0];
 	IBCube* pCubeDown = (IBCube*)aUserData[1];
 
 	if (pCubeTop == NULL && pCubeDown == NULL)
 	{
-		for (uint i=0 ; i<g_oWorld.GetCubes().size() ; ++i)
+		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			for (uint j=0 ; j<g_oWorld.GetCubes().size() ; ++j)
+			for (uint j=0 ; j<pWorld->GetCubes().size() ; ++j)
 			{
 				if (i!=j)
 				{
-					IBCube* pCubeA = &g_oWorld.GetCubes()[i];
-					IBCube* pCubeB = &g_oWorld.GetCubes()[j];
-					if (g_oWorld.IsCubeOnCube(pCubeA, pCubeB))
+					IBCube* pCubeA = &pWorld->GetCubes()[i];
+					IBCube* pCubeB = &pWorld->GetCubes()[j];
+					if (pWorld->IsCubeOnCube(pCubeA, pCubeB))
 					{
 						pCubeTop = pCubeA;
 						pCubeDown = pCubeB;
@@ -56,10 +57,10 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 	}
 	else if (pCubeTop == NULL)
 	{
-		for (uint i=0 ; i<g_oWorld.GetCubes().size() ; ++i)
+		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			IBCube* pCube = &g_oWorld.GetCubes()[i];
-			if (g_oWorld.IsCubeOnCube(pCube, pCubeDown))
+			IBCube* pCube = &pWorld->GetCubes()[i];
+			if (pWorld->IsCubeOnCube(pCube, pCubeDown))
 			{
 				pCubeTop = pCube;
 				break;
@@ -68,10 +69,10 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 	}
 	else if (pCubeDown == NULL)
 	{
-		for (uint i=0 ; i<g_oWorld.GetCubes().size() ; ++i)
+		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			IBCube* pCube = &g_oWorld.GetCubes()[i];
-			if (g_oWorld.IsCubeOnCube(pCubeTop, pCube))
+			IBCube* pCube = &pWorld->GetCubes()[i];
+			if (pWorld->IsCubeOnCube(pCubeTop, pCube))
 			{
 				pCubeDown = pCube;
 				break;
