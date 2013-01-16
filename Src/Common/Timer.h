@@ -1,7 +1,7 @@
 #ifndef __TIMER_H__
 #define __TIMER_H__
 
-float GetClock();
+double GetClock();
 
 
 class Timer
@@ -9,14 +9,14 @@ class Timer
 	public:
 		Timer();
 
-		float GetTime() const;
+		double GetTime() const;
 
 	private:
-		float m_fStartTime;
+		double m_fStartTime;
 
 	public:
 		static Timer s_oTimer;
-		static float Get() { return s_oTimer.GetTime(); }
+		static double Get() { return s_oTimer.GetTime(); }
 };
 
 

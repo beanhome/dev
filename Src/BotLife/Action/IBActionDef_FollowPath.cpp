@@ -43,7 +43,7 @@ bool IBActionDef_FollowPath::Start(IBAction* pAction)
 		Vector2 vTarget = pPath->PopFront();
 		BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
 
-		pBot->SetState(BLBot::Walk, eDir, 1.f);
+		pBot->SetState(BLBot::Walk, eDir, 0.5f);
 		pBot->SetPos(vTarget);
 	}
 	return true;
@@ -66,7 +66,7 @@ bool IBActionDef_FollowPath::Execute(IBAction* pAction)
 		Vector2 vTarget = pPath->PopFront();
 		BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
 
-		pBot->SetState(BLBot::Walk, eDir, 1.f);
+		pBot->SetState(BLBot::Walk, eDir, 0.5f);
 		pBot->SetPos(vTarget);
 	}
 

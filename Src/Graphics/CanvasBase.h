@@ -20,6 +20,9 @@ class CanvasBase
 		uint16							GetWidth() const { return m_iWidth; }
 		uint16							GetHeight() const { return m_iHeight; }
 
+		void							SetWidth(uint16 w) { m_iWidth = w; }
+		void							SetHeight(uint16 h) { m_iHeight = h; }
+
 		virtual GEngine*				GetGEngine() = 0;
 		virtual const GEngine*			GetGEngine() const = 0;
 
@@ -45,9 +48,9 @@ class CanvasBase
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const = 0;
 		void 							DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, const Color& oColor) const { DrawLine(x1, y1, x2, y2, oColor.r, oColor.g, oColor.b); }
 
-		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) = 0;
-		void 							Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... );
-		void 							Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor, const char* format, ... );
+		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const = 0;
+		void 							Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const;
+		void 							Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor, const char* format, ... ) const;
 
 		void 							SetPrintParameter(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor);
 		void 							SetPrintParameter(sint16 x, sint16 y, const char* sFontPath = NULL, uint size = 0, ETextAlign eAlign = Undefined);
@@ -55,9 +58,9 @@ class CanvasBase
 		void 							SetPrintFont(const char* sFontPath, uint size = 0);
 		void 							SetPrintSize(uint size);
 
-		const char*						GetPrintFont() const;
+		virtual const char*				GetPrintFont() const;
 
-		void 							Print(const char* format, ...);
+		void 							Print(const char* format, ...) const;
 
 		//virtual bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
 
@@ -68,6 +71,7 @@ class CanvasBase
 		uint16							m_iWidth;
 		uint16							m_iHeight;
 
+		mutable
 		struct PrintParam
 		{
 			sint16			x;

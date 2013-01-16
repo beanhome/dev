@@ -298,7 +298,7 @@ void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, 
 	Draw_Line(m_pScreen, x1, y1, x2, y2, SDL_MapRGB(m_pScreen->format, r, g, b));
 }
 
-void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs)
+void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
 

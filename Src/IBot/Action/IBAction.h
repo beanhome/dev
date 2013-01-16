@@ -63,6 +63,8 @@ class IBAction
 		State					Resolve(IBPlanner* pPlanner);
 		float					Valuate();
 
+		int						GetExecCounter() const { return m_iExecCount; }
+
 	private:
 		IBActionDef*			m_pDef;
 

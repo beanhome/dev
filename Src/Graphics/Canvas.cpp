@@ -73,7 +73,7 @@ void Canvas::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8
 	GetGEngine()->DrawLine(GetScreenPosX() + x1, GetScreenPosY() + y1, GetScreenPosX() + x2, GetScreenPosY() + y2, r, g, b);
 }
 
-void Canvas::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs)
+void Canvas::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	GetGEngine()->PrintArgs(GetScreenPosX() + x, GetScreenPosY() + y, sFontPath, size, eAlign, r, g, b, format, oArgs);
 }
@@ -86,6 +86,12 @@ sint32 Canvas::GetMouseX() const
 sint32 Canvas::GetMouseY() const
 {
 	return GetGEngine()->GetMouseY() - GetPosY();
+}
+
+const char* Canvas::GetPrintFont() const
+{
+	const char* sPrintFont = CanvasBase::GetPrintFont();
+	return (sPrintFont != NULL ? sPrintFont : m_oParent.GetPrintFont());
 }
 
 

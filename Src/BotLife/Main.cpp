@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 
-
 	float ratio = 0.7f;
 	uint w = 900;
 	uint h = 600;
@@ -30,24 +29,17 @@ int main(int argc, char *argv[])
 
 	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oWorld.GetBot().GetPlanner(), graph_canva);
 
-	/*
-	g_oWorld.Init();
-	g_oWorld.Print();
-	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeA(), g_oWorld.GetCubeB());
-	//oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeB(), g_oWorld.GetCubeC()); // uncomment to add
-	*/
-
-
 	bool bQuit = false;
 
-	float fTime = Timer::Get();
-	float fLastTime = fTime;
+	double fTime = Timer::Get();
+	double fLastTime = fTime;
 
 	while (!bQuit)
 	{
 		fLastTime = fTime;
 		fTime = Timer::Get();
-		float dt = fTime - fLastTime;
+		float dt = (float)(fTime - fLastTime);
+		dt = min(dt, 0.1f);
 
 		ge.Clear();
 

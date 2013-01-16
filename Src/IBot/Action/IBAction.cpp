@@ -331,18 +331,18 @@ float IBAction::Valuate()
 
 void IBAction::Start()
 {
-	LOG("Action %s Started\n", m_pDef->GetName().c_str());
+	//LOG("Action %s Started\n", m_pDef->GetName().c_str());
 	m_iExecCount = 0;
 }
 
 void IBAction::Execute()
 {
-	LOG("Action %s Execute %d\n", m_pDef->GetName().c_str(), m_iExecCount);
+	//LOG("Action %s Execute %d\n", m_pDef->GetName().c_str(), m_iExecCount);
 	m_iExecCount++;
 }
 
 void IBAction::Finish()
 {
-	LOG("Action %s Finish %d\n", m_pDef->GetName().c_str(), m_iExecCount);
+	//LOG("Action %s Finish %d\n", m_pDef->GetName().c_str(), m_iExecCount);
 }
 

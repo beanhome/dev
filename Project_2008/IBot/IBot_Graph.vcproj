@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\Common; C:\dev\Src\IBot; C:\dev\Src\Graphics"
+				AdditionalIncludeDirectories="C:\dev\Src\Common;C:\dev\Src\IBot;C:\dev\Src\Graphics;C:\dev\Src\IBot\Graph"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -102,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\Common; C:\dev\Src\IBot; C:\dev\Src\Graphics"
+				AdditionalIncludeDirectories="C:\dev\Src\Common;C:\dev\Src\IBot;C:\dev\Src\Graphics;C:\dev\Src\IBot\Graph"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -145,6 +145,38 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGActionBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGActionBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBoxBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBoxBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGFactBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\Graph\IBGFactBox.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\Src\IBot\Graph\IBPlannerGraph.cpp"
 				>

@@ -103,7 +103,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\..\External\SDL_image-1.2.10&quot;;..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\Graphics;..\..\Src\Common"
+				AdditionalIncludeDirectories="&quot;..\..\External\SDL_image-1.2.10-lib\include&quot;;..\..\External\SDL_ttf\include;..\..\External\SDL_gfx\src;..\..\External\SDL_Draw\src;..\..\External\SDL\include;..\..\Src\Graphics;..\..\Src\Common"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"

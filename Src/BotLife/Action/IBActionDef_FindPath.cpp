@@ -3,6 +3,7 @@
 #include "IBPlanner.h"
 #include "BLBot.h"
 #include "NavAStar.h"
+#include "Timer.h"
 
 
 IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlanner)
@@ -57,10 +58,19 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
 	ASSERT(pPath != NULL);
 
-	Navigation<BLSquare>::State state = m_pNavigation->FindPathStep(*pStart, *pTarget, 0, *pPath);
+	Navigation<BLSquare>::State state = Navigation<BLSquare>::FP_Find;
+	
+	LOG("Find Path step :");
+	double start = Timer::Get();
+	while (Timer::Get() < start + 0.001 && state == Navigation<BLSquare>::FP_Find)
+	{
+		m_pNavigation->FindPathStep(*pStart, *pTarget, 0, *pPath);
+		LOG(" *");
+	}
+	LOG("\n");
 
-	LOG("Path : ");
-	pPath->Print();
+	//LOG("Path : ");
+	//pPath->Print();
 
 	return (state != Navigation<BLSquare>::FP_Find);
 }

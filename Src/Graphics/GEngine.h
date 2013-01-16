@@ -44,10 +44,10 @@ class GEngine : public CanvasBase
 		sint32							GetMouseY() const { return m_iMouseY; }
 
 		template<typename T>
-		T* const						GetResource(const typename T::Desc& oDesc);
+		T* const						GetResource(const typename T::Desc& oDesc) const;
 
-		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) = 0;
-		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) = 0;
+		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) const = 0;
+		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) const = 0;
 
 		bool							AddResource(uint32 crc, Resource* pRes);
 		bool							RemResource(uint32 crc);
@@ -74,13 +74,13 @@ class GEngine : public CanvasBase
 };
 
 template<typename T>
-T* const GEngine::GetResource(const typename T::Desc& oDesc)
+T* const GEngine::GetResource(const typename T::Desc& oDesc) const
 {
 	uint32 crc = T::ComputeCRC32(oDesc);
 
-	ResourceMap::iterator iter = m_aResources.find(crc);
+	ResourceMap::const_iterator iter = m_aResources.find(crc);
 
-	return (iter == m_aResources.end() ? CreateResource<T>(crc, oDesc) : (T*)iter->second);
+	return (iter == m_aResources.end() ? ((GEngine*)this)->CreateResource<T>(crc, oDesc) : (T*)iter->second);
 }
 
 template<typename T>

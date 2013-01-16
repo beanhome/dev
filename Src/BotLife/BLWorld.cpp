@@ -64,6 +64,7 @@ void BLWorld::Update(float dt)
 {
 	m_pBot->Update(dt);
 
+	/*
 	const InputEvent& ie = m_oCanva.GetGEngine()->GetInputEvent();
 	if (m_pBot->GetState() == BLBot::Idle && ie.GetKeyboardEvent() == KeyDown)
 	{
@@ -76,6 +77,7 @@ void BLWorld::Update(float dt)
 			case KEY_RIGHT:	m_pBot->SetState(BLBot::Walk, BLBot::Right, fDelay);	break;
 		}
 	}
+	*/
 
 	/*
 	static bool step = false;

@@ -32,14 +32,14 @@ class GEngine_SDL : public GEngine
 		virtual void 					DrawCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawFillCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs);
+		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
 
 		void							SaveEvent();
 		bool							PollEvent();
 		const InputEvent&				WaitEvent();
 
-		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) { return GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(oDesc)); }
-		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) { return GetResource<FontResource_SDL>(FontResource_SDL::Desc(oDesc)); }
+		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) const { return GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(oDesc)); }
+		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) const { return GetResource<FontResource_SDL>(FontResource_SDL::Desc(oDesc)); }
 
 	protected:
 		uint 							Init();

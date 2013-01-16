@@ -22,7 +22,7 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	, m_fStateTime(0.f)
 	, m_fStateDelay(0.2f)
 	, m_fStepTime(0.f)
-	, m_fStepDelay(0.2f)
+	, m_fStepDelay(0.1f)
 {
 	m_pImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/Test/Bomberman.png"), 4, 5);
 	m_iWidth = 20;

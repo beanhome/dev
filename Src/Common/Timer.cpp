@@ -9,7 +9,7 @@
 #include <WTypes.h>
 #include <winbase.h>
 
-float GetClock()
+double GetClock()
 {
 	LARGE_INTEGER iCount;
 	QueryPerformanceCounter( &iCount );
@@ -18,7 +18,7 @@ float GetClock()
 	LARGE_INTEGER iFreq;
 	QueryPerformanceFrequency( &iFreq );
 
-	return ((float)iCount.QuadPart) / (float)iFreq.QuadPart;
+	return ((double)iCount.QuadPart) / (double)iFreq.QuadPart;
 }
 
 #else
@@ -27,10 +27,10 @@ float GetClock()
 #include <windows.h>
 #include <time.h>
 
-float GetClock()
+double GetClock()
 {
 	clock_t currentTime = clock();
-	return ((float)currentTime) / (float)CLOCKS_PER_SEC;
+	return ((double)currentTime) / (double)CLOCKS_PER_SEC;
 }
 #endif
 
@@ -38,12 +38,12 @@ float GetClock()
 
 #include <sys/time.h>
 
-float GetClock()
+double GetClock()
 {
 	timeval timer;
 	gettimeofday(&timer, NULL);
 	clock_t currentTime = timer.tv_sec+(long)((double)timer.tv_usec/1000000.0);
-	return ((float)currentTime)*1000.0f;
+	return ((double)currentTime)*1000.0;
 }
 #endif
 
@@ -54,7 +54,7 @@ Timer::Timer()
 	: m_fStartTime(GetClock())
 {}
 
-float Timer::GetTime() const
+double Timer::GetTime() const
 {
 	return GetClock() - m_fStartTime;
 }

@@ -16,6 +16,9 @@ class Canvas : public CanvasBase
 		sint16							GetScreenPosX() const { return m_oParent.GetScreenPosX() + m_iPosX; }
 		sint16							GetScreenPosY() const { return m_oParent.GetScreenPosY() + m_iPosY; }
 
+		void							SetPosX(sint16 x) { m_iPosX = x; }
+		void							SetPosY(sint16 y) { m_iPosY = y; }
+
 		GEngine*						GetGEngine() { return m_oParent.GetGEngine(); }
 		const GEngine*					GetGEngine() const { return m_oParent.GetGEngine(); }
 
@@ -28,8 +31,9 @@ class Canvas : public CanvasBase
 		virtual void 					DrawCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawFillCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs);
+		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
 
+		virtual const char*				GetPrintFont() const;
 		//bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
 
 		sint32							GetMouseX() const;
