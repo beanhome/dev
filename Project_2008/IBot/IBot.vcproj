@@ -258,6 +258,14 @@
 				Name="World"
 				>
 				<File
+					RelativePath="..\..\Src\IBot\World\IBInt.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBot\World\IBInt.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\IBot\World\IBObject.cpp"
 					>
 				</File>

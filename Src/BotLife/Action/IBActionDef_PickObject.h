@@ -1,14 +1,14 @@
-#ifndef __IBACTIONDEF_FOLLOWPATH_H__
-#define __IBACTIONDEF_FOLLOWPATH_H__
+#ifndef __IBACTIONDEF_PICKOBJECT_H__
+#define __IBACTIONDEF_PICKOBJECT_H__
 
 #include "Utils.h"
 #include "Action/IBActionDef.h"
 
-class IBActionDef_FollowPath : public IBActionDef
+class IBActionDef_PickObject : public IBActionDef
 {
 	public:
-		IBActionDef_FollowPath(const string& name, IBPlanner* pPlanner);
-		virtual ~IBActionDef_FollowPath();
+		IBActionDef_PickObject(const string& name, IBPlanner* pPlanner);
+		virtual ~IBActionDef_PickObject();
 
 		virtual void			Define();
 		
@@ -16,7 +16,6 @@ class IBActionDef_FollowPath : public IBActionDef
 		virtual bool			Start(IBAction* pAction);
 		virtual bool			Execute(IBAction* pAction);
 		virtual bool			Finish(IBAction* pAction);
-		virtual void			Destroy(IBAction* pAction);
 
 	private:
 };

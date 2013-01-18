@@ -9,7 +9,7 @@ class ImageResource;
 class Image
 {
 	public:
-		Image(CanvasBase& oCanvas, ImageResource* pImageResource);
+		Image(const CanvasBase& oCanvas, ImageResource* pImageResource);
 		//Image(CanvasBase& oCanvas, const char* path);
 		virtual ~Image();
 
@@ -20,8 +20,10 @@ class Image
 
 		void						Draw() const;
 
+		const ImageResource*		GetResource() const { return m_pImageResource; }
+
 	protected:
-		CanvasBase&					m_oCanvas;
+		const CanvasBase&			m_oCanvas;
 		sint16						m_iPosX;
 		sint16						m_iPosY;
 

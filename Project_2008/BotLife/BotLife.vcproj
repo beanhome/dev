@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -85,8 +85,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -202,6 +202,14 @@
 					RelativePath="..\..\Src\BotLife\Action\IBActionDef_FollowPath.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_PickObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_PickObject.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Fact"
@@ -212,6 +220,30 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotNearPos.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_BotNearPos.h"
 					>
 				</File>
 				<File
@@ -226,6 +258,30 @@
 			<Filter
 				Name="World"
 				>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLObject.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLProp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLProp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLSquare.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLSquare.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\BLWorld.cpp"
 					>

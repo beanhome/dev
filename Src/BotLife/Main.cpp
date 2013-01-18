@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 
-	float ratio = 0.7f;
+	float ratio = 0.6f;
 	uint w = 900;
 	uint h = 600;
 
@@ -34,6 +34,8 @@ int main(int argc, char *argv[])
 	double fTime = Timer::Get();
 	double fLastTime = fTime;
 
+	bool bRun = false;
+
 	while (!bQuit)
 	{
 		fLastTime = fTime;
@@ -43,7 +45,9 @@ int main(int argc, char *argv[])
 
 		ge.Clear();
 
-		oWorld.Update(dt);
+		if (bRun)
+			oWorld.Update(dt);
+
 		oWorld.Draw();
 		oPlannerDisplay->DrawGraph();
 
@@ -56,8 +60,8 @@ int main(int argc, char *argv[])
 			 || ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
 				bQuit = true;
 
-			//if (ge.GetInputEvent().IsKeyboard())
-			//	break;
+			if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_SPACE)
+				bRun = true;
 		}
 	}
 

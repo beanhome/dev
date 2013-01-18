@@ -5,12 +5,14 @@
 #include "InputEvent.h"
 #include "GEngine.h"
 #include "IBPlanner.h" // To Del
+#include "World\BLProp.h"
+#include "Path.h"
 
 int _map_[16][16] = {
 	{ 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1 },
 	{ 1, 0, 0, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
 	{ 1, 0, 0, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 1,  1, 1, 0, 0,  1, 1, 1, 1,  0, 0, 0, 1 },
+	{ 1, 0, 0, 1,  1, 1, 0, 1,  1, 1, 1, 1,  0, 0, 0, 1 },
 
 	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
 	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
@@ -27,6 +29,7 @@ int _map_[16][16] = {
 	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1,  0, 0, 0, 1 },
 	{ 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1 }
 };
+
 
 
 
@@ -49,15 +52,33 @@ BLWorld::BLWorld(Canvas& canva, uint grid)
 	m_pBot = new BLBot(*canva.GetGEngine(), *this);
 	m_pBot->SetLoc(30, 30);
 	m_pBot->SetPos(1, 1);
-
 	//m_pBot->SetState(BLBot::Walk, BLBot::Down, 1.f);
-	m_pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
+	//m_pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
+
+	m_pProp = new BLProp(*this, "Mine", Vector2(2,4));
+
+	//m_pBot->AddGoal("IBFactDef_BotAtPos", new IBVector2("Dest", 14, 14));
+	m_pBot->AddGoal("IBFactDef_BotHasObject", m_pProp);
 }
 
 BLWorld::~BLWorld()
 {
 	delete m_pBot;
+	delete m_pProp;
 }
+
+bool BLWorld::TestPath(const Path& oPath) const
+{
+	/*
+	for (uint i=0 ; i<oPath.GetLength() ; ++i)
+	{
+		const BLSquare& sq = m_oGrid[oPath[i]];
+	}
+	*/
+
+	return true;
+}
+
 
 
 void BLWorld::Update(float dt)
@@ -119,6 +140,8 @@ void BLWorld::Draw() const
 	{
 		m_oCanva.DrawLine(0, i*m_iGrid, m_iWidth, i*m_iGrid, 0, 0, 255);
 	}
+
+	m_pProp->Draw();
 
 	m_pBot->Draw(m_oCanva);
 }

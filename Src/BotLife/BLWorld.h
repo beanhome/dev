@@ -3,24 +3,13 @@
 
 #include "Utils.h"
 #include "GridBase.h"
+#include "World\BLSquare.h"
 
 class Canvas;
 class CanvasBase;
 class BLBot;
-
-class BLSquare
-{
-	public:
-		BLSquare() : m_iType(0) {}
-
-		int GetType() const { return m_iType; }
-		void SetType(int type) { m_iType = type;}
-
-		virtual bool IsBlock() const { return (m_iType == 1); }
-
-	private:
-		int m_iType;
-};
+class BLProp;
+class Path;
 
 class BLWorld
 {
@@ -30,12 +19,16 @@ class BLWorld
 
 		typedef GridBase<BLSquare> BLGrid;
 
+		const Canvas& GetCanvas() const { return m_oCanva; }
+
 		uint GetWidth() const { return m_iWidth; }
 		uint GetHeight() const { return m_iHeight; }
 		uint GetGridSize() const { return m_iGrid; }
 
 		const BLGrid& GetGrid() const { return m_oGrid; }
 		BLGrid& GetGrid() { return m_oGrid; }
+
+		bool TestPath(const Path& oPath) const;
 
 		const BLBot& GetBot() const { return *m_pBot; }
 
@@ -52,6 +45,8 @@ class BLWorld
 		uint m_iHeight;
 
 		BLBot* m_pBot;
+
+		BLProp* m_pProp;
 };
 
 #endif

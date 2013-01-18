@@ -111,17 +111,21 @@ void IBGBox::Draw() const
 		m_oCanvas.CanvasBase::DrawLine(m_pActionBox->GetRight(), m_pActionBox->GetMidH(), m_pFactBox->GetLeft(), m_pFactBox->GetMidH(), IBPlannerGraph::s_oLinkColor);
 	}
 
-	x = 0;
-	y = 0;
-	int w = 0;
-	for (uint i=0 ; i<m_aPreBox.size() ; ++i)
+	if (m_aPreBox.size())
 	{
-		w = max(w, m_aPreBox[i]->GetW());
-		m_aPreBox[i]->SetX(x);
-		m_aPreBox[i]->SetY(y);
-		m_aPreBox[i]->Draw();
-		m_oCanvas.CanvasBase::DrawLine(m_aPreBox[i]->GetRight(), m_aPreBox[i]->GetMidH(), m_pActionBox->GetLeft(), m_pActionBox->GetMidH(), IBPlannerGraph::s_oLinkColor);
+		x = 0;
+		y = 0;
+		int w = 0;
+		int as = m_pActionBox->GetH() / m_aPreBox.size();
+		for (uint i=0 ; i<m_aPreBox.size() ; ++i)
+		{
+			w = max(w, m_aPreBox[i]->GetW());
+			m_aPreBox[i]->SetX(x);
+			m_aPreBox[i]->SetY(y);
+			m_aPreBox[i]->Draw();
+			m_oCanvas.CanvasBase::DrawLine(m_aPreBox[i]->GetRight(), m_aPreBox[i]->GetMidH(), m_pActionBox->GetLeft(), m_pActionBox->GetTop()+i*as+as/2, IBPlannerGraph::s_oLinkColor);
 
-		y += m_aPreBox[i]->GetH() + IBPlannerGraph::s_iFactMinSpace;
+			y += m_aPreBox[i]->GetH() + IBPlannerGraph::s_iFactMinSpace;
+		}
 	}
 }

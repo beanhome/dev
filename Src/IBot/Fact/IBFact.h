@@ -27,9 +27,9 @@ class IBFact
 
 		const vector<void*>&		GetUserData() const { return m_aUserData; }
 		const vector<void*>&		GetVariables() const { return m_aUserData; }
-		void*						GetVariable(uint i) const { assert(i<m_aUserData.size()); return m_aUserData[i]; }
+		void*						GetVariable(uint i) const { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
 		//void*						GetVariable(uint i) { assert(i<m_aUserData.size()); return m_aUserData[i]; }
-		void						SetVariable(uint i, void* pVar) { assert(i<m_aUserData.size()); m_aUserData[i] = pVar; }
+		void						SetVariable(uint i, void* pVar);
 
 		bool						IsTrue() const { return Test() == IBF_OK; }
 

@@ -4,6 +4,7 @@
 #include "BLBot.h"
 #include "NavAStar.h"
 #include "Timer.h"
+#include "World\IBInt.h"
 
 
 IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlanner)
@@ -27,8 +28,9 @@ void IBActionDef_FindPath::Define()
 	AddVariable("Start");
 	AddVariable("Target");
 	AddVariable("Path");
+	AddVariable("Dist");
 
-	AddPostCondition("IBFactDef_HasValidPath", "Path", "Start", "Target");
+	AddPostCondition("IBFactDef_HasValidPath", "Path", "Start", "Target", "Dist");
 }
 
 bool IBActionDef_FindPath::Start(IBAction* pAction)
@@ -38,13 +40,18 @@ bool IBActionDef_FindPath::Start(IBAction* pAction)
 	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
 	ASSERT(pTarget != NULL);
 	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	ASSERT(pPath != NULL);
+	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	ASSERT(pDist != NULL);
 
+	/*
 	if (pPath != NULL)
 		delete pPath;
 
 	pAction->SetVariable("Path", new IBPath("MyPath"));
+	*/
 
-	m_pNavigation->FindPathInit(*pStart, *pTarget, 0, *pPath);
+	m_pNavigation->FindPathInit(*pStart, *pTarget, pDist->GetValue(), *pPath);
 	
 	return true;
 }
@@ -57,6 +64,8 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	ASSERT(pTarget != NULL);
 	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
 	ASSERT(pPath != NULL);
+	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	ASSERT(pDist != NULL);
 
 	Navigation<BLSquare>::State state = Navigation<BLSquare>::FP_Find;
 	
@@ -64,7 +73,7 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	double start = Timer::Get();
 	while (Timer::Get() < start + 0.001 && state == Navigation<BLSquare>::FP_Find)
 	{
-		m_pNavigation->FindPathStep(*pStart, *pTarget, 0, *pPath);
+		state = m_pNavigation->FindPathStep(*pStart, *pTarget, pDist->GetValue(), *pPath);
 		LOG(" *");
 	}
 	LOG("\n");

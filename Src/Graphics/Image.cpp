@@ -3,7 +3,7 @@
 #include "GEngine.h"
 #include "ImageResource.h"
 
-Image::Image(CanvasBase& oCanvas, ImageResource* pImageResource)
+Image::Image(const CanvasBase& oCanvas, ImageResource* pImageResource)
 	: m_oCanvas(oCanvas)
 	, m_iPosX(0)
 	, m_iPosY(0)

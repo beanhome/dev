@@ -17,6 +17,12 @@ IBVector2::IBVector2(const string& name, int _x, int _y)
 	, Vector2(_x, _y)
 {}
 
+IBVector2::IBVector2(const string& name, const Vector2& v)
+	: IBObject(name)
+	, Vector2(v)
+{}
+
+
 IBVector2& IBVector2::operator=(const Vector2& v)
 {
 	x = v.x;
@@ -31,7 +37,7 @@ void IBVector2::Print() const
 	if (m_sName.length() > 0)
 		LOG("Vector2 : %s (%d %d)", m_sName.c_str(), x, y);
 	else
-		LOG("Vector2 (%d %d)", m_sName.c_str(), x, y);
+		LOG("Vector2 (%d %d)", x, y);
 
 	LOG("\n");
 }

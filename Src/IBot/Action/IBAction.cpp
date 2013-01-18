@@ -20,17 +20,15 @@ IBAction::IBAction(IBActionDef* pDef)
 	for (uint i=0 ; i<pDef->GetPreCondDef().size() ; ++i)
 	{
 		const FactCondDef& oPreCondDef = pDef->GetPreCondDef()[i];
+		ASSERT(oPreCondDef.m_pFactDef->GetDegree() == oPreCondDef.m_aVarName.size());
 
 		vector<void*> aUserData;
 		aUserData.resize(oPreCondDef.m_pFactDef->GetDegree(), NULL);
-
-		assert(oPreCondDef.m_pFactDef->GetDegree() == oPreCondDef.m_aVarName.size());
 
 		IBFact* pPreCond = new IBFact(oPreCondDef.m_pFactDef, aUserData);
 
 		AddPreCond(i, pPreCond);
 	}
-
 }
 
 IBAction::~IBAction()
@@ -47,8 +45,6 @@ IBAction::~IBAction()
 		if (m_aPostCond[i] != NULL)
 			m_aPostCond[i]->RemoveCauseAction(this);
 	}
-
-
 }
 
 void* IBAction::FindVariables(const string& name) const
@@ -68,7 +64,7 @@ void IBAction::SetVariable(const string& name, void* val)
 		AffectPreCondVariable(name, val);
 		
 		// Affecte data to pre cond // TOCHECK
-		AffectPostCondVariable(name, val);
+		//AffectPostCondVariable(name, val);
 	}
 }
 
@@ -86,13 +82,15 @@ void IBAction::AddPostCond(uint i, IBFact* pPostCond)
 
 void IBAction::AddPreCond(uint i, IBFact* pPreCond)
 {
-	assert(i<m_aPreCond.size());
+	ASSERT(i<m_aPreCond.size());
 	m_aPreCond[i] = pPreCond;
 	pPreCond->SetEffectAction(this);
 }
 
 const FactCondDef& IBAction::GetPostConfDefFromFact(IBFact* pPostCond) const
 {
+	ASSERT(false); // unused
+
 	static FactCondDef NullDef(NULL);
 
 	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
@@ -101,12 +99,14 @@ const FactCondDef& IBAction::GetPostConfDefFromFact(IBFact* pPostCond) const
 			return m_pDef->GetPostCondDef()[i];
 	}
 
-	assert(false);
+	ASSERT(false);
 	return NullDef;
 }
 
 const FactCondDef& IBAction::GetPreConfDefFromFact(IBFact* pPreCond) const
 {
+	ASSERT(false); // unused
+	
 	static FactCondDef NullDef(NULL);
 
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
@@ -115,7 +115,7 @@ const FactCondDef& IBAction::GetPreConfDefFromFact(IBFact* pPreCond) const
 			return m_pDef->GetPreCondDef()[i];
 	}
 
-	assert(false);
+	ASSERT(false);
 	return NullDef;
 }
 
@@ -167,6 +167,8 @@ void IBAction::AffectPreCondVariable(const string& name, void* data)
 
 void IBAction::AffectPostCondVariable(const string& name, void* data)
 {
+	ASSERT(false);
+
 	// for each post cond
 	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
 	{
@@ -191,17 +193,21 @@ void IBAction::AffectPostCondVariable(const string& name, void* data)
 // Update Variable from post and pre condition
 void IBAction::ResolveVariable()
 {
+	ASSERT(false);
+
 	ResolvePostCondVariable();
 	ResolvePreCondVariable();
 }
 
-// Update Variable from post and pre condition
+// Update Variable from post condition
 void IBAction::ResolvePostCondVariable()
 {
 	// for each post cond
 	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
 	{
 		IBFact* pPostFact = m_aPostCond[i];
+		if (pPostFact == NULL) continue;
+
 		const FactCondDef* pPostCondDef = &m_pDef->GetPostCondDef()[i];
 
 		// for each post cond variable
@@ -275,14 +281,15 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 	switch(m_eState)
 	{
 		case IBA_Init:
-			SetState(IBA_Unresolved);
+			if (m_pDef->Init(this))
+				SetState(IBA_Unresolved);
 			break;
 
 		case IBA_Unresolved:
 			if (res)
 				SetState(IBA_Start);
-			else
-				ResolveVariable();
+			//else
+			//	ResolveVariable();
 			break;
 
 		case IBA_Start:
@@ -303,10 +310,13 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 
 		case IBA_Finish:
 			Finish();
-			if (!res)
+			/*if (!res)
 				SetState(IBA_Unresolved);
-			else if (m_pDef->Finish(this))
+			else*/ if (m_pDef->Finish(this))
+			{
+				m_pDef->Destroy(this);
 				SetState(IBA_Destroy);
+			}
 			break;
 
 		case IBA_Destroy:

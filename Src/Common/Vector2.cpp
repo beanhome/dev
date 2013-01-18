@@ -18,7 +18,13 @@ Vector2::Vector2(const Vector2& v)
 {
 }
 
+Vector2& Vector2::operator=(const Vector2& v)
+{
+	x = v.x;
+	y = v.y;
 
+	return *this;
+}
 
 
 bool operator==(const Vector2& a, const Vector2& b)
@@ -61,11 +67,13 @@ Vector2 operator+(const Vector2& a, const Vector2& b)
 	return res;
 }
 
-Vector2& Vector2::operator=(const Vector2& v)
+Vector2 operator-(const Vector2& a, const Vector2& b)
 {
-	x = v.x;
-	y = v.y;
+	Vector2 res;
 
-	return *this;
+	res.x = a.x - b.x;
+	res.y = a.y - b.y;
+
+	return res;
 }
 

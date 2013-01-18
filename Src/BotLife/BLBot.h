@@ -11,6 +11,7 @@ class BLWorld;
 class CanvasBase;
 class ImageFlipBook;
 class IBPlanner;
+class BLProp;
 
 class BLBot : public IBObject
 {
@@ -28,9 +29,13 @@ class BLBot : public IBObject
 		enum BotDir
 		{
 			Down,
+			DownRight,
 			Right,
+			UpRight,
 			Up,
-			Left
+			UpLeft,
+			Left,
+			DownLeft
 		};
 
 
@@ -51,11 +56,21 @@ class BLBot : public IBObject
 		void					Update(float dt);
 		void					Draw(CanvasBase& canva) const;
 
+		BotDir					GetDir() const { return m_eDir; }
 		BotDir					ComputeDir(const Vector2& Start, const Vector2& Target) const;
 
 		const IBPlanner&		GetPlanner() const { return *m_pPlanner; }
 		IBPlanner&				GetPlanner() { return *m_pPlanner; } // To Del
 		const BLWorld&			GetWorld() const { return m_oWorld; }
+
+		void					PickProp(BLProp* pProp);
+		bool					HasObject(BLProp* pObj) const { return pObj == m_pCarryObject; }
+		BLProp*					GetFirstObject() const { return m_pCarryObject; }
+
+		void					AddGoal(const string& name);
+		void					AddGoal(const string& name, void* pUserData);
+		void					AddGoal(const string& name, void* pUserData1, void* pUserData2);
+		void					AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
 
 	private:
 		BLWorld&				m_oWorld;
@@ -83,10 +98,12 @@ class BLBot : public IBObject
 
 		IBPlanner*				m_pPlanner;
 
+		BLProp*					m_pCarryObject;
+
 	private:
-		static float			s_fDirArrayX[4];
-		static float			s_fDirArrayY[4];
-		static Vector2			s_vDirArray[4];
+		static float			s_fDirArrayX[8];
+		static float			s_fDirArrayY[8];
+		static Vector2			s_vDirArray[8];
 };
 
 #endif

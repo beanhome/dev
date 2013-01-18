@@ -6,11 +6,23 @@
 #include "BLWorld.h"
 #include "IBPlanner_BL.h"
 #include "World\IBVector2.h"
+#include "World\BLProp.h"
+#include "Canvas.h"
 
-float BLBot::s_fDirArrayX[4] = { 0.f, 1.f, 0.f, -1.f};
-float BLBot::s_fDirArrayY[4] = { 1.f, 0.f, -1.f, 0.f};
-Vector2 BLBot::s_vDirArray[4] = { Vector2(0,1), Vector2(1,0), Vector2(0,-1), Vector2(-1,0) };
+/*
+Down,
+DownRight,
+Right,
+UpRight,
+Up,
+UpLeft,
+Left,
+DownLeft
+*/
 
+float BLBot::s_fDirArrayX[8] = { 0.f, 1.f, 1.f, 1.f, 0.f, -1.f, -1.f, -1.f};
+float BLBot::s_fDirArrayY[8] = { 1.f, 1.f, 0.f, -1.f, -1.f, -1.f, 0.f, 1.f};
+Vector2 BLBot::s_vDirArray[8] = { Vector2(0,1), Vector2(1,1), Vector2(1,0), Vector2(1,-1), Vector2(0,-1), Vector2(-1,-1), Vector2(-1,0), Vector2(-1,1) };
 
 
 BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
@@ -23,17 +35,17 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	, m_fStateDelay(0.2f)
 	, m_fStepTime(0.f)
 	, m_fStepDelay(0.1f)
+	, m_pCarryObject(NULL)
 {
-	m_pImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/Test/Bomberman.png"), 4, 5);
-	m_iWidth = 20;
-	m_iHeight = 32;
-	m_iCenterX = 10;
+	m_pImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/Test/Mario.png"), 16, 8);
+	m_iWidth = 24;
+	m_iHeight = 34;
+	m_iCenterX = 12;
 	m_iCenterY = 28;
-	m_iAnimImgcount = 5;
+	m_iAnimImgcount = 8;
 	m_pImage->SetCurrent(0);
 
 	m_pPlanner = new IBPlanner_BL(this);
-	m_pPlanner->AddGoal("IBFactDef_BotAtPos", new IBVector2("Dest", 14, 14));
 }
 
 BLBot::~BLBot()
@@ -66,6 +78,18 @@ void BLBot::SetPos(const Vector2& p)
 	m_vPos = p;
 }
 
+void BLBot::AddGoal(const string& name) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name); }
+void BLBot::AddGoal(const string& name, void* pUserData) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData); }
+void BLBot::AddGoal(const string& name, void* pUserData1, void* pUserData2) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData1, pUserData2); }
+void BLBot::AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData1, pUserData2, pUserData3); }
+
+void BLBot::PickProp(BLProp* pProp)
+{
+	ASSERT(m_pCarryObject == NULL);
+
+	m_pCarryObject = pProp;
+	pProp->SetVisible(false);
+}
 
 
 void BLBot::SetState(BotState state, BotDir dir, float delay)
@@ -80,7 +104,14 @@ void BLBot::SetState(BotState state, BotDir dir, float delay)
 BLBot::BotDir BLBot::ComputeDir(const Vector2& Start, const Vector2& Target) const
 {
 	ASSERT(Start != Target);
-	return (Start.x == Target.x ? (Target.y > Start.y ? Down : Up) : (Target.x < Start.x ? Left : Right));
+	ASSERT(abs(Start.x - Target.x) <= 1);
+	ASSERT(abs(Start.y - Target.y) <= 1);
+
+	for (uint i=0 ; i<8 ; ++i)
+		if (Target - Start == s_vDirArray[i]) 
+			return (BLBot::BotDir)i;
+
+	return Down;
 }
 
 
@@ -96,7 +127,8 @@ void BLBot::Update(float dt)
 	switch (m_eState)
 	{
 		case Idle:
-			m_pImage->SetCurrent(2);
+			m_pImage->SetCurrent(0);
+			//m_eDir = Down;
 			break;
 
 		case Walk:
@@ -105,7 +137,7 @@ void BLBot::Update(float dt)
 			break;
 
 		case Action:
-			m_pImage->SetCurrent(2);
+			m_pImage->SetCurrent(((8+m_eDir)*m_iAnimImgcount) + (int)((float) m_iAnimImgcount * t));
 			break;
 
 		default:
@@ -131,6 +163,9 @@ void BLBot::Update(float dt)
 void BLBot::Draw(CanvasBase& canva) const
 {
 	m_pImage->Draw();
+
+	if (m_pCarryObject != NULL)
+		m_oWorld.GetCanvas().DrawImage(*m_pCarryObject->GetImageResource(), (sint16)m_fLocX, (sint16)m_fLocY, 0, 0.8f);
 
 	/*
 	for (uint i=1 ; i<m_oPath.GetLength() ; ++i)

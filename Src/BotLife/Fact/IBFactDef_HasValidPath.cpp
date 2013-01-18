@@ -4,9 +4,10 @@
 #include "Vector2.h"
 #include "IBPlanner.h"
 #include "World\IBPath.h"
+#include "World\IBInt.h"
 
 IBFactDef_HasValidPath::IBFactDef_HasValidPath(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 3, pPlanner)
+	: IBFactDef(name, 4, pPlanner)
 {
 }
 
@@ -18,14 +19,24 @@ IBF_Result IBFactDef_HasValidPath::Test(const vector<void*>& aUserData)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 3);
+	ASSERT(aUserData.size() == GetDegree());
 
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	Path* pPath = static_cast<IBPath*>(aUserData[0]);
 	Vector2* pStart = static_cast<IBVector2*>(aUserData[1]);
 	Vector2* pTarget = static_cast<IBVector2*>(aUserData[2]);
+	IBInt* pDist = static_cast<IBInt*>(aUserData[3]);
 
-	return ((pPath != NULL && pStart != NULL && pTarget != NULL && pPath->IsValid() && pPath->GetStart() == *pStart && pPath->GetTarget() == *pTarget) ? IBF_OK : IBF_FAIL);
+	if (pPath == NULL || pStart == NULL || pTarget == NULL || pDist == NULL || !pPath->IsValid())
+		return IBF_FAIL;
+
+	if (pPath->GetStart() != *pStart)
+		return IBF_FAIL;
+
+	if (pBot->GetWorld().GetGrid().DistanceSq(pPath->GetTarget(), *pTarget) > pDist->GetValue() * pDist->GetValue())
+		return IBF_FAIL;
+
+	return (pBot->GetWorld().TestPath(*pPath) ? IBF_OK : IBF_FAIL);
 }
 
 void IBFactDef_HasValidPath::ResolveVariable(vector<void*>& aUserData)
@@ -48,7 +59,7 @@ void IBFactDef_HasValidPath::Print(const vector<void*>& aUserData, int tab) cons
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 3);
+	ASSERT(aUserData.size() == GetDegree());
 
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	Path* pPath = static_cast<IBPath*>(aUserData[0]);
