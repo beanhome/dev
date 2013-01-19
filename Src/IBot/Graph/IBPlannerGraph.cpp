@@ -8,7 +8,7 @@
 #include "Action\IBAction.h"
 #include "Fact\IBFactDef.h"
 
-const uint	IBPlannerGraph::s_iMargin = 32;
+const uint	IBPlannerGraph::s_iMargin = 12;
 const uint	IBPlannerGraph::s_iFactWidth = 80;
 const uint	IBPlannerGraph::s_iFactTitleHeight = 18;
 const uint	IBPlannerGraph::s_iFactVarHeight = 18;
@@ -75,12 +75,20 @@ void IBPlannerGraph::Draw()
 		h += m_aBox[i]->GetH();
 	}
 
-	int s = (m_oCanvas.GetHeight() - h) / (m_aBox.size() + 1);
+	int s = 0;
+	int y = 0;
 
-	int y = s;
+	if (h < m_oCanvas.GetHeight())
+	{
+		s = (m_oCanvas.GetHeight() - h) / (m_aBox.size() + 1);
+		y = m_oCanvas.GetPosY() + s;
+	}
+
+	y = max(y, m_oCanvas.GetPosY() + (sint16)IBPlannerGraph::s_iMargin);
+
 	for (uint i=0 ; i<m_aBox.size() ; ++i)
 	{
-		m_aBox[i]->SetX(m_oCanvas.GetWidth() - m_aBox[i]->GetW() - IBPlannerGraph::s_iMargin);
+		m_aBox[i]->SetX(std::max<sint16>(IBPlannerGraph::s_iMargin, m_oCanvas.GetWidth() - (m_aBox[i]->GetW() + IBPlannerGraph::s_iMargin)));
 		m_aBox[i]->SetY(y);
 		m_aBox[i]->Draw();
 		y += m_aBox[i]->GetH() + s;

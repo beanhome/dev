@@ -2,7 +2,7 @@
 #include "GEngine.h"
 #include "ImageResource.h"
 
-ImageFlipBook::ImageFlipBook(CanvasBase& oCanvas, ImageResource* pImageResource, uint16 row, uint16 col)
+ImageFlipBook::ImageFlipBook(const CanvasBase& oCanvas, ImageResource* pImageResource, uint16 row, uint16 col)
 	: Image(oCanvas, pImageResource)
 	, m_iRowCount(row)
 	, m_iColCount(col)

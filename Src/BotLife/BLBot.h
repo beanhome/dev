@@ -62,6 +62,7 @@ class BLBot : public IBObject
 		const IBPlanner&		GetPlanner() const { return *m_pPlanner; }
 		IBPlanner&				GetPlanner() { return *m_pPlanner; } // To Del
 		const BLWorld&			GetWorld() const { return m_oWorld; }
+		BLWorld&				GetWorld() { return m_oWorld; }
 
 		void					PickProp(BLProp* pProp);
 		bool					HasObject(BLProp* pObj) const { return pObj == m_pCarryObject; }

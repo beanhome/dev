@@ -18,7 +18,7 @@ class Image
 		uint16						GetWidth() const;
 		uint16						GetHeight() const;
 
-		void						Draw() const;
+		virtual void				Draw() const;
 
 		const ImageResource*		GetResource() const { return m_pImageResource; }
 

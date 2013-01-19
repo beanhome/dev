@@ -9,6 +9,7 @@
 #include "SDL_rotozoom.h"
 #include "FontResource_SDL.h"
 #include "ImageResource_SDL.h"
+#include "SDL_gfxPrimitives.h"
 
 
 GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth)
@@ -152,6 +153,8 @@ uint GEngine_SDL::Init()
 		return 1;
 	}
 
+	SDL_SetClipRect(m_pScreen, NULL);
+
 	//SDL_EnableKeyRepeat(500, 10);
 
 	LOG("Initializing SDL TTF.\n");
@@ -270,32 +273,32 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sin
 
 void GEngine_SDL::SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const
 {
-	Draw_Pixel(m_pScreen, x, y, SDL_MapRGB(m_pScreen->format, r, g, b));
+	pixelRGBA(m_pScreen, x, y, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const
 {
-	Draw_Rect(m_pScreen, x, y, width, height, SDL_MapRGB(m_pScreen->format, r, g, b));
+	rectangleRGBA(m_pScreen, x, y, x+width, y+height, r, g, b, 255);
 }
 
-void GEngine_SDL::DrawFillRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 _r, uint8 _g, uint8 _b) const
+void GEngine_SDL::DrawFillRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const
 {
-	Draw_FillRect(m_pScreen, x, y, width, height, SDL_MapRGB(m_pScreen->format, _r, _g, _b));
+	boxRGBA(m_pScreen, x, y, x+width, y+height, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const
 {
-	Draw_Circle(m_pScreen, x, y, radius, SDL_MapRGB(m_pScreen->format, r, g, b));
+	circleRGBA(m_pScreen, x, y, radius, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawFillCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const
 {
-	Draw_FillCircle(m_pScreen, x, y, radius, SDL_MapRGB(m_pScreen->format, r, g, b));
+	filledCircleRGBA(m_pScreen, x, y, radius, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const
 {
-	Draw_Line(m_pScreen, x1, y1, x2, y2, SDL_MapRGB(m_pScreen->format, r, g, b));
+	lineRGBA(m_pScreen, x1, y1, x2, y2, r, g, b, 255);
 }
 
 void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const

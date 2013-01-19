@@ -7,6 +7,8 @@
 #include "IBPlanner.h" // To Del
 #include "World\BLProp.h"
 #include "Path.h"
+#include "World\BLProp_SI.h"
+#include "World\BLDoor.h"
 
 int _map_[16][16] = {
 	{ 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1 },
@@ -55,7 +57,10 @@ BLWorld::BLWorld(Canvas& canva, uint grid)
 	//m_pBot->SetState(BLBot::Walk, BLBot::Down, 1.f);
 	//m_pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
 
-	m_pProp = new BLProp(*this, "Mine", Vector2(2,4));
+	m_pProp = new BLProp_SI(*this, "Mine", DATA_DIR "/Test/Mine.png", Vector2(2,4));
+
+	BLDoor* pDoor = new BLDoor(*this, "Door", BLDoor::Verti, Vector2(3, 6));
+	pDoor->Close();
 
 	//m_pBot->AddGoal("IBFactDef_BotAtPos", new IBVector2("Dest", 14, 14));
 	m_pBot->AddGoal("IBFactDef_BotHasObject", m_pProp);
@@ -69,12 +74,12 @@ BLWorld::~BLWorld()
 
 bool BLWorld::TestPath(const Path& oPath) const
 {
-	/*
 	for (uint i=0 ; i<oPath.GetLength() ; ++i)
 	{
 		const BLSquare& sq = m_oGrid[oPath[i]];
+		if (sq.GetProp() != NULL && sq.IsTempBlock())
+			return false;
 	}
-	*/
 
 	return true;
 }
@@ -128,6 +133,9 @@ void BLWorld::Draw() const
 			{
 				m_oCanva.DrawFillRect(i*m_iGrid, j*m_iGrid, m_iGrid, m_iGrid, 18, 18, 18);
 			}
+			
+			if (m_oGrid[i][j].GetProp() != NULL)
+				m_oGrid[i][j].GetProp()->Draw();
 		}
 	}
 
@@ -141,7 +149,7 @@ void BLWorld::Draw() const
 		m_oCanva.DrawLine(0, i*m_iGrid, m_iWidth, i*m_iGrid, 0, 0, 255);
 	}
 
-	m_pProp->Draw();
+	//m_pProp->Draw();
 
 	m_pBot->Draw(m_oCanva);
 }

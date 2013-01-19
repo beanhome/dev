@@ -27,6 +27,11 @@ class IBPlanner
 		void					AddGoal(const string& name, void* pUserData1, void* pUserData2);
 		void					AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
 
+		void					AddPreCond(IBAction* pAction, const string& name);
+		void					AddPreCond(IBAction* pAction, const string& name, void* pUserData);
+		void					AddPreCond(IBAction* pAction, const string& name, void* pUserData1, void* pUserData2);
+		void					AddPreCond(IBAction* pAction, const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
+
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 
 		int						Step();
@@ -49,7 +54,9 @@ class IBPlanner
 };
 
 #define REGISTER_FACT(a) m_oFactLibrary.RegisterFactDef(#a, new a(#a, this))
+#define REGISTER_FACT_NAMED(a, s) m_oFactLibrary.RegisterFactDef(s, new a(s, this))
 #define REGISTER_ACTION(a) m_oActionLibrary.RegisterActionDef(#a, new a(#a, this))
+#define REGISTER_ACTION_NAMED(a, s) m_oActionLibrary.RegisterActionDef(s, new a(s, this))
 
 
 #endif

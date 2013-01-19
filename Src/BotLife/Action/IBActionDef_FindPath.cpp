@@ -5,6 +5,7 @@
 #include "NavAStar.h"
 #include "Timer.h"
 #include "World\IBInt.h"
+#include "World\BLProp.h"
 
 
 IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlanner)
@@ -86,15 +87,27 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 
 bool IBActionDef_FindPath::Finish(IBAction* pAction)
 {
-	/*
 	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
 	ASSERT(pStart != NULL);
 	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
 	ASSERT(pTarget != NULL);
 	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
 	ASSERT(pPath != NULL);
-	*/
 
-	return true;
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	const BLWorld& oWorld = pBot->GetWorld();
+
+	for (uint i=0 ; i<pPath->GetLength() ; ++i)
+	{
+		const BLSquare& sq = oWorld.GetGrid().GetCase((*pPath)[i]);
+		if (sq.GetProp() != NULL && sq.GetProp()->IsTempBlock())
+		{
+			m_pPlanner->AddPreCond(pAction, "IBFactDef_PropIsUnblock", (void*)sq.GetProp());
+		}
+	}
+
+	return oWorld.TestPath(*pPath);
 }
 

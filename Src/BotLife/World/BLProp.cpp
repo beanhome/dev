@@ -10,28 +10,35 @@ BLProp::BLProp(BLWorld& oWorld, const string& name, const Vector2& pos)
 	: BLObject(name, pos)
 	, m_oWorld(oWorld)
 	, m_bVisible(true)
+	, m_pImage(NULL)
 {
-	const Canvas& oCanvas = m_oWorld.GetCanvas();
-
-	m_pImage = new Image(oCanvas, oCanvas.GetGEngine()->GetImageResource(DATA_DIR "/Test/Mine.png"));
-	m_pImage->SetPos(GetPos().x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2, GetPos().y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2);
+	SetPos(pos);
+	m_oWorld.GetGrid().GetCase(pos).SetProp(this);
 }
 
 
 BLProp::~BLProp()
 {
-	delete m_pImage;
 }
+
+
+void BLProp::SetPos(const Vector2& p)
+{
+	BLObject::SetPos(p);
+
+	if (m_pImage != NULL)
+		m_pImage->SetPos(GetPos().x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2, GetPos().y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2);
+}
+
 
 const ImageResource* BLProp::GetImageResource() const
 {
-	return m_pImage->GetResource();
+	return (m_pImage != NULL ? m_pImage->GetResource() : NULL);
 }
 
-
-void BLProp::Draw()
+void BLProp::Draw() const
 {
-	if (m_bVisible)
+	if (m_bVisible && m_pImage != NULL)
 		m_pImage->Draw();
 }
 

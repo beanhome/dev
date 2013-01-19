@@ -210,6 +210,14 @@
 					RelativePath="..\..\Src\BotLife\Action\IBActionDef_PickObject.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Fact"
@@ -254,10 +262,26 @@
 					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsUnblock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsUnblock.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="World"
 				>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLDoor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLDoor.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\World\BLObject.cpp"
 					>
@@ -272,6 +296,22 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\World\BLProp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLProp_FB.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLProp_FB.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLProp_SI.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLProp_SI.h"
 					>
 				</File>
 				<File

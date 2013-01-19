@@ -1,34 +1,35 @@
-#include "IBActionDef_PickObject.h"
+#include "IBActionDef_UnblockProp.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
 #include "World\BLObject.h"
 #include "World\IBInt.h"
+#include "World\BLDoor.h"
 
 
-IBActionDef_PickObject::IBActionDef_PickObject(const string& name, IBPlanner* pPlanner)
+IBActionDef_UnblockProp::IBActionDef_UnblockProp(const string& name, IBPlanner* pPlanner)
 	: IBActionDef(name, pPlanner)
 {
 
 }
 
-IBActionDef_PickObject::~IBActionDef_PickObject()
+IBActionDef_UnblockProp::~IBActionDef_UnblockProp()
 {
 
 }
 
-void IBActionDef_PickObject::Define()
+void IBActionDef_UnblockProp::Define()
 {
 	AddVariable("Obj");    // BLObject
 	AddVariable("ObjPos"); // IBVector2
 	AddVariable("Dist");   // IBInt = 1
 
 	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
-	AddPreCondition("IBFactDef_BotIsEmpty");
+	AddPreCondition("IBFactDef_PropIsBlock", "Obj");
 
-	AddPostCondition("IBFactDef_BotHasObject", "Obj");
+	AddPostCondition("IBFactDef_PropIsUnblock", "Obj");
 }
 
-bool IBActionDef_PickObject::Init(IBAction* pAction)
+bool IBActionDef_UnblockProp::Init(IBAction* pAction)
 {
 	BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
 	ASSERT(pObj != NULL);
@@ -47,25 +48,28 @@ bool IBActionDef_PickObject::Init(IBAction* pAction)
 	pDist = new IBInt("Dist = 1", 1);
 	pAction->SetVariable("Dist", (void*)pDist);
 
-
 	return true;
 }
 
-bool IBActionDef_PickObject::Start(IBAction* pAction)
+bool IBActionDef_UnblockProp::Start(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	//const BLWorld& oWorld = pBot->GetWorld();
 
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
 
-	pBot->SetState(BLBot::Action, pBot->GetDir(), 1.f);
+	BLDoor* pObj = static_cast<BLDoor*>(pAction->FindVariables("Obj"));
+	ASSERT(pObj != NULL);
+
+	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), pObj->GetPos());
+
+	pBot->SetState(BLBot::Action, eDir, 1.f);
 	return true;
 }
 
-bool IBActionDef_PickObject::Execute(IBAction* pAction)
+bool IBActionDef_UnblockProp::Execute(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -75,14 +79,15 @@ bool IBActionDef_PickObject::Execute(IBAction* pAction)
 	if (pBot->GetState() == BLBot::Action)
 		return false;
 
-	BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
+	BLDoor* pObj = static_cast<BLDoor*>(pAction->FindVariables("Obj"));
 	ASSERT(pObj != NULL);
 
-	pBot->PickProp(reinterpret_cast<BLProp*>(pObj));
+	pObj->Open();
+
 	return true;
 }
 
-bool IBActionDef_PickObject::Finish(IBAction* pAction)
+bool IBActionDef_UnblockProp::Finish(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);

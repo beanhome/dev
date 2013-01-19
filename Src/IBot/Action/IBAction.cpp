@@ -87,6 +87,12 @@ void IBAction::AddPreCond(uint i, IBFact* pPreCond)
 	pPreCond->SetEffectAction(this);
 }
 
+void IBAction::AddPreCond(IBFact* pPreCond)
+{
+	m_aPreCond.push_back(pPreCond);
+	pPreCond->SetEffectAction(this);
+}
+
 const FactCondDef& IBAction::GetPostConfDefFromFact(IBFact* pPostCond) const
 {
 	ASSERT(false); // unused
@@ -310,12 +316,14 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 
 		case IBA_Finish:
 			Finish();
-			/*if (!res)
-				SetState(IBA_Unresolved);
-			else*/ if (m_pDef->Finish(this))
+			if (m_pDef->Finish(this))
 			{
 				m_pDef->Destroy(this);
 				SetState(IBA_Destroy);
+			}
+			else
+			{
+				SetState(IBA_Unresolved);
 			}
 			break;
 

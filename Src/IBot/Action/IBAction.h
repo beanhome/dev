@@ -48,6 +48,7 @@ class IBAction
 
 		void					AddPostCond(uint i, IBFact* pPostCond);
 		void					AddPreCond(uint i, IBFact* pPreCond);
+		void					AddPreCond(IBFact* pPreCond);
 
 		const FactCondDef&		GetPostConfDefFromFact(IBFact* pPostCond) const;
 		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;

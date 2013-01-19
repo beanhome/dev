@@ -87,6 +87,10 @@ void BLBot::PickProp(BLProp* pProp)
 {
 	ASSERT(m_pCarryObject == NULL);
 
+	BLSquare& sq = GetWorld().GetGrid().GetCase(pProp->GetPos());
+	ASSERT(sq.GetProp() == pProp);
+	sq.SetProp(NULL);
+
 	m_pCarryObject = pProp;
 	pProp->SetVisible(false);
 }

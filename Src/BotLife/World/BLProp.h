@@ -14,16 +14,20 @@ class BLProp : public BLObject
 		BLProp(BLWorld& oWorld, const string& name, const Vector2& pos = Vector2(0,0));
 		virtual ~BLProp();
 
+		virtual void SetPos(const Vector2& p);
+
 		void SetVisible(bool bVisible = true) { m_bVisible = bVisible; }
 
-		const ImageResource* GetImageResource() const;
+		virtual bool IsBlock() const { return false; }
+		virtual bool IsTempBlock() const { return false; }
 
-		void Draw();
+		const ImageResource* GetImageResource() const;
+		void Draw() const;
 
 	protected:
 		BLWorld&		m_oWorld;
-		Image*			m_pImage;
 		bool			m_bVisible;
+		Image*			m_pImage;
 };
 
 #endif

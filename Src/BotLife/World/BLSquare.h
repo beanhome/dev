@@ -18,10 +18,11 @@ class BLSquare
 		int GetType() const { return m_iType; }
 		void SetType(int type) { m_iType = type;}
 
-		void SetProp(BLProp* pProp) { m_pProp = pProp; }
+		void SetProp(BLProp* pProp);
 		const BLProp* GetProp() const { return m_pProp; }
 
 		virtual bool IsBlock() const;
+		virtual bool IsTempBlock() const;
 
 	private:
 		int m_iType;
