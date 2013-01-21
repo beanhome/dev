@@ -13,7 +13,7 @@ IBFactDef_BotAtPos::~IBFactDef_BotAtPos()
 {
 }
 
-IBF_Result IBFactDef_BotAtPos::Test(const vector<void*>& aUserData)
+IBF_Result IBFactDef_BotAtPos::Test(const vector<IBObject*>& aUserData)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -25,7 +25,7 @@ IBF_Result IBFactDef_BotAtPos::Test(const vector<void*>& aUserData)
 	return ((pBot->GetPos() == vPos) ? IBF_OK : IBF_FAIL);
 }
 
-void IBFactDef_BotAtPos::ResolveVariable(vector<void*>& aUserData)
+void IBFactDef_BotAtPos::ResolveVariable(vector<IBObject*>& aUserData)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -34,19 +34,19 @@ void IBFactDef_BotAtPos::ResolveVariable(vector<void*>& aUserData)
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 
 	if (aUserData[0] == NULL)
-		aUserData[0] = (void*)&(pBot->GetIBPos());
+		aUserData[0] = pBot->GetIBPosAd();
 
 	ASSERT(aUserData[0] != NULL);
 }
 
-void IBFactDef_BotAtPos::Print(const vector<void*>& aUserData, int tab) const
+void IBFactDef_BotAtPos::Print(const vector<IBObject*>& aUserData, int tab) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	ASSERT(aUserData.size() == 1);
 
 	//BLBot* pBot = static_cast<BLBot*>(pOwner);
-	Vector2 vPos = *((Vector2*)aUserData[0]);
+	Vector2 vPos = *((IBVector2*)aUserData[0]);
 
 	for (int i=0 ; i<tab ; ++i)
 		LOG("\t");

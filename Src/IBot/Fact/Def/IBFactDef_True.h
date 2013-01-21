@@ -11,7 +11,7 @@ class IBFactDef_True : public IBFactDef
 		IBFactDef_True(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_True();
 
-		IBF_Result			Test(const vector<void*>& aUserData) { return IBF_OK; }
+		IBF_Result			Test(const vector<IBObject*>& aUserData) { return IBF_OK; }
 };
 
 #endif

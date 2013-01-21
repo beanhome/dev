@@ -34,8 +34,7 @@ void IBGFactBox::Draw() const
 
 	for (uint i=0 ; i<m_pFact->GetVariables().size() ; ++i)
 	{
-		void* pVar = m_pFact->GetVariable(i);
-		IBObject* pObject = (IBObject*)pVar;
+		IBObject* pObject = m_pFact->GetVariable(i);
 		m_oCanvas.CanvasBase::Print(x+w/2, y+IBPlannerGraph::s_iFactTitleHeight + IBPlannerGraph::s_iFactVarHeight/2 + i*IBPlannerGraph::s_iFactVarHeight, m_oCanvas.GetPrintFont(), IBPlannerGraph::s_iFactTitleHeight-6, Center, IBPlannerGraph::s_oFactColor, "%s", (pObject != NULL ? pObject->GetName().c_str() : "NULL"));
 	}
 }

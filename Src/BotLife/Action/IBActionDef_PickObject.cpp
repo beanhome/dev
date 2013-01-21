@@ -30,22 +30,22 @@ void IBActionDef_PickObject::Define()
 
 bool IBActionDef_PickObject::Init(IBAction* pAction)
 {
-	BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
+	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
 	ASSERT(pObj != NULL);
-	IBVector2* pObjPos = static_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
+	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
 	ASSERT(pObjPos == NULL || pObjPos == &pObj->GetPos());
-	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
 	ASSERT(pDist == NULL);
 
 	if (pObjPos == NULL)
 	{
 		pObjPos = (IBVector2*)&pObj->GetPos();
 		pObjPos->SetName(pObj->GetName() + "Pos");
-		pAction->SetVariable("ObjPos", (void*)pObjPos);
+		pAction->SetVariable("ObjPos", pObjPos);
 	}
 
 	pDist = new IBInt("Dist = 1", 1);
-	pAction->SetVariable("Dist", (void*)pDist);
+	pAction->SetVariable("Dist", pDist);
 
 
 	return true;
@@ -90,4 +90,13 @@ bool IBActionDef_PickObject::Finish(IBAction* pAction)
 	ASSERT(pBot != NULL);
 	pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
 	return true;
+}
+
+void IBActionDef_PickObject::Destroy(IBAction* pAction)
+{
+	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	if (pDist != NULL)
+	{
+		delete pDist;
+	}
 }

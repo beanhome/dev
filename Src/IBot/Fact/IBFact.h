@@ -7,11 +7,12 @@
 
 class IBAction;
 class IBPlanner;
+class IBObject;
 
 class IBFact
 {
 	public:
-		IBFact(IBFactDef* pDef, vector<void*> aUserData);
+		IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData);
 		~IBFact();
 
 		IBFactDef*					GetFactDef() const { return m_pDef; }
@@ -25,11 +26,11 @@ class IBFact
 		IBAction*					GetEffectAction() const { return m_pEffectAction; }
 		bool						HasEffectAction() const { return (m_pEffectAction != NULL); }
 
-		const vector<void*>&		GetUserData() const { return m_aUserData; }
-		const vector<void*>&		GetVariables() const { return m_aUserData; }
-		void*						GetVariable(uint i) const { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
-		//void*						GetVariable(uint i) { assert(i<m_aUserData.size()); return m_aUserData[i]; }
-		void						SetVariable(uint i, void* pVar);
+		const vector<IBObject*>&	GetUserData() const { return m_aUserData; }
+		const vector<IBObject*>&	GetVariables() const { return m_aUserData; }
+		IBObject*					GetVariable(uint i) const { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
+		//IBObject*					GetVariable(uint i) { assert(i<m_aUserData.size()); return m_aUserData[i]; }
+		void						SetVariable(uint i, IBObject* pVar);
 
 		bool						IsTrue() const { return Test() == IBF_OK; }
 
@@ -41,7 +42,7 @@ class IBFact
 
 	protected:
 		IBFactDef*					m_pDef;
-		vector<void*>				m_aUserData;
+		vector<IBObject*>			m_aUserData;
 		IBAction*					m_pCauseAction;
 		IBAction*					m_pEffectAction;
 };

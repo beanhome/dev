@@ -4,7 +4,7 @@
 
 #include "Utils.h"
 
-IBFact::IBFact(IBFactDef* pDef, vector<void*> aUserData)
+IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 	: m_pDef(pDef)
 	, m_aUserData(aUserData)
 	, m_pCauseAction(NULL)
@@ -17,7 +17,7 @@ IBFact::~IBFact()
 
 }
 
-void IBFact::SetVariable(uint i, void* pVar)
+void IBFact::SetVariable(uint i, IBObject* pVar)
 {
 	ASSERT(i<m_aUserData.size());
 	m_aUserData[i] = pVar;

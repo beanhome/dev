@@ -22,7 +22,7 @@ IBAction::IBAction(IBActionDef* pDef)
 		const FactCondDef& oPreCondDef = pDef->GetPreCondDef()[i];
 		ASSERT(oPreCondDef.m_pFactDef->GetDegree() == oPreCondDef.m_aVarName.size());
 
-		vector<void*> aUserData;
+		vector<IBObject*> aUserData;
 		aUserData.resize(oPreCondDef.m_pFactDef->GetDegree(), NULL);
 
 		IBFact* pPreCond = new IBFact(oPreCondDef.m_pFactDef, aUserData);
@@ -47,13 +47,13 @@ IBAction::~IBAction()
 	}
 }
 
-void* IBAction::FindVariables(const string& name) const
+IBObject* IBAction::FindVariables(const string& name) const
 {
 	VarMap::const_iterator it = m_aVariables.find(name);
 	return (it == m_aVariables.end() ? NULL : it->second);
 }
 
-void IBAction::SetVariable(const string& name, void* val)
+void IBAction::SetVariable(const string& name, IBObject* val)
 {
 	VarMap::iterator it = m_aVariables.find(name);
 	if (it != m_aVariables.end() && it->second != val)
@@ -140,7 +140,7 @@ void IBAction::ResolveVariableName(uint i, IBFact* pPostCond)
 		const string& name = pPostCondDef->m_aVarName[k];
 
 		// get data from post cond
-		void* pUserData = pPostCond->GetUserData()[k];
+		IBObject* pUserData = pPostCond->GetUserData()[k];
 
 		// set data to variable
 		SetVariable(name, pUserData);
@@ -148,7 +148,7 @@ void IBAction::ResolveVariableName(uint i, IBFact* pPostCond)
 }
 
 // Affect data to pre cond
-void IBAction::AffectPreCondVariable(const string& name, void* data)
+void IBAction::AffectPreCondVariable(const string& name, IBObject* data)
 {
 	// for each pre cond
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
@@ -171,7 +171,7 @@ void IBAction::AffectPreCondVariable(const string& name, void* data)
 	}
 }
 
-void IBAction::AffectPostCondVariable(const string& name, void* data)
+void IBAction::AffectPostCondVariable(const string& name, IBObject* data)
 {
 	ASSERT(false);
 
@@ -222,8 +222,8 @@ void IBAction::ResolvePostCondVariable()
 			const string& name = pPostCondDef->m_aVarName[j];
 
 			// find action variable correspondence
-			void* pCurrentVar = FindVariables(name);
-			void* pPostVar = pPostFact->GetVariable(j);
+			IBObject* pCurrentVar = FindVariables(name);
+			IBObject* pPostVar = pPostFact->GetVariable(j);
 
 			if (pCurrentVar == NULL && pPostVar != NULL)
 			{
@@ -258,8 +258,8 @@ void IBAction::ResolvePreCondVariable()
 			const string& name = pPreCondDef->m_aVarName[j];
 
 			// find action variable correspondence
-			void* pCurrentVar = FindVariables(name);
-			void* pPreVar = pPreFact->GetVariable(j);
+			IBObject* pCurrentVar = FindVariables(name);
+			IBObject* pPreVar = pPreFact->GetVariable(j);
 
 			if (pCurrentVar == NULL && pPreVar != NULL)
 			{

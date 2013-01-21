@@ -7,7 +7,7 @@
 class IBPlanner;
 class IBFactDef;
 class IBFact;
-//class IBAction;
+class IBObject;
 
 struct FactCondDef
 {

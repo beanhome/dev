@@ -46,6 +46,7 @@ class BLBot : public IBObject
 
 		const Vector2&			GetPos() const { return m_vPos; }
 		const IBVector2&		GetIBPos() const { return m_vPos; }
+		IBVector2*				GetIBPosAd() { return &m_vPos; }
 
 		uint					GetWidth() const { return m_iWidth; }
 		uint					GetHeight() const { return m_iHeight; }
@@ -69,9 +70,9 @@ class BLBot : public IBObject
 		BLProp*					GetFirstObject() const { return m_pCarryObject; }
 
 		void					AddGoal(const string& name);
-		void					AddGoal(const string& name, void* pUserData);
-		void					AddGoal(const string& name, void* pUserData1, void* pUserData2);
-		void					AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
+		void					AddGoal(const string& name, IBObject* pUserData);
+		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2);
+		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3);
 
 	private:
 		BLWorld&				m_oWorld;

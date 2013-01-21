@@ -11,11 +11,11 @@ class IBFactDef_BotIsEmpty : public IBFactDef
 		IBFactDef_BotIsEmpty(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_BotIsEmpty();
 
-		virtual void			ResolveVariable(vector<void*>& aUserData);
+		virtual void			ResolveVariable(vector<IBObject*>& aUserData);
 
-		virtual IBF_Result		Test(const vector<void*>& aUserData);
+		virtual IBF_Result		Test(const vector<IBObject*>& aUserData);
 
-		virtual void			Print(const vector<void*>& aUserData, int tab) const;
+		virtual void			Print(const vector<IBObject*>& aUserData, int tab) const;
 
 	private:
 };

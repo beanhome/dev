@@ -15,7 +15,7 @@ IBFactDef_BotNearPos::~IBFactDef_BotNearPos()
 {
 }
 
-IBF_Result IBFactDef_BotNearPos::Test(const vector<void*>& aUserData)
+IBF_Result IBFactDef_BotNearPos::Test(const vector<IBObject*>& aUserData)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -29,7 +29,7 @@ IBF_Result IBFactDef_BotNearPos::Test(const vector<void*>& aUserData)
 	return ((pPos != NULL && pDist != NULL && pBot->GetWorld().GetGrid().DistanceSq(pBot->GetPos(), *pPos) <= pDist->GetValue() * pDist->GetValue()) ? IBF_OK : IBF_FAIL);
 }
 
-void IBFactDef_BotNearPos::ResolveVariable(vector<void*>& aUserData)
+void IBFactDef_BotNearPos::ResolveVariable(vector<IBObject*>& aUserData)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -37,7 +37,7 @@ void IBFactDef_BotNearPos::ResolveVariable(vector<void*>& aUserData)
 
 }
 
-void IBFactDef_BotNearPos::Print(const vector<void*>& aUserData, int tab) const
+void IBFactDef_BotNearPos::Print(const vector<IBObject*>& aUserData, int tab) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);

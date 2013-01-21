@@ -36,21 +36,14 @@ void IBActionDef_FindPath::Define()
 
 bool IBActionDef_FindPath::Start(IBAction* pAction)
 {
-	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
+	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
 	ASSERT(pStart != NULL);
-	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
+	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
 	ASSERT(pTarget != NULL);
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	IBPath* pPath = pAction->FindVariables<IBPath>("Path");
 	ASSERT(pPath != NULL);
-	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	ASSERT(pDist != NULL);
-
-	/*
-	if (pPath != NULL)
-		delete pPath;
-
-	pAction->SetVariable("Path", new IBPath("MyPath"));
-	*/
 
 	m_pNavigation->FindPathInit(*pStart, *pTarget, pDist->GetValue(), *pPath);
 	
@@ -59,13 +52,13 @@ bool IBActionDef_FindPath::Start(IBAction* pAction)
 
 bool IBActionDef_FindPath::Execute(IBAction* pAction)
 {
-	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
+	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
 	ASSERT(pStart != NULL);
-	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
+	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
 	ASSERT(pTarget != NULL);
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	IBPath* pPath = pAction->FindVariables<IBPath>("Path");
 	ASSERT(pPath != NULL);
-	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	ASSERT(pDist != NULL);
 
 	Navigation<BLSquare>::State state = Navigation<BLSquare>::FP_Find;
@@ -79,20 +72,19 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	}
 	LOG("\n");
 
-	//LOG("Path : ");
-	//pPath->Print();
-
 	return (state != Navigation<BLSquare>::FP_Find);
 }
 
 bool IBActionDef_FindPath::Finish(IBAction* pAction)
 {
-	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
+	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
 	ASSERT(pStart != NULL);
-	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
+	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
 	ASSERT(pTarget != NULL);
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	IBPath* pPath = pAction->FindVariables<IBPath>("Path");
 	ASSERT(pPath != NULL);
+	//IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
+	//ASSERT(pDist != NULL);
 
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -104,7 +96,7 @@ bool IBActionDef_FindPath::Finish(IBAction* pAction)
 		const BLSquare& sq = oWorld.GetGrid().GetCase((*pPath)[i]);
 		if (sq.GetProp() != NULL && sq.GetProp()->IsTempBlock())
 		{
-			m_pPlanner->AddPreCond(pAction, "IBFactDef_PropIsUnblock", (void*)sq.GetProp());
+			m_pPlanner->AddPreCond(pAction, "IBFactDef_PropIsUnblock", (IBObject*)sq.GetProp());
 		}
 	}
 

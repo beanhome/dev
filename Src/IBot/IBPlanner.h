@@ -23,14 +23,14 @@ class IBPlanner
 		virtual void			InitActionLibrary();
 
 		void					AddGoal(const string& name);
-		void					AddGoal(const string& name, void* pUserData);
-		void					AddGoal(const string& name, void* pUserData1, void* pUserData2);
-		void					AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
+		void					AddGoal(const string& name, IBObject* pUserData);
+		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2);
+		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3);
 
 		void					AddPreCond(IBAction* pAction, const string& name);
-		void					AddPreCond(IBAction* pAction, const string& name, void* pUserData);
-		void					AddPreCond(IBAction* pAction, const string& name, void* pUserData1, void* pUserData2);
-		void					AddPreCond(IBAction* pAction, const string& name, void* pUserData1, void* pUserData2, void* pUserData3);
+		void					AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData);
+		void					AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2);
+		void					AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3);
 
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 

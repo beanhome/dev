@@ -16,6 +16,7 @@ class IBActionDef_PickObject : public IBActionDef
 		virtual bool			Start(IBAction* pAction);
 		virtual bool			Execute(IBAction* pAction);
 		virtual bool			Finish(IBAction* pAction);
+		virtual void			Destroy(IBAction* pAction);
 
 	private:
 };

@@ -42,33 +42,33 @@ void IBPlanner::AddGoal(const string& name)
 	m_aGoals.insert(pDef->Instanciate());
 }
 
-void IBPlanner::AddGoal(const string& name, void* pUserData)
+void IBPlanner::AddGoal(const string& name, IBObject* pUserData)
 {
 	IBFactDef* pDef = GetFactDef(name);
 	assert(pDef != NULL);
 
-	vector<void*> aUserData;
+	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData);
 	m_aGoals.insert(pDef->Instanciate(aUserData));
 }
 
-void IBPlanner::AddGoal(const string& name, void* pUserData1, void* pUserData2)
+void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2)
 {
 	IBFactDef* pDef = GetFactDef(name);
 	assert(pDef != NULL);
 
-	vector<void*> aUserData;
+	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
 	m_aGoals.insert(pDef->Instanciate(aUserData));
 }
 
-void IBPlanner::AddGoal(const string& name, void* pUserData1, void* pUserData2, void* pUserData3)
+void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3)
 {
 	IBFactDef* pDef = GetFactDef(name);
 	assert(pDef != NULL);
 
-	vector<void*> aUserData;
+	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
 	aUserData.push_back(pUserData3);
@@ -83,33 +83,33 @@ void IBPlanner::AddPreCond(IBAction* pAction, const string& name)
 	pAction->AddPreCond(pDef->Instanciate());
 }
 
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name, void* pUserData)
+void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData)
 {
 	IBFactDef* pDef = GetFactDef(name);
 	assert(pDef != NULL);
 
-	vector<void*> aUserData;
+	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData);
 	pAction->AddPreCond(pDef->Instanciate(aUserData));
 }
 
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name, void* pUserData1, void* pUserData2)
+void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2)
 {
 	IBFactDef* pDef = GetFactDef(name);
 	assert(pDef != NULL);
 
-	vector<void*> aUserData;
+	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
 	pAction->AddPreCond(pDef->Instanciate(aUserData));
 }
 
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name, void* pUserData1, void* pUserData2, void* pUserData3)
+void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3)
 {
 	IBFactDef* pDef = GetFactDef(name);
 	assert(pDef != NULL);
 
-	vector<void*> aUserData;
+	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
 	aUserData.push_back(pUserData3);

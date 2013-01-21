@@ -26,14 +26,14 @@ IBFactDef::~IBFactDef()
 
 }
 
-IBFact* IBFactDef::Instanciate(vector<void*> aUserData)
+IBFact* IBFactDef::Instanciate(vector<IBObject*> aUserData)
 {
 	assert(aUserData.size() == m_iDegree);
 
 	return new IBFact(this, aUserData);
 }
 
-void IBFactDef::Print(const vector<void*>& aUserData, int tab) const
+void IBFactDef::Print(const vector<IBObject*>& aUserData, int tab) const
 {
 	for (int i=0 ; i<tab ; ++i)
 		LOG("\t");

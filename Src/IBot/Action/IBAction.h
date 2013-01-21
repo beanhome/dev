@@ -7,6 +7,7 @@
 class IBActionDef;
 struct FactCondDef;
 class IBPlannerGraph;
+class IBObject;
 
 class IBAction
 {
@@ -25,8 +26,8 @@ class IBAction
 			IBA_Destroy
 		};
 
-		typedef map<string, void*> VarMap;
-		typedef pair<string, void*> VarPair;
+		typedef map<string, IBObject*> VarMap;
+		typedef pair<string, IBObject*> VarPair;
 
 		friend class IBPlannerGraph;
 
@@ -35,8 +36,11 @@ class IBAction
 		void					SetState(State state) { m_eState = state; }
 
 		const VarMap&			GetVariables() const { return m_aVariables; }
-		void*					FindVariables(const string& name) const;
-		void					SetVariable(const string& name, void* val);
+		IBObject*				FindVariables(const string& name) const;
+		void					SetVariable(const string& name, IBObject* val);
+
+		template <typename T>
+		T*						FindVariables(const string& name) const;
 
 		const IBActionDef*		GetDef() const { return m_pDef; }
 
@@ -54,8 +58,8 @@ class IBAction
 		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;
 
 		void					ResolveVariableName(uint i, IBFact* pPreCond);
-		void					AffectPreCondVariable(const string& name, void* data);
-		void					AffectPostCondVariable(const string& name, void* data);
+		void					AffectPreCondVariable(const string& name, IBObject* data);
+		void					AffectPostCondVariable(const string& name, IBObject* data);
 
 		void					ResolvePreCondVariable();
 		void					ResolvePostCondVariable();
@@ -76,5 +80,20 @@ class IBAction
 		vector<IBFact*>			m_aPreCond;
 		vector<IBFact*>			m_aPostCond;
 };
+
+template <typename T>
+T* IBAction::FindVariables(const string& name) const
+{
+	IBObject* pObj = FindVariables(name);
+	if (pObj == NULL)
+		return NULL;
+
+	T* pTObj = dynamic_cast<T*>(pObj);
+	ASSERT(pTObj != NULL);
+
+	return pTObj;
+}
+
+
 
 #endif

@@ -12,7 +12,7 @@ IBFactDef_BotIsEmpty::~IBFactDef_BotIsEmpty()
 {
 }
 
-IBF_Result IBFactDef_BotIsEmpty::Test(const vector<void*>& aUserData)
+IBF_Result IBFactDef_BotIsEmpty::Test(const vector<IBObject*>& aUserData)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -23,11 +23,11 @@ IBF_Result IBFactDef_BotIsEmpty::Test(const vector<void*>& aUserData)
 	return ((pBot->GetFirstObject() == NULL) ? IBF_OK : IBF_FAIL);
 }
 
-void IBFactDef_BotIsEmpty::ResolveVariable(vector<void*>& aUserData)
+void IBFactDef_BotIsEmpty::ResolveVariable(vector<IBObject*>& aUserData)
 {
 }
 
-void IBFactDef_BotIsEmpty::Print(const vector<void*>& aUserData, int tab) const
+void IBFactDef_BotIsEmpty::Print(const vector<IBObject*>& aUserData, int tab) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
