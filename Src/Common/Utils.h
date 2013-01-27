@@ -50,7 +50,7 @@ void Log(const char* format, ...);
 #define ASSERT(cond) assert(cond)
 #define FASSERT(cond, format, ...) { if (!cond) { LOG(format, __VA_ARGS__); } assert(cond); }
 #else
-#define CHECK(test, format, ...) { }
+#define CHECK(test, format, ...) { if (!(test)) { } }
 #define CHECK_RETURN(test, format, ...) { if (!(test)) { return; } }
 #define ASSERT(cond)
 #define FASSERT(cond, format, ...)
@@ -60,5 +60,8 @@ void Log(const char* format, ...);
 
 string FormatString(const char* format, ...);
 
+int Rand();
+int Rand(int iMax);
+int Rand(int iMin, int iMax);
 
 #endif

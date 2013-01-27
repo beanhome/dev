@@ -10,6 +10,7 @@
 #include "FontResource_SDL.h"
 #include "ImageResource_SDL.h"
 #include "SDL_gfxPrimitives.h"
+#include "SDL_gfxBlitFunc.h"
 
 
 GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth)
@@ -243,7 +244,7 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, flo
 	SDL_FreeSurface(pOutput);
 }
 
-void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, uint16 w, uint16 h, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
 {
 	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
 
@@ -253,21 +254,56 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sin
 	if (image->format->palette && m_pScreen->format->palette)
 		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
 
-	SDL_Rect oDestRect;
-	oDestRect.x = x - (sint16)sw / 2;
-	oDestRect.y = y - (sint16)sh / 2;
-	oDestRect.w = sw;
-	oDestRect.h = sh;
+	SDL_Surface* pOutput = image;
+	if (sw != w || sh != h)
+	{
+		double zx = (double)w/(double)sw;
+		double zy = (double)h/(double)sh;
+		pOutput = rotozoomSurfaceXY(image, 0.f, zx, zy, 0);
+		if (pOutput == NULL)
+			return;
 
-	SDL_Rect oSrcRect;
-	oSrcRect.x = sx;
-	oSrcRect.y = sy;
-	oSrcRect.w = sw;
-	oSrcRect.h = sh;
+		SDL_Rect oDestRect;
+		oDestRect.x = x - (sint16)w / 2;
+		oDestRect.y = y - (sint16)h / 2;
+		oDestRect.w = w;
+		oDestRect.h = h;
 
-	/* Blit onto the screen surface */
-	if(SDL_BlitSurface(image, &oSrcRect, m_pScreen, &oDestRect) < 0)
-		LOG("BlitSurface error: %s\n", SDL_GetError());
+		SDL_Rect oSrcRect;
+		oSrcRect.x = (sint16)(sx * zx);
+		oSrcRect.y = (sint16)(sy * zy);
+		oSrcRect.w = (sint16)(sw * zx);
+		oSrcRect.h = (sint16)(sh * zy);
+
+		/* Blit onto the screen surface */
+		if(SDL_BlitSurface(pOutput, &oSrcRect, m_pScreen, &oDestRect) < 0)
+			LOG("BlitSurface error: %s\n", SDL_GetError());
+	
+		SDL_FreeSurface(pOutput);
+	}
+	else
+	{
+		SDL_Rect oDestRect;
+		oDestRect.x = x - (sint16)w / 2;
+		oDestRect.y = y - (sint16)h / 2;
+		oDestRect.w = w;
+		oDestRect.h = h;
+
+		SDL_Rect oSrcRect;
+		oSrcRect.x = sx;
+		oSrcRect.y = sy;
+		oSrcRect.w = sw;
+		oSrcRect.h = sh;
+
+		/* Blit onto the screen surface */
+		if(SDL_BlitSurface(image, &oSrcRect, m_pScreen, &oDestRect) < 0)
+			LOG("BlitSurface error: %s\n", SDL_GetError());
+	}
+}
+
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
+{
+	DrawImage(_image, x, y, sw, sh, sx, sy);
 }
 
 

@@ -10,6 +10,8 @@
 #include "BLBot.h"
 #include "BLWorld.h"
 #include <complex>
+#include "Map/BLMap.h"
+#include "Map/BLTiles.h"
 
 
 int main(int argc, char *argv[])

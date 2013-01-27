@@ -69,6 +69,13 @@ class GridOp
 			, m_bNormalized(bNormalize)
 		{}
 
+		GridOp& operator=(const GridOp& grid)
+		{
+			Init(grid.m_iWidth, grid.m_iHeight);
+			m_bNormalized = grid.m_bNormalized;
+			return *this;
+		}
+
 		bool IsNormalized() const { return m_bNormalized; }
 
 		uint GetWidth() const { return m_iWidth; }
@@ -212,6 +219,14 @@ class GridBase : public GridOp
 			if (m_aGridArray != NULL)	delete [] m_aGridArray;
 		}
 
+		GridBase& operator=(const GridBase& grid)
+		{
+			Init(grid.m_iWidth, grid.m_iHeight);
+			int size = sizeof(TCase);
+			int len = m_iWidth*m_iHeight;
+			memcpy(m_pBuffer, grid.m_pBuffer, sizeof(TCase) * m_iWidth*m_iHeight);
+			return *this;
+		}
 
 		void Init(uint iWidth, uint iHeight)
 		{
@@ -244,6 +259,7 @@ class GridBase : public GridOp
 		GridArray<TCase>& operator[](int x)
 		{
 			ASSERT(m_pBuffer != NULL);
+			ASSERT(m_bNormalized || (x>=0 && x<(int)m_iWidth));
 
 			while (x<0) x += m_iWidth;
 			while ((uint)x>=m_iWidth) x -= m_iWidth;
@@ -254,6 +270,7 @@ class GridBase : public GridOp
 		const GridArray<TCase>& operator[](int x) const
 		{
 			ASSERT(m_pBuffer != NULL);
+			ASSERT(m_bNormalized || (x>=0 && x<(int)m_iWidth));
 
 			while (x<0) x += m_iWidth;
 			while ((uint)x>=m_iWidth) x -= m_iWidth;

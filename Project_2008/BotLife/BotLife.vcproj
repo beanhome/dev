@@ -182,6 +182,37 @@
 			<File
 				RelativePath="..\..\Src\BotLife\Main.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\MapView.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\TilesView.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<Filter
 				Name="Action"
@@ -323,6 +354,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Src\BotLife\Map\BLTiles.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLTiles.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\BotLife\BLWorld.cpp"
 					>
 				</File>
@@ -336,6 +375,18 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\World\IBPath.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Map"
+				>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLMap.h"
 					>
 				</File>
 			</Filter>

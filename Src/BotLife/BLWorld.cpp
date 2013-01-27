@@ -9,6 +9,7 @@
 #include "Path.h"
 #include "World\BLProp_SI.h"
 #include "World\BLDoor.h"
+#include "Map\BLMap.h"
 
 int _map_[16][16] = {
 	{ 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1 },

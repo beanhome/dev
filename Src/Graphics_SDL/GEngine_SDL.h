@@ -26,6 +26,7 @@ class GEngine_SDL : public GEngine
 		virtual void					DrawImage(const ImageResource& image, sint16 x, sint16 y) const;
 		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, float fAngle, float fZoom) const;
 		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const;
+		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, uint16 w, uint16 h, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const;
 		virtual void 					SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawFillRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const;

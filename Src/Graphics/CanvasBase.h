@@ -28,7 +28,8 @@ class CanvasBase
 
 		virtual void					DrawImage(const ImageResource& image, sint16 x, sint16 y) const = 0;
 		virtual void					DrawImage(const ImageResource& image, sint16 x, sint16 y, float fAngle, float fZoom) const = 0;
-		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const = 0;
+		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const { DrawImage(image, x, y, sw, sh, sx, sy, sw, sh); }
+		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, uint16 w, uint16 h, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const = 0;
 
 		virtual void					SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const = 0;
 		void							SetPixel(sint16 x, sint16 y, const Color& oColor) const { SetPixel(x, y, oColor.r, oColor.g, oColor.b); }

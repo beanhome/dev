@@ -49,3 +49,19 @@ string FormatString(const char* format, ...)
 
 	return output;
 }
+
+
+int Rand()
+{
+	return rand();
+}
+
+int Rand(int iMax)
+{
+	return rand() % (iMax+1);
+}
+
+int Rand(int iMin, int iMax)
+{
+	return Rand(iMax-iMin) + iMin;
+}
