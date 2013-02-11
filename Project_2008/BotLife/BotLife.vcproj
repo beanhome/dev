@@ -164,6 +164,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\Src\BotLife\BLApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\BLApp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\BotLife\BLBot.cpp"
 				>
 			</File>
@@ -184,7 +192,6 @@
 				>
 				<FileConfiguration
 					Name="Release|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -192,27 +199,20 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\Src\BotLife\MapView.cpp"
+				RelativePath="..\..\Src\BotLife\MapViewApp.cpp"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\Src\BotLife\TilesView.cpp"
+				RelativePath="..\..\Src\BotLife\MapViewApp.h"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\TilesViewApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\TilesViewApp.h"
+				>
 			</File>
 			<Filter
 				Name="Action"

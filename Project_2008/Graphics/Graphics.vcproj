@@ -162,6 +162,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Graphics\GApp.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Graphics\GEngine.cpp"
 				>
 			</File>
@@ -209,6 +213,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Graphics\FontResource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Graphics\GApp.h"
 				>
 			</File>
 			<File

@@ -33,14 +33,14 @@ BLTiles::BLTiles(const GEngine& ge, const char* name)
 	m_iTileOffsetX = 33;
 	m_iTileOffsetY = 33;
 
-	Add(DarkWater, 331);
-	Add(LightWater, 328);
+	Add(DarkWater, 327);
+	Add(LightWater, 319);
 	Add(LightDirt, 334);
-	Add(DarkDirt, 345);
-	Add(Stone, 165);
-	Add(LightGrass, 356);
+	Add(DarkDirt, 341);
+	Add(Stone, 172);
+	Add(LightGrass, 351);
 	Add(DarkGrass, 364);
-	Add(Tree, 125);
+	Add(Tree, 135);
 	*/
 }
 

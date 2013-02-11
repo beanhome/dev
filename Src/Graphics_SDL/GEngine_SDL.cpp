@@ -303,7 +303,7 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, uin
 
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
 {
-	DrawImage(_image, x, y, sw, sh, sx, sy);
+	DrawImage(_image, x, y, sw, sh, sx, sy, sw, sh);
 }
 
 
@@ -339,6 +339,8 @@ void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, 
 
 void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
+	ASSERT(sFontPath != NULL);
+
 	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
 
 	int ln = _vscprintf(format, oArgs) + 1;
