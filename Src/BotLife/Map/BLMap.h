@@ -66,6 +66,7 @@ class BLMap
 		uint GetWidth() const { return m_iWidth; }
 		uint GetHeight() const { return m_iHeight; }
 
+		void ConvertTypeToTiles();
 		void Debug() const;
 		void Display(const CanvasBase& Canvas) const;
 
@@ -82,8 +83,9 @@ class BLMap
 		uint m_iWidth;
 		uint m_iHeight;
 
-		GridBase<CaseType> m_oMap;
+		GridBase<CaseType> m_oTypeMap;
 		GridBase<CaseType> m_oTmp;
+		GridBase<int> m_oTilesMap;
 
 		const BLTiles& m_oTiles;
 

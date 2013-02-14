@@ -13,8 +13,10 @@ class Canvas : public CanvasBase
 
 		sint16							GetPosX() const { return m_iPosX; }
 		sint16							GetPosY() const { return m_iPosY; }
-		sint16							GetScreenPosX() const { return m_oParent.GetScreenPosX() + m_iPosX; }
-		sint16							GetScreenPosY() const { return m_oParent.GetScreenPosY() + m_iPosY; }
+		sint16							GetScreenPosX() const { return m_oParent.GetScreenPosX() - m_iOrigX + m_iPosX; }
+		sint16							GetScreenPosY() const { return m_oParent.GetScreenPosY() - m_iOrigY + m_iPosY; }
+
+		const CanvasBase&				GetParent() const { return m_oParent; }
 
 		void							SetPosX(sint16 x) { m_iPosX = x; }
 		void							SetPosY(sint16 y) { m_iPosY = y; }
@@ -47,8 +49,9 @@ class Canvas : public CanvasBase
 
 	private:
 		CanvasBase&						m_oParent;
-		sint16							m_iPosX;
-		sint16							m_iPosY;
+		sint16							m_iPosX; // position dans le parent
+		sint16							m_iPosY; // position dans le parent
+
 };
 
 #endif // __CANVAS_H__

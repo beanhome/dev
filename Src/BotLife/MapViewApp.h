@@ -20,7 +20,13 @@ class MapViewApp : public GApp<GEngine_SDL>
 	private:
 		BLTiles* m_pTiles;
 		BLMap* m_pMap;
+
+		Canvas* m_pCanvas;
+
+		bool m_bDrag;
+		int m_iStartOffsetX;
+		int m_iStartOffsetY;
 };
 
-#endif // __GAPP_H__
+#endif // __MAPVIEWAPP_H__
 

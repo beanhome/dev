@@ -7,6 +7,7 @@
 #include "FontResource.h"
 
 class Resource;
+class Canvas;
 //class ImageResource;
 //class FontResource;
 
@@ -52,6 +53,10 @@ class GEngine : public CanvasBase
 		bool							AddResource(uint32 crc, Resource* pRes);
 		bool							RemResource(uint32 crc);
 		bool							RemResource(Resource* pRes);
+
+		virtual void					ClampClear() const = 0;
+		virtual void					ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const = 0;
+		void							ClampCanvas(const Canvas& canvas) const;
 
 	protected:
 		template<typename T>

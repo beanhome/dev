@@ -35,6 +35,11 @@ class GEngine_SDL : public GEngine
 		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
 
+		virtual void					ClampClear() const;
+		virtual void					ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const;
+
+
+
 		void							SaveEvent();
 		bool							PollEvent();
 		const InputEvent&				WaitEvent();

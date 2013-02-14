@@ -5,7 +5,17 @@
 
 
 CanvasBase::CanvasBase(uint16 width, uint16 height)
-	: m_iWidth(width)
+	: m_iOrigX(0)
+	, m_iOrigY(0)
+	, m_iWidth(width)
+	, m_iHeight(height)
+{
+}
+
+CanvasBase::CanvasBase(sint16 x, sint16 y, uint16 width, uint16 height)
+	: m_iOrigX(x)
+	, m_iOrigY(y)
+	, m_iWidth(width)
 	, m_iHeight(height)
 {
 }

@@ -13,12 +13,20 @@ class CanvasBase
 {
 	public:
 		CanvasBase(uint16 xl, uint16 yl);
+		CanvasBase(sint16 x, sint16 y, uint16 xl, uint16 yl);
 		~CanvasBase();
 
-		virtual sint16					GetScreenPosX() const { return 0; }
-		virtual sint16					GetScreenPosY() const { return 0; }
+		virtual sint16					GetScreenPosX() const { return -m_iOrigX; }
+		virtual sint16					GetScreenPosY() const { return -m_iOrigY; }
+
+		sint16							GetOrigX() const { return m_iOrigX; }
+		sint16							GetOrigY() const { return m_iOrigY; }
+
 		uint16							GetWidth() const { return m_iWidth; }
 		uint16							GetHeight() const { return m_iHeight; }
+
+		void							SetOrigX(sint16 x) { m_iOrigX = x; }
+		void							SetOrigY(sint16 y) { m_iOrigY = y; }
 
 		void							SetWidth(uint16 w) { m_iWidth = w; }
 		void							SetHeight(uint16 h) { m_iHeight = h; }
@@ -69,8 +77,12 @@ class CanvasBase
 		virtual sint32					GetMouseY() const = 0;
 
 	protected:
+		sint16							m_iOrigX; // position du Canva par rapport à l'origine
+		sint16							m_iOrigY; // position du Canva par rapport à l'origine
+
 		uint16							m_iWidth;
 		uint16							m_iHeight;
+
 
 		mutable
 		struct PrintParam

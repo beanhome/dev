@@ -190,13 +190,6 @@
 			<File
 				RelativePath="..\..\Src\BotLife\Main.cpp"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\Src\BotLife\MapViewApp.cpp"

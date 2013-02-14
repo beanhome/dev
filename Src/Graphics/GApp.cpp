@@ -62,6 +62,14 @@ int GAppBase::Loop()
 
 			else if (!bPause && m_pEngine->GetInputEvent().IsKeyboard() && m_pEngine->GetInputEvent().GetKeyboardEvent() == KeyDown && m_pEngine->GetInputEvent().GetKeyboardKey() == KEY_SPACE)
 				bPause = true;
+
+			if (m_pEngine->GetInputEvent().IsMouse())
+			{
+				uint16 x, y;
+				m_pEngine->GetInputEvent().GetMouseMove(x, y);
+				m_pEngine->SetMouse(x, y);
+			}
+
 		}
 	}
 

@@ -411,6 +411,21 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 	SDL_FreeSurface(texte);
 }
 
+void GEngine_SDL::ClampClear() const
+{
+	SDL_SetClipRect(m_pScreen, NULL);
+}
+
+
+void GEngine_SDL::ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const
+{
+	SDL_Rect rect;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	SDL_SetClipRect(m_pScreen, &rect);
+}
 
 
 bool GEngine_SDL::PollEvent()

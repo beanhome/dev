@@ -1,6 +1,7 @@
 #include "Utils.h"
 #include "GEngine.h"
 #include "Resource.h"
+#include "Canvas.h"
 
 GEngine::GEngine(uint16 width, uint16 height, uint16 depth)
 	: CanvasBase(width, height)
@@ -14,6 +15,12 @@ GEngine::~GEngine()
 {
 	PurgeResource(); // probablement vide
 }
+
+void GEngine::ClampCanvas(const Canvas& canvas) const
+{
+	ClampRect(canvas.GetParent().GetScreenPosX()+canvas.GetPosX(), canvas.GetParent().GetScreenPosY()+canvas.GetPosY(), canvas.GetWidth(), canvas.GetHeight());
+}
+
 
 void GEngine::PurgeResource()
 {
