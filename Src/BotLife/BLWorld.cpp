@@ -53,7 +53,7 @@ BLWorld::BLWorld(Canvas& canva, uint grid)
 	}
 
 	m_pBot = new BLBot(*canva.GetGEngine(), *this);
-	m_pBot->SetLoc(30, 30);
+	m_pBot->SetLoc(grid*1.5f, grid*1.5f);
 	m_pBot->SetPos(1, 1);
 	//m_pBot->SetState(BLBot::Walk, BLBot::Down, 1.f);
 	//m_pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);

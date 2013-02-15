@@ -48,8 +48,8 @@ class BLBot : public IBObject
 		const IBVector2&		GetIBPos() const { return m_vPos; }
 		IBVector2*				GetIBPosAd() { return &m_vPos; }
 
-		uint					GetWidth() const { return m_iWidth; }
-		uint					GetHeight() const { return m_iHeight; }
+		//uint					GetWidth() const { return m_iWidth; }
+		//uint					GetHeight() const { return m_iHeight; }
 					
 		void					SetState(BotState state, BotDir dir=Down, float delay=-1.f);
 		BotState				GetState() const { return m_eState; }
@@ -77,12 +77,12 @@ class BLBot : public IBObject
 	private:
 		BLWorld&				m_oWorld;
 
-		ImageFlipBook*			m_pImage;
-		uint					m_iWidth;
-		uint 					m_iHeight;
-		uint 					m_iCenterX;
-		uint 					m_iCenterY;
-		uint 					m_iAnimImgcount;
+		ImageFlipBook*			m_pWalkImage;
+		ImageFlipBook*			m_pWorkImage;
+		//uint					m_iWidth;
+		//uint 					m_iHeight;
+		//uint 					m_iCenterX;
+		//uint 					m_iCenterY;
 
 		float					m_fLocX; // pixel
 		float					m_fLocY; // pixel

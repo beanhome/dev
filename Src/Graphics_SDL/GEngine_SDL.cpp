@@ -187,6 +187,7 @@ uint GEngine_SDL::Close()
 
 void GEngine_SDL::Clear()
 {
+	SDL_SetClipRect(m_pScreen, NULL);
 	SDL_FillRect(m_pScreen, NULL, SDL_MapRGB(m_pScreen->format, 128, 128, 128));
 }
 

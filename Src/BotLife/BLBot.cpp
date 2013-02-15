@@ -28,7 +28,8 @@ Vector2 BLBot::s_vDirArray[8] = { Vector2(0,1), Vector2(1,1), Vector2(1,0), Vect
 BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	: IBObject("Bot")
 	, m_oWorld(oWorld)
-	, m_pImage(NULL)
+	, m_pWalkImage(NULL)
+	, m_pWorkImage(NULL)
 	, m_vPos("Current")
 	, m_eState(Idle)
 	, m_fStateTime(0.f)
@@ -37,20 +38,22 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	, m_fStepDelay(0.1f)
 	, m_pCarryObject(NULL)
 {
-	m_pImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/Test/Mario.png"), 16, 8);
-	m_iWidth = 24;
-	m_iHeight = 34;
-	m_iCenterX = 12;
-	m_iCenterY = 28;
-	m_iAnimImgcount = 8;
-	m_pImage->SetCurrent(0);
+	m_pWalkImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/BotLife/peasant_walk.png"), 8, 5);
+	m_pWalkImage->SetCenter(16, 25);
+	//m_iWidth = 32;
+	//m_iHeight = 32;
+	m_pWalkImage->SetCurrent(0);
+
+	m_pWorkImage = new ImageFlipBook(ge, ge.GetImageResource(DATA_DIR "/BotLife/peasant_work.png"), 8, 5);
+	m_pWorkImage->SetCenter(24, 35);
+	m_pWorkImage->SetCurrent(0);
 
 	m_pPlanner = new IBPlanner_BL(this);
 }
 
 BLBot::~BLBot()
 {
-	delete m_pImage;
+	delete m_pWalkImage;
 	delete m_pPlanner;
 }
 
@@ -62,7 +65,8 @@ void BLBot::SetLoc(float x, float y)
 	//m_vPos.x = (int)x / m_oWorld.GetGridSize();
 	//m_vPos.y = (int)y / m_oWorld.GetGridSize();
 
-	m_pImage->SetPos((sint)x - (m_iCenterX - m_iWidth/2), (sint)y - m_iHeight/2 + (m_iHeight - m_iCenterY));
+	m_pWalkImage->SetPos((sint)x, (sint)y);
+	m_pWorkImage->SetPos((sint)x, (sint)y);
 }
 
 void BLBot::SetPos(int i, int j)
@@ -131,17 +135,17 @@ void BLBot::Update(float dt)
 	switch (m_eState)
 	{
 		case Idle:
-			m_pImage->SetCurrent(0);
+			m_pWalkImage->SetCurrent(0);
 			//m_eDir = Down;
 			break;
 
 		case Walk:
-			m_pImage->SetCurrent((m_eDir*m_iAnimImgcount) + (int)((float) m_iAnimImgcount * t));
+			m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
 			SetLoc(m_fLocX + s_fDirArrayX[m_eDir] * fSpeed * dt, m_fLocY + s_fDirArrayY[m_eDir] * fSpeed * dt);
 			break;
 
 		case Action:
-			m_pImage->SetCurrent(((8+m_eDir)*m_iAnimImgcount) + (int)((float) m_iAnimImgcount * t));
+			m_pWorkImage->SetCurrent(((m_eDir)*m_pWorkImage->GetColCount()) + (int)((float) m_pWorkImage->GetColCount() * t));
 			break;
 
 		default:
@@ -166,7 +170,20 @@ void BLBot::Update(float dt)
 
 void BLBot::Draw(CanvasBase& canva) const
 {
-	m_pImage->Draw();
+	switch (m_eState)
+	{
+		case Idle:
+		case Walk:
+			m_pWalkImage->Draw();
+			break;
+
+		case Action:
+			m_pWorkImage->Draw();
+			break;
+
+		default:
+			ASSERT(false);
+	}
 
 	if (m_pCarryObject != NULL)
 		m_oWorld.GetCanvas().DrawImage(*m_pCarryObject->GetImageResource(), (sint16)m_fLocX, (sint16)m_fLocY, 0, 0.8f);

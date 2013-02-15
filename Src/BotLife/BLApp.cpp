@@ -12,7 +12,7 @@ BLApp::BLApp(int w, int h, float r)
 	m_pWorldCanva = new Canvas(*m_pEngine, 0, 0, w, (uint16)(r*(float)h));
 	m_pGraphCanva = new Canvas(*m_pEngine, 0, (sint16)(r*(float)h), w, (uint16)((1.f-r)*(float)h));
 
-	m_pWorld = new BLWorld(*m_pWorldCanva, 20);
+	m_pWorld = new BLWorld(*m_pWorldCanva, 32);
 	m_pPlannerDisplay = new IBPlannerGraph(m_pWorld->GetBot().GetPlanner(), *m_pGraphCanva);
 }
 

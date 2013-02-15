@@ -14,6 +14,7 @@ class Image
 		virtual ~Image();
 
 		void						SetPos(sint16 x, sint16 y);
+		void						SetCenter(sint16 x, sint16 y);
 
 		uint16						GetWidth() const;
 		uint16						GetHeight() const;
@@ -26,6 +27,8 @@ class Image
 		const CanvasBase&			m_oCanvas;
 		sint16						m_iPosX;
 		sint16						m_iPosY;
+		sint16						m_iCenterX;
+		sint16						m_iCenterY;
 
 		ImageResource*				m_pImageResource;
 };

@@ -14,6 +14,9 @@ class ImageFlipBook : public Image
 		int							GetCurrent() const { return m_iCurrent; }
 		void						SetCurrent(int cur);
 
+		uint16						GetRawCount() const { return m_iRowCount; }
+		uint16						GetColCount() const { return m_iColCount; }
+
 		virtual void				Draw() const;
 
 	protected:

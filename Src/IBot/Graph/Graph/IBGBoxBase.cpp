@@ -8,6 +8,6 @@ IBGBoxBase::IBGBoxBase(CanvasBase& parent)
 
 void IBGBoxBase::DrawFrame(const Color& color) const
 {
-	m_oCanvas.CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth(), m_oCanvas.GetHeight(), color);
+	m_oCanvas.CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, color);
 }
 
