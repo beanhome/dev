@@ -26,6 +26,9 @@ class MapViewApp : public GApp<GEngine_SDL>
 		bool m_bDrag;
 		int m_iStartOffsetX;
 		int m_iStartOffsetY;
+
+		int m_iMouseCaseX;
+		int m_iMouseCaseY;
 };
 
 #endif // __MAPVIEWAPP_H__

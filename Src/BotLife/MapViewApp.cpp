@@ -22,7 +22,7 @@ MapViewApp::MapViewApp(int w, int h, const char* name)
 
 	m_pTiles = new BLTiles(*m_pEngine, name);
 	//m_pMap = new BLMap(canvas.GetWidth()/m_pTiles->GetTilesWidth(), canvas.GetHeight()/m_pTiles->GetTilesHeight(), *m_pTiles);
-	m_pMap = new BLMap(128, 128, *m_pTiles);
+	m_pMap = new BLMap(64, 64, *m_pTiles);
 
 	for (uint i=0 ; i<20 ; ++i)
 	{
@@ -58,12 +58,17 @@ int MapViewApp::Update(float dt)
 		}
 		else if (m_bDrag)
 		{
-			sint32 x = max(m_iStartOffsetX - m_pEngine->GetMouseX(), 0);
-			sint32 y = max(m_iStartOffsetY - m_pEngine->GetMouseY(), 0);
-			x = min(x, (m_pMap->GetWidth()-1) * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth());
-			y = min(y, (m_pMap->GetHeight()-1) * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight());
+			sint16 x = std::max<sint16>(m_iStartOffsetX - (sint16)m_pEngine->GetMouseX(), 0);
+			sint16 y = std::max<sint16>(m_iStartOffsetY - (sint16)m_pEngine->GetMouseY(), 0);
+			x = std::min<sint16>(x, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth(), 0));
+			y = std::min<sint16>(y, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight(), 0));
 			m_pCanvas->SetOrigX(x);
 			m_pCanvas->SetOrigY(y);
+		}
+		else
+		{
+			m_iMouseCaseX = m_pCanvas->GetMouseX() / m_pTiles->GetTilesWidth();
+			m_iMouseCaseY = m_pCanvas->GetMouseY() / m_pTiles->GetTilesHeight();
 		}
 	}
 	return 0;
@@ -72,6 +77,13 @@ int MapViewApp::Update(float dt)
 int MapViewApp::Draw()
 {
 	m_pMap->Display(*m_pCanvas);
+
+	if (!m_bDrag)
+	{
+		m_pEngine->Print(100, 100, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Mouse : %d %d", m_iMouseCaseX, m_iMouseCaseY);
+		m_pEngine->Print(100, 130, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Tiles : %s", BLMap::s_sTilesType[m_pMap->GetTilesCase(m_iMouseCaseX, m_iMouseCaseY).eType]);
+		m_pCanvas->DrawRect(m_iMouseCaseX * m_pTiles->GetTilesWidth(), m_iMouseCaseY * m_pTiles->GetTilesHeight(), m_pTiles->GetTilesWidth()-1, m_pTiles->GetTilesHeight()-1, 255, 255, 255);
+	}
 
 	//m_pEngine->Print(100, 100, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Mouse : %d %d", m_pEngine->GetMouseX(), m_pEngine->GetMouseY());
 

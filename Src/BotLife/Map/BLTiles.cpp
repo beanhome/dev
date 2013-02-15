@@ -167,5 +167,5 @@ void BLTiles::DrawTile(const CanvasBase& canvas, int id, int x, int y, int w, in
 {
 	int i = id%m_iTileCountX;
 	int j = id/m_iTileCountX;
-	canvas.DrawImage(*m_pTiles, x, y, w, h, i * m_iTileOffsetX, j * m_iTileOffsetY, m_iTileSizeX, m_iTileSizeY);
+	canvas.DrawImage(*m_pTiles, x+w/2, y+h/2, w, h, i * m_iTileOffsetX, j * m_iTileOffsetY, m_iTileSizeX, m_iTileSizeY);
 }

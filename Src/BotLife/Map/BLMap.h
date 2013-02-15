@@ -24,6 +24,27 @@ enum CaseType
 	CaseType_MAX
 };
 
+enum TilesType
+{
+	TT_DWater	,
+	TT_DWater_LWater	,
+	TT_LWater	,
+	TT_LWater_LDirt	,
+	TT_LDirt	,
+	TT_LDirt_DDirt	,
+	TT_LDirt_LGrass	,
+	TT_LDirt_Stone	,
+	TT_DDirt	,
+	TT_Stone		,
+	TT_LGrass	,
+	TT_LGrass_DGrass	,
+	TT_LGrass_Tree	,
+	TT_DGrass	,
+	TT_Tree		,
+
+	TilesType_MAX
+};
+
 class BLZone
 {
 	public:
@@ -55,6 +76,13 @@ class BLZone
 		int m_iMax;
 };
 
+struct TilesCase 
+{
+	TilesType eType;
+	int		  id;
+};
+
+union TileKey;
 
 class BLMap
 {
@@ -65,6 +93,11 @@ class BLMap
 	public:
 		uint GetWidth() const { return m_iWidth; }
 		uint GetHeight() const { return m_iHeight; }
+
+		TilesType CaseToTile(int id) const;
+		TilesType CaseToTile(const TileKey& tiles) const;
+
+		const TilesCase& GetTilesCase(int i, int j) const;
 
 		void ConvertTypeToTiles();
 		void Debug() const;
@@ -84,8 +117,8 @@ class BLMap
 		uint m_iHeight;
 
 		GridBase<CaseType> m_oTypeMap;
-		GridBase<CaseType> m_oTmp;
-		GridBase<int> m_oTilesMap;
+		GridBase<CaseType> m_oTypeMapTmp;
+		GridBase<TilesCase> m_oTilesMap;
 
 		const BLTiles& m_oTiles;
 
@@ -93,6 +126,9 @@ class BLMap
 		static Color s_oColor[CaseType_MAX];
 		static float s_fRep[CaseType_MAX];
 		static const char* s_sCaseType[CaseType_MAX];
+
+		static const TilesType s_sFullCaseToTile[CaseType_MAX];
+		static const char* s_sTilesType[TilesType_MAX];
 };
 
 #endif
