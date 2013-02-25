@@ -136,6 +136,7 @@ EKeyboardKey InputEvent_SDL::GetKeyboardKey() const
 		case SDLK_PAGEUP:		return KEY_PAGEUP;
 		case SDLK_PAGEDOWN:		return KEY_PAGEDOWN;
 
+		case SDLK_RETURN:		return KEY_ENTER;
 		case SDLK_ESCAPE:		return KEY_ESC;
 
 		case SDLK_F1:			return KEY_F1;

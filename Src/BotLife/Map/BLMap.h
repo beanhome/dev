@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "GridBase.h"
 #include "Color.h"
+#include "BLSquare.h"
 
 class Canvas;
 class CanvasBase;
@@ -22,27 +23,6 @@ enum CaseType
 	Tree		, // -> nil
 
 	CaseType_MAX
-};
-
-enum TilesType
-{
-	TT_DWater	,
-	TT_DWater_LWater	,
-	TT_LWater	,
-	TT_LWater_LDirt	,
-	TT_LDirt	,
-	TT_LDirt_DDirt	,
-	TT_LDirt_LGrass	,
-	TT_LDirt_Stone	,
-	TT_DDirt	,
-	TT_Stone		,
-	TT_LGrass	,
-	TT_LGrass_DGrass	,
-	TT_LGrass_Tree	,
-	TT_DGrass	,
-	TT_Tree		,
-
-	TilesType_MAX
 };
 
 class BLZone
@@ -76,12 +56,6 @@ class BLZone
 		int m_iMax;
 };
 
-struct TilesCase 
-{
-	TilesType eType;
-	int		  id;
-};
-
 union TileKey;
 
 class BLMap
@@ -94,10 +68,17 @@ class BLMap
 		uint GetWidth() const { return m_iWidth; }
 		uint GetHeight() const { return m_iHeight; }
 
+		const GridBase<BLSquare>& GetGrid() const { return m_oTilesMap; }
+		GridBase<BLSquare>& GetGrid() { return m_oTilesMap; }
+
 		TilesType CaseToTile(int id) const;
 		TilesType CaseToTile(const TileKey& tiles) const;
 
-		const TilesCase& GetTilesCase(int i, int j) const;
+		void Generate();
+
+		const BLSquare& GetTilesCase(int i, int j) const;
+
+		void RandomFullGroundLoc(int& i, int& j) const;
 
 		void ConvertTypeToTiles();
 		void Debug() const;
@@ -118,7 +99,7 @@ class BLMap
 
 		GridBase<CaseType> m_oTypeMap;
 		GridBase<CaseType> m_oTypeMapTmp;
-		GridBase<TilesCase> m_oTilesMap;
+		GridBase<BLSquare> m_oTilesMap;
 
 		const BLTiles& m_oTiles;
 

@@ -13,7 +13,7 @@ class IBPlannerDisplay;
 class BLApp : public GApp<GEngine_SDL>
 {
 	public:
-		BLApp(int w, int h, float r);
+		BLApp(int w, int h, float r, int sx, int sy, const char* tilesname);
 		~BLApp();
 
 		virtual int Update(float dt);

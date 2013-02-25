@@ -91,7 +91,7 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 			continue;
 
 		int iCurDistSq = m_pModelGrid->DistanceSq(oSideCoord, target);
-		if (oSideCoord == target || (iCurDistSq <= iDistSq && !m_pModelGrid->GetCase(oSideCoord).IsBlock()))
+		if (oSideCoord == target || (iCurDistSq <= (iDistSq + (m_bDiagMode ? 1 : 0)) && !m_pModelGrid->GetCase(oSideCoord).IsBlock()))
 		{
 			m_aCloseList.insert(AStartPair(oSideCoord, Case(iToCaseCost + 1 + Cost(oSideCoord, target), m_oCurrentCoord)));
 			GetPath(oSideCoord, aPath);

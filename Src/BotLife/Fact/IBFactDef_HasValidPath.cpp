@@ -27,13 +27,16 @@ IBF_Result IBFactDef_HasValidPath::Test(const vector<IBObject*>& aUserData)
 	Vector2* pTarget = reinterpret_cast<IBVector2*>(aUserData[2]);
 	IBInt* pDist = reinterpret_cast<IBInt*>(aUserData[3]);
 
-	if (pPath == NULL || pStart == NULL || pTarget == NULL || pDist == NULL || !pPath->IsValid())
+	if (pPath == NULL || pStart == NULL || pTarget == NULL || pDist == NULL)
+		return IBF_UNKNOW;
+
+	if (!pPath->IsValid())
 		return IBF_FAIL;
 
 	if (pPath->GetStart() != *pStart)
 		return IBF_FAIL;
 
-	if (pBot->GetWorld().GetGrid().DistanceSq(pPath->GetTarget(), *pTarget) > pDist->GetValue() * pDist->GetValue())
+	if (pBot->GetWorld().GetGrid().DistanceSq(pPath->GetTarget(), *pTarget) > (pDist->GetValue() * pDist->GetValue() + 1))
 		return IBF_FAIL;
 
 	return (pBot->GetWorld().TestPath(*pPath) ? IBF_OK : IBF_FAIL);

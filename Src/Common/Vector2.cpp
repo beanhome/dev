@@ -77,3 +77,23 @@ Vector2 operator-(const Vector2& a, const Vector2& b)
 	return res;
 }
 
+Vector2 operator*(const Vector2& a, const float& t)
+{
+	Vector2 res;
+
+	res.x = (int)((float)a.x * t);
+	res.y = (int)((float)a.y * t);
+
+	return a;
+}
+
+Vector2 operator/(const Vector2& a, const float& t)
+{
+	Vector2 res;
+
+	res.x = (int)((float)a.x / t);
+	res.y = (int)((float)a.y / t);
+
+	return a;
+}
+

@@ -76,15 +76,19 @@ bool IBActionDef_UnblockProp::Execute(IBAction* pAction)
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
 
-	if (pBot->GetState() == BLBot::Action)
+	if (pBot->HasFinishState())
+	{
+		BLDoor* pObj = static_cast<BLDoor*>(pAction->FindVariables("Obj"));
+		ASSERT(pObj != NULL);
+
+		pObj->Open();
+
+		return true;
+	}
+	else
+	{
 		return false;
-
-	BLDoor* pObj = static_cast<BLDoor*>(pAction->FindVariables("Obj"));
-	ASSERT(pObj != NULL);
-
-	pObj->Open();
-
-	return true;
+	}
 }
 
 bool IBActionDef_UnblockProp::Finish(IBAction* pAction)

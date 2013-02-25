@@ -16,7 +16,7 @@ IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlann
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	const BLWorld& oWorld = pBot->GetWorld();
 
-	m_pNavigation = new NavAStar<BLSquare>(oWorld.GetGrid(), false);
+	m_pNavigation = new NavAStar<BLSquare>(oWorld.GetGrid(), true);
 }
 
 IBActionDef_FindPath::~IBActionDef_FindPath()

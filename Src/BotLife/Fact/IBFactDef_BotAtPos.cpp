@@ -20,9 +20,12 @@ IBF_Result IBFactDef_BotAtPos::Test(const vector<IBObject*>& aUserData)
 	ASSERT(aUserData.size() == 1);
 
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	Vector2 vPos = *((IBVector2*)aUserData[0]);
+	Vector2* pPos = ((IBVector2*)aUserData[0]);
 
-	return ((pBot->GetPos() == vPos) ? IBF_OK : IBF_FAIL);
+	if (pPos == NULL)
+		return IBF_UNKNOW;
+
+	return ((pBot->GetPos() == *pPos) ? IBF_OK : IBF_FAIL);
 }
 
 void IBFactDef_BotAtPos::ResolveVariable(vector<IBObject*>& aUserData)

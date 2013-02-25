@@ -4,64 +4,39 @@
 #include "BLBot.h"
 #include "InputEvent.h"
 #include "GEngine.h"
-#include "IBPlanner.h" // To Del
 #include "World\BLProp.h"
 #include "Path.h"
 #include "World\BLProp_SI.h"
 #include "World\BLDoor.h"
 #include "Map\BLMap.h"
-
-int _map_[16][16] = {
-	{ 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1 },
-	{ 1, 0, 0, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 1,  1, 1, 0, 1,  1, 1, 1, 1,  0, 0, 0, 1 },
-
-	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 0,  0, 0, 0, 1,  1, 0, 0, 0,  0, 0, 0, 1 },
-
-	{ 1, 0, 0, 1,  0, 0, 0, 1,  1, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 0, 0, 1,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1 },
-	{ 1, 1, 1, 1,  1, 0, 0, 0,  0, 0, 0, 1,  0, 0, 0, 1 },
-
-	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1,  0, 0, 0, 1 },
-	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1,  0, 0, 0, 1 },
-	{ 1, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 1,  0, 0, 0, 1 },
-	{ 1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1,  1, 1, 1, 1 }
-};
+#include "Map\BLTiles.h"
 
 
-
-
-BLWorld::BLWorld(Canvas& canva, uint grid)
-	: m_oCanva(canva)
-	, m_iGrid(grid)
+BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesname)
+	: m_oBLApp(oBLApp)
+	, m_oCanva(canva)
+	, m_iGrid(0)
 {
-	m_iWidth = canva.GetWidth() - canva.GetWidth() % m_iGrid;
-	m_iHeight = canva.GetHeight() - canva.GetHeight() % m_iGrid;
+	m_pTiles = new BLTiles(*canva.GetGEngine(), tilesname);
+	m_iGrid = m_pTiles->GetTilesWidth();
+	ASSERT(m_pTiles->GetTilesWidth() == m_pTiles->GetTilesHeight());
 
-	m_oGrid.Init(16, 16);
-	for (uint i=0 ; i<m_oGrid.GetWidth() ; ++i)
-	{
-		for (uint j=0 ; j<m_oGrid.GetHeight() ; ++j)
-		{
-			m_oGrid[i][j].SetType(_map_[i][j]);
-		}
-	}
+	m_pMap = new BLMap(w, h, *m_pTiles);
+	m_pMap->Generate();
+	int i, j;
+	m_pMap->RandomFullGroundLoc(i, j);
 
 	m_pBot = new BLBot(*canva.GetGEngine(), *this);
-	m_pBot->SetLoc(grid*1.5f, grid*1.5f);
-	m_pBot->SetPos(1, 1);
-	//m_pBot->SetState(BLBot::Walk, BLBot::Down, 1.f);
-	//m_pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
+	m_pBot->SetLoc((float)i*m_iGrid + m_iGrid/2, (float)j*m_iGrid + m_iGrid/2);
+	m_pBot->SetPos(i, j);
+	m_pBot->SetState(BLBot::Idle);
+	CenterMap((int)m_pBot->GetLocX(), (int)m_pBot->GetLocY());
 
-	m_pProp = new BLProp_SI(*this, "Mine", DATA_DIR "/Test/Mine.png", Vector2(2,4));
+	m_pMap->RandomFullGroundLoc(i, j);
+	m_pProp = new BLProp_SI(*this, "Mine", DATA_DIR "/Test/Mine.png", Vector2(i,j));
 
-	BLDoor* pDoor = new BLDoor(*this, "Door", BLDoor::Verti, Vector2(3, 6));
-	pDoor->Close();
+	//BLDoor* pDoor = new BLDoor(*this, "Door", BLDoor::Verti, Vector2(3, 6));
+	//pDoor->Close();
 
 	//m_pBot->AddGoal("IBFactDef_BotAtPos", new IBVector2("Dest", 14, 14));
 	m_pBot->AddGoal("IBFactDef_BotHasObject", m_pProp);
@@ -77,7 +52,7 @@ bool BLWorld::TestPath(const Path& oPath) const
 {
 	for (uint i=0 ; i<oPath.GetLength() ; ++i)
 	{
-		const BLSquare& sq = m_oGrid[oPath[i]];
+		const BLSquare& sq = m_pMap->GetGrid()[oPath[i]];
 		if (sq.GetProp() != NULL && sq.IsTempBlock())
 			return false;
 	}
@@ -86,10 +61,34 @@ bool BLWorld::TestPath(const Path& oPath) const
 }
 
 
+void BLWorld::CenterMap(int x, int y)
+{
+	x -= (m_oCanva.GetWidth() / 2);
+	y -= (m_oCanva.GetHeight() / 2);
+
+	x = max(0, x);
+	y = max(0, y);
+	x = min(x, (int)(GetWidth() * GetGridSize() - m_oCanva.GetWidth()));
+	y = min(y, (int)(GetHeight() * GetGridSize() - m_oCanva.GetHeight()));
+
+	m_oCanva.SetOrigX(x);
+	m_oCanva.SetOrigY(y);
+}
+
+
 
 void BLWorld::Update(float dt)
 {
 	m_pBot->Update(dt);
+
+	float x, y;
+	m_pBot->GetLoc(x, y);
+
+	//x = (x + (float)m_pProp->GetPos().x * (float)GetGridSize()) / 2.f;
+	//y = (y + (float)m_pProp->GetPos().y * (float)GetGridSize()) / 2.f;
+
+	CenterMap((int)x, (int)y);
+
 
 	/*
 	const InputEvent& ie = m_oCanva.GetGEngine()->GetInputEvent();
@@ -123,34 +122,11 @@ void BLWorld::Update(float dt)
 
 void BLWorld::Draw() const
 {
-	m_oCanva.DrawRect(0, 0, m_iWidth, m_iHeight, 0, 0, 255);
+	m_oCanva.DrawRect(0, 0, m_oCanva.GetWidth()-1, m_oCanva.GetHeight()-1, 0, 0, 255);
 
-
-	for (uint i=0 ; i<m_oGrid.GetWidth() ; ++i)
-	{
-		for (uint j=0 ; j<m_oGrid.GetHeight() ; ++j)
-		{
-			if (m_oGrid[i][j].GetType() == 1)
-			{
-				m_oCanva.DrawFillRect(i*m_iGrid, j*m_iGrid, m_iGrid, m_iGrid, 18, 18, 18);
-			}
-			
-			if (m_oGrid[i][j].GetProp() != NULL)
-				m_oGrid[i][j].GetProp()->Draw();
-		}
-	}
-
-	for (uint i=1 ; i<m_iWidth/m_iGrid ; ++i)
-	{
-		m_oCanva.DrawLine(i*m_iGrid, 0, i*m_iGrid, m_iHeight, 0, 0, 255);
-	}
-
-	for (uint i=1 ; i<m_iHeight/m_iGrid ; ++i)
-	{
-		m_oCanva.DrawLine(0, i*m_iGrid, m_iWidth, i*m_iGrid, 0, 0, 255);
-	}
+	m_pMap->Display(m_oCanva);
 
 	//m_pProp->Draw();
 
-	m_pBot->Draw(m_oCanva);
+	m_pBot->Draw();
 }

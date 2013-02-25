@@ -4,7 +4,7 @@
 #include "Graph\IBPlannerGraph.h"
 #include "BLBot.h"
 
-BLApp::BLApp(int w, int h, float r)
+BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
 	: GApp(w, h)
 {
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
@@ -12,8 +12,11 @@ BLApp::BLApp(int w, int h, float r)
 	m_pWorldCanva = new Canvas(*m_pEngine, 0, 0, w, (uint16)(r*(float)h));
 	m_pGraphCanva = new Canvas(*m_pEngine, 0, (sint16)(r*(float)h), w, (uint16)((1.f-r)*(float)h));
 
-	m_pWorld = new BLWorld(*m_pWorldCanva, 32);
+	m_pWorld = new BLWorld(*this, *m_pWorldCanva, sx, sy, tilesname);
 	m_pPlannerDisplay = new IBPlannerGraph(m_pWorld->GetBot().GetPlanner(), *m_pGraphCanva);
+
+	m_bPause = true;
+	//m_fSlomo = 0.333f;
 }
 
 BLApp::~BLApp()

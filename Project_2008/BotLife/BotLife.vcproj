@@ -200,6 +200,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\BotLife\SpriteViewApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\SpriteViewApp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\BotLife\TilesViewApp.cpp"
 				>
 			</File>
@@ -339,22 +347,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\Src\BotLife\World\BLSquare.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\BotLife\World\BLSquare.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\BotLife\Map\BLTiles.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Src\BotLife\Map\BLTiles.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\Src\BotLife\BLWorld.cpp"
 					>
 				</File>
@@ -380,6 +372,22 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\Map\BLMap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLSquare.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLSquare.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLTiles.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Map\BLTiles.h"
 					>
 				</File>
 			</Filter>

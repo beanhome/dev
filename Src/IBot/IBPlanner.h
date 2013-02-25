@@ -40,6 +40,7 @@ class IBPlanner
 
 		void*					GetOwner() const { return m_pOwner; }
 		const FactSet&			GetGoals() const { return m_aGoals; }
+		//FactSet&				GetGoals() { return m_aGoals; }
 
 
 	protected:

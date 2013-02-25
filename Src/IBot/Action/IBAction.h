@@ -3,6 +3,7 @@
 
 #include "Utils.h"
 #include "Fact/IBFact.h"
+//#include "Fact/IBFactVisitor.h"
 
 class IBActionDef;
 struct FactCondDef;
@@ -69,6 +70,15 @@ class IBAction
 		float					Valuate();
 
 		int						GetExecCounter() const { return m_iExecCount; }
+
+		//friend class IBFactIterator;
+		/*
+		IBFactIterator			BeginFactIterator() const;
+		IBFactIterator			BackFactIterator() const;
+		IBFactIterator			EndFactIterator() const;
+		IBFactIterator			NextFactIterator(const IBFactIterator& it) const;
+		IBFactIterator			PrevFactIterator(const IBFactIterator& it) const;
+		*/
 
 	private:
 		IBActionDef*			m_pDef;

@@ -2,6 +2,9 @@
 #include "CanvasBase.h"
 #include "Canvas.h"
 #include "BLTiles.h"
+#include "BLSquare.h"
+//#include "Timer.h"
+#include "World\BLProp.h"
 
 BLZone::BLZone()
 {
@@ -152,7 +155,32 @@ BLMap::~BLMap()
 {
 }
 
-const TilesCase& BLMap::GetTilesCase(int i, int j) const
+void BLMap::Generate()
+{
+	for (uint i=0 ; i<20 ; ++i)
+	{
+		Step(i);
+	}
+
+	ConvertTypeToTiles();
+}
+
+void BLMap::RandomFullGroundLoc(int& i, int& j) const
+{
+	vector<int> id;
+	id.reserve(m_oTilesMap.GetWidth() * m_oTilesMap.GetHeight() / 4);
+
+	for (uint k=0 ; k<m_oTilesMap.GetWidth() * m_oTilesMap.GetHeight() ; ++k)
+	{
+		if (! BLSquare::s_bIsBloc[m_oTilesMap.GetCase(k).GetTilesType()])
+			id.push_back(k);
+	}
+
+	m_oTilesMap.GetCoord(id[Rand(id.size()-1)], i, j);
+}
+
+
+const BLSquare& BLMap::GetTilesCase(int i, int j) const
 {
 	return m_oTilesMap.GetCase(i, j);
 }
@@ -339,8 +367,8 @@ void BLMap::ConvertTypeToTiles()
 			CaseType bl = m_oTypeMap.GetCase(i, j+1);
 			CaseType br = m_oTypeMap.GetCase(i+1, j+1);
 
-			m_oTilesMap.GetCase(i, j).id = m_oTiles.Find(tl, tr, bl, br);
-			m_oTilesMap.GetCase(i, j).eType = CaseToTile(TileKey(tl, tr, bl, br));
+			m_oTilesMap.GetCase(i, j).SetTilesId(m_oTiles.Find(tl, tr, bl, br));
+			m_oTilesMap.GetCase(i, j).SetTilesType(CaseToTile(TileKey(tl, tr, bl, br)));
 		}
 	}
 }
@@ -357,7 +385,11 @@ void BLMap::Display(const CanvasBase& Canvas) const
 			int x = i*w;
 			int y = j*h;
 
-			m_oTiles.DrawTile(Canvas, m_oTilesMap.GetCase(i, j).id , x, y, w, h);
+			const BLSquare& sq = m_oTilesMap.GetCase(i, j);
+
+			m_oTiles.DrawTile(Canvas, sq.GetTilesId() , x, y, w, h);
+			if (sq.GetProp() != NULL)
+				sq.GetProp()->Draw();
 			//Canvas.DrawFillRect(i*32, j*32, 32, 32, s_oColor[m_oMap.GetCase(i, j)]);
 			//Canvas.Print(x, y, Canvas.GetPrintFont(), w/2, Center, 0, 0, 0, "%d", m_oMap.GetCase(i, j));
 		}

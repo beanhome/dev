@@ -14,6 +14,11 @@ class GAppBase
 		//void SetNoClearScreen(bool bNoClearScreen) { m_bNoClearScreen = bNoClearScreen; }
 		//bool GetNoClearScreen() const { return m_bNoClearScreen; }
 
+		void SetSlomo(float slomo) { m_fSlomo = slomo; }
+		float GetSlomo() const { return m_fSlomo; }
+
+		void SetPause(bool bPause) { m_bPause = bPause; }
+
 		virtual int Update(float dt) = 0;
 		virtual int Draw() = 0;
 
@@ -22,6 +27,8 @@ class GAppBase
 	protected:
 		GEngine* m_pEngine;
 		bool m_bNoClearScreen;
+		bool m_bPause;
+		float m_fSlomo;
 };
 
 template <typename ENGINE>

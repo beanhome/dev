@@ -56,12 +56,15 @@ bool IBActionDef_PickObject::Start(IBAction* pAction)
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	//const BLWorld& oWorld = pBot->GetWorld();
+	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
+	ASSERT(pObjPos != NULL);
 
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
 
-	pBot->SetState(BLBot::Action, pBot->GetDir(), 1.f);
+	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), *pObjPos);
+
+	pBot->SetState(BLBot::Action, eDir, 1.f);
 	return true;
 }
 
@@ -72,14 +75,18 @@ bool IBActionDef_PickObject::Execute(IBAction* pAction)
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
 
-	if (pBot->GetState() == BLBot::Action)
+	if (pBot->HasFinishState())
+	{
+		BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
+		ASSERT(pObj != NULL);
+
+		pBot->PickProp(reinterpret_cast<BLProp*>(pObj));
+		return true;
+	}
+	else
+	{
 		return false;
-
-	BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
-	ASSERT(pObj != NULL);
-
-	pBot->PickProp(reinterpret_cast<BLProp*>(pObj));
-	return true;
+	}
 }
 
 bool IBActionDef_PickObject::Finish(IBAction* pAction)

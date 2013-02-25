@@ -47,6 +47,36 @@ IBAction::~IBAction()
 	}
 }
 
+/*
+IBFactIterator IBAction::BeginFactIterator() const
+{
+	return (m_aPostCond.size() > 0 ? IBFactIterator(m_aPreCond[0], this, 0) : EndFactIterator());
+}
+
+IBFactIterator IBAction::BackFactIterator() const
+{
+	return (m_aPostCond.size() > 0 ? IBFactIterator(m_aPreCond[m_aPreCond.size()-1], this, m_aPreCond.size()-1) : EndFactIterator());
+}
+
+IBFactIterator IBAction::EndFactIterator() const
+{
+	return IBFactIterator(NULL, this, -1);
+}
+
+IBFactIterator IBAction::NextFactIterator(const IBFactIterator& it) const
+{
+	int id = it.m_iId + 1;
+	return (id > (int)m_aPostCond.size()-1 ? IBFactIterator(m_aPreCond[id], this, id) : EndFactIterator());
+}
+
+IBFactIterator IBAction::PrevFactIterator(const IBFactIterator& it) const
+{
+	int id = it.m_iId - 1;
+	return (id < 0 ? IBFactIterator(m_aPreCond[id], this, id) : EndFactIterator());
+}
+*/
+
+
 IBObject* IBAction::FindVariables(const string& name) const
 {
 	VarMap::const_iterator it = m_aVariables.find(name);

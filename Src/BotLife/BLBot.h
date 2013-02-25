@@ -40,11 +40,16 @@ class BLBot : public IBObject
 
 
 	public:
+		void					GetLoc(float& x, float& y) const { x = m_fLocX, y = m_fLocY; }
+		float					GetLocX() const { return m_fLocX; }
+		float					GetLocY() const { return m_fLocY; }
 		void					SetLoc(float x, float y);
+		void					FixLoc();
 		void					SetPos(int i, int j);
 		void					SetPos(const Vector2& p);
 
 		const Vector2&			GetPos() const { return m_vPos; }
+		const Vector2&			GetTarget() const { return m_vTarget; }
 		const IBVector2&		GetIBPos() const { return m_vPos; }
 		IBVector2*				GetIBPosAd() { return &m_vPos; }
 
@@ -53,9 +58,10 @@ class BLBot : public IBObject
 					
 		void					SetState(BotState state, BotDir dir=Down, float delay=-1.f);
 		BotState				GetState() const { return m_eState; }
+		bool					HasFinishState() const { return m_fStateTime > m_fStateDelay; }
 					
 		void					Update(float dt);
-		void					Draw(CanvasBase& canva) const;
+		void					Draw() const;
 
 		BotDir					GetDir() const { return m_eDir; }
 		BotDir					ComputeDir(const Vector2& Start, const Vector2& Target) const;
@@ -77,6 +83,7 @@ class BLBot : public IBObject
 	private:
 		BLWorld&				m_oWorld;
 
+		ImageFlipBook*			m_pIdleImage;
 		ImageFlipBook*			m_pWalkImage;
 		ImageFlipBook*			m_pWorkImage;
 		//uint					m_iWidth;
@@ -103,6 +110,7 @@ class BLBot : public IBObject
 		BLProp*					m_pCarryObject;
 
 	private:
+		static const char*		s_sDirString[8];
 		static float			s_fDirArrayX[8];
 		static float			s_fDirArrayY[8];
 		static Vector2			s_vDirArray[8];

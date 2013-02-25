@@ -81,7 +81,7 @@ int MapViewApp::Draw()
 	if (!m_bDrag)
 	{
 		m_pEngine->Print(100, 100, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Mouse : %d %d", m_iMouseCaseX, m_iMouseCaseY);
-		m_pEngine->Print(100, 130, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Tiles : %s", BLMap::s_sTilesType[m_pMap->GetTilesCase(m_iMouseCaseX, m_iMouseCaseY).eType]);
+		m_pEngine->Print(100, 130, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Tiles : %s", BLMap::s_sTilesType[m_pMap->GetTilesCase(m_iMouseCaseX, m_iMouseCaseY).GetTilesType()]);
 		m_pCanvas->DrawRect(m_iMouseCaseX * m_pTiles->GetTilesWidth(), m_iMouseCaseY * m_pTiles->GetTilesHeight(), m_pTiles->GetTilesWidth()-1, m_pTiles->GetTilesHeight()-1, 255, 255, 255);
 	}
 

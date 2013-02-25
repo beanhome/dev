@@ -185,6 +185,14 @@
 					RelativePath="..\..\Src\IBot\Fact\IBFactLibrary.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\Src\IBot\Fact\IBFactVisitor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\IBot\Fact\IBFactVisitor.h"
+					>
+				</File>
 				<Filter
 					Name="Def"
 					>
