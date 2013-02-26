@@ -18,7 +18,7 @@ class InputEvent_SDL : public InputEvent
 		bool IsKeyboard() const;
 		
 		EMouseEvent GetMouseEvent() const;
-		bool GetMouseMove(uint16& x, uint16& y) const;
+		bool GetMouseMove(sint32& x, sint32& y) const;
 
 		EKeyboardEvent GetKeyboardEvent() const;
 		EKeyboardKey GetKeyboardKey() const;

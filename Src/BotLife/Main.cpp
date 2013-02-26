@@ -5,14 +5,6 @@
 #include "SpriteViewApp.h"
 #include "Timer.h"
 
-enum AppType
-{
-	AT_BLApp,
-	AT_MapViewApp,
-	AT_TilesViewApp,
-};
-
-
 int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);

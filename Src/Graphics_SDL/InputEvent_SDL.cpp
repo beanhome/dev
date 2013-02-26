@@ -88,7 +88,7 @@ EMouseEvent InputEvent_SDL::GetMouseEvent() const
 	}
 }
 
-bool InputEvent_SDL::GetMouseMove(uint16& x, uint16& y) const
+bool InputEvent_SDL::GetMouseMove(sint32& x, sint32& y) const
 {
 	/*
 	if (m_pSDLEvent->type != SDL_MOUSEMOTION)

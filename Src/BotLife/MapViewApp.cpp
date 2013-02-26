@@ -5,6 +5,7 @@
 #include "Canvas.h"
 #include "GEngine.h"
 #include "InputEvent.h"
+#include "Input.h"
 
 MapViewApp::MapViewApp(int w, int h, const char* name)
 	: GApp(w, h)
@@ -44,33 +45,28 @@ MapViewApp::~MapViewApp()
 
 int MapViewApp::Update(float dt)
 {
-	if (m_pEngine->GetInputEvent().IsMouse())
+	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
 	{
-		if (!m_bDrag && m_pEngine->GetInputEvent().GetMouseEvent() == LeftDown)
-		{
-			m_iStartOffsetX = m_pEngine->GetMouseX() + m_pCanvas->GetOrigX();
-			m_iStartOffsetY = m_pEngine->GetMouseY() + m_pCanvas->GetOrigY();
-			m_bDrag = true;
-		}
-		else if (m_bDrag && m_pEngine->GetInputEvent().GetMouseEvent() == LeftUp)
-		{
-			m_bDrag = false;
-		}
-		else if (m_bDrag)
-		{
-			sint16 x = std::max<sint16>(m_iStartOffsetX - (sint16)m_pEngine->GetMouseX(), 0);
-			sint16 y = std::max<sint16>(m_iStartOffsetY - (sint16)m_pEngine->GetMouseY(), 0);
-			x = std::min<sint16>(x, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth(), 0));
-			y = std::min<sint16>(y, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight(), 0));
-			m_pCanvas->SetOrigX(x);
-			m_pCanvas->SetOrigY(y);
-		}
-		else
-		{
-			m_iMouseCaseX = m_pCanvas->GetMouseX() / m_pTiles->GetTilesWidth();
-			m_iMouseCaseY = m_pCanvas->GetMouseY() / m_pTiles->GetTilesHeight();
-		}
+		m_iStartOffsetX = m_pEngine->GetMouseX() + m_pCanvas->GetOrigX();
+		m_iStartOffsetY = m_pEngine->GetMouseY() + m_pCanvas->GetOrigY();
+		m_bDrag = true;
 	}
+	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyDown)
+	{
+		sint16 x = std::max<sint16>(m_iStartOffsetX - (sint16)m_pEngine->GetMouseX(), 0);
+		sint16 y = std::max<sint16>(m_iStartOffsetY - (sint16)m_pEngine->GetMouseY(), 0);
+		x = std::min<sint16>(x, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth(), 0));
+		y = std::min<sint16>(y, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight(), 0));
+		m_pCanvas->SetOrigX(x);
+		m_pCanvas->SetOrigY(y);
+	}
+	else
+	{
+		m_bDrag = false;
+		m_iMouseCaseX = m_pCanvas->GetMouseX() / m_pTiles->GetTilesWidth();
+		m_iMouseCaseY = m_pCanvas->GetMouseY() / m_pTiles->GetTilesHeight();
+	}
+
 	return 0;
 }
 

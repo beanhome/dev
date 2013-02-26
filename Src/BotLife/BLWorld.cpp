@@ -88,35 +88,6 @@ void BLWorld::Update(float dt)
 	//y = (y + (float)m_pProp->GetPos().y * (float)GetGridSize()) / 2.f;
 
 	CenterMap((int)x, (int)y);
-
-
-	/*
-	const InputEvent& ie = m_oCanva.GetGEngine()->GetInputEvent();
-	if (m_pBot->GetState() == BLBot::Idle && ie.GetKeyboardEvent() == KeyDown)
-	{
-		float fDelay = 1.f;
-		switch (ie.GetKeyboardKey())
-		{
-			case KEY_DOWN:	m_pBot->SetState(BLBot::Walk, BLBot::Down, fDelay);		break;
-			case KEY_UP:	m_pBot->SetState(BLBot::Walk, BLBot::Up, fDelay);		break;
-			case KEY_LEFT:	m_pBot->SetState(BLBot::Walk, BLBot::Left, fDelay);		break;
-			case KEY_RIGHT:	m_pBot->SetState(BLBot::Walk, BLBot::Right, fDelay);	break;
-		}
-	}
-	*/
-
-	/*
-	static bool step = false;
-	if (ie.GetKeyboardEvent() == KeyDown && ie.GetKeyboardKey() == KEY_SPACE && !step)
-	{
-		m_pBot->GetPlanner().Step();
-		step = true;
-	}
-	else if (ie.GetKeyboardEvent() == KeyUp && ie.GetKeyboardKey() == KEY_SPACE && step)
-	{
-		step = false;
-	}
-	*/
 }
 
 
@@ -125,8 +96,6 @@ void BLWorld::Draw() const
 	m_oCanva.DrawRect(0, 0, m_oCanva.GetWidth()-1, m_oCanva.GetHeight()-1, 0, 0, 255);
 
 	m_pMap->Display(m_oCanva);
-
-	//m_pProp->Draw();
 
 	m_pBot->Draw();
 }

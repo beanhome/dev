@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Graphics\Input.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Graphics\InputEvent.cpp"
 				>
 			</File>
@@ -241,6 +245,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Graphics\ImageRotoZoom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Graphics\Input.h"
 				>
 			</File>
 			<File

@@ -10,6 +10,7 @@ class Resource;
 class Canvas;
 //class ImageResource;
 //class FontResource;
+class Input;
 
 typedef map<uint32, Resource*> ResourceMap;
 typedef pair<uint32, Resource*> ResourcePair;
@@ -33,6 +34,9 @@ class GEngine : public CanvasBase
 
 		virtual void					PurgeResource();
 
+		const Input*					GetInput() const { return m_pInput; }
+		void							UpdateInput();
+
 		virtual void					SaveEvent();
 		virtual bool					PollEvent() = 0;
 		virtual const InputEvent&		WaitEvent() = 0;
@@ -40,9 +44,9 @@ class GEngine : public CanvasBase
 		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
 		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
 
-		void							SetMouse(uint16 x, uint16 y) { m_iMouseX = x; m_iMouseY = y; }
-		sint32							GetMouseX() const { return m_iMouseX; }
-		sint32							GetMouseY() const { return m_iMouseY; }
+		//void							SetMouse(uint16 x, uint16 y) { m_iMouseX = x; m_iMouseY = y; }
+		virtual sint32					GetMouseX() const;
+		virtual sint32					GetMouseY() const;
 
 		template<typename T>
 		T* const						GetResource(const typename T::Desc& oDesc) const;
@@ -73,8 +77,9 @@ class GEngine : public CanvasBase
 
 	private:
 		ResourceMap						m_aResources;
-		uint16							m_iMouseX;
-		uint16							m_iMouseY;
+		Input*							m_pInput;
+		//uint16							m_iMouseX;
+		//uint16							m_iMouseY;
 
 };
 

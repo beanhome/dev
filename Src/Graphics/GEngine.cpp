@@ -2,13 +2,16 @@
 #include "GEngine.h"
 #include "Resource.h"
 #include "Canvas.h"
+#include "Input.h"
 
 GEngine::GEngine(uint16 width, uint16 height, uint16 depth)
 	: CanvasBase(width, height)
 	, m_iDepth(depth)
 	, m_pInputEvent(NULL)
 	, m_pPreviousInputEvent(NULL)
+	, m_pInput(NULL)
 {
+	m_pInput = new Input(*this);
 }
 
 GEngine::~GEngine()
@@ -71,3 +74,17 @@ void GEngine::SaveEvent()
 	assert(false);
 }
 
+void GEngine::UpdateInput()
+{
+	m_pInput->Update();
+}
+
+sint32 GEngine::GetMouseX() const
+{
+	return m_pInput->GetMouseX();
+}
+
+sint32 GEngine::GetMouseY() const
+{
+	return m_pInput->GetMouseY();
+	}

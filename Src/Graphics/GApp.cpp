@@ -3,6 +3,7 @@
 #include "Timer.h"
 #include "InputEvent.h"
 #include <complex>
+#include "Input.h"
 
 GAppBase::GAppBase()
 	: m_pEngine(NULL)
@@ -54,27 +55,13 @@ int GAppBase::Loop()
 
 		m_pEngine->Flip();
 
-		m_pEngine->SaveEvent();
-		if (m_pEngine->PollEvent())
-		{
-			if (m_pEngine->GetInputEvent().IsQuit()
-				|| m_pEngine->GetInputEvent().IsKeyboard() && m_pEngine->GetInputEvent().GetKeyboardKey() == KEY_ESC)
-				bQuit = true;
+		m_pEngine->UpdateInput();
 
-			if (m_bPause && m_pEngine->GetInputEvent().IsKeyboard() && m_pEngine->GetInputEvent().GetKeyboardEvent() == KeyDown && m_pEngine->GetInputEvent().GetKeyboardKey() == KEY_SPACE)
-				m_bPause = false;
+		bQuit = m_pEngine->GetInput()->IsQuit();
+		bQuit |= (m_pEngine->GetInput()->GetVirtualKey(KEY_ESC) == KeyPressed);
 
-			else if (!m_bPause && m_pEngine->GetInputEvent().IsKeyboard() && m_pEngine->GetInputEvent().GetKeyboardEvent() == KeyDown && m_pEngine->GetInputEvent().GetKeyboardKey() == KEY_SPACE)
-				m_bPause = true;
-
-			if (m_pEngine->GetInputEvent().IsMouse())
-			{
-				uint16 x, y;
-				m_pEngine->GetInputEvent().GetMouseMove(x, y);
-				m_pEngine->SetMouse(x, y);
-			}
-
-		}
+		if (m_pEngine->GetInput()->GetVirtualKey(KEY_SPACE) == KeyPressed)
+			m_bPause = !m_bPause;
 	}
 
 	return 0;

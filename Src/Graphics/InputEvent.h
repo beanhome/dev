@@ -12,6 +12,8 @@ enum EMouseEvent
 	MiddleDown,
 	RightUp,
 	RightDown,
+
+	EMouseEvent_MAX
 };
 
 enum EKeyboardEvent
@@ -19,7 +21,10 @@ enum EKeyboardEvent
 	EKeyboardEvent_Error = -1,
 
 	KeyUp,
-	KeyDown
+	KeyDown,
+	KeyPressed,
+	KeyReleased,
+	KeyRepeat,
 };
 
 enum EKeyboardKey
@@ -101,6 +106,12 @@ enum EKeyboardKey
 	KEY_F10,
 	KEY_F11,
 	KEY_F12,
+
+	MOUSE_LEFT,
+	MOUSE_MIDDLE,
+	MOUSE_RIGHT,
+
+	EKeyboardKey_Max
 };
 
 class InputEvent
@@ -116,7 +127,7 @@ class InputEvent
 		virtual bool IsKeyboard() const = 0;
 		
 		virtual EMouseEvent GetMouseEvent() const = 0;
-		virtual bool GetMouseMove(uint16& x, uint16& y) const = 0;
+		virtual bool GetMouseMove(sint32& x, sint32& y) const = 0;
 
 		virtual EKeyboardEvent GetKeyboardEvent() const = 0;
 		virtual EKeyboardKey GetKeyboardKey() const = 0;
