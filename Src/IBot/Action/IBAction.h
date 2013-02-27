@@ -7,7 +7,6 @@
 
 class IBActionDef;
 struct FactCondDef;
-class IBPlannerGraph;
 class IBObject;
 
 class IBAction
@@ -18,8 +17,8 @@ class IBAction
 		friend class IBActionLibrary;
 
 	protected:
-		IBAction(IBActionDef* pDef);
-		~IBAction();
+		IBAction(IBActionDef* pDef, IBFact* pPostCond1);
+		virtual ~IBAction();
 
 	public:
 		enum State
@@ -35,8 +34,6 @@ class IBAction
 
 		typedef map<string, IBObject*> VarMap;
 		typedef pair<string, IBObject*> VarPair;
-
-		friend class IBPlannerGraph;
 
 	public:
 		State					GetState() const { return m_eState; }
@@ -89,7 +86,7 @@ class IBAction
 		IBFactIterator			PrevFactIterator(const IBFactIterator& it) const;
 		*/
 
-	private:
+	protected:
 		IBActionDef*			m_pDef;
 
 		State					m_eState;

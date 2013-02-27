@@ -17,7 +17,7 @@ class IBFact
 
 	protected:
 		IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData);
-		~IBFact();
+		virtual ~IBFact();
 
 	public:
 		IBFactDef*					GetFactDef() const { return m_pDef; }

@@ -37,7 +37,7 @@ float BLBot::s_fDirArrayY[8] = { 1.f, 1.f, 0.f, -1.f, -1.f, -1.f, 0.f, 1.f};
 Vector2 BLBot::s_vDirArray[8] = { Vector2(0,1), Vector2(1,1), Vector2(1,0), Vector2(1,-1), Vector2(0,-1), Vector2(-1,-1), Vector2(-1,0), Vector2(-1,1) };
 
 
-BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
+BLBot::BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas)
 	: IBObject("Bot")
 	, m_oWorld(oWorld)
 	, m_pWalkImage(NULL)
@@ -62,7 +62,7 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld)
 	m_pWorkImage->SetCenter(24, 35);
 	m_pWorkImage->SetCurrent(0);
 
-	m_pPlanner = new IBPlanner_BL(this);
+	m_pPlanner = new IBPlanner_BL(this, oPlannerCanvas);
 }
 
 BLBot::~BLBot()

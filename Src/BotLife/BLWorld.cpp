@@ -32,7 +32,7 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	int i, j;
 	m_pMap->RandomFullGroundLoc(i, j);
 
-	m_pBot = new BLBot(*canva.GetGEngine(), *this);
+	m_pBot = new BLBot(*canva.GetGEngine(), *this, oBLApp.GetPlannerCanvas());
 	m_pBot->SetLoc((float)i*m_iGrid + m_iGrid/2, (float)j*m_iGrid + m_iGrid/2);
 	m_pBot->SetPos(i, j);
 	m_pBot->SetState(BLBot::Idle);

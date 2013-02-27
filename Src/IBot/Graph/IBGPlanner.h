@@ -1,39 +1,27 @@
-#ifndef __IBPLANNERGRAPH_H__
-#define __IBPLANNERGRAPH_H__
+#ifndef __IBGPlanner_H__
+#define __IBGPlanner_H__
 
 #include "Utils.h"
+#include "IBPlanner.h"
 #include "Color.h"
-#include "IBPlannerDisplay.h"
 #include "Canvas.h"
 
-class IBFact;
-class IBAction;
-
-class IBPlanner;
 class CanvasBase;
 
-class IBGBox;
-
-class IBCube;
-
-
-class IBPlannerGraph : public IBPlannerDisplay
+class IBGPlanner : public IBPlanner
 {
 	public:
-		IBPlannerGraph(const IBPlanner& oPlanner, CanvasBase& oGraphCanva);
-		virtual ~IBPlannerGraph();
+		IBGPlanner(void* pOwner, CanvasBase& oGraphCanva);
+		virtual ~IBGPlanner();
 
 	public:
-		virtual void		DrawGraph();
+		virtual IBAction*		InstanciateAction(IBActionDef* pDef, IBFact* pPostCond1);
+		virtual IBFact*			InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, IBAction* pEffectAction);
+
+		void					Draw();
 
 	private:
-		void				Destroy();
-		void				Create(const IBPlanner& oPlanner);
-		void				Draw();
-
-	private:
-		vector<IBGBox*>		m_aBox;
-		Canvas				m_oCanvas;
+		Canvas					m_oCanvas;
 
 	public:
 		static const uint		s_iMargin;
@@ -61,7 +49,6 @@ class IBPlannerGraph : public IBPlannerDisplay
 		static const Color		s_oFalseFactColor;
 		static const Color		s_oLinkColor;
 		static const Color		s_oBoxColor;
-
 };
 
 #endif

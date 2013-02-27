@@ -21,12 +21,13 @@ class BLApp : public GApp<GEngine_SDL>
 		virtual int UpdatePause();
 		virtual int Draw();
 
+		Canvas& GetPlannerCanvas() { return *m_pGraphCanva; }
+
 	private:
 		Canvas* m_pWorldCanva;
 		Canvas* m_pGraphCanva;
 
 		BLWorld* m_pWorld;
-		IBPlannerDisplay* m_pPlannerDisplay;
 
 		BLGoalMenu* m_pGoalMenu;
 };

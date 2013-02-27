@@ -6,6 +6,7 @@
 class IBFact;
 class IBPlanner;
 class IBObject;
+class IBAction;
 
 enum IBF_Result
 {
@@ -27,8 +28,9 @@ class IBFactDef
 		const string&				GetName() const { return m_sName; }
 		uint						GetDegree() const { return m_iDegree; }
 
-		IBFact*						Instanciate() { vector<IBObject*> aUserData; return Instanciate(aUserData); }
-		IBFact*						Instanciate(const vector<IBObject*> aUserData);
+		IBFact*						Instanciate() { return Instanciate(NULL); }
+		IBFact*						Instanciate(IBAction* pEffectAction) { vector<IBObject*> aUserData; return Instanciate(pEffectAction, aUserData); }
+		IBFact*						Instanciate(IBAction* pEffectAction, const vector<IBObject*> aUserData);
 
 		// Must return state of the fact: true or false
 		IBF_Result					Test() { vector<IBObject*> aUserData; return Test(aUserData); }

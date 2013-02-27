@@ -1,11 +1,11 @@
 #include "BLApp.h"
 #include "Canvas.h"
 #include "BLWorld.h"
-#include "Graph\IBPlannerGraph.h"
 #include "BLBot.h"
 #include "BLGoalMenu.h"
 #include "Input.h"
 #include "InputEvent.h"
+#include "Graph\IBGPlanner.h"
 
 BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
 	: GApp(w, h)
@@ -17,7 +17,6 @@ BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
 	m_pGraphCanva = new Canvas(*m_pEngine, 0, (sint16)(r*(float)h), w, (uint16)((1.f-r)*(float)h));
 
 	m_pWorld = new BLWorld(*this, *m_pWorldCanva, sx, sy, tilesname);
-	m_pPlannerDisplay = new IBPlannerGraph(m_pWorld->GetBot().GetPlanner(), *m_pGraphCanva);
 
 	m_pGoalMenu = new BLGoalMenu(*m_pEngine);
 
@@ -31,7 +30,6 @@ BLApp::~BLApp()
 	delete m_pGraphCanva;
 
 	delete m_pWorld;
-	delete m_pPlannerDisplay;
 
 	delete m_pGoalMenu;
 }
@@ -81,7 +79,7 @@ int BLApp::Draw()
 {
 	m_pWorld->Draw();
 
-	m_pPlannerDisplay->DrawGraph();
+	((IBGPlanner&)m_pWorld->GetBot().GetPlanner()).Draw();
 
 	if (m_pGoalMenu->IsVisible())
 	{

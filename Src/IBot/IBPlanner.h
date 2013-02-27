@@ -8,7 +8,6 @@
 
 class IBFactDef;
 
-class IBPlannerGraph;
 class IBGoal;
 
 class IBPlanner
@@ -17,14 +16,9 @@ class IBPlanner
 		IBPlanner(void* pOwner);
 		virtual ~IBPlanner();
 
-		friend class IBPlannerGraph;
-
 	public:
-		virtual void			InitFactLibrary();
-		virtual void			InitActionLibrary();
-
-		virtual IBAction*		InstanciateAction(IBActionDef* pDef);
-		virtual IBFact*			InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData);
+		virtual IBAction*		InstanciateAction(IBActionDef* pDef, IBFact* pPostCond1);
+		virtual IBFact*			InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, IBAction* pEffectAction);
 
 		void					AddGoal(const string& name);
 		void					AddGoal(const string& name, IBObject* pUserData);
@@ -57,6 +51,7 @@ class IBPlanner
 		void*					m_pOwner;
 		set<IBFactDef*>			m_aGoalsDef;
 		
+	protected:
 		FactSet					m_aGoals;
 };
 

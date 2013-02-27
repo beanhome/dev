@@ -13,8 +13,8 @@
 #include "Action\IBActionDef_UnblockProp.h"
 
 
-IBPlanner_BL::IBPlanner_BL(void* pOwner)
-	: IBPlanner(pOwner)
+IBPlanner_BL::IBPlanner_BL(void* pOwner, CanvasBase& canvas)
+	: IBGPlanner(pOwner, canvas)
 {
 	REGISTER_FACT(IBFactDef_BotAtPos);
 	REGISTER_FACT(IBFactDef_BotNearPos);

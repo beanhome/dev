@@ -27,10 +27,10 @@ IBFactDef::~IBFactDef()
 
 }
 
-IBFact* IBFactDef::Instanciate(const vector<IBObject*> aUserData)
+IBFact* IBFactDef::Instanciate(IBAction* pEffectAction, const vector<IBObject*> aUserData)
 {
 	assert(aUserData.size() == m_iDegree);
-	return m_pPlanner->InstanciateFact(this, aUserData);
+	return m_pPlanner->InstanciateFact(this, aUserData, pEffectAction);
 }
 
 void IBFactDef::Print(const vector<IBObject*>& aUserData, int tab) const

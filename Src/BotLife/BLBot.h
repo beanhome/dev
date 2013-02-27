@@ -17,7 +17,7 @@ class IBGoal;
 class BLBot : public IBObject
 {
 	public:
-		BLBot(GEngine& ge, BLWorld& oWorld);
+		BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas);
 		~BLBot();
 
 		enum BotState

@@ -31,6 +31,8 @@ class IBGBoxBase
 		sint16 GetBottom() const { return GetY() + GetH(); }
 		sint16 GetMidW() const { return GetX() + GetW()/2; }
 		sint16 GetMidH() const { return GetY() + GetH()/2; }
+
+		CanvasBase& GetCanvas() { return m_oCanvas; }
 		
 		/*
 		Vector2 GetTopLeft() const { return Vector2(GetX(), GetY()); }

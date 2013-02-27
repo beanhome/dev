@@ -27,20 +27,13 @@ IBPlanner::~IBPlanner()
 }
 
 
-void IBPlanner::InitFactLibrary()
+
+IBAction* IBPlanner::InstanciateAction(IBActionDef* pDef, IBFact* pPostCond1)
 {
+	return new IBAction(pDef, pPostCond1);
 }
 
-void IBPlanner::InitActionLibrary()
-{
-}
-
-IBAction* IBPlanner::InstanciateAction(IBActionDef* pDef)
-{
-	return new IBAction(pDef);
-}
-
-IBFact* IBPlanner::InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
+IBFact* IBPlanner::InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, IBAction* pEffectAction)
 {
 	return new IBFact(pDef, aUserData);
 }
@@ -52,7 +45,7 @@ void IBPlanner::AddGoal(const IBGoal& goal)
 	IBFactDef* pDef = GetFactDef(goal.GetName());
 	assert(pDef != NULL);
 
-	m_aGoals.insert(pDef->Instanciate(goal.GetUserData()));
+	m_aGoals.insert(pDef->Instanciate(NULL, goal.GetUserData()));
 }
 
 
@@ -71,7 +64,7 @@ void IBPlanner::AddGoal(const string& name, IBObject* pUserData)
 
 	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData);
-	m_aGoals.insert(pDef->Instanciate(aUserData));
+	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
 }
 
 void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2)
@@ -82,7 +75,7 @@ void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUse
 	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
-	m_aGoals.insert(pDef->Instanciate(aUserData));
+	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
 }
 
 void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3)
@@ -94,7 +87,7 @@ void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUse
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
 	aUserData.push_back(pUserData3);
-	m_aGoals.insert(pDef->Instanciate(aUserData));
+	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
 }
 
 void IBPlanner::AddPreCond(IBAction* pAction, const string& name)
@@ -112,7 +105,7 @@ void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUse
 
 	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData);
-	pAction->AddPreCond(pDef->Instanciate(aUserData));
+	pAction->AddPreCond(pDef->Instanciate(NULL, aUserData));
 }
 
 void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2)
@@ -123,7 +116,7 @@ void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUse
 	vector<IBObject*> aUserData;
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
-	pAction->AddPreCond(pDef->Instanciate(aUserData));
+	pAction->AddPreCond(pDef->Instanciate(NULL, aUserData));
 }
 
 void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3)
@@ -135,7 +128,7 @@ void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUse
 	aUserData.push_back(pUserData1);
 	aUserData.push_back(pUserData2);
 	aUserData.push_back(pUserData3);
-	pAction->AddPreCond(pDef->Instanciate(aUserData));
+	pAction->AddPreCond(pDef->Instanciate(NULL, aUserData));
 }
 
 

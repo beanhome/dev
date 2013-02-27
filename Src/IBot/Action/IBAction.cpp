@@ -2,7 +2,7 @@
 #include "IBActionDef.h"
 
 
-IBAction::IBAction(IBActionDef* pDef)
+IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 	: m_pDef(pDef)
 	, m_eState(IBA_Init)
 	, m_pUserData(NULL)
@@ -26,7 +26,7 @@ IBAction::IBAction(IBActionDef* pDef)
 		vector<IBObject*> aUserData;
 		aUserData.resize(oPreCondDef.m_pFactDef->GetDegree(), NULL);
 
-		IBFact* pPreCond = oPreCondDef.m_pFactDef->Instanciate(aUserData);
+		IBFact* pPreCond = oPreCondDef.m_pFactDef->Instanciate(this, aUserData);
 
 		AddPreCond(i, pPreCond);
 	}

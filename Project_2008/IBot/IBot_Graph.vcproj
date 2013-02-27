@@ -146,43 +146,51 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGActionBox.cpp"
+				RelativePath="..\..\Src\IBot\Graph\IBGAction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGActionBox.h"
+				RelativePath="..\..\Src\IBot\Graph\IBGAction.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBox.cpp"
+				RelativePath="..\..\Src\IBot\Graph\IBGActionBox.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBox.h"
+				RelativePath="..\..\Src\IBot\Graph\IBGActionBox.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBoxBase.cpp"
+				RelativePath="..\..\Src\IBot\Graph\IBGBoxBase.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGBoxBase.h"
+				RelativePath="..\..\Src\IBot\Graph\IBGBoxBase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGFactBox.cpp"
+				RelativePath="..\..\Src\IBot\Graph\IBGFact.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\Graph\IBGFactBox.h"
+				RelativePath="..\..\Src\IBot\Graph\IBGFact.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\IBPlannerGraph.cpp"
+				RelativePath="..\..\Src\IBot\Graph\IBGFactBox.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\IBot\Graph\IBPlannerGraph.h"
+				RelativePath="..\..\Src\IBot\Graph\IBGFactBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\IBGPlanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\Graph\IBGPlanner.h"
 				>
 			</File>
 		</Filter>

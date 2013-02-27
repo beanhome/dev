@@ -302,19 +302,19 @@
 				Name="Display"
 				>
 				<File
-					RelativePath="..\..\Src\IBot\Graph\IBPlannerDebug.cpp"
+					RelativePath="..\..\Src\IBot\Display\IBPlannerDebug.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Src\IBot\Graph\IBPlannerDebug.h"
+					RelativePath="..\..\Src\IBot\Display\IBPlannerDebug.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Src\IBot\Graph\IBPlannerDisplay.cpp"
+					RelativePath="..\..\Src\IBot\Display\IBPlannerDisplay.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Src\IBot\Graph\IBPlannerDisplay.h"
+					RelativePath="..\..\Src\IBot\Display\IBPlannerDisplay.h"
 					>
 				</File>
 			</Filter>
