@@ -10,8 +10,8 @@
 MapViewApp::MapViewApp(int w, int h, const char* name)
 	: GApp(w, h)
 	, m_bDrag(false)
-	, m_iStartOffsetX(0)
-	, m_iStartOffsetY(0)
+	, m_iStartDragX(0)
+	, m_iStartDragY(0)
 {
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
@@ -47,16 +47,14 @@ int MapViewApp::Update(float dt)
 {
 	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
 	{
-		m_iStartOffsetX = m_pEngine->GetMouseX() + m_pCanvas->GetOrigX();
-		m_iStartOffsetY = m_pEngine->GetMouseY() + m_pCanvas->GetOrigY();
+		m_iStartDragX = m_pEngine->GetMouseX() + m_pCanvas->GetOrigX();
+		m_iStartDragY = m_pEngine->GetMouseY() + m_pCanvas->GetOrigY();
 		m_bDrag = true;
 	}
 	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyDown)
 	{
-		sint16 x = std::max<sint16>(m_iStartOffsetX - (sint16)m_pEngine->GetMouseX(), 0);
-		sint16 y = std::max<sint16>(m_iStartOffsetY - (sint16)m_pEngine->GetMouseY(), 0);
-		x = std::min<sint16>(x, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth(), 0));
-		y = std::min<sint16>(y, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight(), 0));
+		sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_pEngine->GetMouseX(), 0, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth(), 0));
+		sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_pEngine->GetMouseY(), 0, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight(), 0));
 		m_pCanvas->SetOrigX(x);
 		m_pCanvas->SetOrigY(y);
 	}

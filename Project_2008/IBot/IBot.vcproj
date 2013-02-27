@@ -151,6 +151,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\Src\IBot\IBGoal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\IBot\IBGoal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\IBot\IBPlanner.cpp"
 				>
 			</File>

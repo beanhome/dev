@@ -36,7 +36,7 @@ IBF_Result IBFactDef_HasValidPath::Test(const vector<IBObject*>& aUserData)
 	if (pPath->GetStart() != *pStart)
 		return IBF_FAIL;
 
-	if (pBot->GetWorld().GetGrid().DistanceSq(pPath->GetTarget(), *pTarget) > (pDist->GetValue() * pDist->GetValue() + 1))
+	if (pBot->GetWorld().GetGrid().Distance(pPath->GetTarget(), *pTarget) > pDist->GetValue())
 		return IBF_FAIL;
 
 	return (pBot->GetWorld().TestPath(*pPath) ? IBF_OK : IBF_FAIL);

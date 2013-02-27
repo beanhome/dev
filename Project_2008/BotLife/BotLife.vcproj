@@ -180,6 +180,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\BotLife\BLGoalMenu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\BotLife\BLGoalMenu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\BotLife\IBPlanner_BL.cpp"
 				>
 			</File>

@@ -18,17 +18,17 @@ class Cond_Dist : public Condition<TCase>
 	public :
 		Cond_Dist(Vector2 dest, int iDist)
 			: m_vDestination(dest)
-			, m_iDistSq(iDist * iDist)
+			, m_iDist(iDist)
 		{}
 
 		virtual bool Test(const GridBase<TCase>& oGrid, const Vector2& loc) const
 		{
-			return (loc == m_vDestination || oGrid.DistanceSq(loc, m_vDestination) <= m_iDistSq);
+			return (loc == m_vDestination || oGrid.Distance(loc, m_vDestination) <= m_iDist);
 		}
 
 	private:
 		Vector2			m_vDestination;
-		int				m_iDistSq;
+		int				m_iDist;
 };
 
 

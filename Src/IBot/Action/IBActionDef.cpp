@@ -81,7 +81,8 @@ void IBActionDef::AddPostCondition(const char* name, ...)
 IBAction* IBActionDef::Instanciate(IBFact* pPostCond1)
 {
 	// Instantiation
-	IBAction* pAction = new IBAction(this);
+	IBAction* pAction = m_pPlanner->InstanciateAction(this);
+		//new IBAction(this);
 
 	// Insert of the post condition
 	for (uint i=0 ; i<m_aPostCondDef.size() ; ++i)

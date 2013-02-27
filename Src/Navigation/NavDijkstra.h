@@ -12,8 +12,8 @@ template <typename TCase>
 class NavDijkstra : public Navigation<TCase>
 {
 	public:
-		NavDijkstra(bool bDiagMode = false);
-		NavDijkstra(const Grid& oGrid, bool bDiagMode = false);
+		NavDijkstra();
+		NavDijkstra(const Grid& oGrid);
 		~NavDijkstra();
 
 	public:
@@ -28,7 +28,7 @@ class NavDijkstra : public Navigation<TCase>
 		static const int START = 0;
 
 	public:
-		virtual void						Create(const Grid& oGrid, bool bDiagMode = false);
+		virtual void						Create(const Grid& oGrid);
 								
 		void								Init(const vector<Vector2>& start);
 								
@@ -48,7 +48,6 @@ class NavDijkstra : public Navigation<TCase>
 
 	private:
 		GridBase<Case>						m_oPathGrid;
-		bool								m_bDiagMode;
 								
 		vector<uint>						m_aStep;
 		uint								m_iHead;
@@ -56,19 +55,17 @@ class NavDijkstra : public Navigation<TCase>
 };
 
 template <typename TCase>
-NavDijkstra<TCase>::NavDijkstra(bool bDiagMode)
+NavDijkstra<TCase>::NavDijkstra()
 	: Navigation()
-	, m_bDiagMode(bDiagMode)
 	, m_iHead(0)
 	, m_iQueue(0)
 {
 }
 
 template <typename TCase>
-NavDijkstra<TCase>::NavDijkstra(const Grid& oGrid, bool bDiagMode)
+NavDijkstra<TCase>::NavDijkstra(const Grid& oGrid)
 	: Navigation(oGrid)
 	, m_oPathGrid(oGrid.IsNormalized())
-	, m_bDiagMode(bDiagMode)
 	, m_iHead(0)
 	, m_iQueue(0)
 {
@@ -81,11 +78,9 @@ NavDijkstra<TCase>::~NavDijkstra()
 {}
 
 template <typename TCase>
-void NavDijkstra<TCase>::Create(const Grid& oGrid, bool bDiagMode)
+void NavDijkstra<TCase>::Create(const Grid& oGrid)
 {
 	Navigation::Create(oGrid);
-
-	m_bDiagMode = bDiagMode;
 
 	m_iHead = 0;
 	m_iQueue = 0;
@@ -146,7 +141,7 @@ typename Navigation<TCase>::State NavDijkstra<TCase>::FindPathStep(const vector<
 	ASSERT(oCase.iCount != BLOCK);
 	ASSERT(m_oPathGrid.GetIndex(vCoord) == id);
 
-	int iMax = (m_bDiagMode ? EDirection_MAX : CardDirCount);
+	int iMax = (m_oPathGrid.IsDiagMode() ? EDirection_MAX : CardDirCount);
 	int dir_offset = rand() % iMax;
 	for (int dir = 0 ; dir < iMax ; ++dir)
 	{
@@ -159,7 +154,7 @@ typename Navigation<TCase>::State NavDijkstra<TCase>::FindPathStep(const vector<
 		{
 			oSideCase.iCount = oCase.iCount + 1;
 			oSideCase.iPreviousCase = id;
-			ASSERT(m_oPathGrid.DistanceSq(m_oPathGrid.GetCoord(id), vSideCoord) <= 2);
+			ASSERT(m_oPathGrid.Distance(m_oPathGrid.GetCoord(id), vSideCoord) <= 1);
 			uint iSideId = m_oPathGrid.GetIndex(vSideCoord);
 			m_aStep[m_iQueue++] = iSideId;
 		}

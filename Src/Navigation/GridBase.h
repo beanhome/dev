@@ -63,10 +63,11 @@ class GridArray
 class GridOp
 {
 	public:
-		GridOp(bool bNormalize = true)
+		GridOp(bool bNormalize = false, bool bDiagMode = false)
 			: m_iWidth(0)
 			, m_iHeight(0)
 			, m_bNormalized(bNormalize)
+			, m_bDiagMode(bDiagMode)
 		{}
 
 		GridOp& operator=(const GridOp& grid)
@@ -77,6 +78,7 @@ class GridOp
 		}
 
 		bool IsNormalized() const { return m_bNormalized; }
+		bool IsDiagMode() const { return m_bDiagMode; }
 
 		uint GetWidth() const { return m_iWidth; }
 		uint GetHeight() const { return m_iHeight; }
@@ -160,13 +162,19 @@ class GridOp
 			return out;
 		}
 		*/
-		int DistanceSq(const Vector2 &loc1, const Vector2 &loc2) const
+		int Distance(const Vector2 &loc1, const Vector2 &loc2) const
 		{
-			uint d1 = abs(loc1.x-loc2.x);
-			uint d2 = abs(loc1.y-loc2.y);
-			int dr = std::min<uint>(d1, m_iWidth-d1);
-			int dc = std::min<uint>(d2, m_iHeight-d2);
-			return (dr*dr + dc*dc);
+			int d1 = abs(loc1.x-loc2.x);
+			int d2 = abs(loc1.y-loc2.y);
+
+			if (m_bDiagMode)
+			{
+				return min(d1, d2) + abs(d1-d2);
+			}
+			else
+			{
+				return d1 + d2;
+			}
 		}
 
 		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc) const
@@ -201,14 +209,16 @@ class GridOp
 		uint m_iHeight;
 
 		bool m_bNormalized;
+		bool m_bDiagMode;
+
 };
 
 template<typename TCase>
 class GridBase : public GridOp
 {
 	public:
-		GridBase(bool bNormalize = true)
-			: GridOp(bNormalize)
+		GridBase(bool bNormalize = false, bool bDiagMode = false)
+			: GridOp(bNormalize, bDiagMode)
 			, m_pBuffer(NULL)
 			, m_aGridArray(NULL)
 		{}

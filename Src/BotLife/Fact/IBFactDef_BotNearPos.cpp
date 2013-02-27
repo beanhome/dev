@@ -29,7 +29,7 @@ IBF_Result IBFactDef_BotNearPos::Test(const vector<IBObject*>& aUserData)
 	if (pPos == NULL || pDist == NULL)
 		return IBF_UNKNOW;
 
-	return ((pBot->GetWorld().GetGrid().DistanceSq(pBot->GetPos(), *pPos) <= (pDist->GetValue() * pDist->GetValue())+1) ? IBF_OK : IBF_FAIL);
+	return ((pBot->GetWorld().GetGrid().Distance(pBot->GetPos(), *pPos) <= pDist->GetValue()) ? IBF_OK : IBF_FAIL);
 }
 
 void IBFactDef_BotNearPos::ResolveVariable(vector<IBObject*>& aUserData)

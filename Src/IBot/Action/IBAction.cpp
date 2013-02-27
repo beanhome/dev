@@ -5,6 +5,7 @@
 IBAction::IBAction(IBActionDef* pDef)
 	: m_pDef(pDef)
 	, m_eState(IBA_Init)
+	, m_pUserData(NULL)
 {
 	// create action variable
 	for (uint i=0 ; i<pDef->GetVariables().size() ; ++i)
@@ -25,7 +26,7 @@ IBAction::IBAction(IBActionDef* pDef)
 		vector<IBObject*> aUserData;
 		aUserData.resize(oPreCondDef.m_pFactDef->GetDegree(), NULL);
 
-		IBFact* pPreCond = new IBFact(oPreCondDef.m_pFactDef, aUserData);
+		IBFact* pPreCond = oPreCondDef.m_pFactDef->Instanciate(aUserData);
 
 		AddPreCond(i, pPreCond);
 	}

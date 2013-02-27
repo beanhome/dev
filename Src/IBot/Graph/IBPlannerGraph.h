@@ -40,6 +40,7 @@ class IBPlannerGraph : public IBPlannerDisplay
 		static const uint		s_iFactWidth;
 		static const uint		s_iFactTitleHeight;
 		static const uint		s_iFactVarHeight;
+		static const uint		s_iFactVarSpace;
 		static const uint		s_iFactHeight; // to del
 		static const uint		s_iFactMinSpace; // to del
 		static const uint		s_iLinkWidth;
@@ -48,6 +49,7 @@ class IBPlannerGraph : public IBPlannerDisplay
 		static const uint		s_iActionTitleHeight;
 		static const uint		s_iActionAnchorHeight;
 		static const uint		s_iActionVarHeight;
+		static const uint		s_iActionVarSpace;
 		static const uint		s_iActionLinkSpace;
 		static       uint		s_iBoxWidth;
 		static       uint		s_iBoxMinHeight;

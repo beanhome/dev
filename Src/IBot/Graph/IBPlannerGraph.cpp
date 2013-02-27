@@ -9,17 +9,19 @@
 #include "Fact\IBFactDef.h"
 
 const uint	IBPlannerGraph::s_iMargin = 12;
-const uint	IBPlannerGraph::s_iFactWidth = 80;
+const uint	IBPlannerGraph::s_iFactWidth = 90;
 const uint	IBPlannerGraph::s_iFactTitleHeight = 18;
-const uint	IBPlannerGraph::s_iFactVarHeight = 18;
-const uint	IBPlannerGraph::s_iFactHeight = 36;
+const uint	IBPlannerGraph::s_iFactVarHeight = 12;
+const uint	IBPlannerGraph::s_iFactVarSpace = 2;
+const uint	IBPlannerGraph::s_iFactHeight = 20;
 const uint	IBPlannerGraph::s_iFactMinSpace = 16;
 const uint	IBPlannerGraph::s_iLinkWidth = 48;
 const uint	IBPlannerGraph::s_iActionWidth = 128;
 const uint	IBPlannerGraph::s_iActionMinHeight = 64;
 const uint	IBPlannerGraph::s_iActionTitleHeight = 18;
 const uint	IBPlannerGraph::s_iActionAnchorHeight = 20;
-const uint	IBPlannerGraph::s_iActionVarHeight = 18;
+const uint	IBPlannerGraph::s_iActionVarHeight = 12;
+const uint	IBPlannerGraph::s_iActionVarSpace = 4;
 const uint  IBPlannerGraph::s_iActionLinkSpace = 16;
       uint	IBPlannerGraph::s_iBoxWidth = 0;
       uint	IBPlannerGraph::s_iBoxMinHeight = 0;
@@ -85,6 +87,7 @@ void IBPlannerGraph::Draw()
 	}
 
 	y = max(y, m_oCanvas.GetPosY() + (sint16)IBPlannerGraph::s_iMargin);
+	s = max(s, (sint16)IBPlannerGraph::s_iMargin);
 
 	for (uint i=0 ; i<m_aBox.size() ; ++i)
 	{
@@ -98,7 +101,7 @@ void IBPlannerGraph::Draw()
 
 void IBPlannerGraph::DrawGraph()
 {
-	m_oCanvas.CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth(), m_oCanvas.GetHeight(), Color(0, 255, 0));
+	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
 
 	Destroy();
 

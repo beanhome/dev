@@ -151,19 +151,19 @@ int TilesViewApp::Draw()
 			break;
 
 		case Choose_TL:
-			m_pEngine->DrawRect(400-iTileSize*3/2, 400-iTileSize*3/2, iTileSize, iTileSize, 0, 0, 0);
+			m_pEngine->DrawRect(400-iTileSize*3/2, 400-iTileSize*3/2, iTileSize-1, iTileSize-1, 0, 0, 0);
 			break;
 
 		case Choose_TR:
-			m_pEngine->DrawRect(400+iTileSize/2, 400-iTileSize*3/2, iTileSize, iTileSize, 0, 0, 0);
+			m_pEngine->DrawRect(400+iTileSize/2, 400-iTileSize*3/2, iTileSize-1, iTileSize-1, 0, 0, 0);
 			break;
 
 		case Choose_BL:
-			m_pEngine->DrawRect(400-iTileSize*3/2, 400+iTileSize/2, iTileSize, iTileSize, 0, 0, 0);
+			m_pEngine->DrawRect(400-iTileSize*3/2, 400+iTileSize/2, iTileSize-1, iTileSize-1, 0, 0, 0);
 			break;
 
 		case Choose_BR:
-			m_pEngine->DrawRect(400+iTileSize/2, 400+iTileSize/2, iTileSize, iTileSize, 0, 0, 0);
+			m_pEngine->DrawRect(400+iTileSize/2, 400+iTileSize/2, iTileSize-1, iTileSize-1, 0, 0, 0);
 			break;
 	}
 

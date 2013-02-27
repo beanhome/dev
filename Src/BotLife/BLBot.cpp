@@ -8,11 +8,6 @@
 #include "World\IBVector2.h"
 #include "World\BLProp.h"
 #include "Canvas.h"
-#include "Fact\IBFactVisitor.h"
-#include "Action\IBAction.h"
-#include "Action\IBActionDef.h"
-#include "World\IBPath.h"
-#include "BLApp.h"
 
 /*
 Down,
@@ -105,6 +100,7 @@ void BLBot::SetPos(const Vector2& p)
 	m_vPos = p;
 }
 
+void BLBot::AddGoal(const IBGoal& goal) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(goal); }
 void BLBot::AddGoal(const string& name) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name); }
 void BLBot::AddGoal(const string& name, IBObject* pUserData) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData); }
 void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData1, pUserData2); }
@@ -233,9 +229,8 @@ void BLBot::Draw() const
 	if (m_pCarryObject != NULL)
 		m_oWorld.GetCanvas().DrawImage(*m_pCarryObject->GetImageResource(), (sint16)m_fLocX, (sint16)m_fLocY, 0, 0.8f);
 
-	/*
 	m_oWorld.GetCanvas().DrawRect(m_vPos.x * m_oWorld.GetGridSize(), m_vPos.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 255, 255, 255);
-	m_oWorld.GetCanvas().DrawRect(m_vTarget.x * m_oWorld.GetGridSize(), m_vTarget.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 0, 255, 255);
+	//m_oWorld.GetCanvas().DrawRect(m_vTarget.x * m_oWorld.GetGridSize(), m_vTarget.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 0, 255, 255);
 
 	m_oWorld.GetCanvas().GetGEngine()->SetPrintParameter(20, 20, m_oWorld.GetCanvas().GetPrintFont(), 12, LeftTop, Color(255, 255, 255));
 	m_oWorld.GetCanvas().GetGEngine()->Print("State : %d", m_eState);
@@ -243,42 +238,5 @@ void BLBot::Draw() const
 	m_oWorld.GetCanvas().GetGEngine()->Print("Pos X : %8.3f (%8.3f)", m_fLocX, m_fLocX - (float)m_vPos.x * (float)m_oWorld.GetGridSize());
 	m_oWorld.GetCanvas().GetGEngine()->Print("Pos Y : %8.3f (%8.3f)", m_fLocY, m_fLocY - (float)m_vPos.y * (float)m_oWorld.GetGridSize());
 
-	IBFactVisitor FactVisitor(*m_pPlanner);
 
-	for (const IBFact* fact = FactVisitor.Begin() ; fact != NULL ; fact = FactVisitor.Next())
-	{
-		m_oWorld.GetCanvas().GetGEngine()->Print("Fact %s", fact->GetFactDef()->GetName().c_str());
-
-		if (fact->GetCauseAction() != NULL && fact->GetCauseAction()->GetDef()->GetName() == "FollowPath")
-		{
-			IBPath* pPath = static_cast<IBPath*>(fact->GetCauseAction()->FindVariables("Path"));
-
-			if (pPath != NULL)
-			{
-				if (pPath->GetLength() > 0)
-				{
-					int x1 = pPath->GetList()[0].x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					int y1 = pPath->GetList()[0].y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					int x2 = m_vPos.x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					int y2 = m_vPos.y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					m_oWorld.GetCanvas().CanvasBase::DrawLine(x1, y1, x2, y2, Color(0, 255, 0));
-				}
-
-				for (uint i=1 ; i<pPath->GetLength() ; ++i)
-				{
-					int x1 = pPath->GetList()[i-1].x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					int y1 = pPath->GetList()[i-1].y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					int x2 = pPath->GetList()[i].x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-					int y2 = pPath->GetList()[i].y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2;
-
-					m_oWorld.GetCanvas().CanvasBase::DrawLine(x1, y1, x2, y2, Color(0, 255, 0));
-
-					//x1 = m_vPos.x * m_oWorld.GetGridSize();
-					//y1 = m_vPos.y * m_oWorld.GetGridSize();
-					//canva.DrawRect(x1, y1, m_oWorld.GetGridSize(), m_oWorld.GetGridSize(), 255, 0, 0);
-				}
-			}
-		}
-	}
-	*/
 }

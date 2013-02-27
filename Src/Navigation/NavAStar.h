@@ -11,7 +11,7 @@ template <typename TCase>
 class NavAStar : public Navigation<TCase>
 {
 	public:
-		NavAStar(const Grid& oGrid, bool bDiagMode = false);
+		NavAStar(const Grid& oGrid);
 		~NavAStar();
 
 	public:
@@ -40,7 +40,6 @@ class NavAStar : public Navigation<TCase>
 
 
 	private:
-		bool								m_bDiagMode;
 								
 		CaseCoord							m_oCurrentCoord;
 		CaseCoord							m_oBestCoord;
@@ -49,9 +48,8 @@ class NavAStar : public Navigation<TCase>
 };
 
 template <typename TCase>
-NavAStar<TCase>::NavAStar(const Grid& oGrid, bool bDiagMode)
+NavAStar<TCase>::NavAStar(const Grid& oGrid)
 	: Navigation(oGrid)
-	, m_bDiagMode(bDiagMode)
 {
 }
 
@@ -74,7 +72,7 @@ void NavAStar<TCase>::FindPathInit(const Vector2& start, const Vector2& target, 
 }
 
 template <typename TCase>
-typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& start, const Vector2& target, int iDistSq, Path& aPath)
+typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
 {
 	const Case& oCurrentCase = m_aCloseList.find(m_oCurrentCoord)->second;
 	int iCurrentCost = oCurrentCase.iCost;
@@ -82,7 +80,7 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 
 	EDirection offset = m_pModelGrid->GetDirection(m_oCurrentCoord, target);
 
-	int iMax = (m_bDiagMode ? EDirection_MAX : CardDirCount);
+	int iMax = (m_pModelGrid->IsDiagMode() ? EDirection_MAX : CardDirCount);
 	int dir_offset = rand() % iMax;
 	for (int dir = 0 ; dir < iMax ; ++dir)
 	{
@@ -90,8 +88,8 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 		if (m_pModelGrid->GetCoord(m_oCurrentCoord, (EDirection)((dir + dir_offset)%iMax), oSideCoord) == false)
 			continue;
 
-		int iCurDistSq = m_pModelGrid->DistanceSq(oSideCoord, target);
-		if (oSideCoord == target || (iCurDistSq <= (iDistSq + (m_bDiagMode ? 1 : 0)) && !m_pModelGrid->GetCase(oSideCoord).IsBlock()))
+		int iCurDist = m_pModelGrid->Distance(oSideCoord, target);
+		if (oSideCoord == target || (iCurDist <= iDist) && !m_pModelGrid->GetCase(oSideCoord).IsBlock())
 		{
 			m_aCloseList.insert(AStartPair(oSideCoord, Case(iToCaseCost + 1 + Cost(oSideCoord, target), m_oCurrentCoord)));
 			GetPath(oSideCoord, aPath);
@@ -130,7 +128,7 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 	m_aCloseList.insert(AStartPair(it->first, it->second));
 	m_aOpenList.erase(it);
 
-	if (m_pModelGrid->DistanceSq(m_oBestCoord, target) > m_pModelGrid->DistanceSq(m_oCurrentCoord, target))
+	if (m_pModelGrid->Distance(m_oBestCoord, target) > m_pModelGrid->Distance(m_oCurrentCoord, target))
 		m_oBestCoord = m_oCurrentCoord;
 
 
@@ -166,7 +164,7 @@ typename NavAStar<TCase>::CaseCoord NavAStar<TCase>::GetCheaperOpenCase(const Ve
 	AStartMap::const_iterator it;
 
 	int iBestCost = -1;
-	int iBestDistSq;
+	int iBestDist;
 	CaseCoord iBestCase;
 	for (it = begin ; it != end ; ++it)
 	{
@@ -176,16 +174,16 @@ typename NavAStar<TCase>::CaseCoord NavAStar<TCase>::GetCheaperOpenCase(const Ve
 		{
 			iBestCase = it->first;
 			iBestCost = oCase.iCost;
-			iBestDistSq = m_pModelGrid->DistanceSq(iBestCase, target);
+			iBestDist = m_pModelGrid->Distance(iBestCase, target);
 		}
 		else if (oCase.iCost == iBestCost)
 		{
-			int iDistSq = m_pModelGrid->DistanceSq(it->first, target);
-			if (iDistSq < iBestDistSq)
+			int iDist = m_pModelGrid->Distance(it->first, target);
+			if (iDist < iBestDist)
 			{
 				iBestCase = it->first;
 				iBestCost = oCase.iCost;
-				iBestDistSq = iDistSq;
+				iBestDist = iDist;
 			}
 		}
 	}

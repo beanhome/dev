@@ -1,5 +1,6 @@
 #include "IBFactDef.h"
 #include "IBFact.h"
+#include "IBPlanner.h"
 
 char* IBF_ResultString[IBF_Result_MAX] =
 {
@@ -26,11 +27,10 @@ IBFactDef::~IBFactDef()
 
 }
 
-IBFact* IBFactDef::Instanciate(vector<IBObject*> aUserData)
+IBFact* IBFactDef::Instanciate(const vector<IBObject*> aUserData)
 {
 	assert(aUserData.size() == m_iDegree);
-
-	return new IBFact(this, aUserData);
+	return m_pPlanner->InstanciateFact(this, aUserData);
 }
 
 void IBFactDef::Print(const vector<IBObject*>& aUserData, int tab) const

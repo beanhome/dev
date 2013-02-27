@@ -115,8 +115,9 @@ const char* BLMap::s_sTilesType[TilesType_MAX] =
 BLMap::BLMap(uint w, uint h, const BLTiles& oTiles)
 	: m_iWidth(w)
 	, m_iHeight(h)
-	, m_oTypeMap(false)
-	, m_oTypeMapTmp(false)
+	, m_oTypeMap(false, true)
+	, m_oTypeMapTmp(false, true)
+	, m_oTilesMap(false, true)
 	, m_oTiles(oTiles)
 {
 	m_oTypeMap.Init(m_iWidth+1, m_iHeight+1);

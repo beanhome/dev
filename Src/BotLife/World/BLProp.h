@@ -20,6 +20,7 @@ class BLProp : public BLObject
 
 		virtual bool IsBlock() const { return false; }
 		virtual bool IsTempBlock() const { return false; }
+		virtual bool IsPickable() const { return true; }
 
 		const ImageResource* GetImageResource() const;
 		void Draw() const;

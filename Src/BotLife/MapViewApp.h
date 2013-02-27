@@ -24,8 +24,8 @@ class MapViewApp : public GApp<GEngine_SDL>
 		Canvas* m_pCanvas;
 
 		bool m_bDrag;
-		int m_iStartOffsetX;
-		int m_iStartOffsetY;
+		int m_iStartDragX;
+		int m_iStartDragY;
 
 		int m_iMouseCaseX;
 		int m_iMouseCaseY;

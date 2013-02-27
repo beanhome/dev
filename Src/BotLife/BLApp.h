@@ -9,6 +9,7 @@ class GEngine;
 class Canvas;
 class BLWorld;
 class IBPlannerDisplay;
+class BLGoalMenu;
 
 class BLApp : public GApp<GEngine_SDL>
 {
@@ -17,6 +18,7 @@ class BLApp : public GApp<GEngine_SDL>
 		~BLApp();
 
 		virtual int Update(float dt);
+		virtual int UpdatePause();
 		virtual int Draw();
 
 	private:
@@ -25,6 +27,8 @@ class BLApp : public GApp<GEngine_SDL>
 
 		BLWorld* m_pWorld;
 		IBPlannerDisplay* m_pPlannerDisplay;
+
+		BLGoalMenu* m_pGoalMenu;
 };
 
 #endif // __GAPP_H__

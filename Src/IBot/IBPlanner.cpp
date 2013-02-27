@@ -7,6 +7,7 @@
 
 #include "Action/IBAction.h"
 #include "Action/Def/IBActionDef_BoolToBool.h"
+#include "IBGoal.h"
 
 
 IBPlanner::IBPlanner(void* pOwner)
@@ -33,6 +34,27 @@ void IBPlanner::InitFactLibrary()
 void IBPlanner::InitActionLibrary()
 {
 }
+
+IBAction* IBPlanner::InstanciateAction(IBActionDef* pDef)
+{
+	return new IBAction(pDef);
+}
+
+IBFact* IBPlanner::InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
+{
+	return new IBFact(pDef, aUserData);
+}
+
+
+
+void IBPlanner::AddGoal(const IBGoal& goal)
+{
+	IBFactDef* pDef = GetFactDef(goal.GetName());
+	assert(pDef != NULL);
+
+	m_aGoals.insert(pDef->Instanciate(goal.GetUserData()));
+}
+
 
 void IBPlanner::AddGoal(const string& name)
 {

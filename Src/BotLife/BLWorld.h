@@ -16,6 +16,9 @@ class BLTiles;
 class BLMap;
 class BLApp;
 
+class IBPath;
+class IBVector2;
+
 class BLWorld
 {
 	public:
@@ -35,14 +38,20 @@ class BLWorld
 		const BLGrid& GetGrid() const { return m_pMap->GetGrid(); }
 		BLGrid& GetGrid() { return m_pMap->GetGrid(); }
 
+		bool GetMouseCase(const BLSquare** pSquare, int& i, int& j);
+
 		bool TestPath(const Path& oPath) const;
 
 		const BLBot& GetBot() const { return *m_pBot; }
+		BLBot& GetBot() { return *m_pBot; }
 
 		void CenterMap(int x, int y);
 
 		void Update(float dt);
 		void Draw() const;
+		void DrawDebug() const;
+		void DrawDebugPath(const IBPath& oPath) const;
+		void DrawDebugPos(const IBVector2& oPos) const;
 
 	private:
 		BLApp& m_oBLApp;

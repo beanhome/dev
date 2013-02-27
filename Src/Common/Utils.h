@@ -64,4 +64,10 @@ int Rand();
 int Rand(int iMax);
 int Rand(int iMin, int iMax);
 
+template <typename T>
+T Clamp(const T& x, const T& _min, const T& _max)
+{
+	return std::min<T>(std::max<T>(_min, x), _max);
+}
+
 #endif

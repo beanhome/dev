@@ -9,6 +9,7 @@
 class IBFactDef;
 
 class IBPlannerGraph;
+class IBGoal;
 
 class IBPlanner
 {
@@ -22,10 +23,15 @@ class IBPlanner
 		virtual void			InitFactLibrary();
 		virtual void			InitActionLibrary();
 
+		virtual IBAction*		InstanciateAction(IBActionDef* pDef);
+		virtual IBFact*			InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData);
+
 		void					AddGoal(const string& name);
 		void					AddGoal(const string& name, IBObject* pUserData);
 		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2);
 		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3);
+
+		void					AddGoal(const IBGoal& goal);
 
 		void					AddPreCond(IBAction* pAction, const string& name);
 		void					AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData);

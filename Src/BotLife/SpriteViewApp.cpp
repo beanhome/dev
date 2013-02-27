@@ -95,7 +95,7 @@ int SpriteViewApp::Update(float dt)
 int SpriteViewApp::Draw()
 {
 	m_pImage->Draw(4.f);
-	m_pEngine->DrawRect(400-64, 400-64, 128, 128, 0, 0, 0);
+	m_pEngine->DrawRect(400-64, 400-64, 128-1, 128-1, 0, 0, 0);
 
 	int col = m_pImage->GetCurrent() % m_pImage->GetColCount();
 	int row = m_pImage->GetCurrent() / m_pImage->GetColCount();

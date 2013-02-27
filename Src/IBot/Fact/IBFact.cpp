@@ -30,14 +30,14 @@ void IBFact::SetVariable(uint i, IBObject* pVar)
 
 bool IBFact::Resolve(IBPlanner* pPlanner)
 {
-	IBF_Result res = Test();
-	//LOG("Result : %d\n", res);
-
 	if (m_pCauseAction != NULL && m_pCauseAction->Resolve(pPlanner) == IBAction::IBA_Destroy)
 	{
 		delete m_pCauseAction;
 		m_pCauseAction = NULL;
 	}
+
+	IBF_Result res = Test();
+	//LOG("Result : %d\n", res);
 
 	switch (res)
 	{

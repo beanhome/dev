@@ -12,6 +12,7 @@ class CanvasBase;
 class ImageFlipBook;
 class IBPlanner;
 class BLProp;
+class IBGoal;
 
 class BLBot : public IBObject
 {
@@ -74,6 +75,8 @@ class BLBot : public IBObject
 		void					PickProp(BLProp* pProp);
 		bool					HasObject(BLProp* pObj) const { return pObj == m_pCarryObject; }
 		BLProp*					GetFirstObject() const { return m_pCarryObject; }
+
+		void					AddGoal(const IBGoal& goal);
 
 		void					AddGoal(const string& name);
 		void					AddGoal(const string& name, IBObject* pUserData);

@@ -39,6 +39,12 @@ int GAppBase::Loop()
 			if (res != 0)
 				return res;
 		}
+		else
+		{
+			res = UpdatePause();
+			if (res != 0)
+				return res;
+		}
 
 		if (!m_bNoClearScreen)
 			m_pEngine->Clear();

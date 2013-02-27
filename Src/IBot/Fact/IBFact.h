@@ -12,9 +12,14 @@ class IBObject;
 class IBFact
 {
 	public:
+		friend class IBPlanner;
+		friend class IBAction;
+
+	protected:
 		IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData);
 		~IBFact();
 
+	public:
 		IBFactDef*					GetFactDef() const { return m_pDef; }
 
 		void						SetCauseAction(IBAction* pAction) { m_pCauseAction = pAction; }

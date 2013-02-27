@@ -13,9 +13,15 @@ class IBObject;
 class IBAction
 {
 	public:
+		friend class IBPlanner;
+		friend class IBFact;
+		friend class IBActionLibrary;
+
+	protected:
 		IBAction(IBActionDef* pDef);
 		~IBAction();
 
+	public:
 		enum State
 		{
 			IBA_Init,
@@ -46,6 +52,9 @@ class IBAction
 		const IBActionDef*		GetDef() const { return m_pDef; }
 
 		const vector<IBFact*>&	GetPreCond() const { return m_aPreCond; }
+
+		void*					GetUserData() { return m_pUserData; }
+		void					SetUserData(void* pUserData) { m_pUserData = pUserData; }
 
 		void					Start();
 		void					Execute();
@@ -89,6 +98,8 @@ class IBAction
 		VarMap					m_aVariables;
 		vector<IBFact*>			m_aPreCond;
 		vector<IBFact*>			m_aPostCond;
+
+		void*					m_pUserData;
 };
 
 template <typename T>

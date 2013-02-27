@@ -11,17 +11,16 @@
 IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlanner)
 	: IBActionDef(name, pPlanner)
 {
+	/*
 	void* pOwner = pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	const BLWorld& oWorld = pBot->GetWorld();
-
-	m_pNavigation = new NavAStar<BLSquare>(oWorld.GetGrid(), true);
+	*/
 }
 
 IBActionDef_FindPath::~IBActionDef_FindPath()
 {
-	delete m_pNavigation;
 }
 
 void IBActionDef_FindPath::Define()
@@ -36,6 +35,11 @@ void IBActionDef_FindPath::Define()
 
 bool IBActionDef_FindPath::Start(IBAction* pAction)
 {
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	const BLWorld& oWorld = pBot->GetWorld();
+
 	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
 	ASSERT(pStart != NULL);
 	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
@@ -45,8 +49,14 @@ bool IBActionDef_FindPath::Start(IBAction* pAction)
 	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	ASSERT(pDist != NULL);
 
-	m_pNavigation->FindPathInit(*pStart, *pTarget, pDist->GetValue(), *pPath);
-	
+	if (pAction->GetUserData() != NULL)
+		delete pAction->GetUserData();
+
+	Navigation<BLSquare>* pNav = new NavAStar<BLSquare>(oWorld.GetGrid());
+	pNav->FindPathInit(*pStart, *pTarget, pDist->GetValue(), *pPath);
+
+	pAction->SetUserData(pNav);
+
 	return true;
 }
 
@@ -61,13 +71,14 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	ASSERT(pDist != NULL);
 
+	Navigation<BLSquare>* pNav = static_cast<Navigation<BLSquare>*>(pAction->GetUserData());
 	Navigation<BLSquare>::State state = Navigation<BLSquare>::FP_Find;
 	
 	LOG("Find Path step :");
 	double start = Timer::Get();
 	while (Timer::Get() < start + 0.001 && state == Navigation<BLSquare>::FP_Find)
 	{
-		state = m_pNavigation->FindPathStep(*pStart, *pTarget, pDist->GetValue(), *pPath);
+		state = pNav->FindPathStep(*pStart, *pTarget, pDist->GetValue(), *pPath);
 		LOG(" *");
 	}
 	LOG("\n");
@@ -103,3 +114,10 @@ bool IBActionDef_FindPath::Finish(IBAction* pAction)
 	return oWorld.TestPath(*pPath);
 }
 
+void IBActionDef_FindPath::Destroy(IBAction* pAction)
+{
+	if (pAction->GetUserData() != NULL)
+		delete pAction->GetUserData();
+
+	pAction->SetUserData(NULL);
+}

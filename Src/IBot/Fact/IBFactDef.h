@@ -28,7 +28,7 @@ class IBFactDef
 		uint						GetDegree() const { return m_iDegree; }
 
 		IBFact*						Instanciate() { vector<IBObject*> aUserData; return Instanciate(aUserData); }
-		IBFact*						Instanciate(vector<IBObject*> aUserData);
+		IBFact*						Instanciate(const vector<IBObject*> aUserData);
 
 		// Must return state of the fact: true or false
 		IBF_Result					Test() { vector<IBObject*> aUserData; return Test(aUserData); }

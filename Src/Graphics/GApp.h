@@ -17,9 +17,11 @@ class GAppBase
 		void SetSlomo(float slomo) { m_fSlomo = slomo; }
 		float GetSlomo() const { return m_fSlomo; }
 
+		bool IsPaused() const { return m_bPause; }
 		void SetPause(bool bPause) { m_bPause = bPause; }
 
 		virtual int Update(float dt) = 0;
+		virtual int UpdatePause() { return 0; };
 		virtual int Draw() = 0;
 
 		virtual int Loop();
