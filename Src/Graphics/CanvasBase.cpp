@@ -24,7 +24,6 @@ CanvasBase::~CanvasBase()
 {
 }
 
-
 void CanvasBase::Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const
 {
 	va_list oArgs;

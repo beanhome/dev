@@ -15,6 +15,7 @@ class IBActionDef_FollowPath : public IBActionDef
 		virtual bool			Init(IBAction* pAction);
 		virtual bool			Start(IBAction* pAction);
 		virtual bool			Execute(IBAction* pAction);
+		virtual bool			Abort(IBAction* pAction);
 		virtual bool			Finish(IBAction* pAction);
 		virtual void			Destroy(IBAction* pAction);
 

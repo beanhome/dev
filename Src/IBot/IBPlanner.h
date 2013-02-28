@@ -27,6 +27,8 @@ class IBPlanner
 
 		void					AddGoal(const IBGoal& goal);
 
+		void					RemGoal(IBFact* goal);
+
 		void					AddPreCond(IBAction* pAction, const string& name);
 		void					AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData);
 		void					AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2);

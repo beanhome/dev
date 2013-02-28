@@ -8,11 +8,12 @@
 class CanvasBase;
 class BLSquare;
 class IBObject;
+class BLBot;
 
 class BLGoalMenu
 {
 	public:
-		BLGoalMenu(CanvasBase& oParent);
+		BLGoalMenu(CanvasBase& oParent, BLBot& oBot);
 		~BLGoalMenu();
 
 		void SetVisible(bool bVisible) { m_bVisible = bVisible; }
@@ -25,11 +26,15 @@ class BLGoalMenu
 		void SetPos(sint32 x, sint32 y);
 
 		void Update();
+		void Click();
 
 		void Draw() const;
 
 	private:
 		Canvas m_oCanva;
+		BLBot& m_oBot;
+		int m_iI;
+		int m_iJ;
 		bool m_bVisible;
 		vector<IBGoal> m_aGoals;
 		vector<IBObject*> m_aTempObject;

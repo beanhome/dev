@@ -45,8 +45,12 @@ class IBGPlanner : public IBPlanner
 
 		static const Color		s_oActionColor;
 		static const Color		s_oActionWorkColor;
+		static const Color		s_oMarkToDelActionColor;
+		static const Color		s_oReadyToDelActionColor;
 		static const Color		s_oFactColor;
 		static const Color		s_oFalseFactColor;
+		static const Color		s_oMarkToDelFactColor;
+		static const Color		s_oReadyToDelFactColor;
 		static const Color		s_oLinkColor;
 		static const Color		s_oBoxColor;
 };

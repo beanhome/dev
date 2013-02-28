@@ -37,10 +37,18 @@ class IBFact
 		//IBObject*					GetVariable(uint i) { assert(i<m_aUserData.size()); return m_aUserData[i]; }
 		void						SetVariable(uint i, IBObject* pVar);
 
+		bool						IsReadyToDelete() const { return (m_bToDelete && m_pCauseAction == NULL); }
+		void						PrepareToDelete();
+		bool						IsMarkToDelete() const { return m_bToDelete; }
+
 		bool						IsTrue() const { return Test() == IBF_OK; }
 
 		bool						Resolve(IBPlanner* pPlanner);
 		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
+
+	public:
+		static bool	RemoveAndDelete(IBFact* pFact) { if (pFact->IsReadyToDelete()) { delete pFact; return true; } else { return false; } }
+
 
 	public:
 		IBF_Result					Test() const { return m_pDef->Test(m_aUserData); }
@@ -50,6 +58,7 @@ class IBFact
 		vector<IBObject*>			m_aUserData;
 		IBAction*					m_pCauseAction;
 		IBAction*					m_pEffectAction;
+		bool						m_bToDelete;
 };
 
 typedef set<IBFact*>	FactSet;

@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "InputEvent.h"
 #include "Graph\IBGPlanner.h"
+#include "Graph\IBGFact.h"
 
 BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
 	: GApp(w, h)
@@ -18,7 +19,7 @@ BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
 
 	m_pWorld = new BLWorld(*this, *m_pWorldCanva, sx, sy, tilesname);
 
-	m_pGoalMenu = new BLGoalMenu(*m_pEngine);
+	m_pGoalMenu = new BLGoalMenu(*m_pEngine, m_pWorld->GetBot());
 
 	m_bPause = true;
 	//m_fSlomo = 0.333f;
@@ -39,32 +40,62 @@ int BLApp::Update(float dt)
 {
 	m_pWorld->Update(dt);
 	m_pGoalMenu->SetVisible(false);
+	UpdateUserInterface();
 
 	return 0;
 }
 
 int BLApp::UpdatePause()
 {
+	UpdateUserInterface();
+	return 0;
+}
+
+
+void BLApp::UpdateUserInterface()
+{
 	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
 	{
-		const BLSquare* pSquare = NULL;
-		int i, j;
-		if (m_pWorld->GetMouseCase(&pSquare, i, j))
+		if (m_pWorldCanva->IsMouseInside())
 		{
-			m_pGoalMenu->ConstructFromCase(*pSquare, i,j);
-			m_pGoalMenu->SetVisible(m_pGoalMenu->GetGoals().size() > 0);
-
-			if (m_pGoalMenu->GetGoals().size() > 0)
+			if (!m_pGoalMenu->IsVisible())
 			{
-				m_pGoalMenu->SetPos(m_pEngine->GetMouseX(), m_pEngine->GetMouseY());
+				const BLSquare* pSquare = NULL;
+				int i, j;
+				if (m_pWorld->GetMouseCase(&pSquare, i, j))
+				{
+					m_pGoalMenu->ConstructFromCase(*pSquare, i,j);
+					m_pGoalMenu->SetVisible(m_pGoalMenu->GetGoals().size() > 0);
+
+					if (m_pGoalMenu->IsVisible())
+					{
+						m_pGoalMenu->SetPos(m_pEngine->GetMouseX(), m_pEngine->GetMouseY());
+					}
+				}
+			}
+			else
+			{
+				m_pGoalMenu->Click();
+				m_pGoalMenu->SetVisible(false);
+			}
+		}
+		else if (m_pGraphCanva->IsMouseInside())
+		{
+			m_pGoalMenu->SetVisible(false);
+			const FactSet& oGoals = m_pWorld->GetBot().GetPlanner().GetGoals();
+
+			for (FactSet::const_iterator it = oGoals.begin() ; it != oGoals.end() ; ++it)
+			{
+				IBGFact* pFact = static_cast<IBGFact*>(*it);
+				if (pFact->GetCanvas().IsMouseInside())
+				{
+					pFact->PrepareToDelete();
+					break;
+				}
 			}
 		}
 
-		// test
-		if (m_pGoalMenu->IsVisible())
-		{
-			m_pWorld->GetBot().AddGoal(m_pGoalMenu->GetGoals()[0]);
-		}
+		SetPause(m_pGoalMenu->IsVisible());
 	}
 
 	if (m_pGoalMenu->IsVisible())
@@ -72,7 +103,6 @@ int BLApp::UpdatePause()
 		m_pGoalMenu->Update();
 	}
 
-	return 0;
 }
 
 int BLApp::Draw()

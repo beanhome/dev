@@ -8,6 +8,7 @@
 #include "Action/IBAction.h"
 #include "Action/Def/IBActionDef_BoolToBool.h"
 #include "IBGoal.h"
+#include <algorithm>
 
 
 IBPlanner::IBPlanner(void* pOwner)
@@ -90,6 +91,13 @@ void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUse
 	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
 }
 
+void IBPlanner::RemGoal(IBFact* goal)
+{
+	m_aGoals.erase(goal);
+	delete goal;
+}
+
+
 void IBPlanner::AddPreCond(IBAction* pAction, const string& name)
 {
 	IBFactDef* pDef = GetFactDef(name);
@@ -136,10 +144,14 @@ int IBPlanner::Step()
 {
 	bool res = false;
 
+	m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
+
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBFact* pFact = *it;
 		res = pFact->Resolve(this);
+		if (res)
+			pFact->PrepareToDelete();
 	}
 
 	return (int)res;

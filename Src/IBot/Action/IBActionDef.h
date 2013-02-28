@@ -50,6 +50,7 @@ class IBActionDef
 		virtual bool					Execute(IBAction* pAction) { return false; };
 		virtual bool					Finish(IBAction* pAction) { return true; };
 		virtual void					Destroy(IBAction* pAction) { };
+		virtual bool					Abort(IBAction* pAction) { return true; };
 
 	protected:
 		string							m_sName;

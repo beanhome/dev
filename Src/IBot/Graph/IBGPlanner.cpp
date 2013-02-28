@@ -28,8 +28,12 @@ const uint  IBGPlanner::s_iActionLinkSpace = 16;
 const uint	IBGPlanner::s_iBoxSpace = 32;
 const Color	IBGPlanner::s_oActionColor = Color(64, 192, 255);
 const Color	IBGPlanner::s_oActionWorkColor = Color(192, 64, 128);
+const Color	IBGPlanner::s_oMarkToDelActionColor = Color(128, 92, 92);
+const Color	IBGPlanner::s_oReadyToDelActionColor = Color(92, 92, 92);
 const Color	IBGPlanner::s_oFactColor = Color(128, 255, 128);
 const Color	IBGPlanner::s_oFalseFactColor = Color(255, 64, 64);
+const Color	IBGPlanner::s_oMarkToDelFactColor = Color(128, 92, 92);
+const Color	IBGPlanner::s_oReadyToDelFactColor = Color(92, 92, 92);
 const Color	IBGPlanner::s_oLinkColor = Color(128, 255, 255);
 const Color	IBGPlanner::s_oBoxColor = Color(256, 128, 128);
 
@@ -71,9 +75,13 @@ void IBGPlanner::Draw()
 		h += pFact->GetH();
 	}
 
+	int x = m_oCanvas.GetWidth();
+	if (m_aGoals.size() > 0)
+		x = max(x, static_cast<IBGFact*>(*m_aGoals.begin())->GetW());
 	int w = IBGPlanner::s_iFactWidth+IBGPlanner::s_iMargin;
-	m_oCanvas.CanvasBase::DrawRect(m_oCanvas.GetWidth()-w-IBGPlanner::s_iMargin/2, 10, w-1, (h > m_oCanvas.GetHeight() ? m_oCanvas.GetHeight() : m_oCanvas.GetHeight()-20), Color(255, 255, 0));
-	m_oCanvas.CanvasBase::Print(m_oCanvas.GetWidth()-w/2-IBGPlanner::s_iMargin/2, 15, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
+	x -= (w/2 + IBGPlanner::s_iMargin/2);
+	m_oCanvas.CanvasBase::DrawRect(x-w/2, IBGPlanner::s_iMargin, w, (h > m_oCanvas.GetHeight() ? m_oCanvas.GetHeight() : m_oCanvas.GetHeight()-IBGPlanner::s_iMargin*2), Color(255, 255, 0));
+	m_oCanvas.CanvasBase::Print(x, IBGPlanner::s_iMargin+10, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
 
 	int s = 0;
 	int y = 0;

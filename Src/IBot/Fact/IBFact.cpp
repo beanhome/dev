@@ -9,12 +9,24 @@ IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 	, m_aUserData(aUserData)
 	, m_pCauseAction(NULL)
 	, m_pEffectAction(NULL)
+	, m_bToDelete(false)
 {
 }
 
 IBFact::~IBFact()
 {
+	if (m_pCauseAction != NULL)
+	{
+		if (m_pCauseAction->GetPostCond().size() == 1)
+		{
+			delete m_pCauseAction;
+		}
+		else
+		{
+			m_pCauseAction->RemPostCond(this);
 
+		}
+	}
 }
 
 void IBFact::SetVariable(uint i, IBObject* pVar)
@@ -26,15 +38,29 @@ void IBFact::SetVariable(uint i, IBObject* pVar)
 		m_pCauseAction->ResolvePostCondVariable();
 }
 
+void IBFact::PrepareToDelete()
+{
+	m_bToDelete = true;
+
+	if (m_pCauseAction != NULL)
+		m_pCauseAction->PrepareToDelete();
+}
 
 
 bool IBFact::Resolve(IBPlanner* pPlanner)
 {
-	if (m_pCauseAction != NULL && m_pCauseAction->Resolve(pPlanner) == IBAction::IBA_Destroy)
+	if (m_pCauseAction != NULL && m_pCauseAction->Resolve(pPlanner) == IBAction::IBA_Destroyed)
 	{
-		delete m_pCauseAction;
-		m_pCauseAction = NULL;
+		m_pCauseAction->PrepareToDelete();
+		if (m_pCauseAction->IsReadyToDelete())
+		{
+			delete m_pCauseAction;
+			m_pCauseAction = NULL;
+		}
 	}
+
+	if (m_bToDelete)
+		return false;
 
 	IBF_Result res = Test();
 	//LOG("Result : %d\n", res);

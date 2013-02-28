@@ -22,6 +22,11 @@ void IBGFactBox::Draw() const
 {
 	Color oColor = (m_pFact->IsTrue() ? IBGPlanner::s_oFactColor : IBGPlanner::s_oFalseFactColor);
 
+	if (m_pFact->IsMarkToDelete())
+		oColor = IBGPlanner::s_oMarkToDelFactColor;
+	else if (m_pFact->IsReadyToDelete())
+		oColor = IBGPlanner::s_oReadyToDelFactColor;
+
 	DrawFrame(oColor);
 
 	sint16 x = 0;

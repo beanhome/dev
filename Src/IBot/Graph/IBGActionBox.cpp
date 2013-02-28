@@ -23,16 +23,21 @@ void IBGActionBox::Resize()
 
 void IBGActionBox::Draw() const
 {
-	Color oLineColor = (m_pAction->GetState() == IBAction::IBA_Execute && (m_pAction->GetExecCounter() / 4) % 2 == 0 ? IBGPlanner::s_oActionWorkColor : IBGPlanner::s_oActionColor);
+	Color oColor = (m_pAction->GetState() == IBAction::IBA_Execute && (m_pAction->GetExecCounter() / 4) % 2 == 0 ? IBGPlanner::s_oActionWorkColor : IBGPlanner::s_oActionColor);
 
-	IBGBoxBase::DrawFrame(oLineColor);
+	if (m_pAction->IsMarkToDelete())
+		oColor = IBGPlanner::s_oMarkToDelActionColor;
+	else if (m_pAction->IsReadyToDelete())
+		oColor = IBGPlanner::s_oReadyToDelActionColor;
+
+	IBGBoxBase::DrawFrame(oColor);
 
 	sint16 x = 0;
 	sint16 y = 0;
 	uint16 w = GetW();
 	uint16 h = GetH();
 
-	m_oCanvas.CanvasBase::DrawLine(x, y+IBGPlanner::s_iActionTitleHeight, x+w-1, y+IBGPlanner::s_iActionTitleHeight, oLineColor);
+	m_oCanvas.CanvasBase::DrawLine(x, y+IBGPlanner::s_iActionTitleHeight, x+w-1, y+IBGPlanner::s_iActionTitleHeight, oColor);
 	m_oCanvas.CanvasBase::Print(x+w/2, y+IBGPlanner::s_iActionTitleHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionTitleHeight-4, Center, IBGPlanner::s_oActionColor, "%s", m_pAction->GetDef()->GetName().c_str());
 
 	if (m_pAction->GetState() == IBAction::IBA_Execute)

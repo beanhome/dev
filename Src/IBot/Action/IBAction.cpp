@@ -6,6 +6,7 @@ IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 	: m_pDef(pDef)
 	, m_eState(IBA_Init)
 	, m_pUserData(NULL)
+	, m_bToDelete(false)
 {
 	// create action variable
 	for (uint i=0 ; i<pDef->GetVariables().size() ; ++i)
@@ -48,36 +49,6 @@ IBAction::~IBAction()
 	}
 }
 
-/*
-IBFactIterator IBAction::BeginFactIterator() const
-{
-	return (m_aPostCond.size() > 0 ? IBFactIterator(m_aPreCond[0], this, 0) : EndFactIterator());
-}
-
-IBFactIterator IBAction::BackFactIterator() const
-{
-	return (m_aPostCond.size() > 0 ? IBFactIterator(m_aPreCond[m_aPreCond.size()-1], this, m_aPreCond.size()-1) : EndFactIterator());
-}
-
-IBFactIterator IBAction::EndFactIterator() const
-{
-	return IBFactIterator(NULL, this, -1);
-}
-
-IBFactIterator IBAction::NextFactIterator(const IBFactIterator& it) const
-{
-	int id = it.m_iId + 1;
-	return (id > (int)m_aPostCond.size()-1 ? IBFactIterator(m_aPreCond[id], this, id) : EndFactIterator());
-}
-
-IBFactIterator IBAction::PrevFactIterator(const IBFactIterator& it) const
-{
-	int id = it.m_iId - 1;
-	return (id < 0 ? IBFactIterator(m_aPreCond[id], this, id) : EndFactIterator());
-}
-*/
-
-
 IBObject* IBAction::FindVariables(const string& name) const
 {
 	VarMap::const_iterator it = m_aVariables.find(name);
@@ -110,6 +81,21 @@ void IBAction::AddPostCond(uint i, IBFact* pPostCond)
 	// resolve name variable from post cond
 	ResolveVariableName(i, pPostCond);
 }
+
+void IBAction::RemPostCond(IBFact* pPostCond)
+{
+	pPostCond->SetCauseAction(NULL);
+
+	for (vector<IBFact*>::iterator it = m_aPostCond.begin() ; it != m_aPostCond.end() ; ++it)
+	{
+		if (*it == pPostCond)
+		{
+			m_aPostCond.erase(it);
+			break;
+		}
+	}
+}
+
 
 void IBAction::AddPreCond(uint i, IBFact* pPreCond)
 {
@@ -308,6 +294,31 @@ void IBAction::ResolvePreCondVariable()
 	}
 }
 
+void IBAction::PrepareToDelete()
+{
+	m_bToDelete = true;
+
+	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	{
+		m_aPreCond[i]->PrepareToDelete();
+	}
+}
+
+
+bool IBAction::IsReadyToDelete()
+{
+	if (!m_bToDelete)
+		return false;
+
+	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	{
+		if (!m_aPreCond[i]->IsReadyToDelete())
+			return false;
+	}
+
+	return true;
+}
+
 
 IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 {
@@ -318,12 +329,16 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 	switch(m_eState)
 	{
 		case IBA_Init:
-			if (m_pDef->Init(this))
+			if (m_bToDelete)
+				SetState(IBA_Destroyed);
+			else if (m_pDef->Init(this))
 				SetState(IBA_Unresolved);
 			break;
 
 		case IBA_Unresolved:
-			if (res)
+			if (m_bToDelete)
+				SetState(IBA_Finish);
+			else if (res)
 				SetState(IBA_Start);
 			//else
 			//	ResolveVariable();
@@ -331,7 +346,9 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 
 		case IBA_Start:
 			Start();
-			if (!res)
+			if (m_bToDelete)
+				SetState(IBA_Abort);
+			else if (!res)
 				SetState(IBA_Unresolved);
 			else if (m_pDef->Start(this))
 				SetState(IBA_Execute);
@@ -339,7 +356,9 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 
 		case IBA_Execute:
 			Execute();
-			if (!res)
+			if (m_bToDelete)
+				SetState(IBA_Abort);
+			else if (!res)
 				SetState(IBA_Unresolved);
 			else if (m_pDef->Execute(this))
 				SetState(IBA_Finish);
@@ -349,7 +368,7 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 			Finish();
 			if (m_pDef->Finish(this))
 			{
-				m_pDef->Destroy(this);
+				PrepareToDelete();
 				SetState(IBA_Destroy);
 			}
 			else
@@ -358,7 +377,23 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 			}
 			break;
 
+		case IBA_Abort:
+			if (!res)
+				SetState(IBA_Finish);
+			else if (m_pDef->Abort(this))
+				SetState(IBA_Finish);
+			break;
+
 		case IBA_Destroy:
+			if (IsReadyToDelete())
+			{
+				m_pDef->Destroy(this);
+				SetState(IBA_Destroyed);
+			}
+			break;
+
+		case IBA_Destroyed:
+			//LOG("IBA_Destroy\n");
 			break;
 	}
 

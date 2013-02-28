@@ -21,6 +21,8 @@ class BLApp : public GApp<GEngine_SDL>
 		virtual int UpdatePause();
 		virtual int Draw();
 
+		void UpdateUserInterface();
+
 		Canvas& GetPlannerCanvas() { return *m_pGraphCanva; }
 
 	private:

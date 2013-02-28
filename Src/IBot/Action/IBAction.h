@@ -27,9 +27,11 @@ class IBAction
 			IBA_Unresolved,
 			IBA_Start,
 			IBA_Execute,
+			IBA_Abort,
 			IBA_End,
 			IBA_Finish,
-			IBA_Destroy
+			IBA_Destroy,
+			IBA_Destroyed,
 		};
 
 		typedef map<string, IBObject*> VarMap;
@@ -49,6 +51,7 @@ class IBAction
 		const IBActionDef*		GetDef() const { return m_pDef; }
 
 		const vector<IBFact*>&	GetPreCond() const { return m_aPreCond; }
+		const vector<IBFact*>&	GetPostCond() const { return m_aPostCond; }
 
 		void*					GetUserData() { return m_pUserData; }
 		void					SetUserData(void* pUserData) { m_pUserData = pUserData; }
@@ -58,6 +61,8 @@ class IBAction
 		void					Finish();
 
 		void					AddPostCond(uint i, IBFact* pPostCond);
+		void					RemPostCond(IBFact* pPostCond);
+
 		void					AddPreCond(uint i, IBFact* pPreCond);
 		void					AddPreCond(IBFact* pPreCond);
 
@@ -74,6 +79,10 @@ class IBAction
 
 		State					Resolve(IBPlanner* pPlanner);
 		float					Valuate();
+
+		void					PrepareToDelete();
+		bool					IsReadyToDelete();
+		bool					IsMarkToDelete() const { return m_bToDelete; }
 
 		int						GetExecCounter() const { return m_iExecCount; }
 
@@ -97,6 +106,8 @@ class IBAction
 		vector<IBFact*>			m_aPostCond;
 
 		void*					m_pUserData;
+
+		bool					m_bToDelete;
 };
 
 template <typename T>

@@ -71,6 +71,11 @@ class CanvasBase
 
 		void 							Print(const char* format, ...) const;
 
+		bool							IsInside(sint32 x, sint32 y) const { return (x>=m_iOrigX && x<m_iOrigX+m_iWidth && y>=m_iOrigY && y<m_iOrigY+m_iHeight); }
+
+		bool							IsMouseInside() const { return IsInside(GetMouseX(), GetMouseY()); }
+
+
 		//virtual bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
 
 		virtual sint32					GetMouseX() const = 0;

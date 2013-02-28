@@ -91,6 +91,22 @@ bool IBActionDef_FollowPath::Execute(IBAction* pAction)
 	return false;
 }
 
+bool IBActionDef_FollowPath::Abort(IBAction* pAction)
+{
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	ASSERT(pBot != NULL);
+
+	if (pBot->HasFinishState())
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
 bool IBActionDef_FollowPath::Finish(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
