@@ -2,11 +2,14 @@
 
 
 IBObject::IBObject()
+	: m_sName("")
+	, m_sData("")
 {
 }
 
 IBObject::IBObject(const string& name)
 	: m_sName(name)
+	, m_sData("")
 {
 }
 

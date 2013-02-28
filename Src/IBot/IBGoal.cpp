@@ -1,4 +1,5 @@
 #include "IBGoal.h"
+#include "World\IBObject.h"
 
 
 
@@ -53,4 +54,21 @@ IBGoal::IBGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, I
 	m_aUserData.push_back(pUserData1);
 	m_aUserData.push_back(pUserData2);
 	m_aUserData.push_back(pUserData3);
+}
+
+string IBGoal::GetData() const
+{
+	string sData = "(";
+
+	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	{
+		sData += m_aUserData[i]->GetData();
+
+		if (i<m_aUserData.size()-1)
+			sData += ", ";
+	}
+
+	sData += ")";
+
+	return sData;
 }

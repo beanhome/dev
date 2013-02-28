@@ -21,6 +21,7 @@ class IBGoal
 		~IBGoal() {};
 
 		const string& GetName() const { return m_sName; }
+		string GetData() const;
 		const vector<IBObject*>& GetUserData() const { return m_aUserData; }
 
 	private:

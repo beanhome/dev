@@ -13,7 +13,8 @@ class IBInt : public IBObject
 
 		int GetValue() const { return m_iValue; }
 
-		virtual void  Print() const;
+		virtual void FormatData() const;
+		virtual void Print() const;
 
 	private:
 		int m_iValue;

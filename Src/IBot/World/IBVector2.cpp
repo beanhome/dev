@@ -31,6 +31,11 @@ IBVector2& IBVector2::operator=(const Vector2& v)
 	return *this;
 }
 
+void IBVector2::FormatData() const
+{
+	m_sData = FormatString("(%d, %d)", x, y);
+}
+
 
 void IBVector2::Print() const
 {

@@ -10,13 +10,19 @@ class IBObject
 		IBObject(const string& name);
 		virtual ~IBObject();
 
-		const string& GetName() const { return m_sName; }
-		void SetName(const string& name) { m_sName = name; }
+		const string&		GetName() const { return m_sName; }
+		void				SetName(const string& name) { m_sName = name; }
 
-		void  Print() const;
+		const string&		GetData() const { FormatData(); return m_sData; }
+
+		void				Print() const;
 
 	protected:
-		string  m_sName;
+		virtual void		FormatData() const = 0;
+
+	protected:
+		string				m_sName;
+		mutable string		m_sData;
 };
 
 #endif

@@ -12,6 +12,11 @@ IBInt& IBInt::operator=(int v)
 	return *this;
 }
 
+void IBInt::FormatData() const
+{
+	m_sData = FormatString("%d", m_iValue);
+}
+
 void IBInt::Print() const
 {
 	if (m_sName.length() > 0)

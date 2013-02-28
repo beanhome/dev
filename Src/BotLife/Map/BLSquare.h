@@ -45,6 +45,7 @@ class BLSquare
 		void SetProp(BLProp* pProp);
 		const BLProp* GetProp() const { return m_pProp; }
 
+		bool IsFree() const { return (!IsBlock() && !IsTempBlock()); }
 		virtual bool IsBlock() const;
 		virtual bool IsTempBlock() const;
 

@@ -118,6 +118,20 @@ void BLBot::PickProp(BLProp* pProp)
 	pProp->SetVisible(false);
 }
 
+void BLBot::DropObject(BLProp* pProp, const IBVector2& pos)
+{
+	ASSERT(m_pCarryObject == pProp);
+
+	BLSquare& sq = GetWorld().GetGrid().GetCase(pos);
+	ASSERT(sq.GetProp() == NULL);
+	ASSERT(GetWorld().GetGrid().Distance(pos, GetPos()) == 1);
+
+	sq.SetProp(pProp);
+	m_pCarryObject = NULL;
+	pProp->SetVisible(true);
+	pProp->SetPos(pos);
+}
+
 
 void BLBot::SetState(BotState state, BotDir dir, float delay)
 {

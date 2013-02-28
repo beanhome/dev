@@ -14,21 +14,23 @@ class BLProp : public BLObject
 		BLProp(BLWorld& oWorld, const string& name, const Vector2& pos = Vector2(0,0));
 		virtual ~BLProp();
 
-		virtual void SetPos(const Vector2& p);
+		virtual void			SetPos(const Vector2& p);
 
-		void SetVisible(bool bVisible = true) { m_bVisible = bVisible; }
+		void					SetVisible(bool bVisible = true) { m_bVisible = bVisible; }
 
-		virtual bool IsBlock() const { return false; }
-		virtual bool IsTempBlock() const { return false; }
-		virtual bool IsPickable() const { return true; }
+		virtual bool			IsBlock() const { return false; }
+		virtual bool			IsTempBlock() const { return false; }
+		virtual bool			IsPickable() const { return true; }
 
-		const ImageResource* GetImageResource() const;
-		void Draw() const;
+		const ImageResource*	GetImageResource() const;
+		void					Draw() const;
+
+		virtual	void			FormatData() const { m_sData = m_sName; }
 
 	protected:
-		BLWorld&		m_oWorld;
-		bool			m_bVisible;
-		Image*			m_pImage;
+		BLWorld&				m_oWorld;
+		bool					m_bVisible;
+		Image*					m_pImage;
 };
 
 #endif

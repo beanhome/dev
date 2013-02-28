@@ -40,6 +40,6 @@ void IBGFactBox::Draw() const
 	for (uint i=0 ; i<m_pFact->GetVariables().size() ; ++i)
 	{
 		IBObject* pObject = m_pFact->GetVariable(i);
-		m_oCanvas.CanvasBase::Print(x+w/2, y+IBGPlanner::s_iFactTitleHeight + (IBGPlanner::s_iFactVarHeight+IBGPlanner::s_iFactVarSpace)/2 + i*(IBGPlanner::s_iFactVarHeight+IBGPlanner::s_iFactVarSpace), m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactVarHeight, Center, IBGPlanner::s_oFactColor, "%s", (pObject != NULL ? pObject->GetName().c_str() : "NULL"));
+		m_oCanvas.CanvasBase::Print(x+w/2, y+IBGPlanner::s_iFactTitleHeight + (IBGPlanner::s_iFactVarHeight+IBGPlanner::s_iFactVarSpace)/2 + i*(IBGPlanner::s_iFactVarHeight+IBGPlanner::s_iFactVarSpace), m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactVarHeight, Center, IBGPlanner::s_oFactColor, "%s %s", (pObject != NULL ? pObject->GetName().c_str() : "NULL"), (pObject != NULL ? pObject->GetData().c_str() : ""));
 	}
 }

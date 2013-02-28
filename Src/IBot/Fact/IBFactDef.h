@@ -26,6 +26,8 @@ class IBFactDef
 		virtual ~IBFactDef();
 
 		const string&				GetName() const { return m_sName; }
+		string						GetData(const vector<IBObject*>& aUserData) const;
+		void						GetData(const vector<IBObject*>& aUserData, string& sData) const;
 		uint						GetDegree() const { return m_iDegree; }
 
 		IBFact*						Instanciate() { return Instanciate(NULL); }

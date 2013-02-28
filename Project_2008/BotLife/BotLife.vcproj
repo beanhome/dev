@@ -227,6 +227,14 @@
 				Name="Action"
 				>
 				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_DropObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_DropObject.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\BotLife\Action\IBActionDef_FindPath.cpp"
 					>
 				</File>
@@ -300,6 +308,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.h"
 					>
 				</File>
 				<File

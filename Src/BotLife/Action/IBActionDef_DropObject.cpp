@@ -1,86 +1,79 @@
-#include "IBActionDef_PickObject.h"
+#include "IBActionDef_DropObject.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
 #include "World\BLObject.h"
 #include "World\IBInt.h"
 
 
-IBActionDef_PickObject::IBActionDef_PickObject(const string& name, IBPlanner* pPlanner)
+IBActionDef_DropObject::IBActionDef_DropObject(const string& name, IBPlanner* pPlanner)
 	: IBActionDef(name, pPlanner)
 {
 
 }
 
-IBActionDef_PickObject::~IBActionDef_PickObject()
+IBActionDef_DropObject::~IBActionDef_DropObject()
 {
 
 }
 
-void IBActionDef_PickObject::Define()
+void IBActionDef_DropObject::Define()
 {
 	AddVariable("Obj");    // BLObject
-	AddVariable("ObjPos"); // IBVector2
+	AddVariable("Pos"); // IBVector2
 	AddVariable("Dist");   // IBInt = 1
 
-	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
-	AddPreCondition("IBFactDef_BotIsEmpty");
+	AddPreCondition("IBFactDef_BotHasObject", "Obj");
+	AddPreCondition("IBFactDef_PosIsFree", "Pos");
+	AddPreCondition("IBFactDef_BotNearPos", "Pos", "Dist");
 
-	AddPostCondition("IBFactDef_BotHasObject", "Obj");
+	AddPostCondition("IBFactDef_BotIsEmpty");
 }
 
-bool IBActionDef_PickObject::Init(IBAction* pAction)
+bool IBActionDef_DropObject::Init(IBAction* pAction)
 {
 	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
 	ASSERT(pObj != NULL);
-	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
-	ASSERT(pObjPos == NULL || pObjPos == &pObj->GetPos());
 	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
 	ASSERT(pDist == NULL);
-
-	if (pObjPos == NULL)
-	{
-		pObjPos = (IBVector2*)&pObj->GetPos();
-		pObjPos->SetName(pObj->GetName() + "Pos");
-		pAction->SetVariable("ObjPos", pObjPos);
-	}
 
 	pDist = new IBInt("NearDist", 1);
 	pAction->SetVariable("Dist", pDist);
 
-
 	return true;
 }
 
-bool IBActionDef_PickObject::Start(IBAction* pAction)
+bool IBActionDef_DropObject::Start(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
-	ASSERT(pObjPos != NULL);
+	IBVector2* pPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("Pos"));
+	ASSERT(pPos != NULL);
 
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
 
-	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), *pObjPos);
+	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), *pPos);
 
 	pBot->SetState(BLBot::Action, eDir, 1.f);
 	return true;
 }
 
-bool IBActionDef_PickObject::Execute(IBAction* pAction)
+bool IBActionDef_DropObject::Execute(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
+	IBVector2* pPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("Pos"));
+	ASSERT(pPos != NULL);
 
 	if (pBot->HasFinishState())
 	{
 		BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
 		ASSERT(pObj != NULL);
 
-		pBot->PickProp(reinterpret_cast<BLProp*>(pObj));
+		pBot->DropObject(reinterpret_cast<BLProp*>(pObj), *pPos);
 		return true;
 	}
 	else
@@ -89,7 +82,7 @@ bool IBActionDef_PickObject::Execute(IBAction* pAction)
 	}
 }
 
-bool IBActionDef_PickObject::Finish(IBAction* pAction)
+bool IBActionDef_DropObject::Finish(IBAction* pAction)
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -99,7 +92,7 @@ bool IBActionDef_PickObject::Finish(IBAction* pAction)
 	return true;
 }
 
-void IBActionDef_PickObject::Destroy(IBAction* pAction)
+void IBActionDef_DropObject::Destroy(IBAction* pAction)
 {
 	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
 	if (pDist != NULL)

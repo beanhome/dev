@@ -14,7 +14,8 @@ class IBPath : public IBObject, public Path
 		IBPath(const string& name, const Vector2& start, const deque<Vector2>& oPath);
 		virtual ~IBPath();
 		
-		virtual void  Print() const;
+		virtual void FormatData() const;
+		virtual void Print() const;
 
 	private:
 };

@@ -32,6 +32,10 @@ IBPath::~IBPath()
 {
 }
 
+void IBPath::FormatData() const
+{
+	m_sData = FormatString("(%d)", GetLength());
+}
 
 void IBPath::Print() const
 {

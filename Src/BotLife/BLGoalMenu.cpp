@@ -37,9 +37,9 @@ void BLGoalMenu::ConstructFromCase(const BLSquare& oSquare, int I, int J)
 
 	if (!oSquare.IsBlock())
 	{
-		IBVector2* pos = new IBVector2(FormatString("pos %d %d", m_iI, m_iJ), m_iI, m_iJ);
+		IBVector2* pos = new IBVector2("tgt", m_iI, m_iJ);
 		m_aTempObject.push_back(pos);
-		IBInt* dist = new IBInt("Dist_0", 0);
+		IBInt* dist = new IBInt("CloseDist", 0);
 		m_aGoals.push_back(IBGoal("IBFactDef_BotNearPos", pos, dist));
 	}
 
@@ -52,13 +52,18 @@ void BLGoalMenu::ConstructFromCase(const BLSquare& oSquare, int I, int J)
 	{
 		m_aGoals.push_back(IBGoal("IBFactDef_BotHasObject", (IBObject*)oSquare.GetProp()));
 	}
+
+	if (m_oBot.GetPos() == Vector2(m_iI, m_iJ) && m_oBot.HasObject(m_oBot.GetFirstObject()))
+	{
+		m_aGoals.push_back(IBGoal("IBFactDef_BotIsEmpty"));
+	}
 }
 
 void BLGoalMenu::SetPos(sint32 x, sint32 y)
 {
 	m_oCanva.SetPosX(x);
 	m_oCanva.SetPosY(y);
-	m_oCanva.SetWidth(128);
+	m_oCanva.SetWidth(140);
 	m_oCanva.SetHeight(min(m_aGoals.size() * 14 + 4, 32));
 
 }
@@ -103,10 +108,7 @@ void BLGoalMenu::Draw() const
 	{
 		Color& c = ((m_oCanva.IsMouseInside() && m_oCanva.GetMouseY()>y && m_oCanva.GetMouseY()<y+yl) ? cMouse : cNormal);
 
-		if (m_aGoals[i].GetUserData().size() > 0)
-			m_oCanva.Print(x, y, m_oCanva.GetPrintFont(), yl-2, LeftTop, c, "%s %s", m_aGoals[i].GetName().c_str()+10, m_aGoals[i].GetUserData()[0]->GetName().c_str());
-		else
-			m_oCanva.Print(x, y, m_oCanva.GetPrintFont(), yl-2, LeftTop, c, "%s", m_aGoals[i].GetName().c_str()+10);
+		m_oCanva.Print(x, y, m_oCanva.GetPrintFont(), yl-2, LeftTop, c, "%s %s", m_aGoals[i].GetName().c_str()+10, m_aGoals[i].GetData().c_str());
 
 		y += yl;
 	}

@@ -9,7 +9,7 @@
 #include "IBGAction.h"
 
 const uint	IBGPlanner::s_iMargin = 12;
-const uint	IBGPlanner::s_iFactWidth = 90;
+const uint	IBGPlanner::s_iFactWidth = 92;
 const uint	IBGPlanner::s_iFactTitleHeight = 18;
 const uint	IBGPlanner::s_iFactVarHeight = 12;
 const uint	IBGPlanner::s_iFactVarSpace = 2;

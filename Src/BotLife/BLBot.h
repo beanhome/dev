@@ -75,6 +75,7 @@ class BLBot : public IBObject
 		void					PickProp(BLProp* pProp);
 		bool					HasObject(BLProp* pObj) const { return pObj == m_pCarryObject; }
 		BLProp*					GetFirstObject() const { return m_pCarryObject; }
+		void					DropObject(BLProp* pProp, const IBVector2& pos);
 
 		void					AddGoal(const IBGoal& goal);
 
@@ -82,6 +83,8 @@ class BLBot : public IBObject
 		void					AddGoal(const string& name, IBObject* pUserData);
 		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2);
 		void					AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3);
+
+		virtual	void			FormatData() const {}
 
 	private:
 		BLWorld&				m_oWorld;
