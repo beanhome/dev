@@ -82,6 +82,11 @@ void Canvas::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8
 	GetGEngine()->DrawLine(GetScreenPosX() + x1, GetScreenPosY() + y1, GetScreenPosX() + x2, GetScreenPosY() + y2, r, g, b);
 }
 
+void Canvas::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
+{
+	GetGEngine()->TextSizeArgs(w, h, sFontPath, size, format, oArgs);
+}
+
 void Canvas::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	GetGEngine()->ClampCanvas(*this);

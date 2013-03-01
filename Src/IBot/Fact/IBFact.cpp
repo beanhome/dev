@@ -3,6 +3,7 @@
 #include "IBPlanner.h"
 
 #include "Utils.h"
+#include "World/IBObject.h"
 
 IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 	: m_pDef(pDef)
@@ -11,6 +12,11 @@ IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 	, m_pEffectAction(NULL)
 	, m_bToDelete(false)
 {
+	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	{
+		if (m_aUserData[i] != NULL && m_aUserData[i]->IsInstance() && m_aUserData[i]->GetOwner() == NULL)
+			m_aUserData[i]->SetOwner(this);
+	}
 }
 
 IBFact::~IBFact()
@@ -24,8 +30,13 @@ IBFact::~IBFact()
 		else
 		{
 			m_pCauseAction->RemPostCond(this);
-
 		}
+	}
+
+	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	{
+		if (m_aUserData[i] != NULL && m_aUserData[i]->IsInstance() && m_aUserData[i]->GetOwner() == this)
+			delete m_aUserData[i];
 	}
 }
 
@@ -33,6 +44,8 @@ void IBFact::SetVariable(uint i, IBObject* pVar)
 {
 	ASSERT(i<m_aUserData.size());
 	m_aUserData[i] = pVar;
+	if (pVar->IsInstance() && pVar->GetOwner() == NULL)
+		pVar->SetOwner(this);
 
 	if (m_pCauseAction != NULL)
 		m_pCauseAction->ResolvePostCondVariable();

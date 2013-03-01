@@ -37,7 +37,14 @@ class BLGoalMenu
 		int m_iJ;
 		bool m_bVisible;
 		vector<IBGoal> m_aGoals;
-		vector<IBObject*> m_aTempObject;
+
+	private:
+		static int s_iYL;
+		static int s_iTextHeight;
+		static Color s_cBackGroundColor;
+		static Color s_cForeGroundColor;
+		static Color s_cNormalTextColor;
+		static Color s_cMouseTextColor;
 };
 
 

@@ -1,24 +1,24 @@
 #include "IBVector2.h"
 
 
-IBVector2::IBVector2()
+//IBVector2::IBVector2()
+//{}
+
+IBVector2::IBVector2(const string& name, bool bInstance)
+	: IBObject(name, bInstance)
 {}
 
-IBVector2::IBVector2(const string& name)
-	: IBObject(name)
-{}
+//IBVector2::IBVector2(int _x, int _y, bool bInstance)
+//	: Vector2(_x, _y)
+//{}
 
-IBVector2::IBVector2(int _x, int _y)
-	: Vector2(_x, _y)
-{}
-
-IBVector2::IBVector2(const string& name, int _x, int _y)
-	: IBObject(name)
+IBVector2::IBVector2(const string& name, int _x, int _y, bool bInstance)
+	: IBObject(name, bInstance)
 	, Vector2(_x, _y)
 {}
 
-IBVector2::IBVector2(const string& name, const Vector2& v)
-	: IBObject(name)
+IBVector2::IBVector2(const string& name, const Vector2& v, bool bInstance)
+	: IBObject(name, bInstance)
 	, Vector2(v)
 {}
 

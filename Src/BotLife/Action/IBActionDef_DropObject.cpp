@@ -27,6 +27,7 @@ void IBActionDef_DropObject::Define()
 	AddPreCondition("IBFactDef_BotNearPos", "Pos", "Dist");
 
 	AddPostCondition("IBFactDef_BotIsEmpty");
+	AddPostCondition("IBFactDef_ObjectAtPos", "Obj", "Pos");
 }
 
 bool IBActionDef_DropObject::Init(IBAction* pAction)

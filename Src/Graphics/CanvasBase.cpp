@@ -24,6 +24,17 @@ CanvasBase::~CanvasBase()
 {
 }
 
+void CanvasBase::TextSize(int& w, int& h, const char* sFontPath, uint size, const char* format, ...) const
+{
+	va_list oArgs;
+	va_start(oArgs, format);
+
+	TextSizeArgs(w, h, sFontPath, size, format, oArgs);
+
+	va_end(oArgs);
+}
+
+
 void CanvasBase::Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const
 {
 	va_list oArgs;

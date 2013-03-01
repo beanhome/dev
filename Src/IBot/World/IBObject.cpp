@@ -1,15 +1,11 @@
 #include "IBObject.h"
 
 
-IBObject::IBObject()
-	: m_sName("")
-	, m_sData("")
-{
-}
-
-IBObject::IBObject(const string& name)
+IBObject::IBObject(const string& name, bool bInstance)
 	: m_sName(name)
 	, m_sData("")
+	, m_bInstance(bInstance)
+	, m_pFactOwner(NULL)
 {
 }
 

@@ -67,21 +67,25 @@ void IBGPlanner::Draw()
 	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
 	
 	int h = 0;
+	int w = IBGPlanner::s_iFactWidth;
 
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBGFact* pFact = static_cast<IBGFact*>(*it);
 		pFact->Resize();
 		h += pFact->GetH();
+		w = max(pFact->GetFactBox()->GetW(), w);
 	}
 
-	int x = m_oCanvas.GetWidth();
-	if (m_aGoals.size() > 0)
-		x = max(x, static_cast<IBGFact*>(*m_aGoals.begin())->GetW());
-	int w = IBGPlanner::s_iFactWidth+IBGPlanner::s_iMargin;
-	x -= (w/2 + IBGPlanner::s_iMargin/2);
-	m_oCanvas.CanvasBase::DrawRect(x-w/2, IBGPlanner::s_iMargin, w, (h > m_oCanvas.GetHeight() ? m_oCanvas.GetHeight() : m_oCanvas.GetHeight()-IBGPlanner::s_iMargin*2), Color(255, 255, 0));
-	m_oCanvas.CanvasBase::Print(x, IBGPlanner::s_iMargin+10, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
+	{
+		int x = m_oCanvas.GetWidth();
+		if (m_aGoals.size() > 0)
+			x = max(x, static_cast<IBGFact*>(*m_aGoals.begin())->GetW());
+		w += IBGPlanner::s_iMargin;
+		x -= (w/2 + IBGPlanner::s_iMargin/2);
+		m_oCanvas.CanvasBase::DrawRect(x-w/2, IBGPlanner::s_iMargin, w, (h > m_oCanvas.GetHeight() ? m_oCanvas.GetHeight() : m_oCanvas.GetHeight()-IBGPlanner::s_iMargin*2), Color(255, 255, 0));
+		m_oCanvas.CanvasBase::Print(x, IBGPlanner::s_iMargin+10, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
+	}
 
 	int s = 0;
 	int y = 0;

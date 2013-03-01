@@ -7,7 +7,7 @@
 class IBInt : public IBObject
 {
 	public:
-		IBInt(const string& name, int i=0);
+		IBInt(const string& name, int i=0, bool bInstance = false);
 
 		IBInt& operator=(int v);
 

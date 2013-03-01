@@ -1,7 +1,7 @@
 #include "IBInt.h"
 
-IBInt::IBInt(const string& name, int i)
-	: IBObject(name)
+IBInt::IBInt(const string& name, int i, bool bInstance)
+	: IBObject(name, bInstance)
 	, m_iValue(i)
 {}
 

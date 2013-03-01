@@ -338,6 +338,21 @@ void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, 
 	lineRGBA(m_pScreen, x1, y1, x2, y2, r, g, b, 255);
 }
 
+void GEngine_SDL::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
+{
+	ASSERT(sFontPath != NULL);
+
+	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
+
+	int ln = _vscprintf(format, oArgs) + 1;
+	char* str = new char[ln];
+	vsprintf_s(str, ln, format, oArgs);
+
+	TTF_SizeText(pFont->m_pFont, str, &w, &h);
+
+	delete [] str;
+}
+
 void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	ASSERT(sFontPath != NULL);

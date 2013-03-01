@@ -24,6 +24,7 @@ void IBActionDef_PickObject::Define()
 
 	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
 	AddPreCondition("IBFactDef_BotIsEmpty");
+	AddPreCondition("IBFactDef_ObjectAtPos", "Obj", "ObjPos");
 
 	AddPostCondition("IBFactDef_BotHasObject", "Obj");
 }
@@ -37,12 +38,14 @@ bool IBActionDef_PickObject::Init(IBAction* pAction)
 	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
 	ASSERT(pDist == NULL);
 
+	/*
 	if (pObjPos == NULL)
 	{
 		pObjPos = (IBVector2*)&pObj->GetPos();
 		pObjPos->SetName(pObj->GetName() + "Pos");
 		pAction->SetVariable("ObjPos", pObjPos);
 	}
+	*/
 
 	pDist = new IBInt("NearDist", 1);
 	pAction->SetVariable("Dist", pDist);

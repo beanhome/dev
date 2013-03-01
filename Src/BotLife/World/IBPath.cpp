@@ -1,25 +1,25 @@
 #include "IBPath.h"
 
 
-IBPath::IBPath()
-{
-}
+//IBPath::IBPath()
+//{
+//}
 
-IBPath::IBPath(const string& name)
-	: IBObject(name)
+IBPath::IBPath(const string& name, bool bInstance)
+	: IBObject(name, bInstance)
 	, Path()
 {
 }
 
-IBPath::IBPath(const Vector2& start, const deque<Vector2>& oPath)
-	: IBObject()
-	, Path(start, oPath)
-{
+//IBPath::IBPath(const Vector2& start, const deque<Vector2>& oPath)
+//	: IBObject()
+//	, Path(start, oPath)
+//{
+//
+//}
 
-}
-
-IBPath::IBPath(const string& name, const Vector2& start, const deque<Vector2>& oPath)
-	: IBObject(name)
+IBPath::IBPath(const string& name, const Vector2& start, const deque<Vector2>& oPath, bool bInstance)
+	: IBObject(name, bInstance)
 	, Path(start, oPath)
 {
 

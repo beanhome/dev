@@ -311,6 +311,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_ObjectAtPos.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_ObjectAtPos.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.cpp"
 					>
 				</File>

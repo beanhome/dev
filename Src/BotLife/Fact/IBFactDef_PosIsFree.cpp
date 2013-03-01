@@ -51,7 +51,7 @@ void IBFactDef_PosIsFree::ResolveVariable(vector<IBObject*>& aUserData)
 		pNav->FindPath(pBot->GetPos(), oCondFree, oPath);
 
 		// TODO : Fix delete
-		pPos = new IBVector2("free", oPath.GetTarget());
+		pPos = new IBVector2("free", oPath.GetTarget(), true);
 		aUserData[0] = pPos;
 
 		delete pNav;

@@ -1,11 +1,11 @@
 #include "BLObject.h"
 
 
-BLObject::BLObject()
-	: IBObject()
-	, m_vPos("Pos")
-{
-}
+//BLObject::BLObject()
+//	: IBObject()
+//	, m_vPos("Pos")
+//{
+//}
 
 BLObject::BLObject(const string& name)
 	: IBObject(name)
@@ -13,11 +13,11 @@ BLObject::BLObject(const string& name)
 {
 }
 
-BLObject::BLObject(const Vector2& pos)
-	: IBObject()
-	, m_vPos("Pos", pos)
-{
-}
+//BLObject::BLObject(const Vector2& pos)
+//	: IBObject()
+//	, m_vPos("Pos", pos)
+//{
+//}
 
 BLObject::BLObject(const string& name, const Vector2& pos)
 	: IBObject(name)

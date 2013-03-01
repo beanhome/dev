@@ -8,10 +8,10 @@
 class IBPath : public IBObject, public Path
 {
 	public:
-		IBPath();
-		IBPath(const string& name);
-		IBPath(const Vector2& start, const deque<Vector2>& oPath);
-		IBPath(const string& name, const Vector2& start, const deque<Vector2>& oPath);
+		//IBPath();
+		IBPath(const string& name, bool bInstance = false);
+		//IBPath(const Vector2& start, const deque<Vector2>& oPath);
+		IBPath(const string& name, const Vector2& start, const deque<Vector2>& oPath, bool bInstance = false);
 		virtual ~IBPath();
 		
 		virtual void FormatData() const;

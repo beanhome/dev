@@ -38,7 +38,7 @@ bool IBActionDef_FollowPath::Init(IBAction* pAction)
 	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
 	ASSERT(pPath == NULL);
 
-	pPath = new IBPath("MyPath");
+	pPath = new IBPath("MyPath", true);
 	pAction->SetVariable("Path", pPath);
 
 	return true;
@@ -120,8 +120,8 @@ bool IBActionDef_FollowPath::Finish(IBAction* pAction)
 
 void IBActionDef_FollowPath::Destroy(IBAction* pAction)
 {
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
-	ASSERT(pPath != NULL);
+	//IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	//ASSERT(pPath != NULL);
 
-	delete pPath;
+	//delete pPath;
 }
