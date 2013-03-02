@@ -45,9 +45,9 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	CenterMap((int)m_pBot->GetLocX(), (int)m_pBot->GetLocY());
 
 	m_pMap->RandomFullGroundLoc(i, j);
-	new BLProp_SI(*this, "Mine 1", DATA_DIR "/Test/Mine.png", Vector2(i,j));
+	new BLProp_SI(*this, "Mine 1", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
 	m_pMap->RandomFullGroundLoc(i, j);
-	new BLProp_SI(*this, "Mine 2", DATA_DIR "/Test/Mine.png", Vector2(i,j));
+	new BLProp_SI(*this, "Mine 2", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
 
 	//BLDoor* pDoor = new BLDoor(*this, "Door", BLDoor::Verti, Vector2(3, 6));
 	//pDoor->Close();

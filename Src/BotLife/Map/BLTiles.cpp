@@ -17,11 +17,12 @@ BLTiles::BLTiles(const GEngine& ge, const char* name)
 	, m_iTileOffsetX(0)
 	, m_iTileOffsetY(0)
 {
-	string path = FormatString("%sBotLife/%s.png", DATA_DIR, name);
 
+	string path = FormatString("%sBotLife/%s.png", DATA_DIR, name);
 	m_pTiles = ge.GetImageResource(path.c_str());
 
-	m_sPath = FormatString("%sBotLife/%s.blt", DATA_DIR, name);
+	string sRoot = FormatString("%s%s%s", ge.GetRootPath(), (ge.GetRootPath()[strlen(ge.GetRootPath())-1] == '/' ? "" : "/"), DATA_DIR);
+	m_sPath = FormatString("%sBotLife/%s.blt", sRoot.c_str(), name);
 
 	ReadFile();
 

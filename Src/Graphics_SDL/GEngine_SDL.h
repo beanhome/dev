@@ -17,7 +17,7 @@ class FontResource_SDL;
 class GEngine_SDL : public GEngine
 {
 	public:
-		GEngine_SDL(uint16 width, uint16 height, uint16 depth);
+		GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* rootpath);
 		~GEngine_SDL();
 
 		void 							Clear();

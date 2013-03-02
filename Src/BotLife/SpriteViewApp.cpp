@@ -3,8 +3,8 @@
 #include "InputEvent.h"
 #include "ImageFlipBook.h"
 
-SpriteViewApp::SpriteViewApp(int w, int h)
-	: GApp(w, h)
+SpriteViewApp::SpriteViewApp(int w, int h, const char* rootpath)
+	: GApp(w, h, rootpath)
 	, m_bLeft(false)
 	, m_bRight(false)
 	, m_bUp(false)

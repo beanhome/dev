@@ -9,13 +9,14 @@ int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 
-	int w = 800;
+	int w = 920;
 	int h = 800;
-	int sx = 16;
-	int sy = 16;
-	float r = 0.5f;
+	int sx = 32;
+	int sy = 32;
+	float r = 0.54f;
 	const char* sTiles = "summertiles";
-	const char* sApp = NULL;
+	const char* sApp = "BLApp";
+	const char* path = ".";
 	int seed = 0;
 
 	for (int i=1 ; i<argc ; ++i)
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
 				case 'x':		sx = atoi(argv[i+1]);		break;
 				case 'y':		sy = atoi(argv[i+1]);		break;
 				case 's':		seed = atoi(argv[i+1]);		break;
+				case 'p':		path = argv[i+1];			break;
 			}
 		}
 	}
@@ -48,13 +50,13 @@ int main(int argc, char *argv[])
 	GAppBase* pApp = NULL;
 
 	if (_strnicmp(sApp, "BLApp", 5) == 0)
-		pApp = new BLApp(w, h, r, sx, sy, sTiles);
+		pApp = new BLApp(w, h, path, r, sx, sy, sTiles);
 	else if (_strnicmp(sApp, "MapViewApp", 10) == 0)
-		pApp = new MapViewApp(w, h, sTiles);
+		pApp = new MapViewApp(w, h, path, sTiles);
 	else if (_strnicmp(sApp, "TilesViewApp", 12) == 0)
-		pApp = new TilesViewApp(w, h, sTiles);
+		pApp = new TilesViewApp(w, h, path, sTiles);
 	else if (_strnicmp(sApp, "SpriteViewApp", 14) == 0)
-		pApp = new SpriteViewApp(w, h);
+		pApp = new SpriteViewApp(w, h, path);
 	
 
 	if (pApp == NULL)

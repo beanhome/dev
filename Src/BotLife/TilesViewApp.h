@@ -12,7 +12,7 @@ class BLMap;
 class TilesViewApp : public GApp<GEngine_SDL>
 {
 	public:
-		TilesViewApp(int w, int h, const char* name);
+		TilesViewApp(int w, int h, const char* rootpath, const char* name);
 		~TilesViewApp();
 
 		virtual int Update(float dt);

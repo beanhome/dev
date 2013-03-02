@@ -13,8 +13,8 @@
 #include "SDL_gfxBlitFunc.h"
 
 
-GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth)
-	: GEngine(width, height, depth)
+GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* rootpath)
+	: GEngine(width, height, depth, rootpath)
 	, m_pCursor(NULL)
 {
 	Init();

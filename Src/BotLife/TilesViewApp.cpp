@@ -4,8 +4,8 @@
 #include "Map\BLMap.h"
 #include "InputEvent.h"
 
-TilesViewApp::TilesViewApp(int w, int h, const char* name)
-	: GApp(w, h)
+TilesViewApp::TilesViewApp(int w, int h, const char* rootpath, const char* name)
+	: GApp(w, h, rootpath)
 	, m_pTiles(NULL)
 	, mode(Explore)
 	, lastmode(Explore)

@@ -9,8 +9,8 @@
 #include "Graph\IBGFact.h"
 #include "Graph\IBGFactBox.h"
 
-BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
-	: GApp(w, h)
+BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
+	: GApp(w, h, rootpath)
 	, m_pGoalMenu(NULL)
 {
 	m_pEngine->SetPrintFont(FONT_PATH, 14);

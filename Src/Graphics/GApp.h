@@ -37,9 +37,9 @@ template <typename ENGINE>
 class GApp : public GAppBase
 {
 	public:
-		GApp(int w, int h)
+		GApp(int w, int h, const char* rootpath)
 		{
-			m_pEngine = new ENGINE(w, h, 32);
+			m_pEngine = new ENGINE(w, h, 32, rootpath);
 		}
 };
 

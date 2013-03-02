@@ -8,8 +8,6 @@
 
 class Resource;
 class Canvas;
-//class ImageResource;
-//class FontResource;
 class Input;
 
 typedef map<uint32, Resource*> ResourceMap;
@@ -20,7 +18,7 @@ class InputEvent;
 class GEngine : public CanvasBase
 {
 	public:
-		GEngine(uint16 width, uint16 height, uint16 depth);
+		GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath);
 		~GEngine();
 
 		GEngine*						GetGEngine() { return this; }
@@ -44,9 +42,10 @@ class GEngine : public CanvasBase
 		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
 		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
 
-		//void							SetMouse(uint16 x, uint16 y) { m_iMouseX = x; m_iMouseY = y; }
 		virtual sint32					GetMouseX() const;
 		virtual sint32					GetMouseY() const;
+
+		const char*						GetRootPath() const { return m_sRootPath; }
 
 		template<typename T>
 		T* const						GetResource(const typename T::Desc& oDesc) const;
@@ -71,6 +70,7 @@ class GEngine : public CanvasBase
 
 	protected:
 		uint16							m_iDepth;
+		const char*						m_sRootPath;
 
 		InputEvent*						m_pInputEvent;
 		InputEvent*						m_pPreviousInputEvent;
@@ -78,9 +78,6 @@ class GEngine : public CanvasBase
 	private:
 		ResourceMap						m_aResources;
 		Input*							m_pInput;
-		//uint16							m_iMouseX;
-		//uint16							m_iMouseY;
-
 };
 
 template<typename T>

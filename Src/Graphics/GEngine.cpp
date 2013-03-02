@@ -4,9 +4,10 @@
 #include "Canvas.h"
 #include "Input.h"
 
-GEngine::GEngine(uint16 width, uint16 height, uint16 depth)
+GEngine::GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: CanvasBase(width, height)
 	, m_iDepth(depth)
+	, m_sRootPath(rootpath)
 	, m_pInputEvent(NULL)
 	, m_pPreviousInputEvent(NULL)
 	, m_pInput(NULL)

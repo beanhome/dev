@@ -10,7 +10,7 @@ class ImageFlipBook;
 class SpriteViewApp : public GApp<GEngine_SDL>
 {
 	public:
-		SpriteViewApp(int w, int h);
+		SpriteViewApp(int w, int h, const char* rootpath);
 		~SpriteViewApp();
 
 		virtual int Update(float dt);

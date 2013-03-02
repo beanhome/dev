@@ -14,7 +14,7 @@ class BLGoalMenu;
 class BLApp : public GApp<GEngine_SDL>
 {
 	public:
-		BLApp(int w, int h, float r, int sx, int sy, const char* tilesname);
+		BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname);
 		~BLApp();
 
 		virtual int Update(float dt);

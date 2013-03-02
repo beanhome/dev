@@ -1,4 +1,5 @@
 #include "ImageResource_SDL.h"
+#include "GEngine.h"
 
 #include "SDL.h"
 #include "SDL_video.h"
@@ -12,7 +13,8 @@ ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* 
 	: ImageResource(pGEngine, crc, pPath)
 	, m_pSurface(NULL)
 {
-	m_pSurface = IMG_Load(pPath);
+	string path = FormatString("%s%s%s", pGEngine->GetRootPath(), (pGEngine->GetRootPath()[strlen(pGEngine->GetRootPath())-1] == '/' ? "" : "/"), pPath);
+	m_pSurface = IMG_Load(path.c_str());
 	if (m_pSurface == NULL)
 	{
 		LOG("Couldn't load %s: %s\n", pPath, SDL_GetError());
@@ -28,7 +30,8 @@ ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& 
 	: ImageResource(pGEngine, crc, oDesc)
 	, m_pSurface(NULL)
 {
-	m_pSurface = IMG_Load(oDesc.path);
+	string path = FormatString("%s%s%s", pGEngine->GetRootPath(), (pGEngine->GetRootPath()[strlen(pGEngine->GetRootPath())-1] == '/' ? "" : "/"), oDesc.path);
+	m_pSurface = IMG_Load(path.c_str());
 	if (m_pSurface == NULL)
 	{
 		LOG("Couldn't load %s: %s\n", oDesc.path, SDL_GetError());
