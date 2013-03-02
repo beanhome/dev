@@ -16,14 +16,14 @@ class IBGFact : public IBFact, public IBGBoxBase
 		IBGFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, CanvasBase& oParentCanvas);
 		~IBGFact();
 
-		//IBGActionBox*	GetActionBox() { return m_pActionBox; }
-		IBGFactBox*		GetFactBox() { return m_pFactBox; }
+		const IBGFactBox*		GetFactBox() const { return m_pFactBox; }
+		IBGFactBox*				GetFactBox() { return m_pFactBox; }
 
-		virtual void	Resize();
-		virtual void	Draw() const;
+		virtual void			Resize();
+		virtual void			Draw() const;
 
 	protected:
-		IBGFactBox*		m_pFactBox;
+		IBGFactBox*				m_pFactBox;
 };
 
 #endif

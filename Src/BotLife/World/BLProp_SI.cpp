@@ -13,7 +13,6 @@ BLProp_SI::BLProp_SI(BLWorld& oWorld, const string& name, const char* img, const
 	m_pImage = new Image(oCanvas, oCanvas.GetGEngine()->GetImageResource(img));
 
 	SetPos(pos);
-	m_oWorld.GetGrid().GetCase(pos).SetProp(this);
 }
 
 

@@ -35,6 +35,7 @@ class BLSquare
 {
 	public:
 		BLSquare();
+		virtual ~BLSquare();
 
 		TilesType GetTilesType() const { return m_eTilesType; }
 		void SetTilesType(TilesType type) { m_eTilesType = type;}

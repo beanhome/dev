@@ -62,8 +62,13 @@ void BLGoalMenu::ConstructFromCase(const BLSquare& oSquare, int I, int J)
 	}
 }
 
-void BLGoalMenu::SetPos(sint32 x, sint32 y)
+void BLGoalMenu::UpdatePos()
 {
+	sint32 x, y;
+	int s = m_oBot.GetWorld().GetGridSize();
+	int _x = m_oBot.GetWorld().GetCanvas().GetScreenPosX()+m_iI*s;
+	int _y = m_oBot.GetWorld().GetCanvas().GetScreenPosY()+m_iJ*s;
+
 	int width = 0;
 	int height = 0;
 	for (uint i=0 ; i<m_aGoals.size() ; ++i)
@@ -75,12 +80,15 @@ void BLGoalMenu::SetPos(sint32 x, sint32 y)
 		width = max(width, w);
 	}
 	height = max(height+4, 32);
+	width += 4;
+
+	x = (_x+s+width > m_oBot.GetWorld().GetCanvas().GetWidth() ? _x-width : _x+s);
+	y = (_y+height > m_oBot.GetWorld().GetCanvas().GetHeight() ? _y-height : (_y<0 ? _y+s : _y));
 
 	m_oCanva.SetPosX((sint16)x);
 	m_oCanva.SetPosY((sint16)y);
-	m_oCanva.SetWidth(width+4);
+	m_oCanva.SetWidth(width);
 	m_oCanva.SetHeight(height);
-
 }
 
 void BLGoalMenu::Click()
@@ -109,6 +117,9 @@ void BLGoalMenu::Update()
 
 void BLGoalMenu::Draw() const
 {
+	int s = m_oBot.GetWorld().GetGridSize();
+	m_oBot.GetWorld().GetCanvas().DrawRect(m_iI*s, m_iJ*s, s-1, s-1, 192, 192, 192);
+
 	m_oCanva.CanvasBase::DrawFillRect(0, 0, m_oCanva.GetWidth()-1, m_oCanva.GetHeight()-1, s_cBackGroundColor);
 	m_oCanva.CanvasBase::DrawRect(0, 0, m_oCanva.GetWidth()-1, m_oCanva.GetHeight()-1, s_cForeGroundColor);
 

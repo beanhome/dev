@@ -65,7 +65,7 @@ bool IBActionDef_PickObject::Start(IBAction* pAction)
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
 
-	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), *pObjPos);
+	BLBot::BotDir eDir = (pBot->GetWorld().GetGrid().Distance(pBot->GetPos(), *pObjPos) > 0 ? pBot->ComputeDir(pBot->GetPos(), *pObjPos) : pBot->GetDir()) ;
 
 	pBot->SetState(BLBot::Action, eDir, 1.f);
 	return true;

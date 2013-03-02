@@ -67,6 +67,9 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas)
 
 BLBot::~BLBot()
 {
+	if (m_pCarryObject != NULL)
+		delete m_pCarryObject;
+
 	delete m_pIdleImage;
 	delete m_pWalkImage;
 	delete m_pWorkImage;
@@ -124,7 +127,7 @@ void BLBot::DropObject(BLProp* pProp, const IBVector2& pos)
 
 	BLSquare& sq = GetWorld().GetGrid().GetCase(pos);
 	ASSERT(sq.GetProp() == NULL);
-	ASSERT(GetWorld().GetGrid().Distance(pos, GetPos()) == 1);
+	ASSERT(GetWorld().GetGrid().Distance(pos, GetPos()) <= 1);
 
 	sq.SetProp(pProp);
 	m_pCarryObject = NULL;
@@ -243,14 +246,14 @@ void BLBot::Draw() const
 	if (m_pCarryObject != NULL)
 		m_oWorld.GetCanvas().DrawImage(*m_pCarryObject->GetImageResource(), (sint16)m_fLocX, (sint16)m_fLocY, 0, 0.8f);
 
-	m_oWorld.GetCanvas().DrawRect(m_vPos.x * m_oWorld.GetGridSize(), m_vPos.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 255, 255, 255);
+	//m_oWorld.GetCanvas().DrawRect(m_vPos.x * m_oWorld.GetGridSize(), m_vPos.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 255, 255, 255);
 	//m_oWorld.GetCanvas().DrawRect(m_vTarget.x * m_oWorld.GetGridSize(), m_vTarget.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 0, 255, 255);
 
-	m_oWorld.GetCanvas().GetGEngine()->SetPrintParameter(20, 20, m_oWorld.GetCanvas().GetPrintFont(), 12, LeftTop, Color(255, 255, 255));
-	m_oWorld.GetCanvas().GetGEngine()->Print("State : %d", m_eState);
-	m_oWorld.GetCanvas().GetGEngine()->Print("Dir : %s", s_sDirString[m_eDir]);
-	m_oWorld.GetCanvas().GetGEngine()->Print("Pos X : %8.3f (%8.3f)", m_fLocX, m_fLocX - (float)m_vPos.x * (float)m_oWorld.GetGridSize());
-	m_oWorld.GetCanvas().GetGEngine()->Print("Pos Y : %8.3f (%8.3f)", m_fLocY, m_fLocY - (float)m_vPos.y * (float)m_oWorld.GetGridSize());
+	//m_oWorld.GetCanvas().GetGEngine()->SetPrintParameter(20, 20, m_oWorld.GetCanvas().GetPrintFont(), 12, LeftTop, Color(255, 255, 255));
+	//m_oWorld.GetCanvas().GetGEngine()->Print("State : %d", m_eState);
+	//m_oWorld.GetCanvas().GetGEngine()->Print("Dir : %s", s_sDirString[m_eDir]);
+	//m_oWorld.GetCanvas().GetGEngine()->Print("Pos X : %8.3f (%8.3f)", m_fLocX, m_fLocX - (float)m_vPos.x * (float)m_oWorld.GetGridSize());
+	//m_oWorld.GetCanvas().GetGEngine()->Print("Pos Y : %8.3f (%8.3f)", m_fLocY, m_fLocY - (float)m_vPos.y * (float)m_oWorld.GetGridSize());
 
 
 }

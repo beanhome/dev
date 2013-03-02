@@ -16,12 +16,18 @@
 #include "Action\IBActionDef.h"
 #include "World\IBPath.h"
 #include "BLApp.h"
+#include "Graph\IBGFact.h"
+#include "Graph\IBGAction.h"
+#include "Graph\IBGFactBox.h"
+#include "Graph\IBGActionBox.h"
 
 
 BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesname)
 	: m_oBLApp(oBLApp)
 	, m_oCanva(canva)
 	, m_iGrid(0)
+	, m_iStartDragX(0)
+	, m_iStartDragY(0)
 {
 	m_pTiles = new BLTiles(*canva.GetGEngine(), tilesname);
 	m_iGrid = m_pTiles->GetTilesWidth();
@@ -39,7 +45,9 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	CenterMap((int)m_pBot->GetLocX(), (int)m_pBot->GetLocY());
 
 	m_pMap->RandomFullGroundLoc(i, j);
-	m_pProp = new BLProp_SI(*this, "Mine", DATA_DIR "/Test/Mine.png", Vector2(i,j));
+	new BLProp_SI(*this, "Mine 1", DATA_DIR "/Test/Mine.png", Vector2(i,j));
+	m_pMap->RandomFullGroundLoc(i, j);
+	new BLProp_SI(*this, "Mine 2", DATA_DIR "/Test/Mine.png", Vector2(i,j));
 
 	//BLDoor* pDoor = new BLDoor(*this, "Door", BLDoor::Verti, Vector2(3, 6));
 	//pDoor->Close();
@@ -53,7 +61,6 @@ BLWorld::~BLWorld()
 	delete m_pTiles;
 	delete m_pMap;
 	delete m_pBot;
-	delete m_pProp;
 }
 
 bool BLWorld::GetMouseCase(const BLSquare** pSquare, int& i, int& j)
@@ -92,19 +99,35 @@ void BLWorld::CenterMap(int x, int y)
 	m_oCanva.SetOrigY(Clamp<int>(y - (m_oCanva.GetHeight() / 2), 0, (GetHeight() * GetGridSize() - m_oCanva.GetHeight())));
 }
 
+void BLWorld::StartDrag()
+{
+	m_iStartDragX = m_oCanva.GetGEngine()->GetMouseX() + m_oCanva.GetOrigX();
+	m_iStartDragY = m_oCanva.GetGEngine()->GetMouseY() + m_oCanva.GetOrigY();
+}
+
+void BLWorld::UpdateDrag()
+{
+	sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_oCanva.GetGEngine()->GetMouseX(), 0, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_oCanva.GetWidth(), 0));
+	sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_oCanva.GetGEngine()->GetMouseY(), 0, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_oCanva.GetHeight(), 0));
+	m_oCanva.SetOrigX(x);
+	m_oCanva.SetOrigY(y);
+}
+
+void BLWorld::StopDrag()
+{
+
+}
+
+
 
 
 void BLWorld::Update(float dt)
 {
 	m_pBot->Update(dt);
 
-	float x, y;
-	m_pBot->GetLoc(x, y);
-
-	//x = (x + (float)m_pProp->GetPos().x * (float)GetGridSize()) / 2.f;
-	//y = (y + (float)m_pProp->GetPos().y * (float)GetGridSize()) / 2.f;
-
-	CenterMap((int)x, (int)y);
+	//float x, y;
+	//m_pBot->GetLoc(x, y);
+	//CenterMap((int)x, (int)y);
 }
 
 
@@ -125,19 +148,40 @@ void BLWorld::DrawDebug() const
 
 	for (const IBFact* fact = FactVisitor.Begin() ; fact != NULL ; fact = FactVisitor.Next())
 	{
-		//m_oCanva.GetGEngine()->Print("Fact %s", fact->GetFactDef()->GetName().c_str());
+		const IBGFact* pFact = static_cast<const IBGFact*>(fact);
 
-		if (fact->GetCauseAction() != NULL && fact->GetCauseAction()->GetDef()->GetName() == "FollowPath")
+		if (pFact->GetFactBox()->GetCanvas().IsMouseInside())
 		{
-			IBPath* pPath = static_cast<IBPath*>(fact->GetCauseAction()->FindVariables("Path"));
-			if (pPath != NULL)
-				DrawDebugPath(*pPath);
-
-			IBVector2* pPos = static_cast<IBVector2*>(fact->GetCauseAction()->FindVariables("Target"));
-			if (pPos != NULL)
-				DrawDebugPos(*pPos);
+			for (uint i=0 ; i<pFact->GetVariables().size() ; ++i)
+			{
+				IBObject* pObj = pFact->GetVariable(i);
+				DrawDebugObject(pObj);
+			}
+		}
+		else if (pFact->GetCauseAction() != NULL)
+		{
+			IBGAction* pAction = static_cast<IBGAction*>(pFact->GetCauseAction());
+			if (pAction->GetActionBox()->GetCanvas().IsMouseInside())
+			{
+				for (IBAction::VarMap::const_iterator it = pAction->GetVariables().begin() ; it != pAction->GetVariables().end() ; ++it)
+				{
+					IBObject* pObj = it->second;
+					DrawDebugObject(pObj);
+				}
+			}
 		}
 	}
+}
+
+void BLWorld::DrawDebugObject(IBObject* pObj) const
+{
+	IBPath* pPath = dynamic_cast<IBPath*>(pObj);
+	if (pPath != NULL)
+		DrawDebugPath(*pPath);
+
+	IBVector2* pPos = dynamic_cast<IBVector2*>(pObj);
+	if (pPos != NULL)
+		DrawDebugPos(*pPos);
 }
 
 void BLWorld::DrawDebugPath(const IBPath& oPath) const

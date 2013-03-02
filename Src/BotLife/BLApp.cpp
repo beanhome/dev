@@ -7,6 +7,7 @@
 #include "InputEvent.h"
 #include "Graph\IBGPlanner.h"
 #include "Graph\IBGFact.h"
+#include "Graph\IBGFactBox.h"
 
 BLApp::BLApp(int w, int h, float r, int sx, int sy, const char* tilesname)
 	: GApp(w, h)
@@ -69,7 +70,7 @@ void BLApp::UpdateUserInterface()
 
 					if (m_pGoalMenu->IsVisible())
 					{
-						m_pGoalMenu->SetPos(m_pEngine->GetMouseX(), m_pEngine->GetMouseY());
+						m_pGoalMenu->UpdatePos();
 					}
 				}
 			}
@@ -87,7 +88,7 @@ void BLApp::UpdateUserInterface()
 			for (FactSet::const_iterator it = oGoals.begin() ; it != oGoals.end() ; ++it)
 			{
 				IBGFact* pFact = static_cast<IBGFact*>(*it);
-				if (pFact->GetCanvas().IsMouseInside())
+				if (pFact->GetFactBox()->GetCanvas().IsMouseInside())
 				{
 					pFact->PrepareToDelete();
 					break;
@@ -96,6 +97,15 @@ void BLApp::UpdateUserInterface()
 		}
 
 		SetPause(m_pGoalMenu->IsVisible());
+	}
+
+	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
+	{
+		m_pWorld->StartDrag();
+	}
+	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
+	{
+		m_pWorld->UpdateDrag();
 	}
 
 	if (m_pGoalMenu->IsVisible())

@@ -54,7 +54,7 @@ bool IBActionDef_DropObject::Start(IBAction* pAction)
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
 
-	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), *pPos);
+	BLBot::BotDir eDir = (pBot->GetWorld().GetGrid().Distance(pBot->GetPos(), *pPos) > 0 ? pBot->ComputeDir(pBot->GetPos(), *pPos) : pBot->GetDir()) ;
 
 	pBot->SetState(BLBot::Action, eDir, 1.f);
 	return true;

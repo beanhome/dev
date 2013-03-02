@@ -16,6 +16,7 @@ class BLTiles;
 class BLMap;
 class BLApp;
 
+class IBObject;
 class IBPath;
 class IBVector2;
 
@@ -50,8 +51,13 @@ class BLWorld
 		void Update(float dt);
 		void Draw() const;
 		void DrawDebug() const;
+		void DrawDebugObject(IBObject* pObj) const;
 		void DrawDebugPath(const IBPath& oPath) const;
 		void DrawDebugPos(const IBVector2& oPos) const;
+
+		void StartDrag();
+		void UpdateDrag();
+		void StopDrag();
 
 	private:
 		BLApp& m_oBLApp;
@@ -64,9 +70,10 @@ class BLWorld
 		//uint m_iWidth;
 		//uint m_iHeight;
 
-		BLBot* m_pBot;
+		int m_iStartDragX;
+		int m_iStartDragY;
 
-		BLProp* m_pProp;
+		BLBot* m_pBot;
 };
 
 #endif

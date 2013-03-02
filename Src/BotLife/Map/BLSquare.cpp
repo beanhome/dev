@@ -48,6 +48,13 @@ BLSquare::BLSquare()
 {
 }
 
+BLSquare::~BLSquare()
+{
+	if (m_pProp != NULL)
+		delete m_pProp;
+}
+
+
 void BLSquare::SetProp(BLProp* pProp)
 {
 	m_pProp = pProp;

@@ -23,7 +23,7 @@ class BLGoalMenu
 
 		void ConstructFromCase(const BLSquare& pSquare, int I, int J);
 
-		void SetPos(sint32 x, sint32 y);
+		void UpdatePos();
 
 		void Update();
 		void Click();

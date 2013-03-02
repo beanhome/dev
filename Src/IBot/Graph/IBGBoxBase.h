@@ -32,6 +32,7 @@ class IBGBoxBase
 		sint16 GetMidW() const { return GetX() + GetW()/2; }
 		sint16 GetMidH() const { return GetY() + GetH()/2; }
 
+		const CanvasBase& GetCanvas() const { return m_oCanvas; }
 		CanvasBase& GetCanvas() { return m_oCanvas; }
 		
 		/*
