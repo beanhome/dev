@@ -21,12 +21,12 @@ class BLGoalMenu
 
 		const vector<IBGoal>& GetGoals() const { return m_aGoals; }
 
-		void ConstructFromCase(const BLSquare& pSquare, int I, int J);
+		void ConstructFromCase(const BLSquare* pSquare, const BLSquare* pSelectSquare);
 
 		void UpdatePos();
 
 		void Update();
-		void Click();
+		bool Click();
 
 		void Draw() const;
 

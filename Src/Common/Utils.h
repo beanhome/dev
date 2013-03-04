@@ -70,4 +70,6 @@ T Clamp(const T& x, const T& _min, const T& _max)
 	return std::min<T>(std::max<T>(_min, x), _max);
 }
 
+float Lerp(float a, float b, float t);
+
 #endif

@@ -43,7 +43,15 @@ const bool BLSquare::s_bIsFullGround[TilesType_MAX] =
 
 
 BLSquare::BLSquare()
-	: m_eTilesType(TilesType_MAX)
+	: m_vPos("xy")
+	, m_eTilesType(TilesType_MAX)
+	, m_pProp(NULL)
+{
+}
+
+BLSquare::BLSquare(const Vector2& pos)
+	: m_vPos("xy", pos)
+	, m_eTilesType(TilesType_MAX)
 	, m_pProp(NULL)
 {
 }
@@ -63,7 +71,7 @@ void BLSquare::SetProp(BLProp* pProp)
 
 bool BLSquare::IsBlock() const
 {
-	return s_bIsBloc[m_eTilesType];
+	return (s_bIsBloc[m_eTilesType] || (m_pProp != NULL && m_pProp->IsBlock()));
 }
 
 bool BLSquare::IsTempBlock() const

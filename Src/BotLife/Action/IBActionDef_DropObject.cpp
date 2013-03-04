@@ -33,14 +33,15 @@ void IBActionDef_DropObject::Define()
 bool IBActionDef_DropObject::Init(IBAction* pAction)
 {
 	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
-	ASSERT(pObj != NULL);
 	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
-	ASSERT(pDist == NULL);
 
-	pDist = new IBInt("NearDist", 1);
-	pAction->SetVariable("Dist", pDist);
+	if (pDist == NULL)
+	{
+		pDist = new IBInt("NearDist", 1);
+		pAction->SetVariable("Dist", pDist);
+	}
 
-	return true;
+	return (pObj != NULL && pDist != NULL);
 }
 
 bool IBActionDef_DropObject::Start(IBAction* pAction)

@@ -73,9 +73,10 @@ class IBAction
 		void					AffectPreCondVariable(const string& name, IBObject* data);
 		void					AffectPostCondVariable(const string& name, IBObject* data);
 
-		void					ResolvePreCondVariable();
-		void					ResolvePostCondVariable();
-		void					ResolveVariable();
+		void					SpreadPreCondVariable();
+		void					SpreadPostCondVariable();
+		void					SpreadVariable();
+		void					ResolvePreCond();
 
 		State					Resolve(IBPlanner* pPlanner);
 		float					Valuate();
@@ -85,7 +86,6 @@ class IBAction
 		bool					IsMarkToDelete() const { return m_bToDelete; }
 
 		int						GetExecCounter() const { return m_iExecCount; }
-
 		//friend class IBFactIterator;
 		/*
 		IBFactIterator			BeginFactIterator() const;

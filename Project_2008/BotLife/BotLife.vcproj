@@ -259,6 +259,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_PushProp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Action\IBActionDef_PushProp.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.cpp"
 					>
 				</File>
@@ -344,6 +352,22 @@
 				</File>
 				<File
 					RelativePath="..\..\Src\BotLife\World\BLDoor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLHeavyProp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLHeavyProp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLLightProp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\World\BLLightProp.h"
 					>
 				</File>
 				<File

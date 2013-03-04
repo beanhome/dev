@@ -39,7 +39,7 @@ class BLWorld
 		const BLGrid& GetGrid() const { return m_pMap->GetGrid(); }
 		BLGrid& GetGrid() { return m_pMap->GetGrid(); }
 
-		bool GetMouseCase(const BLSquare** pSquare, int& i, int& j);
+		const BLSquare* GetMouseCase();
 
 		bool TestPath(const Path& oPath) const;
 

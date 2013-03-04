@@ -16,7 +16,7 @@ class IBGAction : public IBAction, public IBGBoxBase
 		IBGAction(IBActionDef* pDef, IBFact* pPostCond1);
 		~IBGAction();
 
-		IBGActionBox*	GetActionBox() { return m_pActionBox; }
+		const IBGActionBox*	GetActionBox() const { return m_pActionBox; }
 
 		virtual void	Resize();
 		virtual void	Draw() const;

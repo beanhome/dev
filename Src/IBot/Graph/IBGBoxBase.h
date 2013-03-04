@@ -32,6 +32,9 @@ class IBGBoxBase
 		sint16 GetMidW() const { return GetX() + GetW()/2; }
 		sint16 GetMidH() const { return GetY() + GetH()/2; }
 
+		sint16 GetScreenX() const { return m_oCanvas.GetScreenPosX(); }
+		sint16 GetScreenY() const { return m_oCanvas.GetScreenPosY(); }
+
 		const CanvasBase& GetCanvas() const { return m_oCanvas; }
 		CanvasBase& GetCanvas() { return m_oCanvas; }
 		

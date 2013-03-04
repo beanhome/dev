@@ -10,10 +10,17 @@
 IBFactDef_PosIsFree::IBFactDef_PosIsFree(const string& name, IBPlanner* pPlanner)
 	: IBFactDef(name, 1, pPlanner)
 {
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	const BLWorld& oWorld = pBot->GetWorld();
+	pNav = new NavDijkstra<BLSquare>(oWorld.GetGrid());
+
 }
 
 IBFactDef_PosIsFree::~IBFactDef_PosIsFree()
 {
+	delete pNav;
 }
 
 IBF_Result IBFactDef_PosIsFree::Test(const vector<IBObject*>& aUserData)
@@ -30,7 +37,7 @@ IBF_Result IBFactDef_PosIsFree::Test(const vector<IBObject*>& aUserData)
 
 	BLSquare& sq = pBot->GetWorld().GetGrid().GetCase(*pPos);
 
-	return ((sq.IsBlock() || sq.IsTempBlock()) ? IBF_FAIL : IBF_OK);
+	return ((sq.IsFree()) ? IBF_OK : IBF_FAIL);
 }
 
 void IBFactDef_PosIsFree::ResolveVariable(vector<IBObject*>& aUserData)
@@ -42,19 +49,14 @@ void IBFactDef_PosIsFree::ResolveVariable(vector<IBObject*>& aUserData)
 
 	if (pPos == NULL)
 	{
+		pPos = new IBVector2("free", 0, 0, true);
 		BLBot* pBot = static_cast<BLBot*>(pOwner);
-		const BLWorld& oWorld = pBot->GetWorld();
-		NavDijkstra<BLSquare>* pNav = new NavDijkstra<BLSquare>(oWorld.GetGrid());
 
 		Path oPath;
 		Cond_Free oCondFree;
 		pNav->FindPath(pBot->GetPos(), oCondFree, oPath);
-
-		// TODO : Fix delete
-		pPos = new IBVector2("free", oPath.GetTarget(), true);
+		*pPos = oPath.GetTarget();
 		aUserData[0] = pPos;
-
-		delete pNav;
 	}
 }
 

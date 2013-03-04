@@ -15,12 +15,15 @@ class BLProp : public BLObject
 		virtual ~BLProp();
 
 		virtual void			SetPos(const Vector2& p);
+		void					SetLoc(float x, float y);
 
 		void					SetVisible(bool bVisible = true) { m_bVisible = bVisible; }
 
-		virtual bool			IsBlock() const { return false; }
+		bool					IsBlock() const { return m_bIsBlock; }
+		bool					IsPickable() const { return m_bIsPickable; }
+		bool					IsMovable() const { return m_bIsMovable; }
+
 		virtual bool			IsTempBlock() const { return false; }
-		virtual bool			IsPickable() const { return true; }
 
 		const ImageResource*	GetImageResource() const;
 		void					Draw() const;
@@ -31,6 +34,9 @@ class BLProp : public BLObject
 		BLWorld&				m_oWorld;
 		bool					m_bVisible;
 		Image*					m_pImage;
+		bool					m_bIsBlock;
+		bool					m_bIsPickable;
+		bool					m_bIsMovable;
 };
 
 #endif

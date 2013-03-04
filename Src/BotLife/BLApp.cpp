@@ -12,6 +12,7 @@
 BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
 	: GApp(w, h, rootpath)
 	, m_pGoalMenu(NULL)
+	, m_pSelectSquare(NULL)
 {
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
@@ -61,23 +62,45 @@ void BLApp::UpdateUserInterface()
 		{
 			if (!m_pGoalMenu->IsVisible())
 			{
-				const BLSquare* pSquare = NULL;
-				int i, j;
-				if (m_pWorld->GetMouseCase(&pSquare, i, j))
+				const BLSquare* pSquare = m_pWorld->GetMouseCase();
+				if (pSquare != NULL)
 				{
-					m_pGoalMenu->ConstructFromCase(*pSquare, i,j);
+					/*
+					if (m_pSelectSquare != NULL && pSquare != m_pSelectSquare && pSquare->GetPos() == m_pWorld->GetBot().GetPos())
+					{
+						const BLSquare* pTmp = pSquare;
+						pSquare = m_pSelectSquare;
+						m_pSelectSquare = pTmp;
+					}
+					*/
+
+					m_pGoalMenu->ConstructFromCase(pSquare, m_pSelectSquare);
 					m_pGoalMenu->SetVisible(m_pGoalMenu->GetGoals().size() > 0);
 
 					if (m_pGoalMenu->IsVisible())
 					{
 						m_pGoalMenu->UpdatePos();
 					}
+					else
+					{
+						if (pSquare->GetProp() != NULL || m_pWorld->GetBot().GetPos() == pSquare->GetPos())
+						{
+							m_pSelectSquare = (m_pSelectSquare == pSquare ? NULL : pSquare);
+						}
+						else
+						{
+							m_pSelectSquare = NULL;
+						}
+					}
 				}
 			}
 			else
 			{
-				m_pGoalMenu->Click();
+				if (m_pGoalMenu->Click())
+				{
+				}
 				m_pGoalMenu->SetVisible(false);
+				m_pSelectSquare = NULL;
 			}
 		}
 		else if (m_pGraphCanva->IsMouseInside())
@@ -118,6 +141,16 @@ void BLApp::UpdateUserInterface()
 int BLApp::Draw()
 {
 	m_pWorld->Draw();
+
+	int x = (m_pWorld->GetCanvas().GetMouseX() / m_pWorld->GetGridSize()) * m_pWorld->GetGridSize();
+	int y = (m_pWorld->GetCanvas().GetMouseY() / m_pWorld->GetGridSize()) * m_pWorld->GetGridSize();
+
+	m_pWorld->GetCanvas().DrawRect(x, y, m_pWorld->GetGridSize()-1, m_pWorld->GetGridSize()-1, 255, 255, 255);
+
+	if (m_pSelectSquare != NULL)
+	{
+		m_pWorld->GetCanvas().DrawRect(m_pSelectSquare->GetPos().x*m_pWorld->GetGridSize()-1, m_pSelectSquare->GetPos().y*m_pWorld->GetGridSize()-1, m_pWorld->GetGridSize(), m_pWorld->GetGridSize(), 0, 255, 0);
+	}
 
 	((IBGPlanner&)m_pWorld->GetBot().GetPlanner()).Draw();
 

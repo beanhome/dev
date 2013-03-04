@@ -7,6 +7,9 @@
 #include "Map/BLSquare.h"
 #include "Condition.h"
 
+template<typename T>
+class NavDijkstra;
+
 class IBFactDef_PosIsFree : public IBFactDef
 {
 	public:
@@ -20,6 +23,7 @@ class IBFactDef_PosIsFree : public IBFactDef
 		virtual void			Print(const vector<IBObject*>& aUserData, int tab) const;
 
 	private:
+		NavDijkstra<BLSquare>* pNav;
 };
 
 class Cond_Free : public Condition<BLSquare>
@@ -27,7 +31,7 @@ class Cond_Free : public Condition<BLSquare>
 	public :
 		virtual bool Test(const GridBase<BLSquare>& oGrid, const Vector2& loc) const
 		{
-			return (!oGrid.GetCase(loc).IsBlock() && !oGrid.GetCase(loc).IsTempBlock());
+			return (oGrid.GetCase(loc).IsFree());
 		}
 };
 

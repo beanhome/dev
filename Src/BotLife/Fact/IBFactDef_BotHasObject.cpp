@@ -24,7 +24,9 @@ IBF_Result IBFactDef_BotHasObject::Test(const vector<IBObject*>& aUserData)
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
 	BLProp* pObj = reinterpret_cast<BLProp*>(aUserData[0]);
-	ASSERT(pObj != NULL);
+	
+	if (pObj == NULL)
+		return IBF_UNKNOW;
 
 	return ((pBot->HasObject(pObj)) ? IBF_OK : IBF_FAIL);
 }

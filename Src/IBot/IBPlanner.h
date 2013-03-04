@@ -37,6 +37,8 @@ class IBPlanner
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 
 		int						Step();
+		const IBAction*			GetCurrentAction() const { return m_pCurrentAction; }
+		void					SetCurrentAction(const IBAction* pAction) { m_pCurrentAction = pAction; }
 
 		int						FindActionToResolve(IBFact* pFact);
 
@@ -54,6 +56,7 @@ class IBPlanner
 		set<IBFactDef*>			m_aGoalsDef;
 		
 	protected:
+		const IBAction*			m_pCurrentAction;
 		FactSet					m_aGoals;
 };
 

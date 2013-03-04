@@ -48,7 +48,7 @@ void IBFact::SetVariable(uint i, IBObject* pVar)
 		pVar->SetOwner(this);
 
 	if (m_pCauseAction != NULL)
-		m_pCauseAction->ResolvePostCondVariable();
+		m_pCauseAction->SpreadPostCondVariable();
 }
 
 void IBFact::PrepareToDelete()
@@ -67,6 +67,9 @@ bool IBFact::Resolve(IBPlanner* pPlanner)
 		m_pCauseAction->PrepareToDelete();
 		if (m_pCauseAction->IsReadyToDelete())
 		{
+			if (pPlanner->GetCurrentAction() == m_pCauseAction)
+				pPlanner->SetCurrentAction(NULL);
+
 			delete m_pCauseAction;
 			m_pCauseAction = NULL;
 		}
@@ -81,6 +84,10 @@ bool IBFact::Resolve(IBPlanner* pPlanner)
 	switch (res)
 	{
 		case IBF_OK:
+			if (m_pCauseAction != NULL)
+			{
+				m_pCauseAction->PrepareToDelete();
+			}
 			return true;
 			break;
 

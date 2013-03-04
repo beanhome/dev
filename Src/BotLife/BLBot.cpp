@@ -49,6 +49,7 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas)
 	, m_fStepTime(0.f)
 	, m_fStepDelay(0.1f)
 	, m_pCarryObject(NULL)
+	, m_pPushObject(NULL)
 {
 	m_pIdleImage = new ImageFlipBook(oWorld.GetCanvas(), ge.GetImageResource(DATA_DIR "/BotLife/peasant_idle.png"), 8, 1);
 	m_pIdleImage->SetCenter(16, 25);
@@ -136,7 +137,7 @@ void BLBot::DropObject(BLProp* pProp, const IBVector2& pos)
 }
 
 
-void BLBot::SetState(BotState state, BotDir dir, float delay)
+void BLBot::SetState(BotState state, BotDir dir, float delay, BLProp* pObj)
 {
 	if (m_eState == state)
 	{
@@ -151,6 +152,7 @@ void BLBot::SetState(BotState state, BotDir dir, float delay)
 	m_eState = state;
 	m_eDir = dir;
 	m_vTarget = m_vPos + s_vDirArray[dir];
+	m_pPushObject = pObj;
 }
 
 BLBot::BotDir BLBot::ComputeDir(const Vector2& Start, const Vector2& Target) const
@@ -186,6 +188,9 @@ void BLBot::Update(float dt)
 		float t = min(m_fStateTime / m_fStateDelay, 0.999999f);
 		float fGrid = (float)m_oWorld.GetGridSize();
 		float fSpeed = fGrid / m_fStateDelay;
+		float s = (float)m_oWorld.GetGridSize();
+		const Vector2& st = m_vTarget;
+		Vector2 tgt;
 
 		switch (m_eState)
 		{
@@ -195,10 +200,8 @@ void BLBot::Update(float dt)
 				break;
 
 			case Walk:
-				//LOG("Image : %f %d\n", t, (int)((float) m_pWalkImage->GetColCount() * t));
 				m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
-				//SetLoc(m_fLocX + s_fDirArrayX[m_eDir] * fSpeed * dt, m_fLocY + s_fDirArrayY[m_eDir] * fSpeed * dt);
-				SetLoc( (float)(m_oWorld.GetGridSize()/2 + m_vPos.x * (int)m_oWorld.GetGridSize()) + (float)((m_vTarget.x - m_vPos.x) * (int)m_oWorld.GetGridSize()) * t, (float)(m_oWorld.GetGridSize()/2 + m_vPos.y * (int)m_oWorld.GetGridSize()) + (float)((m_vTarget.y - m_vPos.y) * (int)m_oWorld.GetGridSize()) * t);
+				SetLoc(s/2 + s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), s/2 + s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
 				break;
 
 			case Action:
@@ -206,8 +209,16 @@ void BLBot::Update(float dt)
 				FixLoc();
 				break;
 
-			default:
-				assert(false);
+			case Push:
+				m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
+				SetLoc(s/2 + s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), s/2 + s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
+				tgt = st + s_vDirArray[GetDir()];
+				m_pPushObject->SetLoc((s/2 + s*Lerp((float)st.x, (float)tgt.x, t)), (s/2 + s*Lerp((float)st.y, (float)tgt.y, t)));
+				LOG("Push : %f\n", t);
+				break;
+
+		default:
+				ASSERT(false);
 		}
 	}
 
@@ -232,6 +243,7 @@ void BLBot::Draw() const
 			break;
 
 		case Walk:
+		case Push:
 			m_pWalkImage->Draw();
 			break;
 

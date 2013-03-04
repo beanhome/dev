@@ -11,6 +11,9 @@ BLProp::BLProp(BLWorld& oWorld, const string& name, const Vector2& pos)
 	, m_oWorld(oWorld)
 	, m_bVisible(true)
 	, m_pImage(NULL)
+	, m_bIsBlock(false)
+	, m_bIsPickable(false)
+	, m_bIsMovable(false)
 {
 	SetPos(pos);
 	m_oWorld.GetGrid().GetCase(pos).SetProp(this);
@@ -26,9 +29,15 @@ void BLProp::SetPos(const Vector2& p)
 {
 	BLObject::SetPos(p);
 
-	if (m_pImage != NULL)
-		m_pImage->SetPos(GetPos().x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2, GetPos().y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2);
+	SetLoc(GetPos().x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2, GetPos().y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2);
 }
+
+void BLProp::SetLoc(float x, float y)
+{
+	if (m_pImage != NULL)
+		m_pImage->SetPos(x, y);
+}
+
 
 
 const ImageResource* BLProp::GetImageResource() const

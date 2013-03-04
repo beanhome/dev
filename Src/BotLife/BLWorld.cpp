@@ -20,6 +20,8 @@
 #include "Graph\IBGAction.h"
 #include "Graph\IBGFactBox.h"
 #include "Graph\IBGActionBox.h"
+#include "World\BLLightProp.h"
+#include "World\BLHeavyProp.h"
 
 
 BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesname)
@@ -45,9 +47,11 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	CenterMap((int)m_pBot->GetLocX(), (int)m_pBot->GetLocY());
 
 	m_pMap->RandomFullGroundLoc(i, j);
-	new BLProp_SI(*this, "Mine 1", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
+	new BLLightProp(*this, "Mine 1", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
 	m_pMap->RandomFullGroundLoc(i, j);
-	new BLProp_SI(*this, "Mine 2", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
+	new BLLightProp(*this, "Mine 2", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
+	m_pMap->RandomFullGroundLoc(i, j);
+	new BLHeavyProp(*this, "Box", DATA_DIR "/BotLife/Box.png", Vector2(i,j));
 
 	//BLDoor* pDoor = new BLDoor(*this, "Door", BLDoor::Verti, Vector2(3, 6));
 	//pDoor->Close();
@@ -58,26 +62,23 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 
 BLWorld::~BLWorld()
 {
-	delete m_pTiles;
-	delete m_pMap;
 	delete m_pBot;
+	delete m_pMap;
+	delete m_pTiles;
 }
 
-bool BLWorld::GetMouseCase(const BLSquare** pSquare, int& i, int& j)
+const BLSquare* BLWorld::GetMouseCase()
 {
-	//i = m_oCanva.GetMouseX();
-	//j = m_oCanva.GetMouseY();
-	i = (m_oCanva.GetMouseX()/* + m_oCanva.GetOrigX()*/) / m_iGrid;
-	j = (m_oCanva.GetMouseY()/* + m_oCanva.GetOrigY()*/) / m_iGrid;
+	int i = (m_oCanva.GetMouseX()/* + m_oCanva.GetOrigX()*/) / m_iGrid;
+	int j = (m_oCanva.GetMouseY()/* + m_oCanva.GetOrigY()*/) / m_iGrid;
 
 	if (m_oCanva.GetMouseX() < m_oCanva.GetOrigX() || m_oCanva.GetMouseX()-m_oCanva.GetOrigX() > m_oCanva.GetWidth() || m_oCanva.GetMouseY()-m_oCanva.GetOrigY() > m_oCanva.GetHeight())
-		return false;
+		return NULL;
 
 	if (i<0 || i>= (int)m_pMap->GetWidth() || j<0 || j>= (int)m_pMap->GetHeight())
-		return false;
+		return NULL;
 	
-	*pSquare = &m_pMap->GetGrid().GetCase(i, j);
-	return true;
+	return &m_pMap->GetGrid().GetCase(i, j);
 }
 
 bool BLWorld::TestPath(const Path& oPath) const

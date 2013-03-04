@@ -96,7 +96,7 @@ IBAction* IBActionDef::Instanciate(IBFact* pPostCond1)
 	}
 
 	// Resolve unfilled pre cond variable
-	pAction->ResolvePreCondVariable();
+	pAction->SpreadPreCondVariable();
 
 	return pAction;
 }

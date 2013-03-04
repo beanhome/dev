@@ -65,4 +65,22 @@ void IBFactDef_ObjectAtPos::Print(const vector<IBObject*>& aUserData, int tab) c
 	LOG("%s (%s, %s)\n", GetName().c_str(), (pProp != NULL ? pProp->GetData().c_str() : "nil"), (pPos != NULL ? pPos->GetData().c_str() : "nil"));
 }
 
+IBFactDef_HeavyObjectAtPos::IBFactDef_HeavyObjectAtPos(const string& name, IBPlanner* pPlanner)
+	: IBFactDef_ObjectAtPos(name, pPlanner)
+{
+}
 
+
+
+IBF_Result IBFactDef_HeavyObjectAtPos::Test(const vector<IBObject*>& aUserData)
+{
+	IBF_Result res = IBFactDef_ObjectAtPos::Test(aUserData);
+
+	if (res == IBF_OK)
+	{
+		BLProp* pProp = ((BLProp*)aUserData[0]);
+		return (pProp->IsMovable() ? IBF_OK : IBF_FAIL);
+	}
+
+	return res;
+}

@@ -10,6 +10,7 @@ class Canvas;
 class BLWorld;
 class IBPlannerDisplay;
 class BLGoalMenu;
+class BLSquare;
 
 class BLApp : public GApp<GEngine_SDL>
 {
@@ -32,6 +33,7 @@ class BLApp : public GApp<GEngine_SDL>
 		BLWorld* m_pWorld;
 
 		BLGoalMenu* m_pGoalMenu;
+		const BLSquare* m_pSelectSquare;
 };
 
 #endif // __GAPP_H__

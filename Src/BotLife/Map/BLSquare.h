@@ -3,6 +3,7 @@
 
 #include "Utils.h"
 #include "GridBase.h"
+#include "World\IBVector2.h"
 
 class Canvas;
 class CanvasBase;
@@ -35,7 +36,12 @@ class BLSquare
 {
 	public:
 		BLSquare();
+		BLSquare(const Vector2& pos);
 		virtual ~BLSquare();
+
+		const IBVector2& GetPos() const { return m_vPos; }
+		void SetPos(const Vector2& pos) { m_vPos = pos; }
+		void SetPos(int i, int j) { m_vPos.x = i; m_vPos.y = j; }
 
 		TilesType GetTilesType() const { return m_eTilesType; }
 		void SetTilesType(TilesType type) { m_eTilesType = type;}
@@ -46,11 +52,12 @@ class BLSquare
 		void SetProp(BLProp* pProp);
 		const BLProp* GetProp() const { return m_pProp; }
 
-		bool IsFree() const { return (!IsBlock() && !IsTempBlock()); }
+		bool IsFree() const { return (!IsBlock() && !IsTempBlock() && m_pProp==NULL); }
 		virtual bool IsBlock() const;
 		virtual bool IsTempBlock() const;
 
 	private:
+		IBVector2	m_vPos;
 		TilesType	m_eTilesType;
 		int			m_TilesId;
 		BLProp*		m_pProp;

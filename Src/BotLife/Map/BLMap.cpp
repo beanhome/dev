@@ -124,6 +124,14 @@ BLMap::BLMap(uint w, uint h, const BLTiles& oTiles)
 	m_oTypeMapTmp.Init(m_iWidth+1, m_iHeight+1);
 	m_oTilesMap.Init(m_iWidth, m_iHeight);
 
+	for (uint i=0 ; i<m_oTilesMap.GetWidth() ; ++i)
+	{
+		for (uint j=0 ; j<m_oTilesMap.GetHeight() ; ++j)
+		{
+			m_oTilesMap[i][j].SetPos(i, j);
+		}
+	}
+
 	for (uint i=1 ; i<CaseType_MAX ; ++i)
 	{
 		s_fRep[i] += s_fRep[i-1];
@@ -389,6 +397,13 @@ void BLMap::Display(const CanvasBase& Canvas) const
 			const BLSquare& sq = m_oTilesMap.GetCase(i, j);
 
 			m_oTiles.DrawTile(Canvas, sq.GetTilesId() , x, y, w, h);
+		}
+	}
+	for (uint i=0 ; i<m_oTilesMap.GetWidth() ; ++i)
+	{
+		for (uint j=0 ; j<m_oTilesMap.GetHeight() ; ++j)
+		{
+			const BLSquare& sq = m_oTilesMap.GetCase(i, j);
 			if (sq.GetProp() != NULL)
 				sq.GetProp()->Draw();
 			//Canvas.DrawFillRect(i*32, j*32, 32, 32, s_oColor[m_oMap.GetCase(i, j)]);

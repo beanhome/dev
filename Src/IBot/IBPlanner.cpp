@@ -13,6 +13,7 @@
 
 IBPlanner::IBPlanner(void* pOwner)
 	: m_pOwner(pOwner)
+	, m_pCurrentAction(NULL)
 {
 	REGISTER_FACT(IBFactDef_True);
 	REGISTER_FACT(IBFactDef_False);
@@ -146,6 +147,7 @@ int IBPlanner::Step()
 
 	m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
 
+	m_pCurrentAction = NULL;
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBFact* pFact = *it;

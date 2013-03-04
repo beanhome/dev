@@ -20,4 +20,12 @@ class IBFactDef_ObjectAtPos : public IBFactDef
 	private:
 };
 
+class IBFactDef_HeavyObjectAtPos : public IBFactDef_ObjectAtPos
+{
+	public:
+		IBFactDef_HeavyObjectAtPos(const string& name, IBPlanner* pPlanner);
+		virtual IBF_Result		Test(const vector<IBObject*>& aUserData);
+};
+
+
 #endif

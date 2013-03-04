@@ -25,6 +25,7 @@ class BLBot : public IBObject
 			Idle,
 			Walk,
 			Action,
+			Push,
 		};
 
 		enum BotDir
@@ -57,7 +58,7 @@ class BLBot : public IBObject
 		//uint					GetWidth() const { return m_iWidth; }
 		//uint					GetHeight() const { return m_iHeight; }
 					
-		void					SetState(BotState state, BotDir dir=Down, float delay=-1.f);
+		void					SetState(BotState state, BotDir dir=Down, float delay=-1.f, BLProp* pObj=NULL);
 		BotState				GetState() const { return m_eState; }
 		bool					HasFinishState() const { return m_fStateTime > m_fStateDelay; }
 					
@@ -114,6 +115,7 @@ class BLBot : public IBObject
 		IBPlanner*				m_pPlanner;
 
 		BLProp*					m_pCarryObject;
+		BLProp*					m_pPushObject;
 
 	private:
 		static const char*		s_sDirString[8];

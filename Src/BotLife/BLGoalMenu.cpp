@@ -26,39 +26,56 @@ BLGoalMenu::~BLGoalMenu()
 }
 
 
-void BLGoalMenu::ConstructFromCase(const BLSquare& oSquare, int I, int J)
+void BLGoalMenu::ConstructFromCase(const BLSquare* pSquare, const BLSquare* pSelectSquare)
 {
 	m_aGoals.clear();
 
-	m_iI = I;
-	m_iJ = J;
+	m_iI = pSquare->GetPos().x;
+	m_iJ = pSquare->GetPos().y;
 
-	if (!oSquare.IsBlock())
+	if (pSelectSquare != NULL && pSelectSquare->GetPos() == m_oBot.GetPos())
 	{
-		IBVector2* pos = new IBVector2("tgt", m_iI, m_iJ, true);
-		IBInt* dist = new IBInt("CloseDist", 0, true);
-		m_aGoals.push_back(IBGoal("IBFactDef_BotNearPos", pos, dist));
+		if (pSquare->IsFree())
+		{
+			//IBVector2* pos = new IBVector2("tgt", m_iI, m_iJ, true);
+			IBInt* dist = new IBInt("CloseDist", 0, true);
+			m_aGoals.push_back(IBGoal("IBFactDef_BotNearPos", (IBObject*)&pSquare->GetPos(), dist));
+		}
+
+		if (pSquare->GetProp() != NULL && pSquare->IsTempBlock())
+		{
+			m_aGoals.push_back(IBGoal("IBFactDef_PropIsUnblock", (IBObject*)pSquare->GetProp()));
+		}
+
+		if (pSquare->GetProp() != NULL && pSquare->GetProp()->IsPickable())
+		{
+			m_aGoals.push_back(IBGoal("IBFactDef_BotHasObject", (IBObject*)pSquare->GetProp()));
+		}
+
+		if (pSquare->IsFree() && m_oBot.GetFirstObject() != NULL)
+		{
+			m_aGoals.push_back(IBGoal("IBFactDef_ObjectAtPos", m_oBot.GetFirstObject(), (IBObject*)&pSquare->GetPos()));
+		}
+
+		if (pSelectSquare == pSquare && m_oBot.GetFirstObject() != NULL)
+		{
+			m_aGoals.push_back(IBGoal("IBFactDef_BotIsEmpty"));
+		}
 	}
 
-	if (oSquare.GetProp() != NULL && oSquare.IsTempBlock())
+	if (pSelectSquare != NULL && pSelectSquare == pSquare && pSquare->GetProp() != NULL && pSquare->GetProp()->IsPickable())
 	{
-		m_aGoals.push_back(IBGoal("IBFactDef_PropIsUnblock", (IBObject*)oSquare.GetProp()));
+		m_aGoals.push_back(IBGoal("IBFactDef_BotHasObject", (IBObject*)pSquare->GetProp()));
 	}
 
-	if (oSquare.GetProp() != NULL && oSquare.GetProp()->IsPickable())
+	if (pSelectSquare != NULL && pSelectSquare->GetProp() != NULL && pSelectSquare->GetProp()->IsMovable() && pSquare->IsFree())
 	{
-		m_aGoals.push_back(IBGoal("IBFactDef_BotHasObject", (IBObject*)oSquare.GetProp()));
+		m_aGoals.push_back(IBGoal("IBFactDef_HeavyObjectAtPos", (IBObject*)pSelectSquare->GetProp(), (IBObject*)&pSquare->GetPos()));
 	}
 
-	if (oSquare.GetProp() == NULL && m_oBot.GetFirstObject() != NULL)
+	if (pSelectSquare != NULL && pSelectSquare->GetProp() != NULL && pSelectSquare->GetProp()->IsPickable() && pSquare->IsFree())
 	{
-		IBVector2* pPos = new IBVector2("drop pos", m_iI, m_iJ, true);
-		m_aGoals.push_back(IBGoal("IBFactDef_ObjectAtPos", m_oBot.GetFirstObject(), pPos));
-	}
-
-	if (m_oBot.GetPos() == Vector2(m_iI, m_iJ) && m_oBot.GetFirstObject() != NULL)
-	{
-		m_aGoals.push_back(IBGoal("IBFactDef_BotIsEmpty"));
+		m_aGoals.push_back(IBGoal("IBFactDef_ObjectAtPos", (IBObject*)pSelectSquare->GetProp(), (IBObject*)&pSquare->GetPos()));
 	}
 }
 
@@ -91,15 +108,20 @@ void BLGoalMenu::UpdatePos()
 	m_oCanva.SetHeight(height);
 }
 
-void BLGoalMenu::Click()
+bool BLGoalMenu::Click()
 {
 	if (m_oCanva.IsMouseInside())
 	{
 		int i = m_oCanva.GetMouseY() / s_iYL;
 
 		if (i>=0 && i<(int)m_aGoals.size())
+		{
 			m_oBot.AddGoal(m_aGoals[i]);
+			return true;
+		}
 	}
+
+	return false;
 }
 
 

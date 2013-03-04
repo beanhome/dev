@@ -26,6 +26,14 @@ Vector2& Vector2::operator=(const Vector2& v)
 	return *this;
 }
 
+Vector2& Vector2::operator+=(const Vector2& v)
+{
+	x += v.x;
+	y += v.y;
+
+	return *this;
+}
+
 
 bool operator==(const Vector2& a, const Vector2& b)
 {

@@ -14,6 +14,7 @@
 #include "Action\IBActionDef_PickObject.h"
 #include "Action\IBActionDef_UnblockProp.h"
 #include "Action\IBActionDef_DropObject.h"
+#include "Action\IBActionDef_PushProp.h"
 
 
 IBPlanner_BL::IBPlanner_BL(void* pOwner, CanvasBase& canvas)
@@ -23,6 +24,7 @@ IBPlanner_BL::IBPlanner_BL(void* pOwner, CanvasBase& canvas)
 	REGISTER_FACT(IBFactDef_BotNearPos);
 	REGISTER_FACT(IBFactDef_PosIsFree);
 	REGISTER_FACT(IBFactDef_ObjectAtPos);
+	REGISTER_FACT(IBFactDef_HeavyObjectAtPos);
 	REGISTER_FACT(IBFactDef_HasValidPath);
 	REGISTER_FACT(IBFactDef_BotHasObject);
 	REGISTER_FACT(IBFactDef_BotIsEmpty);
@@ -36,6 +38,7 @@ IBPlanner_BL::IBPlanner_BL(void* pOwner, CanvasBase& canvas)
 	REGISTER_ACTION(IBActionDef_PickObject);
 	REGISTER_ACTION(IBActionDef_DropObject);
 	REGISTER_ACTION(IBActionDef_UnblockProp);
+	REGISTER_ACTION(IBActionDef_PushProp);
 	REGISTER_ACTION_NAMED(IBActionDef_UnblockProp, "IBActionDef_OpenDoor");
 }
 

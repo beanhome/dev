@@ -49,6 +49,9 @@ bool IBActionDef_FindPath::Start(IBAction* pAction)
 	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	ASSERT(pDist != NULL);
 
+	if (oWorld.GetGrid().GetCase(*pTarget).IsBlock())
+		return false;
+
 	if (pAction->GetUserData() != NULL)
 		delete pAction->GetUserData();
 

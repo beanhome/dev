@@ -65,3 +65,8 @@ int Rand(int iMin, int iMax)
 {
 	return Rand(iMax-iMin) + iMin;
 }
+
+float Lerp(float a, float b, float t)
+{
+	return a + (b-a)*t;
+}
