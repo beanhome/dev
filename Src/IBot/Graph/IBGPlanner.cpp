@@ -7,6 +7,7 @@
 #include "Fact\IBFactDef.h"
 #include "IBGFact.h"
 #include "IBGAction.h"
+#include "..\..\Graphics\GEngine.h"
 
 const uint	IBGPlanner::s_iMargin = 12;
 const uint	IBGPlanner::s_iFactWidth = 92;
@@ -42,9 +43,14 @@ const Color	IBGPlanner::s_oBoxColor = Color(256, 128, 128);
 IBGPlanner::IBGPlanner(void* pOwner, CanvasBase& oGraphCanva)
 	: IBPlanner(pOwner)
 	, m_oCanvas(oGraphCanva)
+	, m_iMaxWidth(0)
+	, m_iMaxHeight(0)
+	, m_bDraging(false)
+	, m_iStartDragX(0)
+	, m_iStartDragY(0)
 {
-	IBGPlanner::s_iBoxWidth = IBGPlanner::s_iFactWidth + IBGPlanner::s_iLinkWidth + IBGPlanner::s_iActionWidth;
-	IBGPlanner::s_iBoxMinHeight = IBGPlanner::s_iActionMinHeight;
+	s_iBoxWidth = s_iFactWidth + s_iLinkWidth + s_iActionWidth;
+	s_iBoxMinHeight = s_iActionMinHeight;
 }
 
 IBGPlanner::~IBGPlanner()
@@ -66,65 +72,94 @@ void IBGPlanner::Draw()
 {
 	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
 	
-	int height = 0;
-	int width = 0;
-	int w = IBGPlanner::s_iFactWidth;
+	m_iMaxHeight = 0;
+	m_iMaxWidth = 0;
+	int w = s_iFactWidth;
 
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBGFact* pFact = static_cast<IBGFact*>(*it);
 		pFact->Resize();
-		height += pFact->GetH();
-		width = max(pFact->GetW(), width);
+		m_iMaxHeight += pFact->GetH();
+		m_iMaxWidth = max(pFact->GetW(), m_iMaxWidth);
 		w = max(pFact->GetFactBox()->GetW(), w);
 	}
 
-	width = max(width, (int)(m_oCanvas.GetWidth()-s_iMargin));
+	m_iMaxWidth = max(m_iMaxWidth + s_iMargin * 2, m_oCanvas.GetWidth());
+	m_iMaxHeight = max(m_iMaxHeight + s_iMargin * 2, m_oCanvas.GetHeight());
+
+	if (m_iMaxWidth <= m_oCanvas.GetWidth())
+		m_oCanvas.SetOrigX(0);
+
+	if (m_iMaxHeight <= m_oCanvas.GetHeight())
+		m_oCanvas.SetOrigY(0);
 
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBGFact* pFact = static_cast<IBGFact*>(*it);
-		pFact->SetW(width);
+		pFact->SetW(m_iMaxWidth - s_iMargin*2);
 	}
 
-	if (m_pCurrentAction != NULL)
+	/*
+	if (!IsDraging() && m_pCurrentAction != NULL)
 	{
 		const IBGAction* pAction = static_cast<const IBGAction*>(m_pCurrentAction);
 		int x = pAction->GetActionBox()->GetScreenX() + pAction->GetActionBox()->GetW()/2 - m_oCanvas.GetScreenPosX();
 		int y = pAction->GetActionBox()->GetScreenY() + pAction->GetActionBox()->GetH()/2 - m_oCanvas.GetScreenPosY();
-		m_oCanvas.SetOrigX(Clamp<int>(x - (m_oCanvas.GetWidth() / 2), 0, max(0, width-m_oCanvas.GetWidth())));
-		m_oCanvas.SetOrigY(Clamp<int>(y - (m_oCanvas.GetHeight() / 2), 0, max(0, height-m_oCanvas.GetHeight())));
+		m_oCanvas.SetOrigX(Clamp<int>(x - (m_oCanvas.GetWidth() / 2), 0, max(0, m_iMaxWidth-m_oCanvas.GetWidth())));
+		m_oCanvas.SetOrigY(Clamp<int>(y - (m_oCanvas.GetHeight() / 2), 0, max(0, m_iMaxHeight-m_oCanvas.GetHeight())));
 	}
+	*/
 
 	{
-		int x = width + IBGPlanner::s_iMargin/2;
-		w += IBGPlanner::s_iMargin;
-		x -= (w/2);
-		m_oCanvas.CanvasBase::DrawRect(x-w/2, IBGPlanner::s_iMargin, w, (height > m_oCanvas.GetHeight() ? m_oCanvas.GetHeight() : m_oCanvas.GetHeight()-IBGPlanner::s_iMargin*2), Color(255, 255, 0));
-		m_oCanvas.CanvasBase::Print(x, IBGPlanner::s_iMargin+10, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
+		w += s_iMargin;
+		int x = m_iMaxWidth - ((w+s_iMargin)/2);
+		m_oCanvas.CanvasBase::DrawRect(x-w/2, s_iMargin/2, w-1, m_iMaxHeight-s_iMargin-1, Color(255, 255, 0));
+		m_oCanvas.CanvasBase::Print(x, s_iMargin+10, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
 	}
 
 	{
 		int s = 0;
 		int y = 0;
 
-		if (height < m_oCanvas.GetHeight())
+		if (m_iMaxHeight < m_oCanvas.GetHeight())
 		{
-			s = (m_oCanvas.GetHeight() - height) / (m_aGoals.size() + 1);
+			s = (m_oCanvas.GetHeight() - m_iMaxHeight) / (m_aGoals.size() + 1);
 			y = m_oCanvas.GetPosY() + s;
 		}
 
-		y = max(y, m_oCanvas.GetPosY() + (sint16)IBGPlanner::s_iMargin);
-		s = max(s, (sint16)IBGPlanner::s_iMargin);
+		y = max(y, m_oCanvas.GetPosY() + (sint16)s_iMargin);
+		s = max(s, (sint16)s_iMargin);
 
 		for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 		{
 			IBGFact* pFact = static_cast<IBGFact*>(*it);
-			//pFact->SetX(std::max<sint16>(IBGPlanner::s_iMargin, m_oCanvas.GetWidth() - (pFact->GetW() + IBGPlanner::s_iMargin)));
-			pFact->SetX(0);
+			//pFact->SetX(std::max<sint16>(s_iMargin, m_oCanvas.GetWidth() - (pFact->GetW() + s_iMargin)));
+			pFact->SetX(s_iMargin);
 			pFact->SetY(y);
 			pFact->Draw();
 			y += pFact->GetH() + s;
 		}
 	}
 }
+
+void IBGPlanner::StartDrag()
+{
+	m_bDraging = true;
+	m_iStartDragX = m_oCanvas.GetGEngine()->GetMouseX() + m_oCanvas.GetOrigX();
+	m_iStartDragY = m_oCanvas.GetGEngine()->GetMouseY() + m_oCanvas.GetOrigY();
+}
+
+void IBGPlanner::UpdateDrag()
+{
+	sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_oCanvas.GetGEngine()->GetMouseX(), 0, std::max<sint16>(m_iMaxWidth - m_oCanvas.GetWidth(), 0));
+	sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_oCanvas.GetGEngine()->GetMouseY(), 0, std::max<sint16>(m_iMaxHeight - m_oCanvas.GetHeight(), 0));
+	m_oCanvas.SetOrigX(x);
+	m_oCanvas.SetOrigY(y);
+}
+
+void IBGPlanner::StopDrag()
+{
+	m_bDraging = false;
+}
+

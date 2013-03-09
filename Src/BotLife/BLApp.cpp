@@ -23,7 +23,7 @@ BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const 
 
 	m_pGoalMenu = new BLGoalMenu(*m_pEngine, m_pWorld->GetBot());
 
-	m_bPause = true;
+	//m_bPause = true;
 	//m_fSlomo = 0.333f;
 }
 
@@ -41,7 +41,7 @@ BLApp::~BLApp()
 int BLApp::Update(float dt)
 {
 	m_pWorld->Update(dt);
-	m_pGoalMenu->SetVisible(false);
+	//m_pGoalMenu->SetVisible(false);
 	UpdateUserInterface();
 
 	return 0;
@@ -96,9 +96,7 @@ void BLApp::UpdateUserInterface()
 			}
 			else
 			{
-				if (m_pGoalMenu->Click())
-				{
-				}
+				m_pGoalMenu->Click();				
 				m_pGoalMenu->SetVisible(false);
 				m_pSelectSquare = NULL;
 			}
@@ -119,16 +117,29 @@ void BLApp::UpdateUserInterface()
 			}
 		}
 
-		SetPause(m_pGoalMenu->IsVisible());
+		//SetPause(m_pGoalMenu->IsVisible());
 	}
+
+	IBGPlanner& oPlanner = (IBGPlanner&)m_pWorld->GetBot().GetPlanner();
 
 	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
 	{
-		m_pWorld->StartDrag();
+		if (m_pWorldCanva->IsMouseInside())
+			m_pWorld->StartDrag();
+		else if (m_pGraphCanva->IsMouseInside())
+			oPlanner.StartDrag();
 	}
 	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
 	{
-		m_pWorld->UpdateDrag();
+		if (m_pWorld->IsDraging())
+			m_pWorld->UpdateDrag();
+		else if (oPlanner.IsDraging())
+			oPlanner.UpdateDrag();
+	}
+	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
+	{
+		m_pWorld->StopDrag();
+		oPlanner.StopDrag();
 	}
 
 	if (m_pGoalMenu->IsVisible())

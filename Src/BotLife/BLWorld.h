@@ -55,6 +55,7 @@ class BLWorld
 		void DrawDebugPath(const IBPath& oPath) const;
 		void DrawDebugPos(const IBVector2& oPos) const;
 
+		bool IsDraging() const { return m_bDraging; }
 		void StartDrag();
 		void UpdateDrag();
 		void StopDrag();
@@ -70,6 +71,7 @@ class BLWorld
 		//uint m_iWidth;
 		//uint m_iHeight;
 
+		bool m_bDraging;
 		int m_iStartDragX;
 		int m_iStartDragY;
 

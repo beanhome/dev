@@ -28,6 +28,7 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	: m_oBLApp(oBLApp)
 	, m_oCanva(canva)
 	, m_iGrid(0)
+	, m_bDraging(false)
 	, m_iStartDragX(0)
 	, m_iStartDragY(0)
 {
@@ -102,6 +103,7 @@ void BLWorld::CenterMap(int x, int y)
 
 void BLWorld::StartDrag()
 {
+	m_bDraging = true;
 	m_iStartDragX = m_oCanva.GetGEngine()->GetMouseX() + m_oCanva.GetOrigX();
 	m_iStartDragY = m_oCanva.GetGEngine()->GetMouseY() + m_oCanva.GetOrigY();
 }
@@ -116,7 +118,7 @@ void BLWorld::UpdateDrag()
 
 void BLWorld::StopDrag()
 {
-
+	m_bDraging = false;
 }
 
 

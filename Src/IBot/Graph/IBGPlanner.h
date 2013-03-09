@@ -20,8 +20,20 @@ class IBGPlanner : public IBPlanner
 
 		void					Draw();
 
+		bool					IsDraging() const { return m_bDraging; }
+		void					StartDrag();
+		void					UpdateDrag();
+		void					StopDrag();
+
 	private:
 		Canvas					m_oCanvas;
+
+		uint16					m_iMaxWidth;
+		uint16					m_iMaxHeight;
+
+		bool					m_bDraging;
+		int						m_iStartDragX;
+		int						m_iStartDragY;
 
 	public:
 		static const uint		s_iMargin;

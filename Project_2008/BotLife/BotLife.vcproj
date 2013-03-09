@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation;C:\dev\Src\BotLife"
+				AdditionalIncludeDirectories="..\..\Src\IBot;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL;..\..\Src\Navigation;..\..\Src\BotLife"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL;C:\dev\Src\Navigation;C:\dev\Src\BotLife"
+				AdditionalIncludeDirectories="..\..\Src\IBot;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL;..\..\Src\Navigation;..\..\Src\BotLife"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
