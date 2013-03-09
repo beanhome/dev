@@ -45,7 +45,10 @@ int main(int argc, char *argv[])
 	srand(seed);
 
 	if (sApp == NULL)
+	{
+		LOG("Error: Bad App\n");
 		return -1;
+	}
 
 	GAppBase* pApp = NULL;
 
