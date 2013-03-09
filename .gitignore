@@ -1,3 +1,14 @@
+# Build Path
+Build/
+
+# Visual files
+*.ncb
+*.suo
+*.vcproj.*
+
+# Vim files
+*.swp
+
 # Compiled Object files
 *.slo
 *.lo
