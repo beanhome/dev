@@ -109,6 +109,47 @@ const char* Canvas::GetPrintFont() const
 	return (sPrintFont != NULL ? sPrintFont : m_oParent.GetPrintFont());
 }
 
+ClampingRect Canvas::GetClampingRect() const
+{
+	ClampingRect parent = m_oParent.GetClampingRect();
+
+	ClampingRect mine(GetScreenPosX(), GetScreenPosY(), GetOrigX()+GetWidth(), GetOrigY()+GetHeight());
+
+	if (mine.x < parent.x)
+	{
+		mine.w -= (parent.x-mine.x);
+		mine.x = parent.x;
+	}
+
+	if (mine.x > parent.x+parent.w)
+	{
+		mine.w = 0;
+	}
+
+	if (mine.x + mine.w > parent.x+parent.w)
+	{
+		mine.w = parent.x + parent.w - mine.x;
+	}
+
+	if (mine.y < parent.y)
+	{
+		mine.h -= (parent.y-mine.y);
+		mine.y = parent.y;
+	}
+
+	if (mine.y > parent.y+parent.h)
+	{
+		mine.h = 0;
+	}
+
+	if (mine.y + mine.h > parent.y+parent.h)
+	{
+		mine.h = parent.y + parent.h - mine.y;
+	}
+
+	return mine;
+}
+
 
 
 #if 0

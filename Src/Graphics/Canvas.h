@@ -39,8 +39,10 @@ class Canvas : public CanvasBase
 		virtual const char*				GetPrintFont() const;
 		//bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
 
-		sint32							GetMouseX() const;
-		sint32							GetMouseY() const;
+		virtual sint32					GetMouseX() const;
+		virtual sint32					GetMouseY() const;
+
+		virtual ClampingRect			GetClampingRect() const;
 
 	protected:
 		//void ConvertFrameToGraphic(sint16& x, sint16& y) const;

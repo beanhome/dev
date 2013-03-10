@@ -24,9 +24,6 @@ class GEngine : public CanvasBase
 		GEngine*						GetGEngine() { return this; }
 		const GEngine*					GetGEngine() const { return this; }
 
-		uint16							GetWidth() { return m_iWidth; }
-		uint16							GetHeight() { return m_iHeight; }
-
 		virtual void					Clear() = 0;
 		virtual void					Flip() = 0;
 
@@ -59,7 +56,9 @@ class GEngine : public CanvasBase
 
 		virtual void					ClampClear() const = 0;
 		virtual void					ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const = 0;
+		virtual void					ClampRect(const ClampingRect& rect) const { ClampRect(rect.x, rect.y, rect.w, rect.h); }
 		void							ClampCanvas(const Canvas& canvas) const;
+		virtual ClampingRect			GetClampingRect() const { return ClampingRect(0, 0, GetWidth(), GetHeight()); }
 
 	protected:
 		template<typename T>

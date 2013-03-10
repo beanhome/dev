@@ -9,6 +9,14 @@
 class ImageResource;
 class GEngine;
 
+struct ClampingRect
+{
+	sint16 x,y;
+	uint16 w,h;
+
+	ClampingRect(sint16 _x, sint16 _y, uint16 _w, uint16 _h) : x(_x), y(_y), w(_w), h(_h) {}
+};
+
 class CanvasBase
 {
 	public:
@@ -83,6 +91,8 @@ class CanvasBase
 
 		virtual sint32					GetMouseX() const = 0;
 		virtual sint32					GetMouseY() const = 0;
+
+		virtual ClampingRect			GetClampingRect() const = 0;
 
 	protected:
 		sint16							m_iOrigX; // position du Canva par rapport à l'origine

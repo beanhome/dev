@@ -22,7 +22,7 @@ GEngine::~GEngine()
 
 void GEngine::ClampCanvas(const Canvas& canvas) const
 {
-	ClampRect(canvas.GetParent().GetScreenPosX()+canvas.GetPosX(), canvas.GetParent().GetScreenPosY()+canvas.GetPosY(), canvas.GetWidth(), canvas.GetHeight());
+	ClampRect(canvas.GetClampingRect());
 }
 
 
@@ -88,4 +88,4 @@ sint32 GEngine::GetMouseX() const
 sint32 GEngine::GetMouseY() const
 {
 	return m_pInput->GetMouseY();
-	}
+}
