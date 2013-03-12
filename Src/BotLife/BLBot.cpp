@@ -185,7 +185,7 @@ void BLBot::Update(float dt)
 	}
 	else
 	{
-		float t = min(m_fStateTime / m_fStateDelay, 0.999999f);
+		float t = std::min<float>(m_fStateTime / m_fStateDelay, 0.999999f);
 		float fGrid = (float)m_oWorld.GetGridSize();
 		float fSpeed = fGrid / m_fStateDelay;
 		float s = (float)m_oWorld.GetGridSize();

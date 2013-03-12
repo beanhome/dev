@@ -36,14 +36,22 @@ double GetClock()
 
 #else
 
-#include <sys/time.h>
+//#include <sys/time.h>
+#include <time.h>
 
 double GetClock()
 {
+	timespec timer;
+	clock_gettime(CLOCK_REALTIME, &timer);
+	double currentTime = (double)timer.tv_sec+((double)timer.tv_nsec/1000000000.0);
+	return currentTime;
+
+	/*
 	timeval timer;
 	gettimeofday(&timer, NULL);
 	clock_t currentTime = timer.tv_sec+(long)((double)timer.tv_usec/1000000.0);
 	return ((double)currentTime)*1000.0;
+	*/
 }
 #endif
 

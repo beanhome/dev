@@ -17,7 +17,7 @@ enum ETextAlign
 };
 
 #define DATA_DIR "Data/"
-#define FONT_PATH DATA_DIR ## "Fonts/arial.ttf"
+#define FONT_PATH DATA_DIR "Fonts/arial.ttf"
 
 
 

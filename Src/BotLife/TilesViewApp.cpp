@@ -5,7 +5,7 @@
 #include "InputEvent.h"
 
 TilesViewApp::TilesViewApp(int w, int h, const char* rootpath, const char* name)
-	: GApp(w, h, rootpath)
+	: GApp<GEngine_SDL>(w, h, rootpath)
 	, m_pTiles(NULL)
 	, mode(Explore)
 	, lastmode(Explore)
@@ -73,8 +73,8 @@ int TilesViewApp::Update(float dt)
 	switch (mode)
 	{
 	case Explore:
-		if (bLeft) id = max(0, id-1);
-		if (bRight) id = min(id+1, m_pTiles->GetTilesCount());
+		if (bLeft) id = std::max<int>(0, id-1);
+		if (bRight) id = std::min<int>(id+1, m_pTiles->GetTilesCount());
 		oKey = m_pTiles->Find(id);
 		break;
 
@@ -182,7 +182,7 @@ int TilesViewApp::Loop()
 		fLastTime = fTime;
 		fTime = Timer::Get();
 		float dt = (float)(fTime - fLastTime);
-		dt = min(dt, 0.1f);
+		dt = std::min<float>(dt, 0.1f);
 
 		m_pEngine->Clear();
 

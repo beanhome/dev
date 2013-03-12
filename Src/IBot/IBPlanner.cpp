@@ -145,7 +145,15 @@ int IBPlanner::Step()
 {
 	bool res = false;
 
-	m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
+	//m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
+
+	for( FactSet::iterator it = m_aGoals.begin(); it != m_aGoals.end(); /* blank */ )
+	{
+		if (IBFact::RemoveAndDelete(*it))			
+			m_aGoals.erase(it++);
+		else
+			++it;
+	}
 
 	m_pCurrentAction = NULL;
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)

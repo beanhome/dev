@@ -23,16 +23,16 @@ void IBGFactBox::Resize()
 
 	int w, h;
 	m_oCanvas.CanvasBase::TextSize(w, h, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleHeight-4, m_pFact->GetFactDef()->GetName().c_str());
-	width = max(width, w+4);
+	width = std::max<int>(width, w+4);
 
 	for (uint i=0 ; i<m_pFact->GetVariables().size() ; ++i)
 	{
 		IBObject* pObject = m_pFact->GetVariable(i);
 		m_oCanvas.CanvasBase::TextSize(w, h, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactVarHeight, GetLine(pObject).c_str());
-		width = max(width, w+4);
+		width = std::max<int>(width, w+4);
 	}
 
-	SetH(IBGPlanner::s_iFactTitleHeight + max(IBGPlanner::s_iFactHeight, m_pFact->GetVariables().size()*(IBGPlanner::s_iFactVarHeight+IBGPlanner::s_iFactVarSpace)));
+	SetH(IBGPlanner::s_iFactTitleHeight + std::max<uint>(IBGPlanner::s_iFactHeight, m_pFact->GetVariables().size()*(IBGPlanner::s_iFactVarHeight+IBGPlanner::s_iFactVarSpace)));
 	SetW(width);
 }
 

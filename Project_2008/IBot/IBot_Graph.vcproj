@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
-			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			OutputDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)\obj\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			>
@@ -77,8 +77,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
-			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)"
+			OutputDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)\obj\"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="1"

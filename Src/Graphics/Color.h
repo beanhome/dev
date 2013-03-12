@@ -17,4 +17,3 @@ class Color
 
 
 #endif // __COLOR_H__
-

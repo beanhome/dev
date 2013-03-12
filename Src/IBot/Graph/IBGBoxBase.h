@@ -2,13 +2,14 @@
 #define __IBGBOXBASE_H__
 
 #include "Utils.h"
-#include "Color.h"
+//#include "Color.h"
 #include "Canvas.h"
 #include "Vector2.h"
 
 class CanvasBase;
 
 class IBGBox;
+class Color;
 
 class IBGBoxBase
 {

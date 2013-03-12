@@ -8,7 +8,7 @@
 #include "Input.h"
 
 MapViewApp::MapViewApp(int w, int h, const char* rootpath, const char* name)
-	: GApp(w, h, rootpath)
+	: GApp<GEngine_SDL>(w, h, rootpath)
 	, m_bDrag(false)
 	, m_iStartDragX(0)
 	, m_iStartDragY(0)

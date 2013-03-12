@@ -35,7 +35,7 @@ void IBGAction::Resize()
 		IBGFact* pFact = static_cast<IBGFact*>(m_aPreCond[i]);
 
 		pFact->Resize();
-		w = max(w, pFact->GetW());
+		w = std::max<int>(w, pFact->GetW());
 		h += pFact->GetH();
 		if (i<m_aPreCond.size()-1)
 			h += IBGPlanner::s_iFactMinSpace;
@@ -50,7 +50,7 @@ void IBGAction::Resize()
 		w += IBGPlanner::s_iLinkWidth;
 
 	w += m_pActionBox->GetW();
-	h = max(h, m_pActionBox->GetH());
+	h = std::max<int>(h, m_pActionBox->GetH());
 	
 	SetW(w);
 	SetH(h);
@@ -81,7 +81,7 @@ void IBGAction::Draw() const
 		for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 		{
 			IBGFact* pFact = static_cast<IBGFact*>(m_aPreCond[i]);
-			w = max(w, pFact->GetW());
+			w = std::max<int>(w, pFact->GetW());
 			pFact->SetX(x);
 			pFact->SetY(y);
 			pFact->Draw();

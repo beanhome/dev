@@ -94,9 +94,9 @@ void BLGoalMenu::UpdatePos()
 		m_oCanva.TextSize(w, h, m_oCanva.GetPrintFont(), s_iTextHeight, "%s %s", m_aGoals[i].GetName().c_str()+10, m_aGoals[i].GetData().c_str());
 
 		height += s_iYL;
-		width = max(width, w);
+		width = std::max<int>(width, w);
 	}
-	height = max(height+4, 32);
+	height = std::max<int>(height+4, 32);
 	width += 4;
 
 	x = (_x+s+width > m_oBot.GetWorld().GetCanvas().GetWidth() ? _x-width : _x+s);

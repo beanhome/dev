@@ -60,18 +60,18 @@ void BLTiles::ReadFile()
 	} oData;
 
 	FILE* pFile;
-	fopen_s(&pFile, m_sPath.c_str(), "rb");
+	pFile = fopen(m_sPath.c_str(), "rb");
 
-	fread_s(&m_iTileCountX, sizeof(m_iTileCountX), sizeof(m_iTileCountX), 1, pFile);
-	fread_s(&m_iTileCountY, sizeof(m_iTileCountY), sizeof(m_iTileCountY), 1, pFile);
-	fread_s(&m_iTileSizeX, sizeof(m_iTileSizeX), sizeof(m_iTileSizeX), 1, pFile);
-	fread_s(&m_iTileSizeY, sizeof(m_iTileSizeY), sizeof(m_iTileSizeY), 1, pFile);
-	fread_s(&m_iTileOffsetX, sizeof(m_iTileOffsetX), sizeof(m_iTileOffsetX), 1, pFile);
-	fread_s(&m_iTileOffsetY, sizeof(m_iTileOffsetY), sizeof(m_iTileOffsetY), 1, pFile);
+	fread(&m_iTileCountX, sizeof(m_iTileCountX), 1, pFile);
+	fread(&m_iTileCountY, sizeof(m_iTileCountY), 1, pFile);
+	fread(&m_iTileSizeX, sizeof(m_iTileSizeX), 1, pFile);
+	fread(&m_iTileSizeY, sizeof(m_iTileSizeY), 1, pFile);
+	fread(&m_iTileOffsetX, sizeof(m_iTileOffsetX), 1, pFile);
+	fread(&m_iTileOffsetY, sizeof(m_iTileOffsetY), 1, pFile);
 
 	int count = 0;
 
-	while ((count = fread_s(&oData, sizeof(oData), sizeof(oData), 1, pFile)) == 1)
+	while ((count = fread(&oData, sizeof(oData), 1, pFile)) == 1)
 	{
 		m_aTilesCorner.insert(TilesCornerPair(oData.key, oData.val));
 		m_aTilesId.insert(TilesIdPair(oData.val, oData.key));
@@ -83,7 +83,7 @@ void BLTiles::ReadFile()
 void BLTiles::WriteFile() const
 {
 	FILE* pFile;
-	fopen_s(&pFile, m_sPath.c_str(), "wb+");
+	pFile = fopen(m_sPath.c_str(), "wb+");
 
 	fwrite(&m_iTileCountX, sizeof(m_iTileCountX), 1, pFile);
 	fwrite(&m_iTileCountY, sizeof(m_iTileCountY), 1, pFile);
@@ -136,7 +136,7 @@ int BLTiles::Find(CaseType tl, CaseType tr, CaseType bl, CaseType br) const
 TileKey BLTiles::Find(int id) const
 {
 	TilesIdMap::const_iterator it = m_aTilesId.find(id);
-	return (it != m_aTilesId.end() ? it->second : -1);
+	return (it != m_aTilesId.end() ? it->second : (uint32)-1);
 }
 
 void BLTiles::Add(TileKey oKey, int id)

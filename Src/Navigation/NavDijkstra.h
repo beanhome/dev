@@ -12,6 +12,8 @@ template <typename TCase>
 class NavDijkstra : public Navigation<TCase>
 {
 	public:
+		typedef GridBase<TCase> Grid;
+
 		NavDijkstra();
 		NavDijkstra(const Grid& oGrid);
 		~NavDijkstra();
@@ -34,10 +36,10 @@ class NavDijkstra : public Navigation<TCase>
 								
 		bool								FindPath(const Vector2& start, const Condition<TCase>& oCondition, Path& aPath);
 		bool								FindPath(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
-		Navigation<TCase>::State			FindPathStep(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
+		typename Navigation<TCase>::State	FindPathStep(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath);
 								
 		virtual void						FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
-		virtual Navigation<TCase>::State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+		virtual typename Navigation<TCase>::State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
 
 		virtual bool						GetPath(const Vector2& vTarget, Path& oPath) const;
 								
@@ -56,7 +58,7 @@ class NavDijkstra : public Navigation<TCase>
 
 template <typename TCase>
 NavDijkstra<TCase>::NavDijkstra()
-	: Navigation()
+	: Navigation<TCase>()
 	, m_iHead(0)
 	, m_iQueue(0)
 {
@@ -64,13 +66,13 @@ NavDijkstra<TCase>::NavDijkstra()
 
 template <typename TCase>
 NavDijkstra<TCase>::NavDijkstra(const Grid& oGrid)
-	: Navigation(oGrid)
+	: Navigation<TCase>(oGrid)
 	, m_oPathGrid(oGrid.IsNormalized())
 	, m_iHead(0)
 	, m_iQueue(0)
 {
-	m_aStep.resize(m_pModelGrid->GetWidth() * m_pModelGrid->GetHeight());
-	m_oPathGrid.Init(m_pModelGrid->GetWidth(), m_pModelGrid->GetHeight());
+	m_aStep.resize(Navigation<TCase>::m_pModelGrid->GetWidth() * Navigation<TCase>::m_pModelGrid->GetHeight());
+	m_oPathGrid.Init(Navigation<TCase>::m_pModelGrid->GetWidth(), Navigation<TCase>::m_pModelGrid->GetHeight());
 }
 
 template <typename TCase>
@@ -80,13 +82,13 @@ NavDijkstra<TCase>::~NavDijkstra()
 template <typename TCase>
 void NavDijkstra<TCase>::Create(const Grid& oGrid)
 {
-	Navigation::Create(oGrid);
+	Navigation<TCase>::Create(oGrid);
 
 	m_iHead = 0;
 	m_iQueue = 0;
 
-	m_aStep.resize(m_pModelGrid->GetWidth() * m_pModelGrid->GetHeight());
-	m_oPathGrid.Init(m_pModelGrid->GetWidth(), m_pModelGrid->GetHeight());
+	m_aStep.resize(Navigation<TCase>::m_pModelGrid->GetWidth() * Navigation<TCase>::m_pModelGrid->GetHeight());
+	m_oPathGrid.Init(Navigation<TCase>::m_pModelGrid->GetWidth(), Navigation<TCase>::m_pModelGrid->GetHeight());
 }
 
 template <typename TCase>
@@ -109,7 +111,7 @@ void NavDijkstra<TCase>::Init(const vector<Vector2>& start)
 	// Initialisation
 	for (uint id=0 ; id<m_oPathGrid.GetSize() ; ++id)
 	{
-		const TCase& square = m_pModelGrid->GetCase(id);
+		const TCase& square = Navigation<TCase>::m_pModelGrid->GetCase(id);
 		bool bBlock = square.IsBlock();
 		m_oPathGrid.GetCase(id).iCount = (bBlock ? BLOCK : BLANK);
 
@@ -131,7 +133,7 @@ template <typename TCase>
 typename Navigation<TCase>::State NavDijkstra<TCase>::FindPathStep(const vector<Vector2>& start, const Condition<TCase>& oCondition, Path& aPath)
 {
 	if (m_iHead >= m_aStep.size() || m_iHead >= m_iQueue)
-		return FP_Fail;
+		return Navigation<TCase>::FP_Fail;
 
 	uint id = m_aStep[m_iHead];
 
@@ -159,16 +161,16 @@ typename Navigation<TCase>::State NavDijkstra<TCase>::FindPathStep(const vector<
 			m_aStep[m_iQueue++] = iSideId;
 		}
 
-		if (oCondition.Test(*m_pModelGrid, vSideCoord))
+		if (oCondition.Test(*Navigation<TCase>::m_pModelGrid, vSideCoord))
 		{
 			GetPath(vSideCoord, aPath);
-			return FP_Succeed;
+			return Navigation<TCase>::FP_Succeed;
 		}
 	}
 
 	++m_iHead;
 
-	return FP_Find;
+	return Navigation<TCase>::FP_Find;
 }
 
 template <typename TCase>
@@ -187,10 +189,10 @@ bool NavDijkstra<TCase>::FindPath(const vector<Vector2>& start, const Condition<
 	{
 		switch (FindPathStep(start, oCondition, aPath))
 		{
-			case FP_Succeed:
+			case Navigation<TCase>::FP_Succeed:
 				return true;
 
-			case FP_Fail:
+			case Navigation<TCase>::FP_Fail:
 				return false;
 
 			default:

@@ -169,7 +169,7 @@ class GridOp
 
 			if (m_bDiagMode)
 			{
-				return min(d1, d2) + abs(d1-d2);
+				return std::min<int>(d1, d2) + abs(d1-d2);
 			}
 			else
 			{

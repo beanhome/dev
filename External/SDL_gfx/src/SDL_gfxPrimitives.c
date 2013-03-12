@@ -5728,7 +5728,7 @@ void gfxPrimitivesSetFont(const void *fontdata, Uint32 cw, Uint32 ch)
 	int i;
 
 	if ((fontdata) && (cw) && (ch)) {
-		currentFontdata = fontdata;
+		currentFontdata = (const unsigned char*)fontdata;
 		charWidth = cw;
 		charHeight = ch;
 	} else {
@@ -6499,7 +6499,7 @@ void _murphyIteration(SDL_gfxMurphyIterator *m, Uint8 miter,
 			py[1] = m2y;
 			py[2] = ml1by;
 			py[3] = ml2by;			
-			polygonColor(m->dst, px, py, 4, m->color);						
+			polygonColor(m->dst, (Sint16*)px, (Sint16*)py, 4, m->color);						
 		}
 	}
 

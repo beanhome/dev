@@ -52,13 +52,13 @@ int main(int argc, char *argv[])
 
 	GAppBase* pApp = NULL;
 
-	if (_strnicmp(sApp, "BLApp", 5) == 0)
+	if (strnicmp(sApp, "BLApp", 5) == 0)
 		pApp = new BLApp(w, h, path, r, sx, sy, sTiles);
-	else if (_strnicmp(sApp, "MapViewApp", 10) == 0)
+	else if (strnicmp(sApp, "MapViewApp", 10) == 0)
 		pApp = new MapViewApp(w, h, path, sTiles);
-	else if (_strnicmp(sApp, "TilesViewApp", 12) == 0)
+	else if (strnicmp(sApp, "TilesViewApp", 12) == 0)
 		pApp = new TilesViewApp(w, h, path, sTiles);
-	else if (_strnicmp(sApp, "SpriteViewApp", 14) == 0)
+	else if (strnicmp(sApp, "SpriteViewApp", 14) == 0)
 		pApp = new SpriteViewApp(w, h, path);
 	
 

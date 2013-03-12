@@ -344,9 +344,18 @@ void GEngine_SDL::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size,
 
 	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
 
+#ifdef _WIN32
 	int ln = _vscprintf(format, oArgs) + 1;
+#else
+	int ln = vsnprintf(NULL, 0, format, oArgs) + 1;
+#endif
+
 	char* str = new char[ln];
+#ifdef _WIN32
 	vsprintf_s(str, ln, format, oArgs);
+#else
+	vsnprintf(str, ln, format, oArgs);
+#endif
 
 	TTF_SizeText(pFont->m_pFont, str, &w, &h);
 
@@ -359,9 +368,17 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 
 	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
 
+#ifdef _WIN32
 	int ln = _vscprintf(format, oArgs) + 1;
+#else
+	int ln = vsnprintf(NULL, 0, format, oArgs) + 1;
+#endif
 	char* str = new char[ln];
+#ifdef _WIN32
 	vsprintf_s(str, ln, format, oArgs);
+#else
+	vsnprintf(str, ln, format, oArgs);
+#endif
 
 	SDL_Surface* texte = NULL;
 	SDL_Color color = { 0, 0, 0 };

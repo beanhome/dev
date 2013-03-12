@@ -10,7 +10,7 @@
 #include "Graph\IBGFactBox.h"
 
 BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
-	: GApp(w, h, rootpath)
+	: GApp<GEngine_SDL>(w, h, rootpath)
 	, m_pGoalMenu(NULL)
 	, m_pSelectSquare(NULL)
 {

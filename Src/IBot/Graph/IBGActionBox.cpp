@@ -16,7 +16,7 @@ void IBGActionBox::Resize()
 	int lh = IBGPlanner::s_iActionLinkSpace * m_pAction->GetPreCond().size();
 	int lv = (IBGPlanner::s_iActionVarHeight + IBGPlanner::s_iActionVarSpace) * m_pAction->GetVariables().size();
 
-	SetH(IBGPlanner::s_iActionTitleHeight + max(lh, lv));
+	SetH(IBGPlanner::s_iActionTitleHeight + std::max<int>(lh, lv));
 	SetW(IBGPlanner::s_iActionWidth);
 }
 

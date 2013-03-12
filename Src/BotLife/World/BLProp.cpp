@@ -35,7 +35,7 @@ void BLProp::SetPos(const Vector2& p)
 void BLProp::SetLoc(float x, float y)
 {
 	if (m_pImage != NULL)
-		m_pImage->SetPos(x, y);
+		m_pImage->SetPos((sint16)x, (sint16)y);
 }
 
 

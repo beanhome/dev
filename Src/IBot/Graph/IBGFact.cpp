@@ -39,7 +39,7 @@ void IBGFact::Resize()
 		pCauseAction->Resize();
 
 		w += IBGPlanner::s_iLinkWidth + pCauseAction->GetW();
-		h = max(h, pCauseAction->GetH());
+		h = std::max<int>(h, pCauseAction->GetH());
 	}
 	
 	SetW(w);

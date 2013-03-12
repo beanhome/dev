@@ -7,7 +7,7 @@
 #include "Fact\IBFactDef.h"
 #include "IBGFact.h"
 #include "IBGAction.h"
-#include "..\..\Graphics\GEngine.h"
+#include "GEngine.h"
 
 const uint	IBGPlanner::s_iMargin = 12;
 const uint	IBGPlanner::s_iFactWidth = 92;
@@ -81,12 +81,12 @@ void IBGPlanner::Draw()
 		IBGFact* pFact = static_cast<IBGFact*>(*it);
 		pFact->Resize();
 		m_iMaxHeight += pFact->GetH();
-		m_iMaxWidth = max(pFact->GetW(), m_iMaxWidth);
-		w = max(pFact->GetFactBox()->GetW(), w);
+		m_iMaxWidth = std::max<uint16>(pFact->GetW(), m_iMaxWidth);
+		w = std::max<int>(pFact->GetFactBox()->GetW(), w);
 	}
 
-	m_iMaxWidth = max(m_iMaxWidth + s_iMargin * 2, m_oCanvas.GetWidth());
-	m_iMaxHeight = max(m_iMaxHeight + s_iMargin * 2, m_oCanvas.GetHeight());
+	m_iMaxWidth = std::max<uint16>(m_iMaxWidth + s_iMargin * 2, m_oCanvas.GetWidth());
+	m_iMaxHeight = std::max<uint16>(m_iMaxHeight + s_iMargin * 2, m_oCanvas.GetHeight());
 
 	if (m_iMaxWidth <= m_oCanvas.GetWidth())
 		m_oCanvas.SetOrigX(0);
@@ -128,8 +128,8 @@ void IBGPlanner::Draw()
 			y = m_oCanvas.GetPosY() + s;
 		}
 
-		y = max(y, m_oCanvas.GetPosY() + (sint16)s_iMargin);
-		s = max(s, (sint16)s_iMargin);
+		y = std::max<int>(y, m_oCanvas.GetPosY() + (sint16)s_iMargin);
+		s = std::max<int>(s, (int)s_iMargin);
 
 		for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 		{

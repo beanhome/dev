@@ -31,7 +31,7 @@ int GAppBase::Loop()
 		fLastTime = fTime;
 		fTime = Timer::Get();
 		float dt = (float)(fTime - fLastTime);
-		dt = min(dt, 0.1f);
+		dt = std::min<float>(dt, 0.1f);
 
 		if (!m_bPause)
 		{
@@ -52,6 +52,10 @@ int GAppBase::Loop()
 		res = Draw();
 		if (res != 0)
 			return res;
+
+		m_pEngine->ClampClear();
+		m_pEngine->Print(5, 5, m_pEngine->GetPrintFont(), 12, LeftTop, 255, 255, 255, "%f", dt);
+		m_pEngine->Print(5, 20, m_pEngine->GetPrintFont(), 12, LeftTop, 255, 255, 255, "%f", fTime);
 
 		if (m_bPause)
 		{

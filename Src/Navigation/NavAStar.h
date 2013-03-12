@@ -11,6 +11,8 @@ template <typename TCase>
 class NavAStar : public Navigation<TCase>
 {
 	public:
+		typedef GridBase<TCase> Grid;
+
 		NavAStar(const Grid& oGrid);
 		~NavAStar();
 
@@ -30,7 +32,7 @@ class NavAStar : public Navigation<TCase>
 
 	public:
 		virtual void						FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
-		virtual Navigation<TCase>::State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+		virtual typename Navigation<TCase>::State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
 		
 		virtual bool						GetPath(const Vector2& vTarget, Path& oPath) const;
 
@@ -49,7 +51,7 @@ class NavAStar : public Navigation<TCase>
 
 template <typename TCase>
 NavAStar<TCase>::NavAStar(const Grid& oGrid)
-	: Navigation(oGrid)
+	: Navigation<TCase>(oGrid)
 {
 }
 
@@ -78,25 +80,25 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 	int iCurrentCost = oCurrentCase.iCost;
 	int iToCaseCost = iCurrentCost - Cost(m_oCurrentCoord, target);
 
-	EDirection offset = m_pModelGrid->GetDirection(m_oCurrentCoord, target);
+	EDirection offset = Navigation<TCase>::m_pModelGrid->GetDirection(m_oCurrentCoord, target);
 
-	int iMax = (m_pModelGrid->IsDiagMode() ? EDirection_MAX : CardDirCount);
+	int iMax = (Navigation<TCase>::m_pModelGrid->IsDiagMode() ? EDirection_MAX : CardDirCount);
 	int dir_offset = rand() % iMax;
 	for (int dir = 0 ; dir < iMax ; ++dir)
 	{
 		Vector2 oSideCoord;
-		if (m_pModelGrid->GetCoord(m_oCurrentCoord, (EDirection)((dir + dir_offset)%iMax), oSideCoord) == false)
+		if (Navigation<TCase>::m_pModelGrid->GetCoord(m_oCurrentCoord, (EDirection)((dir + dir_offset)%iMax), oSideCoord) == false)
 			continue;
 
-		int iCurDist = m_pModelGrid->Distance(oSideCoord, target);
-		if (oSideCoord == target || (iCurDist <= iDist) && !m_pModelGrid->GetCase(oSideCoord).IsBlock())
+		int iCurDist = Navigation<TCase>::m_pModelGrid->Distance(oSideCoord, target);
+		if (oSideCoord == target || (iCurDist <= iDist) && !Navigation<TCase>::m_pModelGrid->GetCase(oSideCoord).IsBlock())
 		{
 			m_aCloseList.insert(AStartPair(oSideCoord, Case(iToCaseCost + 1 + Cost(oSideCoord, target), m_oCurrentCoord)));
 			GetPath(oSideCoord, aPath);
-			return FP_Succeed;
+			return Navigation<TCase>::FP_Succeed;
 		}
 
-		if (m_pModelGrid->GetCase(oSideCoord).IsBlock())
+		if (Navigation<TCase>::m_pModelGrid->GetCase(oSideCoord).IsBlock())
 			continue;
 
 		if (m_aCloseList.find(oSideCoord) != m_aCloseList.end())
@@ -105,7 +107,7 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 		int iSideCost = iToCaseCost + 1 + Cost(oSideCoord, target);
 		Case oCase(iSideCost, m_oCurrentCoord);
 
-		AStartMap::iterator it = m_aOpenList.find(oSideCoord);
+		typename AStartMap::iterator it = m_aOpenList.find(oSideCoord);
 		if (it != m_aOpenList.end() && it->second.iCost > iSideCost)
 		{
 			it->second.iCost = iSideCost;
@@ -120,25 +122,25 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 	if (m_aOpenList.size() == 0)
 	{
 		GetPath(m_oBestCoord, aPath);
-		return FP_Fail;
+		return Navigation<TCase>::FP_Fail;
 	}
 
 	m_oCurrentCoord = GetCheaperOpenCase(target);
-	AStartMap::iterator it = m_aOpenList.find(m_oCurrentCoord);
+	typename AStartMap::iterator it = m_aOpenList.find(m_oCurrentCoord);
 	m_aCloseList.insert(AStartPair(it->first, it->second));
 	m_aOpenList.erase(it);
 
-	if (m_pModelGrid->Distance(m_oBestCoord, target) > m_pModelGrid->Distance(m_oCurrentCoord, target))
+	if (Navigation<TCase>::m_pModelGrid->Distance(m_oBestCoord, target) > Navigation<TCase>::m_pModelGrid->Distance(m_oCurrentCoord, target))
 		m_oBestCoord = m_oCurrentCoord;
 
 
 	if (m_aCloseList.size() <= 0)
 	{
 		GetPath(m_oBestCoord, aPath);
-		return FP_Fail;
+		return Navigation<TCase>::FP_Fail;
 	}
 
-	return FP_Find;
+	return Navigation<TCase>::FP_Find;
 }
 
 template <typename TCase>
@@ -147,11 +149,11 @@ int NavAStar<TCase>::Cost(const Vector2& p1, const Vector2& p2) const
 	int dx = abs(p1.x - p2.x);
 	int dy = abs(p1.y - p2.y);
 
-	if (dx > (int)m_pModelGrid->GetWidth() / 2)
-		dx = (int)m_pModelGrid->GetWidth() - dx;
+	if (dx > (int)Navigation<TCase>::m_pModelGrid->GetWidth() / 2)
+		dx = (int)Navigation<TCase>::m_pModelGrid->GetWidth() - dx;
 
-	if (dy > (int)m_pModelGrid->GetHeight() / 2)
-		dy = (int)m_pModelGrid->GetHeight() - dy;
+	if (dy > (int)Navigation<TCase>::m_pModelGrid->GetHeight() / 2)
+		dy = (int)Navigation<TCase>::m_pModelGrid->GetHeight() - dy;
 
 	return dx + dy;
 }
@@ -159,9 +161,9 @@ int NavAStar<TCase>::Cost(const Vector2& p1, const Vector2& p2) const
 template <typename TCase>
 typename NavAStar<TCase>::CaseCoord NavAStar<TCase>::GetCheaperOpenCase(const Vector2& target) const
 {
-	AStartMap::const_iterator begin = m_aOpenList.begin();
-	AStartMap::const_iterator end = m_aOpenList.end();
-	AStartMap::const_iterator it;
+	typename AStartMap::const_iterator begin = m_aOpenList.begin();
+	typename AStartMap::const_iterator end = m_aOpenList.end();
+	typename AStartMap::const_iterator it;
 
 	int iBestCost = -1;
 	int iBestDist;
@@ -174,11 +176,11 @@ typename NavAStar<TCase>::CaseCoord NavAStar<TCase>::GetCheaperOpenCase(const Ve
 		{
 			iBestCase = it->first;
 			iBestCost = oCase.iCost;
-			iBestDist = m_pModelGrid->Distance(iBestCase, target);
+			iBestDist = Navigation<TCase>::m_pModelGrid->Distance(iBestCase, target);
 		}
 		else if (oCase.iCost == iBestCost)
 		{
-			int iDist = m_pModelGrid->Distance(it->first, target);
+			int iDist = Navigation<TCase>::m_pModelGrid->Distance(it->first, target);
 			if (iDist < iBestDist)
 			{
 				iBestCase = it->first;

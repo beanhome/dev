@@ -56,6 +56,13 @@ void Log(const char* format, ...);
 #define FASSERT(cond, format, ...)
 #endif
 
+#ifdef _WIN32
+#define strnicmp _strnicmp
+#define fread(b, s, c, f) fread_s(b, s, s, c, f)
+#define fopen(p, m) myfopen(p, m)
+FILE* myfopen(const char *p, const char *m);
+#else
+#endif
 
 
 string FormatString(const char* format, ...);

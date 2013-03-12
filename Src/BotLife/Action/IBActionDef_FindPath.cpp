@@ -53,7 +53,7 @@ bool IBActionDef_FindPath::Start(IBAction* pAction)
 		return false;
 
 	if (pAction->GetUserData() != NULL)
-		delete pAction->GetUserData();
+		delete (Navigation<BLSquare>*)pAction->GetUserData();
 
 	Navigation<BLSquare>* pNav = new NavAStar<BLSquare>(oWorld.GetGrid());
 	pNav->FindPathInit(*pStart, *pTarget, pDist->GetValue(), *pPath);
@@ -120,7 +120,7 @@ bool IBActionDef_FindPath::Finish(IBAction* pAction)
 void IBActionDef_FindPath::Destroy(IBAction* pAction)
 {
 	if (pAction->GetUserData() != NULL)
-		delete pAction->GetUserData();
+		delete (Navigation<BLSquare>*)pAction->GetUserData();
 
 	pAction->SetUserData(NULL);
 }
