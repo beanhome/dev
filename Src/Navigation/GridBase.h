@@ -164,17 +164,15 @@ class GridOp
 		*/
 		int Distance(const Vector2 &loc1, const Vector2 &loc2) const
 		{
+			return Distance(loc1, loc2, m_bDiagMode);
+		}
+
+		int Distance(const Vector2 &loc1, const Vector2 &loc2, bool bDiagMode) const
+		{
 			int d1 = abs(loc1.x-loc2.x);
 			int d2 = abs(loc1.y-loc2.y);
 
-			if (m_bDiagMode)
-			{
-				return std::min<int>(d1, d2) + abs(d1-d2);
-			}
-			else
-			{
-				return d1 + d2;
-			}
+			return (bDiagMode ? std::min<int>(d1, d2) + abs(d1-d2) : d1 + d2);
 		}
 
 		EDirection GetDirection(const Vector2 &startLoc, const Vector2 &targetLoc) const
@@ -256,6 +254,9 @@ class GridBase : public GridOp
 				m_aGridArray[x].Init(iHeight, m_pBuffer + x * m_iHeight);
 			}
 		}
+
+		bool			IsCoordValid(int i, int j) const				{ return (m_bNormalized || (i>=0 && i<(int)m_iWidth && j>=0 && j<(int)m_iHeight)); }
+		bool			IsCoordValid(const Vector2& pos) const			{ return IsCoordValid(pos.x, pos.y); }
 
 		const TCase&	GetCase(uint id) const							{ ASSERT(id < m_iWidth * m_iHeight); return m_pBuffer[id]; }
 		TCase&			GetCase(uint id)								{ ASSERT(id < m_iWidth * m_iHeight); return m_pBuffer[id]; }

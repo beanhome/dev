@@ -214,7 +214,7 @@ void BLBot::Update(float dt)
 				SetLoc(s/2 + s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), s/2 + s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
 				tgt = st + s_vDirArray[GetDir()];
 				m_pPushObject->SetLoc((s/2 + s*Lerp((float)st.x, (float)tgt.x, t)), (s/2 + s*Lerp((float)st.y, (float)tgt.y, t)));
-				LOG("Push : %f\n", t);
+				//LOG("Push : %f\n", t);
 				break;
 
 		default:

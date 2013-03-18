@@ -19,6 +19,7 @@ class BLApp;
 class IBObject;
 class IBPath;
 class IBVector2;
+class BLObject;
 
 class BLWorld
 {
@@ -53,6 +54,7 @@ class BLWorld
 		void DrawDebug() const;
 		void DrawDebugObject(IBObject* pObj) const;
 		void DrawDebugPath(const IBPath& oPath) const;
+		void DrawDebugObj(const BLObject& oObj) const;
 		void DrawDebugPos(const IBVector2& oPos) const;
 
 		bool IsDraging() const { return m_bDraging; }

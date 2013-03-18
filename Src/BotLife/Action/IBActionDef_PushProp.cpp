@@ -4,6 +4,7 @@
 #include "World\BLObject.h"
 #include "World\IBInt.h"
 #include "World\BLDoor.h"
+#include "World\BLProp.h"
 
 
 IBActionDef_PushProp::IBActionDef_PushProp(const string& name, IBPlanner* pPlanner)
@@ -44,7 +45,7 @@ bool IBActionDef_PushProp::Init(IBAction* pAction)
 	ASSERT(pBot != NULL);
 	const BLWorld& oWorld = pBot->GetWorld();
 
-	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
+	BLProp* pObj = reinterpret_cast<BLProp*>(pAction->FindVariables("Obj"));
 	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
 	IBVector2* pDestPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("DestPos"));
 	IBVector2* pPushPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("PushPos"));
@@ -52,10 +53,12 @@ bool IBActionDef_PushProp::Init(IBAction* pAction)
 
 	if (pObjPos == NULL && pObj != NULL)
 	{
-		BLObject& oObj = *pObj;
+		BLProp& oObj = *pObj;
 		IBVector2& oDestPos = *pDestPos;
+		Vector2 pushpos_test = pObj->GetPos() - (oDestPos - pObj->GetPos());
 		
-		if (oWorld.GetGrid().Distance(oDestPos, pObj->GetPos()) == 1 && (oDestPos.x == pObj->GetPos().x || oDestPos.y == pObj->GetPos().y))
+		if (oWorld.GetGrid().Distance(oDestPos, pObj->GetPos(), false) == 1
+		 && oWorld.GetGrid().IsCoordValid(pushpos_test) && oWorld.GetGrid().GetCase(pushpos_test).IsFree(pObj))
 		{
 			pObjPos = &pObj->GetPos();
 		}
@@ -66,10 +69,12 @@ bool IBActionDef_PushProp::Init(IBAction* pAction)
 			for (uint i=0 ; i<4 ; ++i)
 			{
 				Vector2 pos = oDestPos + dir[i];
-				if (oWorld.GetGrid().GetCase(pos).IsFree())
+				Vector2 pushpos = pos + dir[i];
+				if (oWorld.GetGrid().IsCoordValid(pos) && oWorld.GetGrid().GetCase(pos).IsFree(pObj)
+				 && oWorld.GetGrid().IsCoordValid(pushpos) && oWorld.GetGrid().GetCase(pushpos).IsFree(pObj))
 				{
-					int iDist = oWorld.GetGrid().Distance(pObj->GetPos(), pos);
-					if (iBestDist == -1 || iBestDist > iDist)
+					int iDist = oWorld.GetGrid().Distance(pObj->GetPos(), pos, false);
+					if (iBestDist == -1 || iDist < iBestDist)
 					{
 						iBestDist = iDist;
 						iBestPos = pos;

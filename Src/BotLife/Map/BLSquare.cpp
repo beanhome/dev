@@ -69,12 +69,13 @@ void BLSquare::SetProp(BLProp* pProp)
 }
 
 
-bool BLSquare::IsBlock() const
+bool BLSquare::IsBlock(BLProp* ignore) const
 {
-	return (s_bIsBloc[m_eTilesType] || (m_pProp != NULL && m_pProp->IsBlock()));
+	return (s_bIsBloc[m_eTilesType] || (m_pProp != NULL && m_pProp != ignore && m_pProp->IsBlock()));
 }
 
-bool BLSquare::IsTempBlock() const
+bool BLSquare::IsTempBlock(BLProp* ignore) const
 {
-	return (m_pProp != NULL && m_pProp->IsTempBlock());
+	return (m_pProp != NULL && m_pProp != ignore && m_pProp->IsTempBlock());
 }
+

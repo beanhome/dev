@@ -22,6 +22,7 @@
 #include "Graph\IBGActionBox.h"
 #include "World\BLLightProp.h"
 #include "World\BLHeavyProp.h"
+#include "IBPlanner.h"
 
 
 BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesname)
@@ -149,6 +150,18 @@ void BLWorld::DrawDebug() const
 {
 	IBFactVisitor FactVisitor(m_pBot->GetPlanner());
 
+	// goals
+	for (FactSet::const_iterator it = m_pBot->GetPlanner().GetGoals().begin() ; it != m_pBot->GetPlanner().GetGoals().end() ; ++it)
+	{
+		const IBGFact* pFact = static_cast<const IBGFact*>(*it);
+		for (uint i=0 ; i<pFact->GetVariables().size() ; ++i)
+		{
+			IBObject* pObj = pFact->GetVariable(i);
+			DrawDebugObject(pObj);
+		}
+	}
+
+	// mouse overlaping
 	for (const IBFact* fact = FactVisitor.Begin() ; fact != NULL ; fact = FactVisitor.Next())
 	{
 		const IBGFact* pFact = static_cast<const IBGFact*>(fact);
@@ -176,15 +189,19 @@ void BLWorld::DrawDebug() const
 	}
 }
 
-void BLWorld::DrawDebugObject(IBObject* pObj) const
+void BLWorld::DrawDebugObject(IBObject* _pObj) const
 {
-	IBPath* pPath = dynamic_cast<IBPath*>(pObj);
+	IBPath* pPath = dynamic_cast<IBPath*>(_pObj);
 	if (pPath != NULL)
 		DrawDebugPath(*pPath);
 
-	IBVector2* pPos = dynamic_cast<IBVector2*>(pObj);
+	IBVector2* pPos = dynamic_cast<IBVector2*>(_pObj);
 	if (pPos != NULL)
 		DrawDebugPos(*pPos);
+
+	BLObject* pObj = dynamic_cast<BLObject*>(_pObj);
+	if (pObj != NULL)
+		DrawDebugObj(*pObj);
 }
 
 void BLWorld::DrawDebugPath(const IBPath& oPath) const
@@ -210,10 +227,18 @@ void BLWorld::DrawDebugPath(const IBPath& oPath) const
 	}
 }
 
+void BLWorld::DrawDebugObj(const BLObject& oObj) const
+{
+	int x1 = oObj.GetPos().x * GetGridSize();
+	int y1 = oObj.GetPos().y * GetGridSize();
+	m_oCanva.DrawRect(x1, y1, GetGridSize()-1, GetGridSize()-1, 0, 255, 255);
+	m_oCanva.Print(x1+2, y1+1, m_oCanva.GetPrintFont(), 10, LeftTop, 0, 255, 255, "%s", oObj.GetName().c_str());
+}
+
 void BLWorld::DrawDebugPos(const IBVector2& oPos) const
 {
 	int x1 = oPos.x * GetGridSize();
 	int y1 = oPos.y * GetGridSize();
-	m_oCanva.DrawRect(x1, y1, GetGridSize()-1, GetGridSize()-1, 255, 0, 0);
-	m_oCanva.Print(x1+2, y1+1, m_oCanva.GetPrintFont(), 10, LeftTop, 255, 0, 0, "%s", oPos.GetName().c_str());
+	m_oCanva.DrawRect(x1, y1, GetGridSize()-1, GetGridSize()-1, 0, 255, 0);
+	m_oCanva.Print(x1+2, y1+1, m_oCanva.GetPrintFont(), 10, LeftTop, 0, 255, 0, "%s", oPos.GetName().c_str());
 }

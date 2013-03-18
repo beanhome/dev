@@ -52,9 +52,9 @@ class BLSquare
 		void SetProp(BLProp* pProp);
 		const BLProp* GetProp() const { return m_pProp; }
 
-		bool IsFree() const { return (!IsBlock() && !IsTempBlock() && m_pProp==NULL); }
-		virtual bool IsBlock() const;
-		virtual bool IsTempBlock() const;
+		bool IsFree(BLProp* ignore = NULL) const { return (!IsBlock(ignore) && !IsTempBlock(ignore)); }
+		virtual bool IsBlock(BLProp* ignore = NULL) const;
+		virtual bool IsTempBlock(BLProp* ignore = NULL) const;
 
 	private:
 		IBVector2	m_vPos;
