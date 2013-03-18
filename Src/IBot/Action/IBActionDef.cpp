@@ -101,11 +101,16 @@ IBAction* IBActionDef::Instanciate(IBFact* pPostCond1)
 	return pAction;
 }
 
-void IBActionDef::Print(const IBAction::VarMap& aUserData, int tab) const
+bool IBActionDef::Init(IBAction* pAction)
 {
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
+	for (IBAction::VarMap::const_iterator it =  pAction->GetVariables().begin() ; it != pAction->GetVariables().end() ; ++it)
+	{
+		if (it->second == NULL)
+			return false;
+	}
 
-	LOG("%s \n", m_sName.c_str());
-}
+	return true;
+};
+
+
 

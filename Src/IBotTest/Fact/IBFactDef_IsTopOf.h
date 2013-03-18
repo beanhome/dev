@@ -11,12 +11,10 @@ class IBFactDef_IsTopOf : public IBFactDef
 		IBFactDef_IsTopOf(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsTopOf();
 
-		IBF_Result			Test(const vector<void*>& aUserData);
+		IBF_Result			Test(const vector<IBObject*>& aUserData);
 
-		virtual void		ResolveVariable(vector<void*>& aUserData);
+		virtual void		ResolveVariable(vector<IBObject*>& aUserData);
 	
-		virtual void		Print(const vector<void*>& aUserData, int tab) const;
-
 	private:
 };
 

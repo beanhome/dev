@@ -2,16 +2,13 @@
 #define __IBCUBE_H__
 
 #include "Utils.h"
+#include "World\IBObject.h"
 
-class IBCube
+class IBCube : public IBObject
 {
 	public:
-		IBCube();
 		IBCube(const string& name);
 		virtual ~IBCube();
-
-		const string& GetName() const { return m_sName; }
-		void SetName(const string& name) { m_sName = name; }
 
 		void PutCube(IBCube* pCube);
 		void TakeCube();
@@ -22,8 +19,11 @@ class IBCube
 
 		void  Print() const;
 
+	protected:
+		virtual void		FormatData() const;
+
+
 	private:
-		string  m_sName;
 		IBCube* m_pTopCube;
 };
 

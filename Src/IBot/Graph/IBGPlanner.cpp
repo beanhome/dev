@@ -72,21 +72,26 @@ void IBGPlanner::Draw()
 {
 	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
 	
+	int width = 0;
+	int height = 0;
 	m_iMaxHeight = 0;
 	m_iMaxWidth = 0;
-	int w = s_iFactWidth;
+	int fGoalsWidth = s_iFactWidth;
 
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBGFact* pFact = static_cast<IBGFact*>(*it);
 		pFact->Resize();
-		m_iMaxHeight += pFact->GetH();
-		m_iMaxWidth = std::max<uint16>(pFact->GetW(), m_iMaxWidth);
-		w = std::max<int>(pFact->GetFactBox()->GetW(), w);
+		height += pFact->GetH();
+		width = std::max<uint16>(pFact->GetW(), m_iMaxWidth);
+		fGoalsWidth = std::max<int>(pFact->GetFactBox()->GetW(), fGoalsWidth);
 	}
 
-	m_iMaxWidth = std::max<uint16>(m_iMaxWidth + s_iMargin * 2, m_oCanvas.GetWidth());
-	m_iMaxHeight = std::max<uint16>(m_iMaxHeight + s_iMargin * 2, m_oCanvas.GetHeight());
+	width += s_iMargin * 2;
+	height += s_iMargin * 2;
+
+	m_iMaxWidth = std::max<uint16>(width, m_oCanvas.GetWidth());
+	m_iMaxHeight = std::max<uint16>(height, m_oCanvas.GetHeight());
 
 	if (m_iMaxWidth <= m_oCanvas.GetWidth())
 		m_oCanvas.SetOrigX(0);
@@ -112,9 +117,9 @@ void IBGPlanner::Draw()
 	*/
 
 	{
-		w += s_iMargin;
-		int x = m_iMaxWidth - ((w+s_iMargin)/2);
-		m_oCanvas.CanvasBase::DrawRect(x-w/2, s_iMargin/2, w-1, m_iMaxHeight-s_iMargin-1, Color(255, 255, 0));
+		fGoalsWidth += s_iMargin;
+		int x = m_iMaxWidth - ((fGoalsWidth+s_iMargin)/2);
+		m_oCanvas.CanvasBase::DrawRect(x-fGoalsWidth/2, s_iMargin/2, fGoalsWidth-1, m_iMaxHeight-s_iMargin-1, Color(255, 255, 0));
 		m_oCanvas.CanvasBase::Print(x, s_iMargin+10, m_oCanvas.GetPrintFont(), 16, CenterTop, 255, 255, 255, "Goals");
 	}
 
@@ -122,9 +127,9 @@ void IBGPlanner::Draw()
 		int s = 0;
 		int y = 0;
 
-		if (m_iMaxHeight < m_oCanvas.GetHeight())
+		if (height < m_oCanvas.GetHeight())
 		{
-			s = (m_oCanvas.GetHeight() - m_iMaxHeight) / (m_aGoals.size() + 1);
+			s = (m_oCanvas.GetHeight() - height) / (m_aGoals.size() + 1);
 			y = m_oCanvas.GetPosY() + s;
 		}
 

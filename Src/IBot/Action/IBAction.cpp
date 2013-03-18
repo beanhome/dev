@@ -3,6 +3,20 @@
 #include "IBPlanner.h"
 
 
+const char*	IBAction::s_sStateString[State_MAX] =
+{
+	"Init",
+	"Unresolved",
+	"Start",
+	"Execute",
+	"Abort",
+	"End",
+	"Finish",
+	"Destroy",
+	"Destroyed",
+};
+
+
 IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 	: m_pDef(pDef)
 	, m_eState(IBA_Init)

@@ -1,27 +1,17 @@
 #include "Utils.h"
 
-#define USE_GRAPH
-
-#ifdef USE_GRAPH
 #include "GEngine_SDL.h"
 #include "InputEvent_SDL.h"
 #include "Canvas.h"
 #include "Timer.h"
-#endif
-
 
 #include "IBPlannerTest.h"
 #include "World/IBCubeWorld.h"
-#include "Graph/IBPlannerGraph.h"
-#include "Graph/IBPlannerDebug.h"
+#include "Display/IBPlannerDebug.h"
+#include "Input.h"
 
-IBWorld g_oWorld;
-
-
-#ifdef USE_GRAPH
-void DrawWorld(CanvasBase& oWorldCanva);
+void DrawWorld(const IBCubeWorld& oWorld, CanvasBase& oWorldCanva);
 void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j);
-#endif
 
 
 
@@ -29,93 +19,86 @@ int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 
-#ifdef USE_GRAPH
-	GEngine_SDL ge(1280, 720, 32);
-	Canvas world_canva(ge, 0, 0, 1280, 192);
-	Canvas graph_canva(ge, 0, 192, 1280, 512);
+	IBCubeWorld oWorld;
+
+	GEngine_SDL ge(800, 600, 32, "../../");
+	Canvas world_canva(ge, 0, 0, 800, 192);
+	Canvas graph_canva(ge, 0, 192, 800, 600-192);
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
-#endif
 
-	IBPlannerTest oPlanner(&g_oWorld);
-#ifdef USE_GRAPH
-	IBPlannerDisplay* oPlannerDisplay = new IBPlannerGraph(oPlanner, graph_canva);
-#else
-	IBPlannerDisplay* oPlannerDisplay = new IBPlannerDebug(oPlanner);
-#endif
+	IBPlannerTest oPlanner(&oWorld, graph_canva);
 	
-	g_oWorld.Init();
-	g_oWorld.Print();
-	oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeA(), g_oWorld.GetCubeB());
-	//oPlanner.AddGoal("IBFactDef_IsTopOf", g_oWorld.GetCubeB(), g_oWorld.GetCubeC()); // uncomment to add
+	oWorld.Init();
+	oWorld.Print();
+	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeA(), oWorld.GetCubeB());
+	//oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
 
 
 	bool bQuit = false;
+	int i=0;
 
-	int res = 0;
-	for (uint i=0 ; i<10 && res==0 && !bQuit; ++i)
+	while (!bQuit)
 	{
-#ifdef USE_GRAPH
-		ge.Clear();
-#endif
+		ge.UpdateInput();
 
-		LOG("\n");
-		LOG("****  %d  ****\n", i);
-		res = oPlanner.Step();
+		bQuit = (ge.GetInput()->IsQuit() || ge.GetInput()->GetVirtualKey(KEY_ESC) == KeyPressed);
 
-		// TODO
-#ifdef USE_GRAPH
-		DrawWorld(world_canva);
-#endif
-		oPlannerDisplay->DrawGraph();
-	
-#ifdef USE_GRAPH
-		ge.Flip();
-
-		float fTime = Timer::Get();
-		while  (res == 1 || Timer::Get() < fTime + 1.f)
+		if (ge.GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
 		{
-			ge.SaveEvent();
-			if (ge.PollEvent())
-			{
-				if (ge.GetInputEvent().IsQuit())
-				{
-					bQuit = true;
-					break;
-				}
-
-				if (ge.GetInputEvent().IsKeyboard() && ge.GetInputEvent().GetKeyboardKey() == KEY_ESC)
-					bQuit = true;
-
-				if (ge.GetInputEvent().IsKeyboard())
-					break;
-			}
+			if (graph_canva.IsMouseInside())
+				oPlanner.StartDrag();
 		}
-#else
-		printf("Press Enter\n");
-		getchar();
-#endif
+		else if (ge.GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
+		{
+			if (oPlanner.IsDraging())
+				oPlanner.UpdateDrag();
+		}
+		else if (ge.GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
+		{
+			oPlanner.StopDrag();
+		}
+
+		//float fTime = Timer::Get();
+		if (ge.GetInput()->GetVirtualKey(KEY_SPACE) == KeyPressed
+		 /*|| Timer::Get() < fTime + 1.f*/)
+		{
+
+			LOG("\n");
+			LOG("****  %d  ****\n", i++);
+			/*res = */oPlanner.Step();
+
+			IBPlannerDebug debug(oPlanner);
+			debug.DrawGraph();
+
+		}
+
+		ge.Clear();
+
+		DrawWorld(oWorld, world_canva);
+		oPlanner.Draw();
+	
+		ge.Flip();
 	}
 
     return 0;
 }
 
 
-#ifdef USE_GRAPH
-void DrawWorld(CanvasBase& oWorldCanva)
+void DrawWorld(const IBCubeWorld& oWorld, CanvasBase& oWorldCanva)
 {
 	int size = 48;
 	int space = 32;
 	int line = oWorldCanva.GetHeight()-size;
 	int left_space = 32;
 
-	oWorldCanva.DrawLine(left_space, line, left_space + (size*g_oWorld.GetCubes().size()) + ((size+1)*g_oWorld.GetCubes().size()), line, Color(192, 255, 255));
+	oWorldCanva.DrawLine(left_space, line, left_space + (size*oWorld.GetCubes().size()) + ((size+1)*oWorld.GetCubes().size()), line, Color(192, 255, 255));
 
-	for (uint i=0 ; i < g_oWorld.GetCubes().size() ; ++i)
+	for (uint i=0 ; i < oWorld.GetCubes().size() ; ++i)
 	{
-		IBCube* pCube = &g_oWorld.GetCubes()[i];
+		const IBCube* pCube = oWorld.GetCubes()[i];
 
-		if (g_oWorld.GetTable().HasCube(pCube))
+		if (oWorld.GetTable().HasCube((IBCube*)pCube))
 		{
 			DrawCube(pCube, oWorldCanva, i, 0);
 		}
@@ -137,4 +120,3 @@ void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j)
 		DrawCube(pCube->GetTopCube(), canva, i, j+1);
 	}
 }
-#endif

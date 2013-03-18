@@ -13,11 +13,11 @@ IBFactDef_IsTopOf::~IBFactDef_IsTopOf()
 {
 }
 
-IBF_Result IBFactDef_IsTopOf::Test(const vector<void*>& aUserData)
+IBF_Result IBFactDef_IsTopOf::Test(const vector<IBObject*>& aUserData)
 {
 	assert(aUserData.size() == 2);
 
-	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
 	IBCube* pCube1 = (IBCube*)aUserData[0];
 	IBCube* pCube2 = (IBCube*)aUserData[1];
 
@@ -27,11 +27,11 @@ IBF_Result IBFactDef_IsTopOf::Test(const vector<void*>& aUserData)
 	return (pWorld->IsCubeOnCube(pCube1, pCube2) ? IBF_OK : IBF_FAIL);
 }
 
-void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
+void IBFactDef_IsTopOf::ResolveVariable(vector<IBObject*>& aUserData)
 {
 	assert(aUserData.size() == 2);
 
-	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
 	IBCube* pCubeTop = (IBCube*)aUserData[0];
 	IBCube* pCubeDown = (IBCube*)aUserData[1];
 
@@ -43,8 +43,8 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 			{
 				if (i!=j)
 				{
-					IBCube* pCubeA = &pWorld->GetCubes()[i];
-					IBCube* pCubeB = &pWorld->GetCubes()[j];
+					IBCube* pCubeA = pWorld->GetCubes()[i];
+					IBCube* pCubeB = pWorld->GetCubes()[j];
 					if (pWorld->IsCubeOnCube(pCubeA, pCubeB))
 					{
 						pCubeTop = pCubeA;
@@ -59,7 +59,7 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 	{
 		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			IBCube* pCube = &pWorld->GetCubes()[i];
+			IBCube* pCube = pWorld->GetCubes()[i];
 			if (pWorld->IsCubeOnCube(pCube, pCubeDown))
 			{
 				pCubeTop = pCube;
@@ -71,7 +71,7 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 	{
 		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			IBCube* pCube = &pWorld->GetCubes()[i];
+			IBCube* pCube = pWorld->GetCubes()[i];
 			if (pWorld->IsCubeOnCube(pCubeTop, pCube))
 			{
 				pCubeDown = pCube;
@@ -80,20 +80,8 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<void*>& aUserData)
 		}
 	}
 
-	aUserData[0] = pCubeTop;
-	aUserData[1] = pCubeDown;
+	aUserData[0] = (IBObject*)pCubeTop;
+	aUserData[1] = (IBObject*)pCubeDown;
 }
 
-void IBFactDef_IsTopOf::Print(const vector<void*>& aUserData, int tab) const
-{
-	assert(aUserData.size() == 2);
-
-	IBCube* pCube1 = (IBCube*)aUserData[0];
-	IBCube* pCube2 = (IBCube*)aUserData[1];
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s (%s, %s)\n", GetName().c_str(), (pCube1 != NULL ? pCube1->GetName().c_str() : "NULL"), (pCube2 != NULL ? pCube2->GetName().c_str() : "NULL"));
-}
 

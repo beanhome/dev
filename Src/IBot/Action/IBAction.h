@@ -32,6 +32,8 @@ class IBAction
 			IBA_Finish,
 			IBA_Destroy,
 			IBA_Destroyed,
+
+			State_MAX
 		};
 
 		typedef map<string, IBObject*> VarMap;
@@ -108,6 +110,9 @@ class IBAction
 		void*					m_pUserData;
 
 		bool					m_bToDelete;
+
+	public:
+		static const char*		s_sStateString[State_MAX];
 };
 
 template <typename T>

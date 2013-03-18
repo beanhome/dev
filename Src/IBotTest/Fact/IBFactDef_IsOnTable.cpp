@@ -12,44 +12,36 @@ IBFactDef_IsOnTable::~IBFactDef_IsOnTable()
 {
 }
 
-IBF_Result IBFactDef_IsOnTable::Test(const vector<void*>& aUserData)
+IBF_Result IBFactDef_IsOnTable::Test(const vector<IBObject*>& aUserData)
 {
 	assert(aUserData.size() == 1);
-	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
 
 	IBCube* pCube = (IBCube*)aUserData[0];
+
+	if (pCube == NULL)
+		return IBF_UNKNOW;
+
 	return (pWorld->IsCubeOnTable(pCube) ? IBF_OK : IBF_FAIL);
 }
 
-void IBFactDef_IsOnTable::ResolveVariable(vector<void*>& aUserData)
+void IBFactDef_IsOnTable::ResolveVariable(vector<IBObject*>& aUserData)
 {
 	assert(aUserData.size() == 1);
-	IBWorld* pWorld = static_cast<IBWorld*>(m_pPlanner->GetOwner());
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
 
 	if (aUserData[0] == NULL)
 	{
 		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			if (pWorld->IsCubeOnTable(&pWorld->GetCubes()[i]))
+			if (pWorld->IsCubeOnTable(pWorld->GetCubes()[i]))
 			{
-				aUserData[0] = (void*)&(pWorld->GetCubes()[i]);
+				aUserData[0] = (IBObject*)(pWorld->GetCubes()[i]);
 				break;
 			}
 		}
 	}
 
 	assert(aUserData[0] != NULL);
-}
-
-void IBFactDef_IsOnTable::Print(const vector<void*>& aUserData, int tab) const
-{
-	assert(aUserData.size() == 1);
-
-	IBCube* pCube = (IBCube*)aUserData[0];
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s (%s)\n", GetName().c_str(), pCube->GetName().c_str());
 }
 

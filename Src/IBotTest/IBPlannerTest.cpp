@@ -9,8 +9,8 @@
 #include "Action/IBActionDef_MoveCubeFromCubeToTable.h"
 
 
-IBPlannerTest::IBPlannerTest(void* pOwner)
-	: IBPlanner(pOwner)
+IBPlannerTest::IBPlannerTest(void* pOwner, CanvasBase& oGraphCanva)
+	: IBGPlanner(pOwner, oGraphCanva)
 {
 	REGISTER_FACT(IBFactDef_IsOnTable);
 	REGISTER_FACT(IBFactDef_IsFree);
@@ -25,16 +25,4 @@ IBPlannerTest::~IBPlannerTest()
 {
 }
 
-
-void IBPlannerTest::InitFactLibrary()
-{
-	IBPlanner::InitFactLibrary();
-
-}
-
-void IBPlannerTest::InitActionLibrary()
-{
-	IBPlanner::InitActionLibrary();
-
-}
 

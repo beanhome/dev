@@ -41,8 +41,6 @@ class IBFactDef
 		// Find adequate object to match with the fact for the variables unfilled
 		virtual void				ResolveVariable(vector<IBObject*>& aUserData) {}
 
-		virtual void				Print(const vector<IBObject*>& aUserData, int tab) const;
-
 	private:
 		string						m_sName;
 		uint						m_iDegree;

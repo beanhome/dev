@@ -34,14 +34,15 @@ void IBPlannerDebug::PrintPlanner(const IBPlanner& oPlanner) const
 
 void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 {
-	oAction.GetDef()->Print(oAction.GetVariables(), tab);
+	for (int i=0 ; i<tab ; ++i) LOG("\t");
+	LOG("%s [%s]\n", oAction.GetDef()->GetName().c_str(), IBAction::s_sStateString[oAction.GetState()]);
 
 	for (IBAction::VarMap::const_iterator it = oAction.GetVariables().begin() ; it != oAction.GetVariables().end() ; ++it)
 	{
 		for (int i=0 ; i<tab ; ++i)
 			LOG("\t");
 
-		LOG("  var %s 0x%x %s\n", it->first.c_str(), it->second, ( it->second != NULL ? ((IBObject*)it->second)->GetName().c_str() : "NULL" ));
+		LOG("  var %s %s\n", it->first.c_str(), ( it->second != NULL ? it->second->GetName().c_str() : "nil" ));
 	}
 
 	for (uint i=0 ; i<oAction.GetPreCond().size() ; ++i)
@@ -53,11 +54,20 @@ void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 
 void IBPlannerDebug::PrintFact(const IBFact& oFact, int tab) const
 {
-	oFact.GetFactDef()->Print(oFact.GetUserData(), tab);
-
 	for (int i=0 ; i<tab ; ++i) LOG("\t");
+
+	LOG("%s (", oFact.GetFactDef()->GetName().c_str());
+	for (uint i=0 ; i<oFact.GetVariables().size() ; ++i)
+	{
+		LOG("%s", (oFact.GetVariable(i) != NULL ? oFact.GetVariable(i)->GetName().c_str() : "nil"));
+		if (i<oFact.GetVariables().size()-1)
+			LOG(", ");
+	}
+	LOG(")");
+	LOG(" [");
 	LOG(IBF_ResultString[oFact.Test()]);
-	LOG("\n");
+	LOG("]\n");
+
 
 	if (oFact.GetCauseAction() != NULL)
 	{

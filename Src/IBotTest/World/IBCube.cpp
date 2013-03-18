@@ -1,14 +1,9 @@
 #include "IBCube.h"
 
 
-IBCube::IBCube()
-: m_pTopCube(NULL)
-{
-}
-
 IBCube::IBCube(const string& name)
-: m_sName(name)
-, m_pTopCube(NULL)
+	: IBObject(name)
+	, m_pTopCube(NULL)
 {
 }
 
@@ -36,4 +31,12 @@ void IBCube::Print() const
 		LOG("  free");
 
 	LOG("\n");
+}
+
+void IBCube::FormatData() const
+{
+	if (m_pTopCube != NULL)
+		m_sData = " [" + m_pTopCube->GetName() + "]";
+	else
+		m_sData = " [free]";
 }

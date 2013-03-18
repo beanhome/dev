@@ -11,11 +11,9 @@ class IBFactDef_IsOnTable : public IBFactDef
 		IBFactDef_IsOnTable(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsOnTable();
 
-		IBF_Result			Test(const vector<void*>& aUserData);
+		IBF_Result			Test(const vector<IBObject*>& aUserData);
 
-		virtual void		ResolveVariable(vector<void*>& aUserData);
-
-		virtual void		Print(const vector<void*>& aUserData, int tab) const;
+		virtual void		ResolveVariable(vector<IBObject*>& aUserData);
 
 	private:
 };

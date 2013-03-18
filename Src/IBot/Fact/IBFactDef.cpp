@@ -54,27 +54,3 @@ string IBFactDef::GetData(const vector<IBObject*>& aUserData) const
 }
 
 
-void IBFactDef::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s", GetName().c_str());
-
-	if (aUserData.size() > 0)
-	{
-		LOG(" (");
-		for (uint i=0 ; i<aUserData.size() ; ++i)
-		{
-			LOG("0x%x", aUserData[i]);
-
-			if (i<aUserData.size()-1)
-				LOG(", ");
-		}
-
-		LOG(")");
-	}
-
-
-	LOG("\n");
-}

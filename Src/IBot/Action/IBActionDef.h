@@ -41,11 +41,9 @@ class IBActionDef
 		void							AddPreCondition(const char* name, ...);
 		void							AddPostCondition(const char* name, ...);
 
-		virtual void					Print(const IBAction::VarMap& aUserData, int tab) const;
-
 		virtual void					PreDestroy(IBAction::VarMap& aUserData) const {}
 
-		virtual bool					Init(IBAction* pAction) { return true; };
+		virtual bool					Init(IBAction* pAction)/* { return true; }*/;
 		virtual bool					Start(IBAction* pAction) { return true; };
 		virtual bool					Execute(IBAction* pAction) { return false; };
 		virtual bool					Finish(IBAction* pAction) { return true; };

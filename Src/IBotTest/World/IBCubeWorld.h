@@ -5,24 +5,24 @@
 #include "IBTable.h"
 #include "IBCube.h"
 
-class IBWorld
+class IBCubeWorld
 {
 	public:
-		IBWorld();
-		virtual ~IBWorld();
+		IBCubeWorld();
+		virtual ~IBCubeWorld();
 
 		void Init();
 
-		IBCube* GetCubeA() { return &m_oCubes[0]; }
-		IBCube* GetCubeB() { return &m_oCubes[1]; }
-		IBCube* GetCubeC() { return &m_oCubes[2]; }
+		IBCube* GetCubeA() { return m_oCubes[0]; }
+		IBCube* GetCubeB() { return m_oCubes[1]; }
+		IBCube* GetCubeC() { return m_oCubes[2]; }
 
-		const IBCube* GetCubeA() const { return &m_oCubes[0]; }
-		const IBCube* GetCubeB() const { return &m_oCubes[1]; }
-		const IBCube* GetCubeC() const { return &m_oCubes[2]; }
+		const IBCube* GetCubeA() const { return m_oCubes[0]; }
+		const IBCube* GetCubeB() const { return m_oCubes[1]; }
+		const IBCube* GetCubeC() const { return m_oCubes[2]; }
 
-		const vector<IBCube>& GetCubes() const { return m_oCubes; }
-		vector<IBCube>& GetCubes() { return m_oCubes; }
+		const vector<IBCube*>& GetCubes() const { return m_oCubes; }
+		vector<IBCube*>& GetCubes() { return m_oCubes; }
 
 		const IBTable& GetTable() const { return m_oTable; }
 
@@ -39,7 +39,7 @@ class IBWorld
 	private:
 		IBTable			m_oTable;
 
-		vector<IBCube>	m_oCubes;
+		vector<IBCube*>	m_oCubes;
 };
 
 #endif

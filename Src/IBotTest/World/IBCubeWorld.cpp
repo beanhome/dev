@@ -1,22 +1,27 @@
 #include "IBCubeWorld.h"
 
 
-IBWorld::IBWorld()
+IBCubeWorld::IBCubeWorld()
 {
 	m_oCubes.resize(3);
 
-	GetCubeA()->SetName("Cube_A");
-	GetCubeB()->SetName("Cube_B");
-	GetCubeC()->SetName("Cube_C");
+	for (uint i=0 ; i<m_oCubes.size() ; ++i)
+	{
+		m_oCubes[i] = new IBCube(FormatString("Cube_%c", 'A'+i));
+	}
 }
 
-IBWorld::~IBWorld()
+IBCubeWorld::~IBCubeWorld()
 {
+	for (uint i=0 ; i<m_oCubes.size() ; ++i)
+	{
+		delete m_oCubes[i];
+	}
 }
 
 #define WORLD_CONFIG 1
 
-void IBWorld::Init()
+void IBCubeWorld::Init()
 {
 #if WORLD_CONFIG == 0
 	// Config A
@@ -31,7 +36,7 @@ void IBWorld::Init()
 #endif
 }
 
-void IBWorld::Print() const
+void IBCubeWorld::Print() const
 {
 	m_oTable.Print();
 
@@ -42,7 +47,7 @@ void IBWorld::Print() const
 
 
 
-void IBWorld::MoveCubeFromTableToCube(IBCube* pCube, IBCube* pDestCube)
+void IBCubeWorld::MoveCubeFromTableToCube(IBCube* pCube, IBCube* pDestCube)
 {
 	assert(m_oTable.HasCube(pCube));
 	assert(pCube->IsFree());
@@ -52,7 +57,7 @@ void IBWorld::MoveCubeFromTableToCube(IBCube* pCube, IBCube* pDestCube)
 	pDestCube->PutCube(pCube);
 }
 
-void IBWorld::MoveCubeFromCubeToCube(IBCube* pCube, IBCube* pOrigCube, IBCube* pDestCube)
+void IBCubeWorld::MoveCubeFromCubeToCube(IBCube* pCube, IBCube* pOrigCube, IBCube* pDestCube)
 {
 	assert(pCube->IsFree());
 	assert(pDestCube->IsFree());
@@ -62,7 +67,7 @@ void IBWorld::MoveCubeFromCubeToCube(IBCube* pCube, IBCube* pOrigCube, IBCube* p
 	pDestCube->PutCube(pCube);
 }
 
-void IBWorld::MoveCubeFromCubeToTable(IBCube* pCube, IBCube* pOrigCube)
+void IBCubeWorld::MoveCubeFromCubeToTable(IBCube* pCube, IBCube* pOrigCube)
 {
 	assert(pCube->IsFree());
 	assert(pOrigCube->HasCube(pCube));
@@ -71,12 +76,12 @@ void IBWorld::MoveCubeFromCubeToTable(IBCube* pCube, IBCube* pOrigCube)
 	m_oTable.PutCube(pCube);
 }
 
-bool IBWorld::IsCubeOnTable(IBCube* pCube)
+bool IBCubeWorld::IsCubeOnTable(IBCube* pCube)
 {
 	return (m_oTable.HasCube(pCube));
 }
 
-bool IBWorld::IsCubeOnCube(IBCube* pCube1, IBCube* pCube2)
+bool IBCubeWorld::IsCubeOnCube(IBCube* pCube1, IBCube* pCube2)
 {
 	return (pCube2->HasCube(pCube1));
 }

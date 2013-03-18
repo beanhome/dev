@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\Build\$(PlatformName)\exe\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)\obj\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\IBotTest;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\IBot;..\..\Src\IBotTest;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -85,8 +85,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\Build\$(SolutionName)\exe\$(ConfigurationName)"
-			IntermediateDirectory="..\..\Build\$(SolutionName)\lib\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="..\..\Build\$(PlatformName)\exe\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)\obj\"
 			ConfigurationType="1"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -110,7 +110,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\IBot;C:\dev\Src\IBotTest;C:\dev\Src\Common;C:\dev\Src\Graphics;C:\dev\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\IBot;..\..\Src\IBotTest;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
