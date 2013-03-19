@@ -4,9 +4,10 @@ Personnal developement
 Some parts of my personnal works. Mainly wrote in c++.
 Most of them using the same lib, so they share the same place.
 
+
 C++ Project:
 ------------
-- BotLife: My most serious project of a game based on a plannificator (Goal resolver).
+- [BotLife](http://www.youtube.com/watch?v=x2GE7QnMiqI): My most serious project of a game based on a plannificator (Goal resolver).
 - AntWar: Stand alone project for the AI Challenge of 2011.
 - PlanetWar: Previous AI Challenge project (2010, stand alone too).
 - Faust: Deprecated project using sql database in wxWidget ui.
