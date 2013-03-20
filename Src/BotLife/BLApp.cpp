@@ -156,7 +156,8 @@ int BLApp::Draw()
 	int x = (m_pWorld->GetCanvas().GetMouseX() / m_pWorld->GetGridSize()) * m_pWorld->GetGridSize();
 	int y = (m_pWorld->GetCanvas().GetMouseY() / m_pWorld->GetGridSize()) * m_pWorld->GetGridSize();
 
-	m_pWorld->GetCanvas().DrawRect(x, y, m_pWorld->GetGridSize()-1, m_pWorld->GetGridSize()-1, 255, 255, 255);
+	if (!m_pWorld->IsDraging())
+		m_pWorld->GetCanvas().DrawRect(x, y, m_pWorld->GetGridSize()-1, m_pWorld->GetGridSize()-1, 255, 255, 255);
 
 	if (m_pSelectSquare != NULL)
 	{

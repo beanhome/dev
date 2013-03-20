@@ -11,6 +11,7 @@ class IBActionDef_BoolToBool : public IBActionDef
 		virtual ~IBActionDef_BoolToBool();
 
 		virtual void		Define();
+		virtual float		Evaluate(const IBAction* pAction) const { return 0.f; }
 
 	private:
 };

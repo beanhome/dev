@@ -433,17 +433,16 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 	return GetState();
 }
 
-float IBAction::Valuate()
+float IBAction::Evaluate() const
 {
-	float iCount = 0;
+	float fValue = m_pDef->Evaluate(this);
 
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
-		if (m_aPreCond[i]->IsTrue())
-			iCount++;
+		fValue += m_aPreCond[i]->Evaluate();
 	}
 
-	return (float)iCount / m_aPreCond.size();
+	return fValue;
 }
 
 void IBAction::Start()

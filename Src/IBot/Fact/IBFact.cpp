@@ -59,6 +59,15 @@ void IBFact::PrepareToDelete()
 		m_pCauseAction->PrepareToDelete();
 }
 
+float IBFact::Evaluate() const
+{
+	if (Test() == IBF_OK)
+		return 0.f;
+
+	// TODO: return the smallest cause action value
+	return (m_pCauseAction != NULL ? m_pCauseAction->Evaluate() : IBPlanner::s_fMaxActionDelay);
+}
+
 
 bool IBFact::Resolve(IBPlanner* pPlanner)
 {

@@ -29,6 +29,26 @@ void IBActionDef_FollowPath::Define()
 	AddPostCondition("IBFactDef_BotNearPos", "Target", "Dist");
 }
 
+float IBActionDef_FollowPath::Evaluate(const IBAction* pAction) const
+{
+	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
+	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
+	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+
+	if (pPath == NULL || pStart == NULL || pTarget == NULL)
+		return IBPlanner::s_fMaxActionDelay;
+
+	void* pOwner =  m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	const BLWorld& oWorld = pBot->GetWorld();
+
+	int dist = oWorld.GetGrid().Distance(*pStart, *pTarget);
+	int ln = pPath->GetLength();
+
+	return ((float)(std::max<int>(dist, ln)) * 0.5f);
+}
+
 bool IBActionDef_FollowPath::Init(IBAction* pAction)
 {
 	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));

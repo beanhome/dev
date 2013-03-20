@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\dev\Src\Common;C:\dev\Src\IBot;C:\dev\Src\Graphics;C:\dev\Src\IBot\Graph"
+				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\IBot;..\..\Src\Graphics;..\..\Src\IBot\Graph"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

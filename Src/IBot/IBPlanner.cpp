@@ -8,8 +8,9 @@
 #include "Action/IBAction.h"
 #include "Action/Def/IBActionDef_BoolToBool.h"
 #include "IBGoal.h"
-#include <algorithm>
+//#include <algorithm>
 
+float IBPlanner::s_fMaxActionDelay = 10000000.f;
 
 IBPlanner::IBPlanner(void* pOwner)
 	: m_pOwner(pOwner)

@@ -10,23 +10,25 @@
 #include "GEngine.h"
 
 const uint	IBGPlanner::s_iMargin = 12;
-const uint	IBGPlanner::s_iFactWidth = 92;
+const uint	IBGPlanner::s_iFactMinWidth = 92;
 const uint	IBGPlanner::s_iFactTitleHeight = 18;
+const uint	IBGPlanner::s_iFactTitleSize = 14;
+const uint	IBGPlanner::s_iFactEvalHeight = 16;
+const uint	IBGPlanner::s_iFactEvalSize = 12;
 const uint	IBGPlanner::s_iFactVarHeight = 12;
 const uint	IBGPlanner::s_iFactVarSpace = 1;
-const uint	IBGPlanner::s_iFactHeight = 20;
+const uint	IBGPlanner::s_iFactMinHeight = 20;
 const uint	IBGPlanner::s_iFactMinSpace = 10;
 const uint	IBGPlanner::s_iLinkWidth = 48;
-const uint	IBGPlanner::s_iActionWidth = 128;
+const uint	IBGPlanner::s_iActionMinWidth = 128;
 const uint	IBGPlanner::s_iActionMinHeight = 64;
 const uint	IBGPlanner::s_iActionTitleHeight = 18;
-const uint	IBGPlanner::s_iActionAnchorHeight = 20;
+const uint	IBGPlanner::s_iActionTitleSize = 14;
+const uint	IBGPlanner::s_iActionEvalHeight = 16;
+const uint	IBGPlanner::s_iActionEvalSize = 12;
 const uint	IBGPlanner::s_iActionVarHeight = 12;
 const uint	IBGPlanner::s_iActionVarSpace = 2;
 const uint  IBGPlanner::s_iActionLinkSpace = 16;
-      uint	IBGPlanner::s_iBoxWidth = 0;
-      uint	IBGPlanner::s_iBoxMinHeight = 0;
-const uint	IBGPlanner::s_iBoxSpace = 32;
 const Color	IBGPlanner::s_oActionColor = Color(64, 192, 255);
 const Color	IBGPlanner::s_oActionWorkColor = Color(192, 64, 128);
 const Color	IBGPlanner::s_oMarkToDelActionColor = Color(128, 92, 92);
@@ -49,8 +51,6 @@ IBGPlanner::IBGPlanner(void* pOwner, CanvasBase& oGraphCanva)
 	, m_iStartDragX(0)
 	, m_iStartDragY(0)
 {
-	s_iBoxWidth = s_iFactWidth + s_iLinkWidth + s_iActionWidth;
-	s_iBoxMinHeight = s_iActionMinHeight;
 }
 
 IBGPlanner::~IBGPlanner()
@@ -76,7 +76,7 @@ void IBGPlanner::Draw()
 	int height = 0;
 	m_iMaxHeight = 0;
 	m_iMaxWidth = 0;
-	int fGoalsWidth = s_iFactWidth;
+	int fGoalsWidth = s_iFactMinWidth;
 
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{

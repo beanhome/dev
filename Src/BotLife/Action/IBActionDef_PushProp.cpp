@@ -35,6 +35,11 @@ void IBActionDef_PushProp::Define()
 	AddPostCondition("IBFactDef_HeavyObjectAtPos", "Obj", "DestPos");
 }
 
+float IBActionDef_PushProp::Evaluate(const IBAction* pAction) const
+{
+	return 1.f;
+}
+
 Vector2 dir[4] = { Vector2(0,1), Vector2(0,-1), Vector2(1,0), Vector2(-1,0) };
 
 bool IBActionDef_PushProp::Init(IBAction* pAction)

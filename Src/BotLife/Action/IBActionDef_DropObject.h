@@ -11,6 +11,8 @@ class IBActionDef_DropObject : public IBActionDef
 		virtual ~IBActionDef_DropObject();
 
 		virtual void			Define();
+
+		virtual float			Evaluate(const IBAction* pAction) const;
 		
 		virtual bool			Init(IBAction* pAction);
 		virtual bool			Start(IBAction* pAction);

@@ -12,6 +12,8 @@ class IBActionDef_FollowPath : public IBActionDef
 
 		virtual void			Define();
 		
+		virtual float			Evaluate(const IBAction* pAction) const;
+
 		virtual bool			Init(IBAction* pAction);
 		virtual bool			Start(IBAction* pAction);
 		virtual bool			Execute(IBAction* pAction);

@@ -7,6 +7,7 @@
 #include "World\IBInt.h"
 #include "World\BLProp.h"
 
+float IBActionDef_FindPath::s_fFindPathStepDelay = 0.001f;
 
 IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlanner)
 	: IBActionDef(name, pPlanner)
@@ -31,6 +32,24 @@ void IBActionDef_FindPath::Define()
 	AddVariable("Dist");
 
 	AddPostCondition("IBFactDef_HasValidPath", "Path", "Start", "Target", "Dist");
+}
+
+
+float IBActionDef_FindPath::Evaluate(const IBAction* pAction) const
+{
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	const BLWorld& oWorld = pBot->GetWorld();
+
+	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
+	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
+
+	if (pStart == NULL || pTarget == NULL)
+		return IBPlanner::s_fMaxActionDelay;
+
+	// TODO: Improve this evaluation depands on the StepDelay of the planner and the findpathspeed
+	return (float)(oWorld.GetGrid().Distance(*pStart, *pTarget)) * s_fFindPathStepDelay;
 }
 
 bool IBActionDef_FindPath::Start(IBAction* pAction)
@@ -79,7 +98,7 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	
 	LOG("Find Path step :");
 	double start = Timer::Get();
-	while (Timer::Get() < start + 0.001 && state == Navigation<BLSquare>::FP_Find)
+	while (Timer::Get() < start + s_fFindPathStepDelay && state == Navigation<BLSquare>::FP_Find)
 	{
 		state = pNav->FindPathStep(*pStart, *pTarget, pDist->GetValue(), *pPath);
 		LOG(" *");

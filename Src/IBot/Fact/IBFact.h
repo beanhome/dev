@@ -42,6 +42,7 @@ class IBFact
 		bool						IsMarkToDelete() const { return m_bToDelete; }
 
 		bool						IsTrue() const { return Test() == IBF_OK; }
+		float						Evaluate() const;
 
 		bool						Resolve(IBPlanner* pPlanner);
 		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }

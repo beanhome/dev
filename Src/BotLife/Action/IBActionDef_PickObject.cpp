@@ -16,6 +16,7 @@ IBActionDef_PickObject::~IBActionDef_PickObject()
 
 }
 
+
 void IBActionDef_PickObject::Define()
 {
 	AddVariable("Obj");    // BLObject
@@ -27,6 +28,11 @@ void IBActionDef_PickObject::Define()
 	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
 
 	AddPostCondition("IBFactDef_BotHasObject", "Obj");
+}
+
+float IBActionDef_PickObject::Evaluate(const IBAction* pAction) const
+{
+	return 1.f;
 }
 
 bool IBActionDef_PickObject::Init(IBAction* pAction)

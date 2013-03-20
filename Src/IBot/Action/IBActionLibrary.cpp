@@ -82,7 +82,7 @@ IBAction* IBActionLibrary::FindActionDef(IBFact* pFact)
 			{
 				IBAction* pAction = pActionDef->Instanciate(pFact);
 
-				float fValue = pAction->Valuate();
+				float fValue = pAction->Evaluate();
 
 				if (pBestAction == NULL)
 				{

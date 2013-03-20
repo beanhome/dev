@@ -77,7 +77,7 @@ void IBGAction::Draw() const
 		x = 0;
 		y = 0;
 		int w = 0;
-		int as = m_pActionBox->GetH() / m_aPreCond.size();
+		int as = (m_pActionBox->GetH() - IBGPlanner::s_iActionTitleHeight - IBGPlanner::s_iActionEvalHeight) / m_aPreCond.size();
 		for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 		{
 			IBGFact* pFact = static_cast<IBGFact*>(m_aPreCond[i]);
@@ -85,7 +85,7 @@ void IBGAction::Draw() const
 			pFact->SetX(x);
 			pFact->SetY(y);
 			pFact->Draw();
-			m_oCanvas.CanvasBase::DrawLine(pFact->GetRight(), pFact->GetMidH(), m_pActionBox->GetLeft()-1, m_pActionBox->GetTop()+i*as+as/2, IBGPlanner::s_oLinkColor);
+			m_oCanvas.CanvasBase::DrawLine(pFact->GetRight(), pFact->GetMidH(), m_pActionBox->GetLeft()-1, m_pActionBox->GetTop()+IBGPlanner::s_iActionTitleHeight+IBGPlanner::s_iActionEvalHeight+i*as+as/2, IBGPlanner::s_oLinkColor);
 
 			y += pFact->GetH() + IBGPlanner::s_iFactMinSpace;
 		}

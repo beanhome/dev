@@ -43,13 +43,14 @@ class IBActionDef
 
 		virtual void					PreDestroy(IBAction::VarMap& aUserData) const {}
 
+		virtual float					Evaluate(const IBAction* pAction) const = 0;
+
 		virtual bool					Init(IBAction* pAction)/* { return true; }*/;
 		virtual bool					Start(IBAction* pAction) { return true; };
 		virtual bool					Execute(IBAction* pAction) { return false; };
 		virtual bool					Finish(IBAction* pAction) { return true; };
 		virtual void					Destroy(IBAction* pAction) { };
 		virtual bool					Abort(IBAction* pAction) { return true; };
-
 	protected:
 		string							m_sName;
 		IBPlanner*						m_pPlanner;
@@ -58,7 +59,6 @@ class IBActionDef
 
 		vector<FactCondDef>				m_aPreCondDef;
 		vector<FactCondDef>				m_aPostCondDef;
-
 };
 
 #endif

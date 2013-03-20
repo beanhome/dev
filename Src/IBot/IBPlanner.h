@@ -58,6 +58,9 @@ class IBPlanner
 	protected:
 		const IBAction*			m_pCurrentAction;
 		FactSet					m_aGoals;
+
+	public:
+		static float			s_fMaxActionDelay;
 };
 
 #define REGISTER_FACT(a) m_oFactLibrary.RegisterFactDef(#a, new a(#a, this))

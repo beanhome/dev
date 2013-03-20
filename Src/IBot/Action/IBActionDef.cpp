@@ -2,7 +2,6 @@
 #include "IBPlanner.h"
 #include "IBAction.h"
 
-
 IBActionDef::IBActionDef(const string& name, IBPlanner* pPlanner)
 	: m_sName(name)
 	, m_pPlanner(pPlanner)
@@ -111,6 +110,5 @@ bool IBActionDef::Init(IBAction* pAction)
 
 	return true;
 };
-
 
 

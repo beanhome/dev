@@ -29,6 +29,11 @@ void IBActionDef_UnblockProp::Define()
 	AddPostCondition("IBFactDef_PropIsUnblock", "Obj");
 }
 
+float IBActionDef_UnblockProp::Evaluate(const IBAction* pAction) const
+{
+	return 1.f;
+}
+
 bool IBActionDef_UnblockProp::Init(IBAction* pAction)
 {
 	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));

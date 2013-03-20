@@ -81,7 +81,7 @@ class IBAction
 		void					ResolvePreCond();
 
 		State					Resolve(IBPlanner* pPlanner);
-		float					Valuate();
+		float					Evaluate() const;
 
 		void					PrepareToDelete();
 		bool					IsReadyToDelete();

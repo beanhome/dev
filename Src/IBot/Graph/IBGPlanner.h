@@ -37,23 +37,28 @@ class IBGPlanner : public IBPlanner
 
 	public:
 		static const uint		s_iMargin;
-		static const uint		s_iFactWidth;
+
+		static const uint		s_iFactMinWidth;
+		static const uint		s_iFactMinHeight;
 		static const uint		s_iFactTitleHeight;
+		static const uint		s_iFactTitleSize;
+		static const uint		s_iFactEvalHeight;
+		static const uint		s_iFactEvalSize;
 		static const uint		s_iFactVarHeight;
 		static const uint		s_iFactVarSpace;
-		static const uint		s_iFactHeight; // to del
-		static const uint		s_iFactMinSpace; // to del
+		static const uint		s_iFactMinSpace;
+
 		static const uint		s_iLinkWidth;
-		static const uint		s_iActionWidth;
+		
+		static const uint		s_iActionMinWidth;
 		static const uint		s_iActionMinHeight;
 		static const uint		s_iActionTitleHeight;
-		static const uint		s_iActionAnchorHeight;
+		static const uint		s_iActionTitleSize;
+		static const uint		s_iActionEvalHeight;
+		static const uint		s_iActionEvalSize;
 		static const uint		s_iActionVarHeight;
 		static const uint		s_iActionVarSpace;
 		static const uint		s_iActionLinkSpace;
-		static       uint		s_iBoxWidth;
-		static       uint		s_iBoxMinHeight;
-		static const uint		s_iBoxSpace;
 
 		static const Color		s_oActionColor;
 		static const Color		s_oActionWorkColor;

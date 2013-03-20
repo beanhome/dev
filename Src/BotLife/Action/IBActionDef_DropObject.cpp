@@ -30,6 +30,12 @@ void IBActionDef_DropObject::Define()
 	AddPostCondition("IBFactDef_ObjectAtPos", "Obj", "Pos");
 }
 
+float IBActionDef_DropObject::Evaluate(const IBAction* pAction) const
+{
+	return 1.f;
+}
+
+
 bool IBActionDef_DropObject::Init(IBAction* pAction)
 {
 	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
