@@ -60,18 +60,5 @@ void IBFactDef_PosIsFree::ResolveVariable(vector<IBObject*>& aUserData)
 	}
 }
 
-void IBFactDef_PosIsFree::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
-
-	Vector2* pPos = reinterpret_cast<IBVector2*>(aUserData[0]);
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s\n", GetName().c_str());
-}
 
 

@@ -13,6 +13,8 @@ enum IBF_Result
 	IBF_OK,
 	IBF_FAIL,
 	IBF_UNKNOW,
+	IBF_IMPOSSIBLE,
+	IBF_DELETE,
 
 	IBF_Result_MAX
 };

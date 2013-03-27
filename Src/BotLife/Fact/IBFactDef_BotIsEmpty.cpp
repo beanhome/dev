@@ -27,16 +27,4 @@ void IBFactDef_BotIsEmpty::ResolveVariable(vector<IBObject*>& aUserData)
 {
 }
 
-void IBFactDef_BotIsEmpty::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 0);
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s\n", GetName().c_str());
-}
-
 

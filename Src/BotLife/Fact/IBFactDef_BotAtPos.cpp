@@ -42,19 +42,5 @@ void IBFactDef_BotAtPos::ResolveVariable(vector<IBObject*>& aUserData)
 	ASSERT(aUserData[0] != NULL);
 }
 
-void IBFactDef_BotAtPos::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 1);
-
-	//BLBot* pBot = static_cast<BLBot*>(pOwner);
-	Vector2 vPos = *((IBVector2*)aUserData[0]);
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s (%d %d)\n", GetName().c_str(), vPos.x, vPos.y );
-}
 
 

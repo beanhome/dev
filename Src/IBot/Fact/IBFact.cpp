@@ -8,7 +8,6 @@
 IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 	: m_pDef(pDef)
 	, m_aUserData(aUserData)
-	, m_pCauseAction(NULL)
 	, m_pEffectAction(NULL)
 	, m_bToDelete(false)
 {
@@ -21,17 +20,30 @@ IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 
 IBFact::~IBFact()
 {
-	if (m_pCauseAction != NULL)
+	while (m_aCauseAction.begin() != m_aCauseAction.end())
 	{
-		if (m_pCauseAction->GetPostCond().size() == 1)
+		delete *(m_aCauseAction.begin());
+	}
+
+#if 0
+	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; /*++it*/)
+	{
+		IBAction* pAction = *it;
+
+		//if (pAction->GetPostCond().size() == 1)
 		{
-			delete m_pCauseAction;
+			delete pAction;
+			it++;
 		}
+		/*
 		else
 		{
-			m_pCauseAction->RemPostCond(this);
+			pAction->RemPostCond(this);
+			it++;
 		}
+		*/
 	}
+#endif
 
 	for (uint i=0 ; i<m_aUserData.size() ; ++i)
 	{
@@ -44,77 +56,139 @@ void IBFact::SetVariable(uint i, IBObject* pVar)
 {
 	ASSERT(i<m_aUserData.size());
 	m_aUserData[i] = pVar;
-	if (pVar->IsInstance() && pVar->GetOwner() == NULL)
+	if (pVar != NULL && pVar->IsInstance() && pVar->GetOwner() == NULL)
 		pVar->SetOwner(this);
 
-	if (m_pCauseAction != NULL)
-		m_pCauseAction->SpreadPostCondVariable();
+	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+		(*it)->UpdateVariableFromPostCond();
 }
+
+bool IBFact::IsReadyToDelete() const
+{
+	if (!m_bToDelete)
+		return false;
+
+	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+	{
+		if (!(*it)->IsReadyToDelete())
+			return false;
+	}
+
+	return true;
+}
+
 
 void IBFact::PrepareToDelete()
 {
 	m_bToDelete = true;
 
-	if (m_pCauseAction != NULL)
-		m_pCauseAction->PrepareToDelete();
+	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+		(*it)->PrepareToDelete();
 }
+
+IBAction* IBFact::GetBestCauseAction(float& fMinEval) const
+{
+	IBAction* pBestAction = NULL;
+	fMinEval = IBPlanner::s_fMaxActionDelay;
+	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+	{
+		IBAction* pAction = *it;
+
+		float fEval = pAction->Evaluate();
+		if (pBestAction == NULL || fMinEval > fEval)
+		{
+			pBestAction = pAction;
+			fMinEval = fEval;
+		}
+	}
+
+	return pBestAction;
+}
+
 
 float IBFact::Evaluate() const
 {
 	if (Test() == IBF_OK)
 		return 0.f;
 
-	// TODO: return the smallest cause action value
-	return (m_pCauseAction != NULL ? m_pCauseAction->Evaluate() : IBPlanner::s_fMaxActionDelay);
+	float fEval;
+	GetBestCauseAction(fEval);
+
+	return fEval;
 }
 
-
-bool IBFact::Resolve(IBPlanner* pPlanner)
+IBF_Result IBFact::Resolve(IBPlanner* pPlanner)
 {
-	if (m_pCauseAction != NULL && m_pCauseAction->Resolve(pPlanner) == IBAction::IBA_Destroyed)
+	for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); /* blank */)
 	{
-		m_pCauseAction->PrepareToDelete();
-		if (m_pCauseAction->IsReadyToDelete())
+		if ((*it)->IsReadyToDelete())
 		{
-			if (pPlanner->GetCurrentAction() == m_pCauseAction)
-				pPlanner->SetCurrentAction(NULL);
-
-			delete m_pCauseAction;
-			m_pCauseAction = NULL;
+			delete *it++; // the delete do the erase
+			//m_aCauseAction.erase(it++);
+		}
+		else
+		{
+			++it;
 		}
 	}
 
-	if (m_bToDelete)
-		return false;
-
 	IBF_Result res = Test();
-	//LOG("Result : %d\n", res);
+
+	multimap<float, IBAction*> pActionOrdered;
+
+	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+		pActionOrdered.insert(pair<float, IBAction*>((*it)->Evaluate(), (*it)));
 
 	switch (res)
 	{
 		case IBF_OK:
-			if (m_pCauseAction != NULL)
+			for (multimap<float, IBAction*>::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
 			{
-				m_pCauseAction->PrepareToDelete();
+				IBAction* pAction = it->second;
+				pAction->PrepareToDelete();
+				pAction->Resolve(pPlanner);
 			}
-			return true;
 			break;
 
 		case IBF_FAIL:
-			if (m_pCauseAction == NULL)
+			if (!m_bToDelete && m_aCauseAction.size() == 0)
 			{
 				pPlanner->FindActionToResolve(this);
+				if (m_aCauseAction.size() == 0)
+					res = IBF_IMPOSSIBLE;
+			}
+			else
+			{
+				bool imp = true;
+				for (multimap<float, IBAction*>::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
+				{
+					IBAction* pAction = it->second;
+
+					if (m_bToDelete)
+						pAction->PrepareToDelete();
+
+					IBAction::State st = pAction->Resolve(pPlanner);
+
+					if (st != IBAction::IBA_Impossible)
+						imp = false;
+
+					if (!m_bToDelete && st == IBAction::IBA_Destroyed)
+						pAction->PrepareToDelete();
+				}
+				if (imp)
+					res = IBF_IMPOSSIBLE;
 			}
 			break;
 
 		case IBF_UNKNOW:
 			// Find variable object
-			// ...
-			if (false) { LOG("prout"); }
+			ResolveVariable();
+			if (GetEffectAction() != NULL)
+				GetEffectAction()->SpreadPreCondVariable(this);
 			break;
 	}
 
-	return false;
+	return (m_bToDelete ? IBF_DELETE : res);
 }
 
 

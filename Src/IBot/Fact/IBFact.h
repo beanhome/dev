@@ -9,6 +9,9 @@ class IBAction;
 class IBPlanner;
 class IBObject;
 
+typedef set<IBFact*>	FactSet;
+typedef set<IBAction*>	ActionSet;
+
 class IBFact
 {
 	public:
@@ -22,10 +25,10 @@ class IBFact
 	public:
 		IBFactDef*					GetFactDef() const { return m_pDef; }
 
-		void						SetCauseAction(IBAction* pAction) { m_pCauseAction = pAction; }
-		IBAction*					GetCauseAction() const { return m_pCauseAction; }
-		bool						HasCauseAction() const { return (m_pCauseAction != NULL); }
-		void						RemoveCauseAction(const IBAction* pAction) { if (m_pCauseAction == pAction) m_pCauseAction = NULL; }
+		bool						HasCauseAction() const { return (m_aCauseAction.size() > 0); }
+		void						RemoveCauseAction(IBAction* pAction) { m_aCauseAction.erase(pAction); }
+		void						AddCauseAction(IBAction* pAction) { m_aCauseAction.insert(pAction); }
+		const ActionSet&			GetCauseAction() const { return m_aCauseAction; }
 
 		void						SetEffectAction(IBAction* pAction) { m_pEffectAction = pAction; }
 		IBAction*					GetEffectAction() const { return m_pEffectAction; }
@@ -34,17 +37,20 @@ class IBFact
 		const vector<IBObject*>&	GetUserData() const { return m_aUserData; }
 		const vector<IBObject*>&	GetVariables() const { return m_aUserData; }
 		IBObject*					GetVariable(uint i) const { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
-		//IBObject*					GetVariable(uint i) { assert(i<m_aUserData.size()); return m_aUserData[i]; }
+		//IBObject*					GetVariable(uint i) { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
 		void						SetVariable(uint i, IBObject* pVar);
 
-		bool						IsReadyToDelete() const { return (m_bToDelete && m_pCauseAction == NULL); }
+		bool						IsReadyToDelete() const;
 		void						PrepareToDelete();
 		bool						IsMarkToDelete() const { return m_bToDelete; }
 
 		bool						IsTrue() const { return Test() == IBF_OK; }
 		float						Evaluate() const;
 
-		bool						Resolve(IBPlanner* pPlanner);
+		IBAction*					GetBestCauseAction(float& fMinEval) const;
+		IBAction*					GetBestCauseAction() const { float fEval; return GetBestCauseAction(fEval); }
+
+		IBF_Result 					Resolve(IBPlanner* pPlanner);
 		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
 
 	public:
@@ -57,11 +63,9 @@ class IBFact
 	protected:
 		IBFactDef*					m_pDef;
 		vector<IBObject*>			m_aUserData;
-		IBAction*					m_pCauseAction;
+		ActionSet					m_aCauseAction;
 		IBAction*					m_pEffectAction;
 		bool						m_bToDelete;
 };
-
-typedef set<IBFact*>	FactSet;
 
 #endif

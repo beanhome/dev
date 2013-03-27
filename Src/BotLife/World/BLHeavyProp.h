@@ -10,7 +10,8 @@ class BLHeavyProp : public BLProp_SI
 		BLHeavyProp(BLWorld& oWorld, const string& name, const char* img, const Vector2& pos = Vector2(0,0));
 		virtual ~BLHeavyProp();
 
-		virtual bool			IsTempBlock() const { return false; }
+		virtual bool			IsBlock() const { return true; }
+		virtual bool			IsMovable() const { return true; }
 
 	protected:
 };

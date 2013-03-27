@@ -36,9 +36,12 @@ IBF_Result IBFactDef_ObjectAtPos::Test(const vector<IBObject*>& aUserData)
 
 void IBFactDef_ObjectAtPos::ResolveVariable(vector<IBObject*>& aUserData)
 {
+	ASSERT(aUserData.size() == GetDegree());
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	ASSERT(pBot != NULL);
+	BLWorld& oWorld = pBot->GetWorld();
 
 	BLProp* pProp = ((BLProp*)aUserData[0]);
 	IBVector2* pPos = ((IBVector2*)aUserData[1]);
@@ -48,23 +51,14 @@ void IBFactDef_ObjectAtPos::ResolveVariable(vector<IBObject*>& aUserData)
 		pPos = &pProp->GetPos();
 		aUserData[1] = pPos;
 	}
+	else if (pPos != NULL && pProp == NULL)
+	{
+		pProp = (BLProp*)oWorld.GetGrid().GetCase(*pPos).GetProp();
+		aUserData[0] = pProp;
+	}
 }
 
-void IBFactDef_ObjectAtPos::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
-
-	BLProp* pProp = ((BLProp*)aUserData[0]);
-	IBVector2* pPos = ((IBVector2*)aUserData[1]);
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s (%s, %s)\n", GetName().c_str(), (pProp != NULL ? pProp->GetData().c_str() : "nil"), (pPos != NULL ? pPos->GetData().c_str() : "nil"));
-}
-
+/*
 IBFactDef_HeavyObjectAtPos::IBFactDef_HeavyObjectAtPos(const string& name, IBPlanner* pPlanner)
 	: IBFactDef_ObjectAtPos(name, pPlanner)
 {
@@ -84,3 +78,4 @@ IBF_Result IBFactDef_HeavyObjectAtPos::Test(const vector<IBObject*>& aUserData)
 
 	return res;
 }
+*/

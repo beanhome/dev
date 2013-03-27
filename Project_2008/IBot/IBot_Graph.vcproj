@@ -102,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\dev\Src\Common;C:\dev\Src\IBot;C:\dev\Src\Graphics;C:\dev\Src\IBot\Graph"
+				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\IBot;..\..\Src\Graphics;..\..\Src\IBot\Graph"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"

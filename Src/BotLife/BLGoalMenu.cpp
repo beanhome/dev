@@ -68,12 +68,7 @@ void BLGoalMenu::ConstructFromCase(const BLSquare* pSquare, const BLSquare* pSel
 		m_aGoals.push_back(IBGoal("IBFactDef_BotHasObject", (IBObject*)pSquare->GetProp()));
 	}
 
-	if (pSelectSquare != NULL && pSelectSquare->GetProp() != NULL && pSelectSquare->GetProp()->IsMovable() && pSquare->IsFree())
-	{
-		m_aGoals.push_back(IBGoal("IBFactDef_HeavyObjectAtPos", (IBObject*)pSelectSquare->GetProp(), (IBObject*)&pSquare->GetPos()));
-	}
-
-	if (pSelectSquare != NULL && pSelectSquare->GetProp() != NULL && pSelectSquare->GetProp()->IsPickable() && pSquare->IsFree())
+	if (pSelectSquare != NULL && pSelectSquare->GetProp() != NULL && !pSquare->IsPermBlock())
 	{
 		m_aGoals.push_back(IBGoal("IBFactDef_ObjectAtPos", (IBObject*)pSelectSquare->GetProp(), (IBObject*)&pSquare->GetPos()));
 	}

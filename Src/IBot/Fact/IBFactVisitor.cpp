@@ -6,7 +6,6 @@
 IBFactVisitor::IBFactVisitor(const IBPlanner& planner)
 	: m_oPlanner(planner)
 {
-
 }
 
 const IBFact* IBFactVisitor::Begin()
@@ -18,25 +17,27 @@ const IBFact* IBFactVisitor::Begin()
 	if (m_itGoals == m_oPlanner.GetGoals().end())
 		return NULL;
 
-	while (LastFact()->GetCauseAction() != NULL && LastFact()->GetCauseAction()->GetPreCond().size() > 0)
+	while (HasChildren(LastFact()))
 	{
-		m_Stack.push_back(IBFactVisitor::Iterator(LastFact(), 0));
+		m_Stack.push_back(IBFactVisitor::Iterator(LastFact()));
 	}
 
 	return LastFact();
 }
 
-/*
-IBFact* IBFactVisitor::Back()
+bool IBFactVisitor::HasChildren(const IBFact* pFact) const
 {
+	if (pFact->GetCauseAction().size() == 0)
+		return false;
 
-}
+	for (ActionSet::const_iterator it = pFact->GetCauseAction().begin() ; it != pFact->GetCauseAction().end() ; ++it)
+	{
+		if ((*it)->GetPreCond().size() > 0)
+			return true;
+	}
 
-IBFact* IBFactVisitor::End()
-{
-	return NULL;
+	return false;
 }
-*/
 
 IBFact* IBFactVisitor::Get()
 {
@@ -47,9 +48,20 @@ bool IBFactVisitor::NextChild()
 {
 	if (m_Stack.size() > 0)
 	{
-		int& id = m_Stack[m_Stack.size()-1].m_iId;
-		const IBFact* pFact = m_Stack[m_Stack.size()-1].m_pFact;
-		return (++id < (int)pFact->GetCauseAction()->GetPreCond().size());
+		Iterator& Last = m_Stack[m_Stack.size()-1];
+		const IBFact* pFact = Last.m_pFact;
+		int& id = Last.m_iPreCondId;
+		IBAction* pAction = *(Last.m_itCauseAction);
+
+		if (++id < (int)pAction->GetPreCond().size())
+			return true;
+
+		id = 0;
+		while (++Last.m_itCauseAction != pFact->GetCauseAction().end()
+			&& (*Last.m_itCauseAction)->GetPreCond().size() == 0)
+		{}
+
+		return (Last.m_itCauseAction != pFact->GetCauseAction().end());
 	}
 	else
 	{
@@ -61,9 +73,9 @@ const IBFact* IBFactVisitor::LastFact()
 {
 	if (m_Stack.size() > 0)
 	{
-		int id = m_Stack[m_Stack.size()-1].m_iId;
-		const IBFact* pFact = m_Stack[m_Stack.size()-1].m_pFact;
-		return (pFact->GetCauseAction()->GetPreCond()[id]);
+		Iterator& Last = m_Stack[m_Stack.size()-1];
+		int id = Last.m_iPreCondId;
+		return ((*Last.m_itCauseAction)->GetPreCond()[id]);
 	}
 	else
 	{
@@ -93,18 +105,12 @@ const IBFact* IBFactVisitor::Next()
 	else
 	{
 		// on push tout les enfants possible
-		while (LastFact()->GetCauseAction() != NULL && LastFact()->GetCauseAction()->GetPreCond().size() > 0)
+		while (HasChildren(LastFact()))
 		{
-			m_Stack.push_back(IBFactVisitor::Iterator(LastFact(), 0));
+			m_Stack.push_back(IBFactVisitor::Iterator(LastFact()));
 		}
 
 		return LastFact();
 	}
 }
 
-/*
-IBFact* IBFactVisitor::Prev()
-{
-	return NULL;
-}
-*/

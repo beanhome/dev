@@ -49,9 +49,9 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	CenterMap((int)m_pBot->GetLocX(), (int)m_pBot->GetLocY());
 
 	m_pMap->RandomFullGroundLoc(i, j);
-	new BLLightProp(*this, "Mine 1", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
+	new BLLightProp(*this, "Coin", DATA_DIR "/BotLife/Coin.png", Vector2(i,j));
 	m_pMap->RandomFullGroundLoc(i, j);
-	new BLLightProp(*this, "Mine 2", DATA_DIR "/BotLife/Mine.png", Vector2(i,j));
+	new BLLightProp(*this, "Diam", DATA_DIR "/BotLife/Diam.png", Vector2(i,j));
 	m_pMap->RandomFullGroundLoc(i, j);
 	new BLHeavyProp(*this, "Box", DATA_DIR "/BotLife/Box.png", Vector2(i,j));
 
@@ -174,15 +174,19 @@ void BLWorld::DrawDebug() const
 				DrawDebugObject(pObj);
 			}
 		}
-		else if (pFact->GetCauseAction() != NULL)
+		else
 		{
-			IBGAction* pAction = static_cast<IBGAction*>(pFact->GetCauseAction());
-			if (pAction->GetActionBox()->GetCanvas().IsMouseInside())
+			for (ActionSet::const_iterator it = pFact->GetCauseAction().begin() ; it != pFact->GetCauseAction().end() ; ++it)
 			{
-				for (IBAction::VarMap::const_iterator it = pAction->GetVariables().begin() ; it != pAction->GetVariables().end() ; ++it)
+				IBGAction* pAction = static_cast<IBGAction*>(*it);
+
+				if (pAction->GetActionBox()->GetCanvas().IsMouseInside())
 				{
-					IBObject* pObj = it->second;
-					DrawDebugObject(pObj);
+					for (IBAction::VarMap::const_iterator it = pAction->GetVariables().begin() ; it != pAction->GetVariables().end() ; ++it)
+					{
+						IBObject* pObj = it->second;
+						DrawDebugObject(pObj);
+					}
 				}
 			}
 		}
@@ -229,10 +233,13 @@ void BLWorld::DrawDebugPath(const IBPath& oPath) const
 
 void BLWorld::DrawDebugObj(const BLObject& oObj) const
 {
-	int x1 = oObj.GetPos().x * GetGridSize();
-	int y1 = oObj.GetPos().y * GetGridSize();
-	m_oCanva.DrawRect(x1, y1, GetGridSize()-1, GetGridSize()-1, 0, 255, 255);
-	m_oCanva.Print(x1+2, y1+1, m_oCanva.GetPrintFont(), 10, LeftTop, 0, 255, 255, "%s", oObj.GetName().c_str());
+	if (!m_pBot->HasObject(dynamic_cast<BLProp*>((BLObject*)&oObj)))
+	{
+		int x1 = oObj.GetPos().x * GetGridSize();
+		int y1 = oObj.GetPos().y * GetGridSize();
+		m_oCanva.DrawRect(x1, y1, GetGridSize()-1, GetGridSize()-1, 0, 255, 255);
+		m_oCanva.Print(x1+2, y1+1, m_oCanva.GetPrintFont(), 10, LeftTop, 0, 255, 255, "%s", oObj.GetName().c_str());
+	}
 }
 
 void BLWorld::DrawDebugPos(const IBVector2& oPos) const

@@ -7,6 +7,8 @@
 #include "Fact\IBFactDef_BotIsEmpty.h"
 #include "Fact\IBFactDef_BotNearPos.h"
 #include "Fact\IBFactDef_PropIsUnblock.h"
+#include "Fact\IBFactDef_PropIsPickable.h"
+#include "Fact\IBFactDef_PropIsMovable.h"
 #include "Fact\IBFactDef_PosIsFree.h"
 
 #include "Action\IBActionDef_FollowPath.h"
@@ -24,12 +26,13 @@ IBPlanner_BL::IBPlanner_BL(void* pOwner, CanvasBase& canvas)
 	REGISTER_FACT(IBFactDef_BotNearPos);
 	REGISTER_FACT(IBFactDef_PosIsFree);
 	REGISTER_FACT(IBFactDef_ObjectAtPos);
-	REGISTER_FACT(IBFactDef_HeavyObjectAtPos);
 	REGISTER_FACT(IBFactDef_HasValidPath);
 	REGISTER_FACT(IBFactDef_BotHasObject);
 	REGISTER_FACT(IBFactDef_BotIsEmpty);
 	REGISTER_FACT(IBFactDef_PropIsUnblock);
 	REGISTER_FACT(IBFactDef_PropIsBlock);
+	REGISTER_FACT(IBFactDef_PropIsPickable);
+	REGISTER_FACT(IBFactDef_PropIsMovable);
 	REGISTER_FACT_NAMED(IBFactDef_PropIsUnblock, "IBFactDef_DoorIsOpen");
 	REGISTER_FACT_NAMED(IBFactDef_PropIsBlock, "IBFactDef_DoorIsClose");
 

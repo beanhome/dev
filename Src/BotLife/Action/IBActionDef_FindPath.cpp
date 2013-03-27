@@ -68,8 +68,8 @@ bool IBActionDef_FindPath::Start(IBAction* pAction)
 	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	ASSERT(pDist != NULL);
 
-	if (oWorld.GetGrid().GetCase(*pTarget).IsBlock())
-		return false;
+	//if (oWorld.GetGrid().GetCase(*pTarget).IsBlock())
+	//	return false;
 
 	if (pAction->GetUserData() != NULL)
 		delete (Navigation<BLSquare>*)pAction->GetUserData();
@@ -127,10 +127,16 @@ bool IBActionDef_FindPath::Finish(IBAction* pAction)
 	for (uint i=0 ; i<pPath->GetLength() ; ++i)
 	{
 		const BLSquare& sq = oWorld.GetGrid().GetCase((*pPath)[i]);
-		if (sq.GetProp() != NULL && sq.GetProp()->IsTempBlock())
+		if (sq.GetProp() != NULL && sq.GetProp()->IsBlock())
 		{
 			m_pPlanner->AddPreCond(pAction, "IBFactDef_PropIsUnblock", (IBObject*)sq.GetProp());
 		}
+	}
+
+	if (pAction->GetUserData() != NULL)
+	{
+		delete (Navigation<BLSquare>*)pAction->GetUserData();
+		pAction->SetUserData(NULL);
 	}
 
 	return oWorld.TestPath(*pPath);
@@ -138,8 +144,4 @@ bool IBActionDef_FindPath::Finish(IBAction* pAction)
 
 void IBActionDef_FindPath::Destroy(IBAction* pAction)
 {
-	if (pAction->GetUserData() != NULL)
-		delete (Navigation<BLSquare>*)pAction->GetUserData();
-
-	pAction->SetUserData(NULL);
 }

@@ -26,6 +26,8 @@ class BLBot : public IBObject
 			Walk,
 			Action,
 			Push,
+			
+			BotState_MAX,
 		};
 
 		enum BotDir
@@ -74,7 +76,7 @@ class BLBot : public IBObject
 		BLWorld&				GetWorld() { return m_oWorld; }
 
 		void					PickProp(BLProp* pProp);
-		bool					HasObject(BLProp* pObj) const { return pObj == m_pCarryObject; }
+		bool					HasObject(BLProp* pObj) const { return (pObj != NULL && pObj == m_pCarryObject); }
 		BLProp*					GetFirstObject() const { return m_pCarryObject; }
 		void					DropObject(BLProp* pProp, const IBVector2& pos);
 
@@ -118,6 +120,7 @@ class BLBot : public IBObject
 		BLProp*					m_pPushObject;
 
 	private:
+		static const char*		s_sStateString[BotState_MAX];
 		static const char*		s_sDirString[8];
 		static float			s_fDirArrayX[8];
 		static float			s_fDirArrayY[8];

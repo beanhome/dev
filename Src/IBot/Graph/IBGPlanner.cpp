@@ -29,6 +29,7 @@ const uint	IBGPlanner::s_iActionEvalSize = 12;
 const uint	IBGPlanner::s_iActionVarHeight = 12;
 const uint	IBGPlanner::s_iActionVarSpace = 2;
 const uint  IBGPlanner::s_iActionLinkSpace = 16;
+const uint  IBGPlanner::s_iActionMinSpace = 10;
 const Color	IBGPlanner::s_oActionColor = Color(64, 192, 255);
 const Color	IBGPlanner::s_oActionWorkColor = Color(192, 64, 128);
 const Color	IBGPlanner::s_oMarkToDelActionColor = Color(128, 92, 92);

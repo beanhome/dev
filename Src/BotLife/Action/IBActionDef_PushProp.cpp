@@ -27,12 +27,13 @@ void IBActionDef_PushProp::Define()
 	AddVariable("Dist");   // IBInt = 0
 
 	AddPreCondition("IBFactDef_PosIsFree", "DestPos");
-	AddPreCondition("IBFactDef_HeavyObjectAtPos", "Obj", "ObjPos");
+	AddPreCondition("IBFactDef_ObjectAtPos", "Obj", "ObjPos");
+	AddPreCondition("IBFactDef_PropIsMovable", "Obj");
 	AddPreCondition("IBFactDef_BotNearPos", "PushPos", "Dist");
 	AddPreCondition("IBFactDef_PosIsFree", "PushPos");
-	//AddPreCondition("IBFactDef_PropIsHeavy", "Obj");
 
-	AddPostCondition("IBFactDef_HeavyObjectAtPos", "Obj", "DestPos");
+	AddPostCondition("IBFactDef_ObjectAtPos", "Obj", "DestPos");
+	AddPostCondition("IBFactDef_PosIsFree", "ObjPos");
 }
 
 float IBActionDef_PushProp::Evaluate(const IBAction* pAction) const
@@ -56,7 +57,37 @@ bool IBActionDef_PushProp::Init(IBAction* pAction)
 	IBVector2* pPushPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("PushPos"));
 	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
 
-	if (pObjPos == NULL && pObj != NULL)
+	if (pObj == NULL && pObjPos == NULL)
+		return false;
+
+	if (pObj == NULL)
+	{
+		pObj = (BLProp*)(oWorld.GetGrid().GetCase(*pObjPos).GetProp());
+		pAction->SetVariable("Obj", pObj);
+	}
+
+	if (pDestPos == NULL)
+	{
+		pObjPos = &(pObj->GetPos());
+		pAction->SetVariable("ObjPos", pObjPos);
+
+		for (uint i=0 ; i<4 ; ++i)
+		{
+			Vector2 oDestPos = *pObjPos + dir[i];
+			Vector2 pushpos = *pObjPos - dir[i];
+			if (oWorld.GetGrid().IsCoordValid(oDestPos) && !oWorld.GetGrid().GetCase(oDestPos).IsPermBlock(pObj)
+				&& oWorld.GetGrid().IsCoordValid(pushpos) && !oWorld.GetGrid().GetCase(pushpos).IsPermBlock(pObj))
+			{
+				pDestPos = new IBVector2("Dest", oDestPos, true);
+				pPushPos = new IBVector2("Push", pushpos, true);
+				pAction->SetVariable("DestPos", pDestPos);
+				pAction->SetVariable("PushPos", pPushPos);
+				break;
+			}
+		}
+	}
+
+	if (pObjPos == NULL && pDestPos != NULL)
 	{
 		BLProp& oObj = *pObj;
 		IBVector2& oDestPos = *pDestPos;
@@ -70,26 +101,26 @@ bool IBActionDef_PushProp::Init(IBAction* pAction)
 		else
 		{
 			int iBestDist = -1;
-			Vector2 iBestPos;
+			Vector2 oBestPos;
 			for (uint i=0 ; i<4 ; ++i)
 			{
 				Vector2 pos = oDestPos + dir[i];
 				Vector2 pushpos = pos + dir[i];
-				if (oWorld.GetGrid().IsCoordValid(pos) && oWorld.GetGrid().GetCase(pos).IsFree(pObj)
-				 && oWorld.GetGrid().IsCoordValid(pushpos) && oWorld.GetGrid().GetCase(pushpos).IsFree(pObj))
+				if (oWorld.GetGrid().IsCoordValid(pos) && !oWorld.GetGrid().GetCase(pos).IsPermBlock(pObj)
+				 && oWorld.GetGrid().IsCoordValid(pushpos) && !oWorld.GetGrid().GetCase(pushpos).IsPermBlock(pObj))
 				{
 					int iDist = oWorld.GetGrid().Distance(pObj->GetPos(), pos, false);
 					if (iBestDist == -1 || iDist < iBestDist)
 					{
 						iBestDist = iDist;
-						iBestPos = pos;
+						oBestPos = pos;
 					}
 				}
 			}
 
 			if (iBestDist > 0)
 			{
-				pObjPos = new IBVector2("Obj Pos", iBestPos, true);
+				pObjPos = new IBVector2("Obj Pos", oBestPos, true);
 			}
 		}
 

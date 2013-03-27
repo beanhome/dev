@@ -59,6 +59,7 @@ class IBGPlanner : public IBPlanner
 		static const uint		s_iActionVarHeight;
 		static const uint		s_iActionVarSpace;
 		static const uint		s_iActionLinkSpace;
+		static const uint		s_iActionMinSpace;
 
 		static const Color		s_oActionColor;
 		static const Color		s_oActionWorkColor;

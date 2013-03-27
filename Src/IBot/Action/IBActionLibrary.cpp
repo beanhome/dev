@@ -68,8 +68,8 @@ IBAction* IBActionLibrary::FindActionDef(IBFact* pFact)
 	ActionDefMap::iterator end = m_oMap.end();
 	ActionDefMap::iterator it;
 
-	IBAction* pBestAction = NULL;
-	float fBestValuate;
+	//IBAction* pBestAction = NULL;
+	//float fBestValuate;
 
 	for (it=begin ; it!=end ; ++it)
 	{
@@ -82,6 +82,7 @@ IBAction* IBActionLibrary::FindActionDef(IBFact* pFact)
 			{
 				IBAction* pAction = pActionDef->Instanciate(pFact);
 
+				/*
 				float fValue = pAction->Evaluate();
 
 				if (pBestAction == NULL)
@@ -101,10 +102,12 @@ IBAction* IBActionLibrary::FindActionDef(IBFact* pFact)
 				}
 
 				break;
+				*/
 			}
 		}
 	}
 
-	return pBestAction;
+	//return pBestAction;
+	return NULL;
 }
 

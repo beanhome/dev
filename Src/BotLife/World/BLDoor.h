@@ -25,7 +25,7 @@ class BLDoor : public BLProp_FB
 		void Close() { SetState(false); }
 		bool IsOpen() const { return m_bOpen; }
 
-		virtual bool IsTempBlock() const { return !m_bOpen; }
+		virtual bool IsBlock() const { return !m_bOpen; }
 
 	private:
 		void SetState(bool bOpen) { m_bOpen = bOpen; SetCurrent((m_eDir*2) + m_bOpen); }

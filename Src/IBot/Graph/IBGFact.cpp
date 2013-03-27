@@ -33,14 +33,21 @@ void IBGFact::Resize()
 	w = m_pFactBox->GetW();
 	h = m_pFactBox->GetH();
 
-	if (m_pCauseAction != NULL)
+	int wa = 0;
+	int ha = 0;
+	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 	{
-		IBGAction* pCauseAction = static_cast<IBGAction*>(m_pCauseAction);
-		pCauseAction->Resize();
+		IBGAction* pAction = static_cast<IBGAction*>(*it);
+		pAction->Resize();
 
-		w += IBGPlanner::s_iLinkWidth + pCauseAction->GetW();
-		h = std::max<int>(h, pCauseAction->GetH());
+		wa = std::max<int>(pAction->GetW(), wa);
+		ha += pAction->GetH() + IBGPlanner::s_iActionMinSpace;
 	}
+	if (ha > (int)IBGPlanner::s_iActionMinSpace)
+		ha -= IBGPlanner::s_iActionMinSpace;
+
+	w += IBGPlanner::s_iLinkWidth + wa;
+	h = std::max<int>(h, ha);
 	
 	SetW(w);
 	SetH(h);
@@ -62,17 +69,18 @@ void IBGFact::Draw() const
 	m_pFactBox->SetY(y);
 	m_pFactBox->Draw();
 
-	if (m_pCauseAction != NULL)
+	y = 0;
+	x -= IBGPlanner::s_iLinkWidth;
+	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 	{
-		IBGAction* pCauseAction = static_cast<IBGAction*>(m_pCauseAction);
+		IBGAction* pAction = static_cast<IBGAction*>(*it);
 
-		y = GetH()/2 - pCauseAction->GetH()/2;
-		x -= IBGPlanner::s_iLinkWidth;
-		x -= pCauseAction->GetW();
-		pCauseAction->SetX(x);
-		pCauseAction->SetY(y);
-		pCauseAction->Draw();
+		pAction->SetX(x - pAction->GetW());
+		pAction->SetY(y);
+		pAction->Draw();
 
-		m_oCanvas.CanvasBase::DrawLine(pCauseAction->GetRight(), pCauseAction->GetMidH(), m_pFactBox->GetLeft()-1, m_pFactBox->GetMidH(), IBGPlanner::s_oLinkColor);
+		m_oCanvas.CanvasBase::DrawLine(pAction->GetRight(), pAction->GetMidH(), m_pFactBox->GetLeft()-1, m_pFactBox->GetMidH(), IBGPlanner::s_oLinkColor);
+
+		y+= pAction->GetH() + IBGPlanner::s_iActionMinSpace;
 	}
 }

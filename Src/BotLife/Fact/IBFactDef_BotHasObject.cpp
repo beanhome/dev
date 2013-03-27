@@ -43,18 +43,3 @@ void IBFactDef_BotHasObject::ResolveVariable(vector<IBObject*>& aUserData)
 		aUserData[0] = pBot->GetFirstObject();
 }
 
-void IBFactDef_BotHasObject::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
-
-	IBObject* pObj = (IBObject*)aUserData[0];
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s %s\n", GetName().c_str(), pObj->GetName().c_str());
-}
-
-

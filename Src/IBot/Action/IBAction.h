@@ -25,6 +25,7 @@ class IBAction
 		{
 			IBA_Init,
 			IBA_Unresolved,
+			IBA_Impossible,
 			IBA_Start,
 			IBA_Execute,
 			IBA_Abort,
@@ -75,16 +76,18 @@ class IBAction
 		void					AffectPreCondVariable(const string& name, IBObject* data);
 		void					AffectPostCondVariable(const string& name, IBObject* data);
 
-		void					SpreadPreCondVariable();
-		void					SpreadPostCondVariable();
+		void					SpreadPreCondVariable(IBFact* pPreCond = NULL);
+		void					UpdateVariableFromPostCond();
 		void					SpreadVariable();
-		void					ResolvePreCond();
+		//void					ResolvePreCond();
 
 		State					Resolve(IBPlanner* pPlanner);
+		IBF_Result				ResolvePreCond(IBPlanner* pPlanner);
 		float					Evaluate() const;
 
 		void					PrepareToDelete();
 		bool					IsReadyToDelete();
+		bool					IsReadyToDestroy();
 		bool					IsMarkToDelete() const { return m_bToDelete; }
 
 		int						GetExecCounter() const { return m_iExecCount; }
@@ -96,6 +99,10 @@ class IBAction
 		IBFactIterator			NextFactIterator(const IBFactIterator& it) const;
 		IBFactIterator			PrevFactIterator(const IBFactIterator& it) const;
 		*/
+
+	public:
+		//static bool	RemoveAndDelete(IBAction* pAction) { if (pAction->IsReadyToDelete()) { delete pAction; return true; } else { return false; } }
+
 
 	protected:
 		IBActionDef*			m_pDef;

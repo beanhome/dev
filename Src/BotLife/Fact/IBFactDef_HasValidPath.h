@@ -15,8 +15,6 @@ class IBFactDef_HasValidPath : public IBFactDef
 
 		virtual IBF_Result		Test(const vector<IBObject*>& aUserData);
 
-		virtual void			Print(const vector<IBObject*>& aUserData, int tab) const;
-
 	private:
 };
 

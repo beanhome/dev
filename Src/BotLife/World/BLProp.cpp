@@ -11,9 +11,6 @@ BLProp::BLProp(BLWorld& oWorld, const string& name, const Vector2& pos)
 	, m_oWorld(oWorld)
 	, m_bVisible(true)
 	, m_pImage(NULL)
-	, m_bIsBlock(false)
-	, m_bIsPickable(false)
-	, m_bIsMovable(false)
 {
 	SetPos(pos);
 	m_oWorld.GetGrid().GetCase(pos).SetProp(this);

@@ -336,6 +336,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsMovable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsMovable.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsPickable.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsPickable.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Src\BotLife\Fact\IBFactDef_PropIsUnblock.cpp"
 					>
 				</File>

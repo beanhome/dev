@@ -22,8 +22,8 @@ void IBActionDef_DropObject::Define()
 	AddVariable("Pos"); // IBVector2
 	AddVariable("Dist");   // IBInt = 1
 
-	AddPreCondition("IBFactDef_BotHasObject", "Obj");
 	AddPreCondition("IBFactDef_PosIsFree", "Pos");
+	AddPreCondition("IBFactDef_BotHasObject", "Obj");
 	AddPreCondition("IBFactDef_BotNearPos", "Pos", "Dist");
 
 	AddPostCondition("IBFactDef_BotIsEmpty");
@@ -102,9 +102,10 @@ bool IBActionDef_DropObject::Finish(IBAction* pAction)
 
 void IBActionDef_DropObject::Destroy(IBAction* pAction)
 {
-	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	if (pDist != NULL)
 	{
 		delete pDist;
+		pAction->SetVariable("Dist", NULL);
 	}
 }

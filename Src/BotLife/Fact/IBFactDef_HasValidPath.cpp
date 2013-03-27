@@ -58,21 +58,4 @@ void IBFactDef_HasValidPath::ResolveVariable(vector<IBObject*>& aUserData)
 	// Do nothing, have to wait variables filled and use other action to get the path
 }
 
-void IBFactDef_HasValidPath::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
-
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	Path* pPath = reinterpret_cast<IBPath*>(aUserData[0]);
-	Vector2* pStart = reinterpret_cast<IBVector2*>(aUserData[1]);
-	Vector2* pTarget = reinterpret_cast<IBVector2*>(aUserData[2]);
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s (%p (%d,%d) (%d,%d) )\n", GetName().c_str(), pPath, (pStart != NULL ? pStart->x : 0), (pStart != NULL ? pStart->y : 0), (pTarget != NULL ? pTarget->x : 0), (pTarget != NULL ? pTarget->y : 0));
-}
-
 

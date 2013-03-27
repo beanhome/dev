@@ -39,6 +39,7 @@ void IBGActionBox::Draw() const
 
 	float fVal = m_pAction->Evaluate();
 	m_oCanvas.Print(0, IBGPlanner::s_iActionEvalHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionEvalSize, LeftCenter, 42, 255, 255, (fVal >= IBPlanner::s_fMaxActionDelay ? "---" : "%3.3f"), fVal);
+	m_oCanvas.Print(GetW(), IBGPlanner::s_iActionEvalHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionEvalSize, RightCenter, 42, 255, 255, "%s", IBAction::s_sStateString[m_pAction->GetState()]);
 
 	sint16 x = 0;
 	sint16 y = IBGPlanner::s_iActionEvalHeight;

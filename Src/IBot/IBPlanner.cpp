@@ -8,7 +8,6 @@
 #include "Action/IBAction.h"
 #include "Action/Def/IBActionDef_BoolToBool.h"
 #include "IBGoal.h"
-//#include <algorithm>
 
 float IBPlanner::s_fMaxActionDelay = 10000000.f;
 
@@ -144,11 +143,9 @@ void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUse
 
 int IBPlanner::Step()
 {
-	bool res = false;
-
 	//m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
 
-	for( FactSet::iterator it = m_aGoals.begin(); it != m_aGoals.end(); /* blank */ )
+	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; /* blank */)
 	{
 		if (IBFact::RemoveAndDelete(*it))			
 			m_aGoals.erase(it++);
@@ -156,16 +153,18 @@ int IBPlanner::Step()
 			++it;
 	}
 
-	m_pCurrentAction = NULL;
+	bool finish = true;
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBFact* pFact = *it;
-		res = pFact->Resolve(this);
-		if (res)
+		IBF_Result res = pFact->Resolve(this);
+		if (res == IBF_OK)
 			pFact->PrepareToDelete();
+		else
+			finish = false;
 	}
 
-	return (int)res;
+	return finish;
 }
 
 int IBPlanner::FindActionToResolve(IBFact* pFact)

@@ -68,10 +68,11 @@ void IBPlannerDebug::PrintFact(const IBFact& oFact, int tab) const
 	LOG(IBF_ResultString[oFact.Test()]);
 	LOG("]\n");
 
-
-	if (oFact.GetCauseAction() != NULL)
+	for (ActionSet::const_iterator it = oFact.GetCauseAction().begin() ; it != oFact.GetCauseAction().end() ; ++it)
 	{
-		PrintAction(*oFact.GetCauseAction(), tab+1);
+		IBAction* pAction = *it;
+
+		PrintAction(*pAction, tab+1);
 	}
 }
 

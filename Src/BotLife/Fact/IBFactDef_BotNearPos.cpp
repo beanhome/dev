@@ -40,23 +40,4 @@ void IBFactDef_BotNearPos::ResolveVariable(vector<IBObject*>& aUserData)
 
 }
 
-void IBFactDef_BotNearPos::Print(const vector<IBObject*>& aUserData, int tab) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 2);
-
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	IBVector2* pPos = (IBVector2*)aUserData[0];
-	ASSERT(pPos != NULL);
-	IBInt* pDist = (IBInt*)aUserData[1];
-	ASSERT(pDist != NULL);
-
-	for (int i=0 ; i<tab ; ++i)
-		LOG("\t");
-
-	LOG("%s %s (%d %d) at %d\n", GetName().c_str(), pPos->x, pPos->y, pDist);
-}
-
 

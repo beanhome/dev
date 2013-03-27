@@ -10,7 +10,7 @@ class BLLightProp : public BLProp_SI
 		BLLightProp(BLWorld& oWorld, const string& name, const char* img, const Vector2& pos = Vector2(0,0));
 		virtual ~BLLightProp();
 
-		virtual bool			IsTempBlock() const { return false; }
+		virtual bool			IsPickable() const { return true; }
 
 	protected:
 };

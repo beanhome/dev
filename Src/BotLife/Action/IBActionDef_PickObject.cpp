@@ -23,11 +23,13 @@ void IBActionDef_PickObject::Define()
 	AddVariable("ObjPos"); // IBVector2
 	AddVariable("Dist");   // IBInt = 1
 
-	AddPreCondition("IBFactDef_BotIsEmpty");
 	AddPreCondition("IBFactDef_ObjectAtPos", "Obj", "ObjPos");
+	AddPreCondition("IBFactDef_PropIsPickable", "Obj");
+	AddPreCondition("IBFactDef_BotIsEmpty");
 	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
 
 	AddPostCondition("IBFactDef_BotHasObject", "Obj");
+	AddPostCondition("IBFactDef_PosIsFree", "ObjPos");
 }
 
 float IBActionDef_PickObject::Evaluate(const IBAction* pAction) const
@@ -109,9 +111,10 @@ bool IBActionDef_PickObject::Finish(IBAction* pAction)
 
 void IBActionDef_PickObject::Destroy(IBAction* pAction)
 {
-	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	if (pDist != NULL)
 	{
 		delete pDist;
+		pAction->SetVariable("Dist", NULL);
 	}
 }

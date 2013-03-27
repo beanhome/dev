@@ -109,7 +109,10 @@ bool IBActionDef_UnblockProp::Finish(IBAction* pAction)
 
 void IBActionDef_UnblockProp::Destroy(IBAction* pAction)
 {
-	IBInt* pDist = static_cast<IBInt*>(pAction->FindVariables("Dist"));
+	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
 	if (pDist != NULL)
+	{
 		delete pDist;
+		pAction->SetVariable("Dist", NULL);
+	}
 }

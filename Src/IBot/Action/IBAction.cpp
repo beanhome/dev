@@ -7,6 +7,7 @@ const char*	IBAction::s_sStateString[State_MAX] =
 {
 	"Init",
 	"Unresolved",
+	"Impossible",
 	"Start",
 	"Execute",
 	"Abort",
@@ -91,7 +92,7 @@ void IBAction::AddPostCond(uint i, IBFact* pPostCond)
 {
 	assert(i<m_aPostCond.size());
 	m_aPostCond[i] = pPostCond;
-	pPostCond->SetCauseAction(this);
+	pPostCond->AddCauseAction(this);
 
 	// resolve name variable from post cond
 	ResolveVariableName(i, pPostCond);
@@ -99,7 +100,7 @@ void IBAction::AddPostCond(uint i, IBFact* pPostCond)
 
 void IBAction::RemPostCond(IBFact* pPostCond)
 {
-	pPostCond->SetCauseAction(NULL);
+	pPostCond->RemoveCauseAction(this);
 
 	for (vector<IBFact*>::iterator it = m_aPostCond.begin() ; it != m_aPostCond.end() ; ++it)
 	{
@@ -228,6 +229,7 @@ void IBAction::AffectPostCondVariable(const string& name, IBObject* data)
 	}
 }
 
+/*
 // Update Variable from post and pre condition
 void IBAction::ResolvePreCond()
 {
@@ -239,18 +241,19 @@ void IBAction::ResolvePreCond()
 
 	SpreadPreCondVariable();
 }
+*/
 
 // Update Variable from post and pre condition
 void IBAction::SpreadVariable()
 {
 	ASSERT(false);
 
-	SpreadPostCondVariable();
+	UpdateVariableFromPostCond();
 	SpreadPreCondVariable();
 }
 
 // Update Variable from post condition
-void IBAction::SpreadPostCondVariable()
+void IBAction::UpdateVariableFromPostCond()
 {
 	// for each post cond
 	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
@@ -269,31 +272,24 @@ void IBAction::SpreadPostCondVariable()
 			IBObject* pCurrentVar = FindVariables(name);
 			IBObject* pPostVar = pPostFact->GetVariable(j);
 
-			if (pCurrentVar == NULL && pPostVar != NULL)
+			if (pCurrentVar != pPostVar)
 			{
 				SetVariable(name, pPostVar);
-			}
-			else if (pCurrentVar != NULL && pPostVar == NULL)
-			{
-				pPostFact->SetVariable(j, pCurrentVar);
-			}
-			else if (pCurrentVar != pPostVar)
-			{
-				ASSERT(false); // What to do ???
 			}
 		}
 	}
 }
 
 // Update Variable from pre condition
-void IBAction::SpreadPreCondVariable()
+void IBAction::SpreadPreCondVariable(IBFact* pPreCond)
 {
 	// for each pre cond
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
 		IBFact* pPreFact = m_aPreCond[i];
-		// resolve unfilled var
-		//pPreFact->ResolveVariable();
+
+		if (pPreCond != NULL && pPreCond != pPreFact)
+			continue;
 
 		const FactCondDef* pPreCondDef = &m_pDef->GetPreCondDef()[i];
 		// for each pre cond variable
@@ -332,7 +328,7 @@ void IBAction::PrepareToDelete()
 }
 
 
-bool IBAction::IsReadyToDelete()
+bool IBAction::IsReadyToDestroy()
 {
 	if (!m_bToDelete)
 		return false;
@@ -346,88 +342,129 @@ bool IBAction::IsReadyToDelete()
 	return true;
 }
 
+bool IBAction::IsReadyToDelete()
+{
+	return (IsReadyToDestroy() && GetState() == IBA_Destroyed);
+}
+
+
+IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner)
+{
+	/*
+	map<float, IBFact*> pFactOrdered;
+
+	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+		pFactOrdered.insert(pair<float, IBFact*>(m_aPreCond[i]->Evaluate(), m_aPreCond[i]));
+
+	bool res = true;
+	for (map<float, IBFact*>::iterator it = pFactOrdered.begin() ; it != pFactOrdered.end() ; ++it)
+		res &= it->second->Resolve(pPlanner);
+	*/
+
+	IBF_Result res = IBF_OK;
+	
+	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	{
+		IBF_Result preres = m_aPreCond[i]->Resolve(pPlanner);
+
+		if (res == IBF_OK && (preres == IBF_FAIL || preres == IBF_UNKNOW))
+			res = IBF_FAIL;
+
+		if (preres == IBF_IMPOSSIBLE)
+			res = IBF_IMPOSSIBLE;
+	}
+
+	return res;
+}
+
 
 IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 {
-	bool res = true;
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-		res &= m_aPreCond[i]->Resolve(pPlanner);
+	IBF_Result res;
 
-	if (pPlanner->GetCurrentAction() == NULL)
+	switch(m_eState)
 	{
-		if (m_eState != IBA_Destroy && m_eState != IBA_Destroyed)
-			pPlanner->SetCurrentAction(this);
+		case IBA_Init:
+			if (m_bToDelete)
+				SetState(IBA_Destroy);
+			else if (m_pDef->Init(this))
+				SetState(IBA_Unresolved);
+			else if (ResolvePreCond(pPlanner) == IBF_IMPOSSIBLE)
+				SetState(IBA_Impossible);
+			break;
 
-		switch(m_eState)
-		{
-			case IBA_Init:
-				if (m_bToDelete)
-					SetState(IBA_Destroyed);
-				else if (m_pDef->Init(this))
-					SetState(IBA_Unresolved);
-				else
-					ResolvePreCond();
-				break;
+		case IBA_Unresolved:
+			if (pPlanner->GetCurrentAction() == this)
+				pPlanner->SetCurrentAction(NULL);
+			if (m_bToDelete)
+				SetState(IBA_Destroy);
+			res = ResolvePreCond(pPlanner);
+			if (res == IBF_IMPOSSIBLE)
+				SetState(IBA_Impossible);
+			else if (res == IBF_OK && pPlanner->GetCurrentAction() == NULL)
+			{
+				pPlanner->SetCurrentAction(this);
+				SetState(IBA_Start);
+			}
+			break;
 
-			case IBA_Unresolved:
-				if (m_bToDelete)
-					SetState(IBA_Finish);
-				else if (res)
-					SetState(IBA_Start);
-				break;
+		case IBA_Impossible:
+			if (m_bToDelete)
+				SetState(IBA_Destroy);
+			break;
 
-			case IBA_Start:
-				Start();
-				if (m_bToDelete)
-					SetState(IBA_Abort);
-				else if (!res)
-					SetState(IBA_Unresolved);
-				else if (m_pDef->Start(this))
-					SetState(IBA_Execute);
-				break;
+		case IBA_Start:
+			Start();
+			if (m_bToDelete)
+				SetState(IBA_Finish);
+			else if (ResolvePreCond(pPlanner) != IBF_OK)
+				SetState(IBA_Unresolved);
+			else if (m_pDef->Start(this))
+				SetState(IBA_Execute);
+			break;
 
-			case IBA_Execute:
-				Execute();
-				if (m_bToDelete)
-					SetState(IBA_Abort);
-				else if (!res)
-					SetState(IBA_Unresolved);
-				else if (m_pDef->Execute(this))
-					SetState(IBA_Finish);
-				break;
+		case IBA_Execute:
+			Execute();
+			if (m_bToDelete)
+				SetState(IBA_Abort);
+			else if (ResolvePreCond(pPlanner) != IBF_OK)
+				SetState(IBA_Unresolved);
+			else if (m_pDef->Execute(this))
+				SetState(IBA_Finish);
+			break;
 
-			case IBA_Finish:
-				Finish();
-				if (m_pDef->Finish(this))
-				{
-					PrepareToDelete();
-					SetState(IBA_Destroy);
-				}
-				else
-				{
-					SetState(IBA_Unresolved);
-				}
-				break;
+		case IBA_Finish:
+			Finish();
+			if (ResolvePreCond(pPlanner) != IBF_OK)
+				SetState(IBA_Unresolved);
+			else if (m_pDef->Finish(this))
+				SetState(IBA_Destroy);
+			break;
 
-			case IBA_Abort:
-				if (!res)
-					SetState(IBA_Finish);
-				else if (m_pDef->Abort(this))
-					SetState(IBA_Finish);
-				break;
+		case IBA_Abort:
+			/*if (ResolvePreCond(pPlanner) != IBF_OK)
+				SetState(IBA_Finish);
+			else */if (m_pDef->Abort(this))
+				SetState(IBA_Finish);
+			break;
 
-			case IBA_Destroy:
-				if (IsReadyToDelete())
-				{
-					m_pDef->Destroy(this);
-					SetState(IBA_Destroyed);
-				}
-				break;
+		case IBA_Destroy:
+			if (pPlanner->GetCurrentAction() == this)
+				pPlanner->SetCurrentAction(NULL);
+			if (IsReadyToDestroy())
+			{
+				m_pDef->Destroy(this);
+				SetState(IBA_Destroyed);
+			}
+			else
+			{
+				ResolvePreCond(pPlanner);
+			}
+			break;
 
-			case IBA_Destroyed:
-				//LOG("IBA_Destroy\n");
-				break;
-		}
+		case IBA_Destroyed:
+			//LOG("IBA_Destroy\n");
+			break;
 	}
 
 	return GetState();
