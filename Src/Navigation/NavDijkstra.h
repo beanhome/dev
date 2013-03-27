@@ -67,7 +67,7 @@ NavDijkstra<TCase>::NavDijkstra()
 template <typename TCase>
 NavDijkstra<TCase>::NavDijkstra(const Grid& oGrid)
 	: Navigation<TCase>(oGrid)
-	, m_oPathGrid(oGrid.IsNormalized())
+	, m_oPathGrid(oGrid.IsNormalized(), oGrid.IsDiagMode())
 	, m_iHead(0)
 	, m_iQueue(0)
 {
