@@ -30,6 +30,14 @@ CPPC = g++
 AR = ar -rc
 LD= $(CPPC)
 
+#define version from goal
+ifeq ($(MAKECMDGOALS),debug)
+VERSION=Debug
+endif
+ifeq ($(MAKECMDGOALS),release)
+VERSION=Release
+endif
+
 #define some name complement and option
 ifeq ($(VERSION),Debug)
 LIB_POSTFIX=_d
@@ -57,18 +65,21 @@ PROJ_MAK=$(foreach p,$(PROJECT),$(BUILD_PATH)mak/$(p).mak)
 all: $(EXE) $(PROJ_MAK) $(PROJECT)
 exe: $(EXE) 
 
+debug: all
+release: all
+
 # Copy the project makefile with specific name
 $(BUILD_PATH)mak/%.mak: $(ROOT)Project_$(PLATFORM)/%.mak
 	@echo 'Generate $*.mak'
 	@mkdir -p $(dir $@)
-	@sed -e 's/\([_A-Za-z]\+\) *=/$*_\1=/' $^ >> $@
+	@sed -e 's/\([_A-Za-z]\+\) *=/$*_\1=/' $^ > $@
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(PROJ_MAK)
 endif
 
 # Generate the first var of each project
-define PROJECT_var =
+define PROJECT_var
 $(1)_MAK= $(BUILD_PATH)mak/$(1).mak
 $(1)_LIB= $(BUILD_PATH)lib/$(LIB_PREFIX)$(1)$(LIB_POSTFIX)$(LIB_EXT)
 $(1)_DEP_PATH= $(BUILD_PATH)dep/$(1)/$(VERSION)/
@@ -79,20 +90,20 @@ $(1)_CC= $(if $($(1)_C), $(CC), $(CPPC))
 endef
 
 # Generate the other var of each project
-define PROJECT_var2 =
-$(1)_INC= -I $($(1)_SRC_PATH) $(foreach i,$($(1)_INC_DIR), -I $(ROOT)$i) 
+define PROJECT_var2
+$(1)_INC= -I $($(1)_SRC_PATH) $(foreach i,$($(1)_INC_DIR), -I $(if $(realpath $i),$i,$(ROOT)$i)) 
 $(1)_OBJS= $(foreach f,$($(1)_SRC),$($(1)_OBJ_PATH)$(basename $f).o)
 ALL_LIB+= $($(1)_LIB)
-OTHER_LIB += $(foreach i,$($(1)_LIB_DEP),$(ROOT)$(i))
+OTHER_LIB += $($(1)_LIB_DEP)
 endef
 
 # Some Test to eject the generation
-define PROJECT_test =
+define PROJECT_test
 $(if $(wildcard $(ROOT)Project_$(PLATFORM)/$(1).mak), , $(error $(ROOT)Project_$(PLATFORM)/$(1).mak no exist))
 endef
 
 # Project rules
-define PROJECT_rules =
+define PROJECT_rules
 $(1): $($(1)_MAK) $($(1)_LIB)
 $($(1)_LIB): $($(1)_OBJS) $($(1)_MAK) 
 	@echo 'Generate static lib of $(1)'
@@ -111,7 +122,7 @@ $($(1)_DEP_PATH)%.dep: $($(1)_SRC_PATH)%.$($(1)_SRCEXT)
 endef
 
 # include the dep of each project
-define PROJECT_include =
+define PROJECT_include
 -include $(foreach f,$($(1)_SRC),$($(1)_DEP_PATH)$(basename $f).dep)
 endef
 
@@ -121,7 +132,7 @@ $(foreach f,$($(1)_SRC), $(eval $(call SOURCE_rules,$(1),$(f))))
 endef
 
 # insert rule dor each source file
-define SOURCE_rules =
+define SOURCE_rules
 .PHONY: $(2) $(notdir $(2)) $(notdir $(basename $(2)))
 $(2): $($(1)_SRC_PATH)$(2)
 $(notdir $(2)): $($(1)_SRC_PATH)$(2)
@@ -129,7 +140,7 @@ $(notdir $(basename $(2))): $($(1)_SRC_PATH)$(2)
 endef
 
 # Call Project Rules
-$(foreach p, $(PROJECT), $(eval $(call PROJECT_var,$(p))))
+$(foreach p,$(PROJECT),$(eval $(call PROJECT_var,$(p))))
 $(foreach p, $(PROJECT), $(eval $(call PROJECT_var2,$(p))))
 $(foreach p, $(PROJECT), $(eval $(call PROJECT_test,$(p))))
 $(foreach p, $(PROJECT), $(eval $(call PROJECT_rules,$(p))))
@@ -142,7 +153,7 @@ $(foreach p, $(PROJECT), $(eval $(call PROJECT_SOURCE_rules,$(p))))
 $(EXE): $(ALL_LIB)
 	@mkdir -p $(dir $@)
 	@echo 'Generate exe'
-	@$(LD) $(OPTION) -o $(EXE) $(call reverse,$(ALL_LIB)) $(OTHER_LIB)
+	$(LD) $(OPTION) -o $(EXE) $(call reverse,$(ALL_LIB)) $(OTHER_LIB)
 
 # Clean
 .PHONY: clean

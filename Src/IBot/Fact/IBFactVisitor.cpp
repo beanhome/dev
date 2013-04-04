@@ -1,6 +1,6 @@
 #include "IBFactVisitor.h"
 
-#include "Action\IBAction.h"
+#include "Action/IBAction.h"
 #include "IBPlanner.h"
 
 IBFactVisitor::IBFactVisitor(const IBPlanner& planner)

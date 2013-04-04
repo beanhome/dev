@@ -1,9 +1,9 @@
 #include "IBGFactBox.h"
 
 #include "CanvasBase.h"
-#include "Fact\IBFact.h"
+#include "Fact/IBFact.h"
 #include "IBGPlanner.h"
-#include "World\IBObject.h"
+#include "World/IBObject.h"
 
 IBGFactBox::IBGFactBox(Canvas& parent, IBFact* pFact)
 	: IBGBoxBase(parent)

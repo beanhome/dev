@@ -2,7 +2,7 @@
 #include "Utils.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
-#include "World\BLProp.h"
+#include "World/BLProp.h"
 
 IBFactDef_PropIsPickable::IBFactDef_PropIsPickable(const string& name, IBPlanner* pPlanner)
 	: IBFactDef(name, 1, pPlanner)

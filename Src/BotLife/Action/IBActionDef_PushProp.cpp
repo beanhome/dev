@@ -1,10 +1,10 @@
 #include "IBActionDef_PushProp.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
-#include "World\BLObject.h"
-#include "World\IBInt.h"
-#include "World\BLDoor.h"
-#include "World\BLProp.h"
+#include "World/BLObject.h"
+#include "World/IBInt.h"
+#include "World/BLDoor.h"
+#include "World/BLProp.h"
 
 
 IBActionDef_PushProp::IBActionDef_PushProp(const string& name, IBPlanner* pPlanner)

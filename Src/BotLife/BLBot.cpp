@@ -5,8 +5,8 @@
 #include "ImageResource.h"
 #include "BLWorld.h"
 #include "IBPlanner_BL.h"
-#include "World\IBVector2.h"
-#include "World\BLProp.h"
+#include "World/IBVector2.h"
+#include "World/BLProp.h"
 #include "Canvas.h"
 
 /*

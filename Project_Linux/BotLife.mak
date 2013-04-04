@@ -28,6 +28,8 @@ SRC= \
 	Fact/IBFactDef_ObjectAtPos.cpp \
 	Fact/IBFactDef_PosIsFree.cpp \
 	Fact/IBFactDef_PropIsUnblock.cpp \
+	Fact/IBFactDef_PropIsPickable.cpp \
+	Fact/IBFactDef_PropIsMovable.cpp \
 	IBPlanner_BL.cpp \
 	Main.cpp \
 	Map/BLMap.cpp \
@@ -52,7 +54,6 @@ SRC= \
 INC_DIR = Src/Common Src/Graphics Src/IBot Src/Navigation Src/Graphics_SDL
 
 # Additionnal library for the final link
-# (ROOT path relative)
 # LIB_DEP= 
 
 

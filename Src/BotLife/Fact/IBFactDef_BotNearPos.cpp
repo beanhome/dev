@@ -3,8 +3,8 @@
 #include "BLBot.h"
 #include "Vector2.h"
 #include "IBPlanner.h"
-#include "World\BLObject.h"
-#include "World\IBInt.h"
+#include "World/BLObject.h"
+#include "World/IBInt.h"
 
 IBFactDef_BotNearPos::IBFactDef_BotNearPos(const string& name, IBPlanner* pPlanner)
 	: IBFactDef(name, 2, pPlanner)

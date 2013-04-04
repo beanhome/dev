@@ -6,8 +6,6 @@ MAIN = BotLife
 PROJECT = \
 	Common \
 	Navigation \
-	SDL_Draw \
-	SDL_gfx \
 	Graphics \
 	IBot \
 	IBot_Graph \

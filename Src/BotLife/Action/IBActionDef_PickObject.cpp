@@ -1,8 +1,8 @@
 #include "IBActionDef_PickObject.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
-#include "World\BLObject.h"
-#include "World\IBInt.h"
+#include "World/BLObject.h"
+#include "World/IBInt.h"
 
 
 IBActionDef_PickObject::IBActionDef_PickObject(const string& name, IBPlanner* pPlanner)

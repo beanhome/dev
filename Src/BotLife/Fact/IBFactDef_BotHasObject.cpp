@@ -3,8 +3,8 @@
 #include "BLBot.h"
 #include "Vector2.h"
 #include "IBPlanner.h"
-#include "World\BLObject.h"
-#include "World\BLProp.h"
+#include "World/BLObject.h"
+#include "World/BLProp.h"
 
 IBFactDef_BotHasObject::IBFactDef_BotHasObject(const string& name, IBPlanner* pPlanner)
 	: IBFactDef(name, 1, pPlanner)

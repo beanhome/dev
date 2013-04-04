@@ -25,9 +25,15 @@ class NavDijkstra : public Navigation<TCase>
 			uint iPreviousCase;
 		};
 
+		/*
 		static const int BLOCK = -2;
 		static const int BLANK = -1;
 		static const int START = 0;
+		*/
+
+		static const int BLOCK;
+		static const int BLANK;
+		static const int START;
 
 	public:
 		virtual void						Create(const Grid& oGrid);
@@ -55,6 +61,10 @@ class NavDijkstra : public Navigation<TCase>
 		uint								m_iHead;
 		uint								m_iQueue;
 };
+
+template <typename TCase> const int NavDijkstra<TCase>::BLOCK = -2;
+template <typename TCase> const int NavDijkstra<TCase>::BLANK = -1;
+template <typename TCase> const int NavDijkstra<TCase>::START = 0;
 
 template <typename TCase>
 NavDijkstra<TCase>::NavDijkstra()

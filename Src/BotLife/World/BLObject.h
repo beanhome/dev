@@ -2,8 +2,8 @@
 #define __BLOBJECT_H__
 
 #include "Utils.h"
-#include "World\IBObject.h"
-#include "World\IBVector2.h"
+#include "World/IBObject.h"
+#include "World/IBVector2.h"
 
 class BLObject : public IBObject
 {

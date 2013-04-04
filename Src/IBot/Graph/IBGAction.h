@@ -2,7 +2,7 @@
 #define __IBGACTION_H__
 
 #include "IBGBoxBase.h"
-#include "Action\IBAction.h"
+#include "Action/IBAction.h"
 
 class IBAction;
 class IBFact;

@@ -2,9 +2,9 @@
 #define __BOTLIFE_BOT_H__
 
 #include "Utils.h"
-#include "World\IBObject.h"
+#include "World/IBObject.h"
 #include "BLWorld.h"
-#include "World\IBVector2.h"
+#include "World/IBVector2.h"
 
 class GEngine;
 class BLWorld;

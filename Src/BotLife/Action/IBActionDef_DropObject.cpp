@@ -1,8 +1,8 @@
 #include "IBActionDef_DropObject.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
-#include "World\BLObject.h"
-#include "World\IBInt.h"
+#include "World/BLObject.h"
+#include "World/IBInt.h"
 
 
 IBActionDef_DropObject::IBActionDef_DropObject(const string& name, IBPlanner* pPlanner)

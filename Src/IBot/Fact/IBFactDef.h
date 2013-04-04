@@ -19,7 +19,7 @@ enum IBF_Result
 	IBF_Result_MAX
 };
 
-extern char* IBF_ResultString[IBF_Result_MAX];
+extern const char* IBF_ResultString[IBF_Result_MAX];
 
 class IBFactDef
 {

@@ -3,8 +3,8 @@
 #include "BLBot.h"
 #include "Vector2.h"
 #include "IBPlanner.h"
-#include "World\IBPath.h"
-#include "World\IBInt.h"
+#include "World/IBPath.h"
+#include "World/IBInt.h"
 
 IBFactDef_HasValidPath::IBFactDef_HasValidPath(const string& name, IBPlanner* pPlanner)
 	: IBFactDef(name, 4, pPlanner)

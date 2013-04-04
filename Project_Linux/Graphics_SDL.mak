@@ -13,20 +13,15 @@ SRC= \
 INC_DIR = \
 	Src/Common \
 	Src/Graphics \
-	External/SDL_image-1.2.10-lib/include \
-	External/SDL_ttf/include \
-	External/SDL_gfx/src \
-	External/SDL_Draw/src \
-	External/SDL/include \
+	/usr/include/SDL \
 
 # Option optionnal for the compilation
 # OPTION = 
 
 # Additionnal library for the final link
-# (ROOT path relative)
 LIB_DEP= \
-	External/SDL_image-1.2.10-lib/lib/SDL_image.lib \
-	External/SDL_ttf/lib/SDL_ttf.lib \
-	External/SDL/lib/SDLmain.lib \
-	External/SDL/lib/SDL.lib
-	
+	-lSDL \
+	-lSDL_ttf \
+	-lSDL_image \
+	-lSDL_gfx \
+

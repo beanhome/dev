@@ -1,12 +1,5 @@
 #include "Utils.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <wtypes.h>
-#include <basetsd.h>
-#include <winbase.h>
-
 bool g_bVisualOutput = false;
 
 #ifdef _WIN32
@@ -35,9 +28,11 @@ void Log(const char* format, ...)
 	vsnprintf(output, 1024, format, arglist);
 	#endif
 	
+	#ifdef _WIN32
 	if (g_bVisualOutput)
 		OutputDebugStringA(output);
 	else
+	#endif
 		printf("%s", output);
 }
 

@@ -1,8 +1,8 @@
 #include "BLGoalMenu.h"
-#include "Map\BLSquare.h"
-#include "World\IBVector2.h"
-#include "World\BLProp.h"
-#include "World\IBInt.h"
+#include "Map/BLSquare.h"
+#include "World/IBVector2.h"
+#include "World/BLProp.h"
+#include "World/IBInt.h"
 #include "BLBot.h"
 
 int BLGoalMenu::s_iYL = 18;

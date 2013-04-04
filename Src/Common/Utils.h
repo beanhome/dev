@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
 #include <string>
 #include <vector>
 #include <deque>
@@ -10,9 +12,11 @@
 #include <set>
 #include <list>
 
+#ifdef _WIN32
 #include <wtypes.h>
 #include <basetsd.h>
 #include <winbase.h>
+#endif
 
 #include <assert.h>
 

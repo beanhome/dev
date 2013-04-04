@@ -3,7 +3,7 @@
 #include "BLBot.h"
 #include "Vector2.h"
 #include "IBPlanner.h"
-#include "World\BLProp.h"
+#include "World/BLProp.h"
 
 IBFactDef_ObjectAtPos::IBFactDef_ObjectAtPos(const string& name, IBPlanner* pPlanner)
 	: IBFactDef(name, 2, pPlanner)

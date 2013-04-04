@@ -3,8 +3,8 @@
 #include "BLBot.h"
 #include "Vector2.h"
 #include "IBPlanner.h"
-#include "World\IBPath.h"
-#include "World\IBInt.h"
+#include "World/IBPath.h"
+#include "World/IBInt.h"
 #include "NavDijkstra.h"
 
 IBFactDef_PosIsFree::IBFactDef_PosIsFree(const string& name, IBPlanner* pPlanner)

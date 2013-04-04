@@ -1,9 +1,9 @@
 #include "IBActionDef_UnblockProp.h"
 #include "BLBot.h"
 #include "IBPlanner.h"
-#include "World\BLObject.h"
-#include "World\IBInt.h"
-#include "World\BLDoor.h"
+#include "World/BLObject.h"
+#include "World/IBInt.h"
+#include "World/BLDoor.h"
 
 
 IBActionDef_UnblockProp::IBActionDef_UnblockProp(const string& name, IBPlanner* pPlanner)

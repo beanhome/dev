@@ -32,6 +32,5 @@ SRC= \
 INC_DIR = Src/Common
 
 # Additionnal library for the final link
-# (ROOT path relative)
 # LIB_DEP= 
 	

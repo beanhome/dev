@@ -1,9 +1,9 @@
 #include "IBFactDef.h"
 #include "IBFact.h"
 #include "IBPlanner.h"
-#include "World\IBObject.h"
+#include "World/IBObject.h"
 
-char* IBF_ResultString[IBF_Result_MAX] =
+const char* IBF_ResultString[IBF_Result_MAX] =
 {
 	"OK",
 	"FAIL",

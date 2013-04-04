@@ -2,7 +2,7 @@
 #define __IBPATH_H__
 
 #include "Utils.h"
-#include "World\IBObject.h"
+#include "World/IBObject.h"
 #include "Path.h"
 
 class IBPath : public IBObject, public Path

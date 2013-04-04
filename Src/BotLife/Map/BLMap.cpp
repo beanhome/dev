@@ -4,7 +4,7 @@
 #include "BLTiles.h"
 #include "BLSquare.h"
 //#include "Timer.h"
-#include "World\BLProp.h"
+#include "World/BLProp.h"
 
 BLZone::BLZone()
 {

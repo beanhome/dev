@@ -19,6 +19,5 @@ INC_DIR = Src/Common Src/Graphics Src/IBot/Graph
 # OPTION = 
 
 # Additionnal library for the final link
-# (ROOT path relative)
 # LIB_DEP= 
 

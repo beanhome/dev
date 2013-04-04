@@ -1,11 +1,11 @@
 #include "IBPlannerDebug.h"
 
 #include "IBPlanner.h"
-#include "Fact\IBFact.h"
-#include "Fact\IBFactDef.h"
-#include "Action\IBAction.h"
-#include "Action\IBActionDef.h"
-#include "World\IBObject.h"
+#include "Fact/IBFact.h"
+#include "Fact/IBFactDef.h"
+#include "Action/IBAction.h"
+#include "Action/IBActionDef.h"
+#include "World/IBObject.h"
 
 IBPlannerDebug::IBPlannerDebug(const IBPlanner& oPlanner)
 	: IBPlannerDisplay(oPlanner)

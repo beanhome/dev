@@ -2,7 +2,7 @@
 #include "BLBot.h"
 #include "Path.h"
 #include "IBPlanner.h"
-#include "World\IBPath.h"
+#include "World/IBPath.h"
 
 
 IBActionDef_FollowPath::IBActionDef_FollowPath(const string& name, IBPlanner* pPlanner)

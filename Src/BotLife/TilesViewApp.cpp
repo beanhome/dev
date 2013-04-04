@@ -1,7 +1,7 @@
 #include "TilesViewApp.h"
 #include "Timer.h"
-#include "Map\BLTiles.h"
-#include "Map\BLMap.h"
+#include "Map/BLTiles.h"
+#include "Map/BLMap.h"
 #include "InputEvent.h"
 
 TilesViewApp::TilesViewApp(int w, int h, const char* rootpath, const char* name)

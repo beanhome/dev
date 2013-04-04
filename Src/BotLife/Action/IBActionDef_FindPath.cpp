@@ -1,11 +1,11 @@
 #include "IBActionDef_FindPath.h"
-#include "World\IBPath.h"
+#include "World/IBPath.h"
 #include "IBPlanner.h"
 #include "BLBot.h"
 #include "NavAStar.h"
 #include "Timer.h"
-#include "World\IBInt.h"
-#include "World\BLProp.h"
+#include "World/IBInt.h"
+#include "World/BLProp.h"
 
 float IBActionDef_FindPath::s_fFindPathStepDelay = 0.001f;
 

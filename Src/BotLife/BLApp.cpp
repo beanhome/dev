@@ -5,9 +5,9 @@
 #include "BLGoalMenu.h"
 #include "Input.h"
 #include "InputEvent.h"
-#include "Graph\IBGPlanner.h"
-#include "Graph\IBGFact.h"
-#include "Graph\IBGFactBox.h"
+#include "Graph/IBGPlanner.h"
+#include "Graph/IBGFact.h"
+#include "Graph/IBGFactBox.h"
 
 BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
 	: GApp<GEngine_SDL>(w, h, rootpath)

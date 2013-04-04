@@ -3,8 +3,8 @@
 
 #include "Utils.h"
 #include "GridBase.h"
-#include "Map\BLSquare.h"
-#include "Map\BLMap.h"
+#include "Map/BLSquare.h"
+#include "Map/BLMap.h"
 
 class Canvas;
 class CanvasBase;
