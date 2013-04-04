@@ -11,7 +11,7 @@ class BLMap;
 class MapViewApp : public GApp<GEngine_SDL>
 {
 	public:
-		MapViewApp(int w, int h, const char* rootpath, const char* name);
+		MapViewApp(int w, int h, const char* rootpath, int sx, int sy, const char* name);
 		~MapViewApp();
 
 		virtual int Update(float dt);

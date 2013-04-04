@@ -7,7 +7,7 @@
 #include "InputEvent.h"
 #include "Input.h"
 
-MapViewApp::MapViewApp(int w, int h, const char* rootpath, const char* name)
+MapViewApp::MapViewApp(int w, int h, const char* rootpath, int sx, int sy, const char* name)
 	: GApp<GEngine_SDL>(w, h, rootpath)
 	, m_bDrag(false)
 	, m_iStartDragX(0)
@@ -23,7 +23,7 @@ MapViewApp::MapViewApp(int w, int h, const char* rootpath, const char* name)
 
 	m_pTiles = new BLTiles(*m_pEngine, name);
 	//m_pMap = new BLMap(canvas.GetWidth()/m_pTiles->GetTilesWidth(), canvas.GetHeight()/m_pTiles->GetTilesHeight(), *m_pTiles);
-	m_pMap = new BLMap(64, 64, *m_pTiles);
+	m_pMap = new BLMap(sx, sy, *m_pTiles);
 
 	for (uint i=0 ; i<20 ; ++i)
 	{
@@ -72,12 +72,12 @@ int MapViewApp::Draw()
 {
 	m_pMap->Display(*m_pCanvas);
 
-	if (!m_bDrag)
-	{
-		m_pEngine->Print(100, 100, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Mouse : %d %d", m_iMouseCaseX, m_iMouseCaseY);
-		m_pEngine->Print(100, 130, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Tiles : %s", BLMap::s_sTilesType[m_pMap->GetTilesCase(m_iMouseCaseX, m_iMouseCaseY).GetTilesType()]);
-		m_pCanvas->DrawRect(m_iMouseCaseX * m_pTiles->GetTilesWidth(), m_iMouseCaseY * m_pTiles->GetTilesHeight(), m_pTiles->GetTilesWidth()-1, m_pTiles->GetTilesHeight()-1, 255, 255, 255);
-	}
+	//if (!m_bDrag)
+	//{
+	//	m_pEngine->Print(100, 100, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Mouse : %d %d", m_iMouseCaseX, m_iMouseCaseY);
+	//	m_pEngine->Print(100, 130, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Tiles : %s", BLMap::s_sTilesType[m_pMap->GetTilesCase(m_iMouseCaseX, m_iMouseCaseY).GetTilesType()]);
+	//	m_pCanvas->DrawRect(m_iMouseCaseX * m_pTiles->GetTilesWidth(), m_iMouseCaseY * m_pTiles->GetTilesHeight(), m_pTiles->GetTilesWidth()-1, m_pTiles->GetTilesHeight()-1, 255, 255, 255);
+	//}
 
 	//m_pEngine->Print(100, 100, m_pEngine->GetPrintFont(), 15, LeftTop, 255, 255, 255, "Mouse : %d %d", m_pEngine->GetMouseX(), m_pEngine->GetMouseY());
 

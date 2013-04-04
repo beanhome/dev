@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	if (strncmp(sApp, "BLApp", 5) == 0)
 		pApp = new BLApp(w, h, path, r, sx, sy, sTiles);
 	else if (strncmp(sApp, "MapViewApp", 10) == 0)
-		pApp = new MapViewApp(w, h, path, sTiles);
+		pApp = new MapViewApp(w, h, path, sx, sy, sTiles);
 	else if (strncmp(sApp, "TilesViewApp", 12) == 0)
 		pApp = new TilesViewApp(w, h, path, sTiles);
 	else if (strncmp(sApp, "SpriteViewApp", 14) == 0)
