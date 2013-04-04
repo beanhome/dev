@@ -23,6 +23,7 @@ void IBActionDef_DropObject::Define()
 	AddVariable("Dist");   // IBInt = 1
 
 	AddPreCondition("IBFactDef_PosIsFree", "Pos");
+	AddPreCondition("IBFactDef_PropIsPickable", "Obj");
 	AddPreCondition("IBFactDef_BotHasObject", "Obj");
 	AddPreCondition("IBFactDef_BotNearPos", "Pos", "Dist");
 

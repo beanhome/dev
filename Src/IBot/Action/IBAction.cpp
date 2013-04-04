@@ -400,7 +400,10 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 				SetState(IBA_Destroy);
 			res = ResolvePreCond(pPlanner);
 			if (res == IBF_IMPOSSIBLE)
+			{
 				SetState(IBA_Impossible);
+				PrepareToDelete();
+			}
 			else if (res == IBF_OK && pPlanner->GetCurrentAction() == NULL)
 			{
 				pPlanner->SetCurrentAction(this);

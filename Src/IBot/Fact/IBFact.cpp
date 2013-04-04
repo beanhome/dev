@@ -132,6 +132,9 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner)
 		}
 	}
 
+	//if (m_pEffectAction != NULL && m_pEffectAction->GetState() == IBAction::IBA_Impossible)
+	//	return IBF_IMPOSSIBLE;
+
 	IBF_Result res = Test();
 
 	multimap<float, IBAction*> pActionOrdered;

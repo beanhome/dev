@@ -72,6 +72,7 @@ IBFact* IBGPlanner::InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aU
 void IBGPlanner::Draw()
 {
 	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
+
 	
 	int width = 0;
 	int height = 0;
@@ -94,11 +95,8 @@ void IBGPlanner::Draw()
 	m_iMaxWidth = std::max<uint16>(width, m_oCanvas.GetWidth());
 	m_iMaxHeight = std::max<uint16>(height, m_oCanvas.GetHeight());
 
-	if (m_iMaxWidth <= m_oCanvas.GetWidth())
-		m_oCanvas.SetOrigX(0);
-
-	if (m_iMaxHeight <= m_oCanvas.GetHeight())
-		m_oCanvas.SetOrigY(0);
+	m_oCanvas.SetOrigX(Clamp<sint16>(m_oCanvas.GetOrigX(), 0, std::max<sint16>(m_iMaxWidth - m_oCanvas.GetWidth(), 0)));
+	m_oCanvas.SetOrigY(Clamp<sint16>(m_oCanvas.GetOrigY(), 0, std::max<sint16>(m_iMaxHeight - m_oCanvas.GetHeight(), 0)));
 
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
@@ -158,10 +156,8 @@ void IBGPlanner::StartDrag()
 
 void IBGPlanner::UpdateDrag()
 {
-	sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_oCanvas.GetGEngine()->GetMouseX(), 0, std::max<sint16>(m_iMaxWidth - m_oCanvas.GetWidth(), 0));
-	sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_oCanvas.GetGEngine()->GetMouseY(), 0, std::max<sint16>(m_iMaxHeight - m_oCanvas.GetHeight(), 0));
-	m_oCanvas.SetOrigX(x);
-	m_oCanvas.SetOrigY(y);
+	m_oCanvas.SetOrigX(m_iStartDragX - (sint16)m_oCanvas.GetGEngine()->GetMouseX());
+	m_oCanvas.SetOrigY(m_iStartDragY - (sint16)m_oCanvas.GetGEngine()->GetMouseY());
 }
 
 void IBGPlanner::StopDrag()
