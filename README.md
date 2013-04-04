@@ -32,10 +32,11 @@ C++ Lib:
 The Directories are grouped by type:
 ------------------------------------
 - Data: Contain the assets and files used by the projects
-- External: Contain the externa libraies
+- External: Contain the external libraies
 - Project_2008: Contain all needed to compile the C++ project in visual studio 2008
-- Project_Linux: Contain makefile to compile the C++ project (tested on cygwin)
+- Project_Linux: Contain makefile to compile the C++ project on Linux
+- Project_Cygwin: Contain makefile to compile the C++ project on cygwin
 - Projet_Eclipse: Contain the Android developement
 - Src: Contain the C++ sources files
 - Utils: Contain some tools for the projects
-- WorkingDir: Define the Directoies where execute the projects (mostly usefull for place the dll dependency)
+- WorkingDir: Define the Directories where execute the projects (mostly usefull for place the dll dependency)
