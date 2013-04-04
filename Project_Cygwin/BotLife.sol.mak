@@ -15,7 +15,7 @@ PROJECT = \
 
 
 # platform
-PLATFORM = Linux
+PLATFORM = Cygwin
 
 # version
 VERSION = Debug
