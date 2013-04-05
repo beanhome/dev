@@ -50,7 +50,7 @@ class IBFact
 		IBAction*					GetBestCauseAction(float& fMinEval) const;
 		IBAction*					GetBestCauseAction() const { float fEval; return GetBestCauseAction(fEval); }
 
-		IBF_Result 					Resolve(IBPlanner* pPlanner);
+		IBF_Result 					Resolve(IBPlanner* pPlanner, bool bExecute);
 		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
 
 	public:

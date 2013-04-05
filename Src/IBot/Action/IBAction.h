@@ -81,8 +81,8 @@ class IBAction
 		void					SpreadVariable();
 		//void					ResolvePreCond();
 
-		State					Resolve(IBPlanner* pPlanner);
-		IBF_Result				ResolvePreCond(IBPlanner* pPlanner);
+		State					Resolve(IBPlanner* pPlanner, bool bExecute);
+		IBF_Result				ResolvePreCond(IBPlanner* pPlanner, bool bExecute);
 		float					Evaluate() const;
 
 		void					PrepareToDelete();

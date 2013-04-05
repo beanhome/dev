@@ -117,7 +117,7 @@ float IBFact::Evaluate() const
 	return fEval;
 }
 
-IBF_Result IBFact::Resolve(IBPlanner* pPlanner)
+IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 {
 	for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); /* blank */)
 	{
@@ -149,7 +149,7 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner)
 			{
 				IBAction* pAction = it->second;
 				pAction->PrepareToDelete();
-				pAction->Resolve(pPlanner);
+				pAction->Resolve(pPlanner, bExecute);
 			}
 			break;
 
@@ -170,7 +170,7 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner)
 					if (m_bToDelete)
 						pAction->PrepareToDelete();
 
-					IBAction::State st = pAction->Resolve(pPlanner);
+					IBAction::State st = pAction->Resolve(pPlanner, bExecute);
 
 					if (st != IBAction::IBA_Impossible)
 						imp = false;

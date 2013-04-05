@@ -157,7 +157,7 @@ int IBPlanner::Step()
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
 	{
 		IBFact* pFact = *it;
-		IBF_Result res = pFact->Resolve(this);
+		IBF_Result res = pFact->Resolve(this, true);
 		if (res == IBF_OK)
 			pFact->PrepareToDelete();
 		else

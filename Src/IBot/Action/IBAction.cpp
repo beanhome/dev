@@ -348,7 +348,7 @@ bool IBAction::IsReadyToDelete()
 }
 
 
-IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner)
+IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
 {
 	/*
 	map<float, IBFact*> pFactOrdered;
@@ -365,7 +365,10 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner)
 	
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
-		IBF_Result preres = m_aPreCond[i]->Resolve(pPlanner);
+		IBF_Result preres = m_aPreCond[i]->Resolve(pPlanner, bExecute);
+
+		if (preres == IBF_FAIL)
+			bExecute = false;
 
 		if (res == IBF_OK && (preres == IBF_FAIL || preres == IBF_UNKNOW))
 			res = IBF_FAIL;
@@ -378,9 +381,11 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner)
 }
 
 
-IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
+IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 {
 	IBF_Result res;
+
+	bExecute &= Evaluate() < IBPlanner::s_fMaxActionDelay;
 
 	switch(m_eState)
 	{
@@ -389,7 +394,7 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 				SetState(IBA_Destroy);
 			else if (m_pDef->Init(this))
 				SetState(IBA_Unresolved);
-			else if (ResolvePreCond(pPlanner) == IBF_IMPOSSIBLE)
+			else if (ResolvePreCond(pPlanner, bExecute) == IBF_IMPOSSIBLE)
 				SetState(IBA_Impossible);
 			break;
 
@@ -398,13 +403,13 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 				pPlanner->SetCurrentAction(NULL);
 			if (m_bToDelete)
 				SetState(IBA_Destroy);
-			res = ResolvePreCond(pPlanner);
+			res = ResolvePreCond(pPlanner, bExecute);
 			if (res == IBF_IMPOSSIBLE)
 			{
 				SetState(IBA_Impossible);
 				PrepareToDelete();
 			}
-			else if (res == IBF_OK && pPlanner->GetCurrentAction() == NULL)
+			else if (res == IBF_OK && bExecute && pPlanner->GetCurrentAction() == NULL)
 			{
 				pPlanner->SetCurrentAction(this);
 				SetState(IBA_Start);
@@ -420,7 +425,7 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 			Start();
 			if (m_bToDelete)
 				SetState(IBA_Finish);
-			else if (ResolvePreCond(pPlanner) != IBF_OK)
+			else if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
 				SetState(IBA_Unresolved);
 			else if (m_pDef->Start(this))
 				SetState(IBA_Execute);
@@ -430,7 +435,7 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 			Execute();
 			if (m_bToDelete)
 				SetState(IBA_Abort);
-			else if (ResolvePreCond(pPlanner) != IBF_OK)
+			else if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
 				SetState(IBA_Unresolved);
 			else if (m_pDef->Execute(this))
 				SetState(IBA_Finish);
@@ -438,14 +443,14 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 
 		case IBA_Finish:
 			Finish();
-			if (ResolvePreCond(pPlanner) != IBF_OK)
+			if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
 				SetState(IBA_Unresolved);
 			else if (m_pDef->Finish(this))
 				SetState(IBA_Destroy);
 			break;
 
 		case IBA_Abort:
-			/*if (ResolvePreCond(pPlanner) != IBF_OK)
+			/*if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
 				SetState(IBA_Finish);
 			else */if (m_pDef->Abort(this))
 				SetState(IBA_Finish);
@@ -461,7 +466,7 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner)
 			}
 			else
 			{
-				ResolvePreCond(pPlanner);
+				ResolvePreCond(pPlanner, bExecute);
 			}
 			break;
 
