@@ -77,7 +77,7 @@ bool IBActionDef_FollowPath::Start(IBAction* pAction)
 		return false;
 
 	Vector2 vTarget = pPath->GetFirstStep();
-	LOG("FollowPath::Start (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
+	//LOG("FollowPath::Start (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
 	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
 
 	pBot->SetState(BLBot::Walk, eDir, 0.5f);
@@ -104,7 +104,7 @@ bool IBActionDef_FollowPath::Execute(IBAction* pAction)
 			return true;
 
 		Vector2 vTarget = pPath->GetFirstStep();
-		LOG("FollowPath::Execute (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
+		//LOG("FollowPath::Execute (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
 		BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
 
 		pBot->SetState(BLBot::Walk, eDir, 0.5f);
@@ -122,7 +122,7 @@ bool IBActionDef_FollowPath::Abort(IBAction* pAction)
 	IBPath* pPath =  pAction->FindVariables<IBPath>("Path");
 	ASSERT(pPath != NULL);
 
-	LOG("FollowPath::Abort \n");
+	//LOG("FollowPath::Abort \n");
 
 	if (pBot->HasFinishState())
 	{
@@ -142,7 +142,7 @@ bool IBActionDef_FollowPath::Finish(IBAction* pAction)
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
 	//pBot->SetPos(pBot->GetTarget());
-	LOG("FollowPath::Finish \n");
+	//LOG("FollowPath::Finish \n");
 	pBot->SetState(BLBot::Idle, pBot->GetDir(), 0.5f);
 	return true;
 }

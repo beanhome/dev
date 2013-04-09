@@ -41,7 +41,7 @@ endif
 #define some name complement and option
 ifeq ($(VERSION),Debug)
 LIB_POSTFIX=_d
-OPTION=-g
+OPTION=-g -D_DEBUG
 endif
 ifeq ($(PLATFORM), Win32)
 EXE_EXT=.exe
@@ -153,7 +153,7 @@ $(foreach p, $(PROJECT), $(eval $(call PROJECT_SOURCE_rules,$(p))))
 $(EXE): $(ALL_LIB)
 	@mkdir -p $(dir $@)
 	@echo 'Generate exe'
-	$(LD) $(OPTION) -o $(EXE) $(call reverse,$(ALL_LIB)) $(OTHER_LIB)
+	@$(LD) $(OPTION) -o $(EXE) $(call reverse,$(ALL_LIB)) $(OTHER_LIB)
 
 # Clean
 .PHONY: clean
