@@ -5,12 +5,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <string>
-#include <vector>
-#include <deque>
-#include <map>
-#include <set>
-#include <list>
+#include <assert.h>
 
 #ifdef _WIN32
 #include <wtypes.h>
@@ -18,8 +13,23 @@
 #include <winbase.h>
 #endif
 
-#include <assert.h>
+#include <string>
+#include <vector>
+#include <deque>
+#include <map>
+#include <set>
+#include <list>
 
+using std::string;
+using std::vector;
+using std::deque;
+using std::map;
+using std::multimap;
+using std::set;
+using std::pair;
+using std::list;
+
+typedef unsigned char byte;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint;
@@ -30,17 +40,11 @@ typedef signed short sint16;
 typedef signed int sint;
 typedef signed long sint32;
 
-
 typedef wchar_t wchar;
 
-using std::string;
-using std::vector;
-using std::deque;
-using std::map;
-using std::multimap;
-using std::set;
-using std::pair;
-using std::list;
+#ifdef _DEBUG
+#include "Alloc.h"
+#endif
 
 void InitLog(int argc, char *argv[]);
 

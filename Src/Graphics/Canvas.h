@@ -9,7 +9,7 @@ class Canvas : public CanvasBase
 	public:
 		Canvas(CanvasBase& oParent, sint16 x, sint16 y, uint16 w, uint16 h);
 		Canvas(CanvasBase& oParent);
-		~Canvas();
+		virtual ~Canvas();
 
 		sint16							GetPosX() const { return m_iPosX; }
 		sint16							GetPosY() const { return m_iPosY; }

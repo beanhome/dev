@@ -11,6 +11,8 @@
 # List of source file (SRC_PATH relative)
 SRC= \
 	Utils.cpp \
+	Alloc.cpp \
+	Allocator.cpp \
 	CRC32.cpp \
 	Timer.cpp \
 	Vector2.cpp 

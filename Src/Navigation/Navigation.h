@@ -24,7 +24,7 @@ class Navigation
 	public:
 		Navigation();
 		Navigation(const Grid& oGrid) : m_pModelGrid(&oGrid) {}
-		~Navigation() {}
+		virtual ~Navigation() {}
 
 		virtual void	Create(const Grid& oGrid) { m_pModelGrid = &oGrid; }
 

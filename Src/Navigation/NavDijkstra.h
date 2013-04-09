@@ -16,7 +16,7 @@ class NavDijkstra : public Navigation<TCase>
 
 		NavDijkstra();
 		NavDijkstra(const Grid& oGrid);
-		~NavDijkstra();
+		virtual ~NavDijkstra();
 
 	public:
 		struct Case

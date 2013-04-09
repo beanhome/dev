@@ -118,7 +118,7 @@ class InputEvent
 {
 	public:
 		InputEvent();
-		~InputEvent();
+		virtual ~InputEvent();
 
 		//virtual InputEvent& operator=(const InputEvent& src) = 0;
 

@@ -19,7 +19,7 @@ class GEngine : public CanvasBase
 {
 	public:
 		GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath);
-		~GEngine();
+		virtual ~GEngine();
 
 		GEngine*						GetGEngine() { return this; }
 		const GEngine*					GetGEngine() const { return this; }

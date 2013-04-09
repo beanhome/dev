@@ -70,6 +70,8 @@ class GridOp
 			, m_bDiagMode(bDiagMode)
 		{}
 
+		virtual ~GridOp() {}
+
 		GridOp& operator=(const GridOp& grid)
 		{
 			Init(grid.m_iWidth, grid.m_iHeight);
@@ -221,7 +223,7 @@ class GridBase : public GridOp
 			, m_aGridArray(NULL)
 		{}
 
-		~GridBase()
+		virtual ~GridBase()
 		{
 			if (m_pBuffer != NULL)		delete [] m_pBuffer;
 			if (m_aGridArray != NULL)	delete [] m_aGridArray;

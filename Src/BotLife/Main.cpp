@@ -4,7 +4,52 @@
 #include "TilesViewApp.h"
 #include "SpriteViewApp.h"
 #include "Timer.h"
+#include "Alloc.h"
 
+#if 0
+
+
+class A
+{
+public:
+	A()
+	{
+		LOG("A Contructor\n");
+	}
+
+	~A()
+	{
+		LOG("A Destructor\n");
+	}
+
+private:
+
+};
+
+void Test()
+{
+	LOG("\n");
+
+	A* pA = new A;
+	delete pA;
+
+	LOG("\n");
+
+	A* pATab = new A[2];
+	delete[] pATab;
+}
+
+int main(int argc, char *argv[])
+{
+	InitLog(argc, argv);
+
+	Test();
+
+	return 0;
+}
+
+
+#else
 int main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
@@ -71,4 +116,6 @@ int main(int argc, char *argv[])
 
 	return res;
 }
+#endif
+
 

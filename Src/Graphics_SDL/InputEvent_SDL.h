@@ -9,7 +9,7 @@ class InputEvent_SDL : public InputEvent
 {
 	public:
 		InputEvent_SDL();
-		~InputEvent_SDL();
+		virtual ~InputEvent_SDL();
 
 		InputEvent_SDL& operator=(const InputEvent_SDL& src);
 

@@ -17,6 +17,7 @@ GEngine::GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath
 
 GEngine::~GEngine()
 {
+	delete m_pInput;
 	PurgeResource(); // probablement vide
 }
 

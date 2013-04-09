@@ -144,6 +144,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\Src\Common\Alloc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Common\Allocator.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Common\CRC32.cpp"
 				>
 			</File>
@@ -165,6 +173,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\Src\Common\Alloc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Common\Allocator.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\Src\Common\CRC32.h"
 				>

@@ -14,7 +14,7 @@ class NavAStar : public Navigation<TCase>
 		typedef GridBase<TCase> Grid;
 
 		NavAStar(const Grid& oGrid);
-		~NavAStar();
+		virtual ~NavAStar();
 
 	public:
 		typedef Vector2					CaseCoord;

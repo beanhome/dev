@@ -22,7 +22,7 @@ class CanvasBase
 	public:
 		CanvasBase(uint16 xl, uint16 yl);
 		CanvasBase(sint16 x, sint16 y, uint16 xl, uint16 yl);
-		~CanvasBase();
+		virtual ~CanvasBase();
 
 		virtual sint16					GetScreenPosX() const { return -m_iOrigX; }
 		virtual sint16					GetScreenPosY() const { return -m_iOrigY; }
