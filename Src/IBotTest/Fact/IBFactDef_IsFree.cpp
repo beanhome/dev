@@ -35,9 +35,11 @@ void IBFactDef_IsFree::ResolveVariable(vector<IBObject*>& aUserData)
 	{
 		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
-			if (pWorld->GetCubes()[i]->IsFree())
+			IBCube* pCube = pWorld->GetCubes()[i];
+
+			if (pCube->IsFree())
 			{
-				aUserData[0] = (IBObject*)&(pWorld->GetCubes()[i]);
+				aUserData[0] = pCube;
 				break;
 			}
 		}

@@ -35,6 +35,7 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<IBObject*>& aUserData)
 	IBCube* pCubeTop = (IBCube*)aUserData[0];
 	IBCube* pCubeDown = (IBCube*)aUserData[1];
 
+	// Resolve from real state
 	if (pCubeTop == NULL && pCubeDown == NULL)
 	{
 		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
@@ -79,6 +80,23 @@ void IBFactDef_IsTopOf::ResolveVariable(vector<IBObject*>& aUserData)
 			}
 		}
 	}
+
+	// Resolve with first cube
+	/*
+	if (pCubeTop != NULL && pCubeDown == NULL)
+	{
+		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
+		{
+			IBCube* pCube = pWorld->GetCubes()[i];
+
+			if (pCube != pCubeTop && pCube->IsFree())
+			{
+				pCubeDown = pCube;
+				break;
+			}
+		}
+	}
+	*/
 
 	aUserData[0] = (IBObject*)pCubeTop;
 	aUserData[1] = (IBObject*)pCubeDown;

@@ -171,6 +171,8 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 						pAction->PrepareToDelete();
 
 					IBAction::State st = pAction->Resolve(pPlanner, bExecute);
+					if (st != IBAction::IBA_Destroyed)
+						bExecute = false;
 
 					if (st != IBAction::IBA_Impossible)
 						imp = false;

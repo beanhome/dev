@@ -1,4 +1,7 @@
 #include "IBActionDef_MoveCubeFromCubeToTable.h"
+#include "IBPlanner.h"
+#include "World\IBCubeWorld.h"
+#include "World\IBCube.h"
 
 
 IBActionDef_MoveCubeFromCubeToTable::IBActionDef_MoveCubeFromCubeToTable(const string& name, IBPlanner* pPlanner)
@@ -22,3 +25,22 @@ void IBActionDef_MoveCubeFromCubeToTable::Define()
 
 	AddPostCondition("IBFactDef_IsFree", "SrcCube");
 }
+
+
+bool IBActionDef_MoveCubeFromCubeToTable::Execute(IBAction* pAction)
+{
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(pOwner);
+	ASSERT(pWorld != NULL);
+
+	IBCube* pCube = pAction->FindVariables<IBCube>("Cube");
+	IBCube* pSrcCube = pAction->FindVariables<IBCube>("SrcCube");
+
+	ASSERT(pCube != NULL && pSrcCube != NULL);
+
+	pWorld->MoveCubeFromCubeToTable(pCube, pSrcCube);
+
+	return true;
+}
+
