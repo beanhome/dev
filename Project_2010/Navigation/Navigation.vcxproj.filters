@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Src\Navigation\Condition.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Navigation\GridBase.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Navigation\NavAStar.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Navigation\NavDijkstra.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Navigation\Navigation.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Navigation\Path.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Src\Navigation\Path.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

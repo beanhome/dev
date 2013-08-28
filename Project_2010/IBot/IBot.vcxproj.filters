@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Files\Facts">
+      <UniqueIdentifier>{65a3e20a-e307-4689-bbdc-d03c0c77d81c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Facts\Def">
+      <UniqueIdentifier>{46d6b20d-a61a-4ce1-930b-7eef0d13d48a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Actions">
+      <UniqueIdentifier>{02d9f089-f0d7-47de-b66a-34b7dd7d8829}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Actions\Def">
+      <UniqueIdentifier>{78d3d941-9c32-4f63-9747-17a2e2074b7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\World">
+      <UniqueIdentifier>{9595a782-9202-47df-9455-8ec228a14fb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Display">
+      <UniqueIdentifier>{b2d8874e-2d5c-45ea-8dcf-5396bde8a260}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Src\IBot\IBGoal.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\IBPlanner.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\IBFact.cpp">
+      <Filter>Files\Facts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\IBFactDef.cpp">
+      <Filter>Files\Facts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\IBFactLibrary.cpp">
+      <Filter>Files\Facts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\IBFactVisitor.cpp">
+      <Filter>Files\Facts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\Def\IBFactDef_Bool.cpp">
+      <Filter>Files\Facts\Def</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\Def\IBFactDef_False.cpp">
+      <Filter>Files\Facts\Def</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Fact\Def\IBFactDef_True.cpp">
+      <Filter>Files\Facts\Def</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Action\IBAction.cpp">
+      <Filter>Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Action\IBActionDef.cpp">
+      <Filter>Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Action\IBActionLibrary.cpp">
+      <Filter>Files\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.cpp">
+      <Filter>Files\Actions\Def</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\World\IBInt.cpp">
+      <Filter>Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\World\IBObject.cpp">
+      <Filter>Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\World\IBVector2.cpp">
+      <Filter>Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Display\IBPlannerDebug.cpp">
+      <Filter>Files\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\IBot\Display\IBPlannerDisplay.cpp">
+      <Filter>Files\Display</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Src\IBot\IBGoal.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\IBPlanner.h">
+      <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\IBFact.h">
+      <Filter>Files\Facts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\IBFactDef.h">
+      <Filter>Files\Facts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\IBFactLibrary.h">
+      <Filter>Files\Facts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\IBFactVisitor.h">
+      <Filter>Files\Facts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\Def\IBFactDef_Bool.h">
+      <Filter>Files\Facts\Def</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\Def\IBFactDef_False.h">
+      <Filter>Files\Facts\Def</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Fact\Def\IBFactDef_True.h">
+      <Filter>Files\Facts\Def</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Action\IBAction.h">
+      <Filter>Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Action\IBActionDef.h">
+      <Filter>Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Action\IBActionLibrary.h">
+      <Filter>Files\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h">
+      <Filter>Files\Actions\Def</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\World\IBInt.h">
+      <Filter>Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\World\IBObject.h">
+      <Filter>Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\World\IBVector2.h">
+      <Filter>Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Display\IBPlannerDebug.h">
+      <Filter>Files\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\IBot\Display\IBPlannerDisplay.h">
+      <Filter>Files\Display</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

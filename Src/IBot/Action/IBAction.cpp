@@ -27,7 +27,7 @@ IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 	// create action variable
 	for (uint i=0 ; i<pDef->GetVariables().size() ; ++i)
 	{
-		m_aVariables.insert(VarPair(pDef->GetVariables()[i], NULL));
+		m_aVariables.insert(VarPair(pDef->GetVariables()[i], (IBObject*)NULL));
 	}
 
 	// create fact vector
