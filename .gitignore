@@ -5,6 +5,7 @@ Build/
 *.ncb
 *.suo
 *.vcproj.*
+*.ipch
 
 # Vim files
 *.swp
