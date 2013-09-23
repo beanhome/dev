@@ -48,13 +48,15 @@ void IBGFactBox::Draw() const
 
 	m_oCanvas.CanvasBase::DrawRect(0, IBGPlanner::s_iFactEvalHeight, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-IBGPlanner::s_iFactEvalHeight-1, oColor);
 
-	float fVal = m_pFact->Evaluate();
-	m_oCanvas.Print(0, IBGPlanner::s_iFactEvalHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactEvalSize, LeftCenter, 42, 255, 255, (fVal >= IBPlanner::s_fMaxActionDelay ? "---" : "%3.3f"), fVal);
-
 	sint16 x = 0;
 	sint16 y = IBGPlanner::s_iFactEvalHeight;
 	uint16 w = GetW();
 	uint16 h = GetH();
+
+	float fVal = m_pFact->Evaluate();
+	m_oCanvas.Print(x, IBGPlanner::s_iFactEvalHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactEvalSize, LeftCenter, 42, 255, 255, (fVal >= IBPlanner::s_fMaxActionDelay ? "---" : "%3.3f"), fVal);
+	IBF_Result res = (m_pFact->IsTrue() ? IBF_OK : m_pFact->IsResolved() ? IBF_RESOLVED : IBF_FAIL);
+	m_oCanvas.Print(w, IBGPlanner::s_iFactEvalHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactEvalSize, RightCenter, 42, 255, 255, IBF_ResultString[res]);
 
 	m_oCanvas.CanvasBase::DrawLine(x, y+IBGPlanner::s_iFactTitleHeight, x+w-1, y+IBGPlanner::s_iFactTitleHeight, oColor);
 	m_oCanvas.CanvasBase::Print(x+w/2, y+IBGPlanner::s_iFactTitleHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleSize, Center, IBGPlanner::s_oFactColor, "%s", m_pFact->GetFactDef()->GetName().c_str());

@@ -19,21 +19,22 @@ IBCubeWorld::~IBCubeWorld()
 	}
 }
 
-#define WORLD_CONFIG 1
 
-void IBCubeWorld::Init()
+void IBCubeWorld::Init(int config)
 {
-#if WORLD_CONFIG == 0
-	// Config A
-	m_oTable.PutCube(GetCubeA());
-	m_oTable.PutCube(GetCubeB());
-	m_oTable.PutCube(GetCubeC());
-#elif WORLD_CONFIG == 1
-	// ConfigB
-	m_oTable.PutCube(GetCubeA());
-	m_oTable.PutCube(GetCubeB());
-	GetCubeB()->PutCube(GetCubeC());
-#endif
+	switch (config)
+	{
+		case 1:
+			m_oTable.PutCube(GetCubeA());
+			m_oTable.PutCube(GetCubeB());
+			GetCubeB()->PutCube(GetCubeC());
+			break;
+
+		default:
+			m_oTable.PutCube(GetCubeA());
+			m_oTable.PutCube(GetCubeB());
+			m_oTable.PutCube(GetCubeC());
+	}
 }
 
 void IBCubeWorld::Print() const

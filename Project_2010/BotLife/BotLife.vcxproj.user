@@ -3,6 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>..\..\WorkingDir\$(ProjectName)\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-p ../..</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-v -a BLApp -w 920 -h 800 -p ../../ -r 0.54 -x 32 -y 24 -t summertiles</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

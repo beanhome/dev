@@ -7,6 +7,7 @@ const char*	IBAction::s_sStateString[State_MAX] =
 {
 	"Init",
 	"Unresolved",
+	"resolved",
 	"Impossible",
 	"Start",
 	"Execute",
@@ -361,7 +362,9 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
 		res &= it->second->Resolve(pPlanner);
 	*/
 
-	IBF_Result res = IBF_OK;
+	int results[IBF_Result_MAX];
+
+	for (uint i=0 ; i<IBF_Result_MAX ; ++i)	results[i] = 0;
 	
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
@@ -370,14 +373,25 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
 		if (preres == IBF_FAIL)
 			bExecute = false;
 
-		if (res == IBF_OK && (preres == IBF_FAIL || preres == IBF_UNKNOW))
-			res = IBF_FAIL;
-
-		if (preres == IBF_IMPOSSIBLE)
-			res = IBF_IMPOSSIBLE;
+		results[preres]++;
 	}
 
-	return res;
+	if (results[IBF_DELETE] == m_aPreCond.size())
+		return IBF_DELETE;
+
+	if (results[IBF_IMPOSSIBLE] > 0)
+		return IBF_IMPOSSIBLE;
+
+	if (results[IBF_FAIL] > 0)
+		return IBF_FAIL;
+
+	if (results[IBF_OK] == m_aPreCond.size())
+		return IBF_OK;
+
+	if (results[IBF_UNKNOW] == 0)
+		return IBF_RESOLVED;
+
+	return IBF_UNKNOW;
 }
 
 
@@ -399,6 +413,7 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 			break;
 
 		case IBA_Unresolved:
+		case IBA_Resolved:
 			if (pPlanner->GetCurrentAction() == this)
 				pPlanner->SetCurrentAction(NULL);
 			if (m_bToDelete)
@@ -413,6 +428,10 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 			{
 				pPlanner->SetCurrentAction(this);
 				SetState(IBA_Start);
+			}
+			else if (res == IBF_OK || res == IBF_RESOLVED)
+			{
+				SetState(IBAction::IBA_Resolved);
 			}
 			break;
 
@@ -477,6 +496,23 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 
 	return GetState();
 }
+
+bool IBAction::IsResolved() const
+{
+	switch (m_eState)
+	{
+		case IBA_Resolved:
+		case IBA_Start:
+		case IBA_Execute:
+		case IBA_Abort:
+		case IBA_End:
+		case IBA_Finish:
+			return true;
+	}
+
+	return false;
+}
+
 
 float IBAction::Evaluate() const
 {

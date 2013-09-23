@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
 
 #else
-int main(int argc, char *argv[])
+extern "C" int SDL_main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 

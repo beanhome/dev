@@ -45,6 +45,7 @@ class IBFact
 		bool						IsMarkToDelete() const { return m_bToDelete; }
 
 		bool						IsTrue() const { return Test() == IBF_OK; }
+		bool						IsResolved() const;
 		float						Evaluate() const;
 
 		IBAction*					GetBestCauseAction(float& fMinEval) const;
@@ -56,7 +57,6 @@ class IBFact
 	public:
 		static bool	RemoveAndDelete(IBFact* pFact) { if (pFact->IsReadyToDelete()) { delete pFact; return true; } else { return false; } }
 
-
 	public:
 		IBF_Result					Test() const { return m_pDef->Test(m_aUserData); }
 
@@ -66,6 +66,7 @@ class IBFact
 		ActionSet					m_aCauseAction;
 		IBAction*					m_pEffectAction;
 		bool						m_bToDelete;
+
 };
 
 #endif

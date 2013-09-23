@@ -50,7 +50,7 @@ bool Header::CheckSum() const
 
 void Header::Print() const
 {
-	LOG("Block %p of size %d\n", m_pAddress, m_iSize);
+	LOG("Block 0x%p of size %d\n", m_pAddress, m_iSize);
 	LOG("Allocate from %s (%d)\n", m_sFileName, m_iLineNumber);
 	LOG("\n");
 }

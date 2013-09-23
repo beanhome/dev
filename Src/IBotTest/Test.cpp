@@ -15,7 +15,7 @@ void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j);
 
 
 
-int main(int argc, char *argv[])
+extern "C" int SDL_main(int argc, char *argv[])
 {
 	InitLog(argc, argv);
 
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 	IBPlannerTest oPlanner(&oWorld, graph_canva);
 	
-	oWorld.Init();
+	oWorld.Init(1);
 	oWorld.Print();
 	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeA(), oWorld.GetCubeB());
 	//oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 
 			LOG("\n");
 			LOG("****  %d  ****\n", i++);
-			/*res = */oPlanner.Step();
+			/*res = */oPlanner.Step(true);
 
 			IBPlannerDebug debug(oPlanner);
 			debug.DrawGraph();

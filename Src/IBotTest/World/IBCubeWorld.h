@@ -11,7 +11,7 @@ class IBCubeWorld
 		IBCubeWorld();
 		virtual ~IBCubeWorld();
 
-		void Init();
+		void Init(int config);
 
 		IBCube* GetCubeA() { return m_oCubes[0]; }
 		IBCube* GetCubeB() { return m_oCubes[1]; }

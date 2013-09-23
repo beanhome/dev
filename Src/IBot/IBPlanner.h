@@ -36,7 +36,7 @@ class IBPlanner
 
 		IBFactDef*				GetFactDef(const string& name) { return m_oFactLibrary.GetFactDef(name); }
 
-		int						Step();
+		int						Step(bool bExecute = true);
 		const IBAction*			GetCurrentAction() const { return m_pCurrentAction; }
 		void					SetCurrentAction(const IBAction* pAction) { m_pCurrentAction = pAction; }
 

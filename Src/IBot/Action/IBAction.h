@@ -25,6 +25,7 @@ class IBAction
 		{
 			IBA_Init,
 			IBA_Unresolved,
+			IBA_Resolved,
 			IBA_Impossible,
 			IBA_Start,
 			IBA_Execute,
@@ -91,6 +92,8 @@ class IBAction
 		bool					IsMarkToDelete() const { return m_bToDelete; }
 
 		int						GetExecCounter() const { return m_iExecCount; }
+
+		bool					IsResolved() const;
 		//friend class IBFactIterator;
 		/*
 		IBFactIterator			BeginFactIterator() const;

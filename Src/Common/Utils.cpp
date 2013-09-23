@@ -1,4 +1,7 @@
 #include "Utils.h"
+#ifdef _WIN32
+#include <winbase.h>
+#endif
 
 bool g_bVisualOutput = false;
 
@@ -22,17 +25,17 @@ void Log(const char* format, ...)
 	va_list arglist;
 	va_start(arglist, format);
 
-	#ifdef _WIN32
+#ifdef _WIN32
 	_vsprintf_s_l(output, 1024, format, NULL, arglist);
-	#else
+#else
 	vsnprintf(output, 1024, format, arglist);
-	#endif
+#endif
 	
-	#ifdef _WIN32
+#ifdef _WIN32
 	if (g_bVisualOutput)
 		OutputDebugStringA(output);
 	else
-	#endif
+#endif
 		printf("%s", output);
 }
 

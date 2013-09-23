@@ -89,7 +89,8 @@ void IBFact::PrepareToDelete()
 IBAction* IBFact::GetBestCauseAction(float& fMinEval) const
 {
 	IBAction* pBestAction = NULL;
-	fMinEval = IBPlanner::s_fMaxActionDelay;
+	//fMinEval = IBPlanner::s_fMaxActionDelay;
+	fMinEval = 0.f;
 	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 	{
 		IBAction* pAction = *it;
@@ -142,6 +143,8 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 		pActionOrdered.insert(pair<float, IBAction*>((*it)->Evaluate(), (*it)));
 
+	bool bResolved = false;
+
 	switch (res)
 	{
 		case IBF_OK:
@@ -163,6 +166,7 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 			else
 			{
 				bool imp = true;
+				bool resolved = false;
 				for (multimap<float, IBAction*>::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
 				{
 					IBAction* pAction = it->second;
@@ -170,7 +174,12 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 					if (m_bToDelete)
 						pAction->PrepareToDelete();
 
+					if (bResolved)
+						pAction->PrepareToDelete();
+
 					IBAction::State st = pAction->Resolve(pPlanner, bExecute);
+					bResolved = pAction->IsResolved();
+
 					if (st != IBAction::IBA_Destroyed)
 						bExecute = false;
 
@@ -180,8 +189,11 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 					if (!m_bToDelete && st == IBAction::IBA_Destroyed)
 						pAction->PrepareToDelete();
 				}
+
 				if (imp)
 					res = IBF_IMPOSSIBLE;
+				else if (bResolved)
+					res = IBF_RESOLVED;
 			}
 			break;
 
@@ -193,7 +205,25 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 			break;
 	}
 
-	return (m_bToDelete ? IBF_DELETE : res);
+	res = (m_bToDelete ? IBF_DELETE : res);
+
+	return res;
+}
+
+bool IBFact::IsResolved() const
+{
+	if (IsTrue())
+		return true;
+
+	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+	{
+		IBAction* pAction = *it;
+
+		if (pAction->IsResolved())
+			return true;
+	}
+
+	return false;
 }
 
 

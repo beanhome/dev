@@ -5,11 +5,12 @@
 
 const char* IBF_ResultString[IBF_Result_MAX] =
 {
-	"OK",
-	"FAIL",
-	"UNKNOW",
-	"IMPOSSIBLE",
-	"DELETE",
+	"Ok",
+	"Fail",
+	"Unknow",
+	"Impossible",
+	"Resolved",
+	"Delete",
 };
 
 
