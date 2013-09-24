@@ -7,6 +7,11 @@
 #include "IBGAction.h"
 #include "IBGPlanner.h"
 
+bool EvalSort::operator()(const IBAction* a1, const IBAction* a2) const
+{
+	return a1->Evaluate() < a2->Evaluate();
+}
+
 IBGFact::IBGFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, CanvasBase& oParentCanvas)
 	: IBFact(pDef, aUserData)
 	, IBGBoxBase(oParentCanvas)
@@ -71,7 +76,10 @@ void IBGFact::Draw() const
 
 	y = 0;
 	x -= IBGPlanner::s_iLinkWidth;
-	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+
+	SortedActionSet pActionOrdered = GetActionOrdered();
+
+	for (SortedActionSet::const_iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
 	{
 		IBGAction* pAction = static_cast<IBGAction*>(*it);
 

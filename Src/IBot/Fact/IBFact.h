@@ -9,8 +9,14 @@ class IBAction;
 class IBPlanner;
 class IBObject;
 
+struct EvalSort
+{
+  bool operator()(const IBAction* a1, const IBAction* a2) const;
+};
+
 typedef set<IBFact*>	FactSet;
 typedef set<IBAction*>	ActionSet;
+typedef multiset<IBAction*, EvalSort>	SortedActionSet;
 
 class IBFact
 {
@@ -29,6 +35,7 @@ class IBFact
 		void						RemoveCauseAction(IBAction* pAction) { m_aCauseAction.erase(pAction); }
 		void						AddCauseAction(IBAction* pAction) { m_aCauseAction.insert(pAction); }
 		const ActionSet&			GetCauseAction() const { return m_aCauseAction; }
+		SortedActionSet				GetActionOrdered() const;
 
 		void						SetEffectAction(IBAction* pAction) { m_pEffectAction = pAction; }
 		IBAction*					GetEffectAction() const { return m_pEffectAction; }

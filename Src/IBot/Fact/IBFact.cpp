@@ -52,6 +52,17 @@ IBFact::~IBFact()
 	}
 }
 
+SortedActionSet IBFact::GetActionOrdered() const
+{
+	SortedActionSet pActionOrdered;
+
+	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+		pActionOrdered.insert(*it);
+
+	return pActionOrdered;
+}
+
+
 void IBFact::SetVariable(uint i, IBObject* pVar)
 {
 	ASSERT(i<m_aUserData.size());
@@ -89,7 +100,6 @@ void IBFact::PrepareToDelete()
 IBAction* IBFact::GetBestCauseAction(float& fMinEval) const
 {
 	IBAction* pBestAction = NULL;
-	//fMinEval = IBPlanner::s_fMaxActionDelay;
 	fMinEval = 0.f;
 	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 	{
@@ -138,19 +148,16 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 
 	IBF_Result res = Test();
 
-	multimap<float, IBAction*> pActionOrdered;
-
-	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
-		pActionOrdered.insert(pair<float, IBAction*>((*it)->Evaluate(), (*it)));
+	SortedActionSet pActionOrdered = GetActionOrdered();
 
 	bool bResolved = false;
 
 	switch (res)
 	{
 		case IBF_OK:
-			for (multimap<float, IBAction*>::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
+			for (SortedActionSet::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
 			{
-				IBAction* pAction = it->second;
+				IBAction* pAction = *it;
 				pAction->PrepareToDelete();
 				pAction->Resolve(pPlanner, bExecute);
 			}
@@ -167,9 +174,9 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 			{
 				bool imp = true;
 				bool resolved = false;
-				for (multimap<float, IBAction*>::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
+				for (SortedActionSet::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
 				{
-					IBAction* pAction = it->second;
+					IBAction* pAction = *it;
 
 					if (m_bToDelete)
 						pAction->PrepareToDelete();

@@ -21,9 +21,14 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	IBCubeWorld oWorld;
 
-	GEngine_SDL ge(800, 600, 32, "../../");
-	Canvas world_canva(ge, 0, 0, 800, 192);
-	Canvas graph_canva(ge, 0, 192, 800, 600-192);
+	int w = 1280;
+	int h = 996;
+	int top = 192;
+	int bRealTime = false;
+
+	GEngine_SDL ge(w, h, 32, "../../");
+	Canvas world_canva(ge, 0, 0, w, top);
+	Canvas graph_canva(ge, 0, top, w, h-top);
 	world_canva.SetPrintFont(FONT_PATH, 14);
 	graph_canva.SetPrintFont(FONT_PATH, 14);
 
@@ -37,6 +42,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	bool bQuit = false;
 	int i=0;
+	double fTime = Timer::Get();
 
 	while (!bQuit)
 	{
@@ -59,9 +65,8 @@ extern "C" int SDL_main(int argc, char *argv[])
 			oPlanner.StopDrag();
 		}
 
-		//float fTime = Timer::Get();
 		if (ge.GetInput()->GetVirtualKey(KEY_SPACE) == KeyPressed
-		 /*|| Timer::Get() < fTime + 1.f*/)
+		 || (bRealTime && Timer::Get() > fTime + 1.f))
 		{
 
 			LOG("\n");
@@ -71,6 +76,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 			IBPlannerDebug debug(oPlanner);
 			debug.DrawGraph();
 
+			fTime = Timer::Get();
 		}
 
 		ge.Clear();

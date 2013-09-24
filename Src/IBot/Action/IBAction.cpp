@@ -399,8 +399,6 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 {
 	IBF_Result res;
 
-	bExecute &= Evaluate() < IBPlanner::s_fMaxActionDelay;
-
 	switch(m_eState)
 	{
 		case IBA_Init:
