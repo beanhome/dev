@@ -77,6 +77,34 @@ void IBActionDef::AddPostCondition(const char* name, ...)
 	}
 }
 
+void IBActionDef::AddCounterPostCondition(const char* name, ...)
+{
+	IBFactDef* pFact = m_pPlanner->GetFactDef(name);
+
+	assert(pFact != NULL);
+
+	if (pFact != NULL)
+	{
+		uint n = pFact->GetDegree();
+
+		va_list vl;
+		va_start(vl, name);
+
+		FactCondDef oCond(pFact);
+
+		for (uint i=0 ; i<n ; ++i)
+		{
+			char* arg = va_arg(vl, char*);
+			oCond.AddVariable(arg);
+		}
+
+		m_aCounterPostCondDef.push_back(oCond);
+
+		va_end(vl);
+	}
+}
+
+
 IBAction* IBActionDef::Instanciate(IBFact* pPostCond1)
 {
 	// Instantiation

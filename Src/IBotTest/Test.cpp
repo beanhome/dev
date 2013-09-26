@@ -34,10 +34,10 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	IBPlannerTest oPlanner(&oWorld, graph_canva);
 	
-	oWorld.Init(1);
+	oWorld.Init(0);
 	oWorld.Print();
 	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeA(), oWorld.GetCubeB());
-	//oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
+	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
 
 
 	bool bQuit = false;
@@ -71,7 +71,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 			LOG("\n");
 			LOG("****  %d  ****\n", i++);
-			/*res = */oPlanner.Step(true);
+			/*res = */oPlanner.Step(true, false);
 
 			IBPlannerDebug debug(oPlanner);
 			debug.DrawGraph();

@@ -26,6 +26,20 @@ void IBActionDef_MoveCubeFromCubeToTable::Define()
 	AddPostCondition("IBFactDef_IsFree", "SrcCube");
 }
 
+bool IBActionDef_MoveCubeFromCubeToTable::Init(IBAction* pAction)
+{
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(pOwner);
+	ASSERT(pWorld != NULL);
+
+	IBCube* pCube = pAction->FindVariables<IBCube>("Cube");
+	IBCube* pSrcCube = pAction->FindVariables<IBCube>("SrcCube");
+
+	ASSERT(pCube == NULL || pCube != pSrcCube);
+
+	return (pCube != NULL && pSrcCube != NULL);
+}
 
 bool IBActionDef_MoveCubeFromCubeToTable::Execute(IBAction* pAction)
 {

@@ -19,7 +19,7 @@ class IBPlannerDebug : public IBPlannerDisplay
 	private:
 		void PrintPlanner(const IBPlanner& oPlanner) const;
 		void PrintAction(const IBAction& oAction, int tab) const;
-		void PrintFact(const IBFact& oFact, int tab) const;
+		void PrintFact(const IBFact& oFact, int tab, bool counter=false) const;
 };
 
 #endif

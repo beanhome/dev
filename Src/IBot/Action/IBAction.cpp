@@ -34,6 +34,7 @@ IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 	// create fact vector
 	m_aPreCond.resize(pDef->GetPreCondDef().size(), NULL);
 	m_aPostCond.resize(pDef->GetPostCondDef().size(), NULL);
+	m_aCounterPostCond.resize(pDef->GetCounterPostCondDef().size(), NULL);
 
 	// instantiate pre cond
 	for (uint i=0 ; i<pDef->GetPreCondDef().size() ; ++i)
@@ -47,6 +48,20 @@ IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 		IBFact* pPreCond = oPreCondDef.m_pFactDef->Instanciate(this, aUserData);
 
 		AddPreCond(i, pPreCond);
+	}
+
+	// instantiate counter post cond
+	for (uint i=0 ; i<pDef->GetCounterPostCondDef().size() ; ++i)
+	{
+		const FactCondDef& oPostCondDef = pDef->GetCounterPostCondDef()[i];
+		ASSERT(oPostCondDef.m_pFactDef->GetDegree() == oPostCondDef.m_aVarName.size());
+
+		vector<IBObject*> aUserData;
+		aUserData.resize(oPostCondDef.m_pFactDef->GetDegree(), NULL);
+
+		IBFact* pPostCond = oPostCondDef.m_pFactDef->Instanciate(this, aUserData);
+
+		AddCounterPostCond(i, pPostCond);
 	}
 }
 
@@ -84,6 +99,8 @@ void IBAction::SetVariable(const string& name, IBObject* val)
 		
 		// Affecte data to pre cond // TOCHECK
 		//AffectPostCondVariable(name, val);
+
+		AffectCounterPostCondVariable(name, val);
 	}
 }
 
@@ -96,9 +113,17 @@ void IBAction::AddPostCond(uint i, IBFact* pPostCond)
 	pPostCond->AddCauseAction(this);
 
 	// resolve name variable from post cond
-	ResolveVariableName(i, pPostCond);
+	ResolveVariableNameFromPostCond(i, pPostCond);
 }
 
+void IBAction::AddCounterPostCond(uint i, IBFact* pPostCond)
+{
+	assert(i<m_aCounterPostCond.size());
+	m_aCounterPostCond[i] = pPostCond;
+	pPostCond->AddCauseAction(this);
+}
+
+/*
 void IBAction::RemPostCond(IBFact* pPostCond)
 {
 	pPostCond->RemoveCauseAction(this);
@@ -111,7 +136,7 @@ void IBAction::RemPostCond(IBFact* pPostCond)
 			break;
 		}
 	}
-}
+}*/
 
 
 void IBAction::AddPreCond(uint i, IBFact* pPreCond)
@@ -161,10 +186,26 @@ const FactCondDef& IBAction::GetPreConfDefFromFact(IBFact* pPreCond) const
 
 
 // Resolve Variable data of Action from the post cond
-void IBAction::ResolveVariableName(uint i, IBFact* pPostCond)
+void IBAction::ResolveVariableNameFromPostCond(uint i, IBFact* pPostCond)
 {
 	FactCondDef* pPostCondDef = &m_pDef->GetPostCondDef()[i];
 
+	ResolveVariableName(i, pPostCond, pPostCondDef);
+}
+
+// Resolve Variable data of Action from the counter post cond
+/*
+void IBAction::ResolveVariableNameFromCounterPostCond(uint i, IBFact* pPostCond)
+{
+	FactCondDef* pPostCondDef = &m_pDef->GetCounterPostCondDef()[i];
+
+	ResolveVariableName(i, pPostCond, pPostCondDef);
+}
+*/
+
+// Resolve Variable data of Action from a post cond
+void IBAction::ResolveVariableName(uint i, IBFact* pPostCond, FactCondDef* pPostCondDef)
+{
 	assert(pPostCondDef->m_aVarName.size() == pPostCond->GetUserData().size());
 
 	// for each post cond data
@@ -230,6 +271,29 @@ void IBAction::AffectPostCondVariable(const string& name, IBObject* data)
 	}
 }
 
+void IBAction::AffectCounterPostCondVariable(const string& name, IBObject* data)
+{
+	// for each post cond
+	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
+	{
+		// get post fact
+		IBFact* pPostFact = m_aCounterPostCond[i];
+
+		// get def
+		const FactCondDef* pPostCondDef = &m_pDef->GetCounterPostCondDef()[i];
+
+		// for each var of post cond
+		for (uint j=0 ; j<pPostCondDef->m_aVarName.size() ; ++j)
+		{
+			// if correspond, set
+			if (pPostCondDef->m_aVarName[j] == name)
+			{
+				pPostFact->SetVariable(j, data);
+			}
+		}
+	}
+}
+
 /*
 // Update Variable from post and pre condition
 void IBAction::ResolvePreCond()
@@ -244,6 +308,7 @@ void IBAction::ResolvePreCond()
 }
 */
 
+/*
 // Update Variable from post and pre condition
 void IBAction::SpreadVariable()
 {
@@ -252,6 +317,7 @@ void IBAction::SpreadVariable()
 	UpdateVariableFromPostCond();
 	SpreadPreCondVariable();
 }
+*/
 
 // Update Variable from post condition
 void IBAction::UpdateVariableFromPostCond()

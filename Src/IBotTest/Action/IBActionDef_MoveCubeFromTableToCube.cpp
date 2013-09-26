@@ -25,6 +25,23 @@ void IBActionDef_MoveCubeFromTableToCube::Define()
 	AddPreCondition("IBFactDef_IsFree", "DestCube");
 
 	AddPostCondition("IBFactDef_IsTopOf", "Cube", "DestCube");
+	
+	AddCounterPostCondition("IBFactDef_IsFree", "DestCube");
+}
+
+bool IBActionDef_MoveCubeFromTableToCube::Init(IBAction* pAction)
+{
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(pOwner);
+	ASSERT(pWorld != NULL);
+
+	IBCube* pCube = pAction->FindVariables<IBCube>("Cube");
+	IBCube* pDestCube = pAction->FindVariables<IBCube>("DestCube");
+
+	ASSERT(pCube == NULL || pCube != pDestCube);
+
+	return (pCube != NULL && pDestCube != NULL);
 }
 
 

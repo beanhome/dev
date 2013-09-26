@@ -27,6 +27,8 @@ void IBActionDef_MoveCubeFromCubeToCube::Define()
 
 	AddPostCondition("IBFactDef_IsTopOf", "Cube", "DestCube");
 	AddPostCondition("IBFactDef_IsFree", "SrcCube");
+
+	AddCounterPostCondition("IBFactDef_IsFree", "DestCube");
 }
 
 bool IBActionDef_MoveCubeFromCubeToCube::Init(IBAction* pAction)
@@ -40,7 +42,7 @@ bool IBActionDef_MoveCubeFromCubeToCube::Init(IBAction* pAction)
 	IBCube* pDestCube = pAction->FindVariables<IBCube>("DestCube");
 	IBCube* pSrcCube = pAction->FindVariables<IBCube>("SrcCube");
 
-	if (pCube != NULL && pSrcCube == NULL && pDestCube != NULL)
+ 	if (pCube != NULL && pSrcCube == NULL && pDestCube != NULL)
 	{
 		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
 		{
@@ -54,6 +56,25 @@ bool IBActionDef_MoveCubeFromCubeToCube::Init(IBAction* pAction)
 		}
 
 		pAction->SetVariable("SrcCube", pSrcCube);
+	}
+	else if (pSrcCube != NULL && pCube == NULL)
+	{
+		pCube = (IBCube*) pSrcCube->GetTopCube();
+		pAction->SetVariable("Cube", pCube);
+	}
+
+	if (pDestCube == NULL)
+	{
+		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
+		{
+			IBCube* pTmpCube = pWorld->GetCubes()[i];
+			if (pTmpCube != pCube && pTmpCube != pSrcCube && pTmpCube->IsFree())
+			{
+				pDestCube = pTmpCube;
+				pAction->SetVariable("DestCube", pDestCube);
+				break;
+			}
+		}
 	}
 
 	ASSERT((pCube == NULL || pCube != pSrcCube) && (pCube == NULL || pCube != pDestCube) && (pSrcCube == NULL || pSrcCube != pDestCube));

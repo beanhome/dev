@@ -56,6 +56,7 @@ class IBAction
 
 		const vector<IBFact*>&	GetPreCond() const { return m_aPreCond; }
 		const vector<IBFact*>&	GetPostCond() const { return m_aPostCond; }
+		const vector<IBFact*>&	GetCounterPostCond() const { return m_aCounterPostCond; }
 
 		void*					GetUserData() { return m_pUserData; }
 		void					SetUserData(void* pUserData) { m_pUserData = pUserData; }
@@ -65,7 +66,8 @@ class IBAction
 		void					Finish();
 
 		void					AddPostCond(uint i, IBFact* pPostCond);
-		void					RemPostCond(IBFact* pPostCond);
+		//void					RemPostCond(IBFact* pPostCond);
+		void					AddCounterPostCond(uint i, IBFact* pPostCond);
 
 		void					AddPreCond(uint i, IBFact* pPreCond);
 		void					AddPreCond(IBFact* pPreCond);
@@ -73,13 +75,16 @@ class IBAction
 		const FactCondDef&		GetPostConfDefFromFact(IBFact* pPostCond) const;
 		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;
 
-		void					ResolveVariableName(uint i, IBFact* pPreCond);
+		void					ResolveVariableName(uint i, IBFact* pPreCond, FactCondDef* pPostCondDef);
+		void					ResolveVariableNameFromPostCond(uint i, IBFact* pPreCond);
+		//void					ResolveVariableNameFromCounterPostCond(uint i, IBFact* pPreCond);
 		void					AffectPreCondVariable(const string& name, IBObject* data);
 		void					AffectPostCondVariable(const string& name, IBObject* data);
+		void					AffectCounterPostCondVariable(const string& name, IBObject* data);
 
 		void					SpreadPreCondVariable(IBFact* pPreCond = NULL);
 		void					UpdateVariableFromPostCond();
-		void					SpreadVariable();
+		//void					SpreadVariable();
 		//void					ResolvePreCond();
 
 		State					Resolve(IBPlanner* pPlanner, bool bExecute);
@@ -116,7 +121,8 @@ class IBAction
 		VarMap					m_aVariables;
 		vector<IBFact*>			m_aPreCond;
 		vector<IBFact*>			m_aPostCond;
-
+		vector<IBFact*>			m_aCounterPostCond;
+		
 		void*					m_pUserData;
 
 		bool					m_bToDelete;

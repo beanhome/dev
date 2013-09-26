@@ -32,6 +32,8 @@ class IBActionDef
 		const vector<FactCondDef>&		GetPreCondDef() const { return m_aPreCondDef; }
 		const vector<FactCondDef>&		GetPostCondDef() const { return m_aPostCondDef; }
 		vector<FactCondDef>&			GetPostCondDef() { return m_aPostCondDef; }
+		const vector<FactCondDef>&		GetCounterPostCondDef() const { return m_aCounterPostCondDef; }
+		vector<FactCondDef>&			GetCounterPostCondDef() { return m_aCounterPostCondDef; }
 
 		IBAction*						Instanciate(IBFact* pPostCond1);
 		//void							Instanciate(IBFact* pPostCond1, IBFact* pPostCond2);
@@ -40,6 +42,7 @@ class IBActionDef
 		void							AddVariable(const char* name);
 		void							AddPreCondition(const char* name, ...);
 		void							AddPostCondition(const char* name, ...);
+		void							AddCounterPostCondition(const char* name, ...);
 
 		virtual void					PreDestroy(IBAction::VarMap& aUserData) const {}
 
@@ -59,6 +62,7 @@ class IBActionDef
 
 		vector<FactCondDef>				m_aPreCondDef;
 		vector<FactCondDef>				m_aPostCondDef;
+		vector<FactCondDef>				m_aCounterPostCondDef;
 };
 
 #endif

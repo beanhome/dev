@@ -141,16 +141,19 @@ void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUse
 }
 
 
-int IBPlanner::Step(bool bExecute)
+int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 {
 	//m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
 
-	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; /* blank */)
+	if (bCleanGoal)
 	{
-		if (IBFact::RemoveAndDelete(*it))			
-			m_aGoals.erase(it++);
-		else
-			++it;
+		for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; /* blank */)
+		{
+			if (IBFact::RemoveAndDelete(*it))			
+				m_aGoals.erase(it++);
+			else
+				++it;
+		}
 	}
 
 	bool finish = true;
@@ -159,7 +162,8 @@ int IBPlanner::Step(bool bExecute)
 		IBFact* pFact = *it;
 		IBF_Result res = pFact->Resolve(this, bExecute);
 		if (res == IBF_OK)
-			pFact->PrepareToDelete();
+			if (bCleanGoal)
+				pFact->PrepareToDelete();
 		else
 			finish = false;
 	}

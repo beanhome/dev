@@ -9,7 +9,10 @@
 
 bool EvalSort::operator()(const IBAction* a1, const IBAction* a2) const
 {
-	return a1->Evaluate() < a2->Evaluate();
+	float e1 = a1->Evaluate();
+	float e2 = a2->Evaluate();
+
+	return (e1 == e2 ? a1->GetState() < a2->GetState() : e1 < e2);
 }
 
 IBGFact::IBGFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, CanvasBase& oParentCanvas)

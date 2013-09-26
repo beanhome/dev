@@ -45,14 +45,30 @@ void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 		LOG("  var %s %s\n", it->first.c_str(), ( it->second != NULL ? it->second->GetName().c_str() : "nil" ));
 	}
 
+	if (oAction.GetPreCond().size() > 0)
+	{
+		for (int i=0 ; i<tab ; ++i)	LOG("\t");
+		LOG("  pre cond :\n");
+	}
 	for (uint i=0 ; i<oAction.GetPreCond().size() ; ++i)
 	{
 		PrintFact(*oAction.GetPreCond()[i], tab+1);
 	}
+
+	if (oAction.GetCounterPostCond().size() > 0)
+	{
+		for (int i=0 ; i<tab ; ++i)	LOG("\t");
+		LOG("  counter post cond :\n");
+	}
+	for (uint i=0 ; i<oAction.GetCounterPostCond().size() ; ++i)
+	{
+		PrintFact(*oAction.GetCounterPostCond()[i], tab+1, true);
+	}
+
 }
 
 
-void IBPlannerDebug::PrintFact(const IBFact& oFact, int tab) const
+void IBPlannerDebug::PrintFact(const IBFact& oFact, int tab, bool counter) const
 {
 	for (int i=0 ; i<tab ; ++i) LOG("\t");
 
@@ -68,11 +84,14 @@ void IBPlannerDebug::PrintFact(const IBFact& oFact, int tab) const
 	LOG(IBF_ResultString[oFact.Test()]);
 	LOG("]\n");
 
-	for (ActionSet::const_iterator it = oFact.GetCauseAction().begin() ; it != oFact.GetCauseAction().end() ; ++it)
+	if (!counter)
 	{
-		IBAction* pAction = *it;
+		for (ActionSet::const_iterator it = oFact.GetCauseAction().begin() ; it != oFact.GetCauseAction().end() ; ++it)
+		{
+			IBAction* pAction = *it;
 
-		PrintAction(*pAction, tab+1);
+			PrintAction(*pAction, tab+1);
+		}
 	}
 }
 
