@@ -1,6 +1,7 @@
 #include "IBGAction.h"
 #include "IBGActionBox.h"
 #include "Action/IBAction.h"
+#include "Action/IBActionDef.h"
 #include "Fact/IBFact.h"
 #include "CanvasBase.h"
 #include "Canvas.h"
@@ -88,6 +89,19 @@ void IBGAction::Draw() const
 			m_oCanvas.CanvasBase::DrawLine(pFact->GetRight(), pFact->GetMidH(), m_pActionBox->GetLeft()-1, m_pActionBox->GetTop()+IBGPlanner::s_iActionTitleHeight+IBGPlanner::s_iActionEvalHeight+i*as+as/2, IBGPlanner::s_oLinkColor);
 
 			y += pFact->GetH() + IBGPlanner::s_iFactMinSpace;
+		}
+	}
+
+	if (m_eState == IBA_Impossible)
+	{
+		for (uint i=0 ; i<m_aCounterFact.size() ; ++i)
+		{
+			IBFact* pCounterFact = m_aCounterFact[i];
+			if (pCounterFact != NULL)
+			{
+				IBGFact* pFact = static_cast<IBGFact*>(pCounterFact);
+				m_oCanvas.CanvasBase::DrawLine(pFact->GetMidW(), pFact->GetMidH(), m_pActionBox->GetMidW(), m_pActionBox->GetMidH(), IBGPlanner::s_oFalseFactColor);
+			}
 		}
 	}
 }

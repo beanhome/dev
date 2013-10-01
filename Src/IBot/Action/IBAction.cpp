@@ -9,6 +9,7 @@ const char*	IBAction::s_sStateString[State_MAX] =
 	"Unresolved",
 	"resolved",
 	"Impossible",
+	"Counter",
 	"Start",
 	"Execute",
 	"Abort",
@@ -104,6 +105,16 @@ void IBAction::SetVariable(const string& name, IBObject* val)
 	}
 }
 
+const IBFact* IBAction::GetFirstPostCond() const
+{
+	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
+	{
+		if (m_aPostCond[i] != NULL)
+			return m_aPostCond[i];
+	}
+	
+	return NULL;
+}
 
 
 void IBAction::AddPostCond(uint i, IBFact* pPostCond)
@@ -183,6 +194,34 @@ const FactCondDef& IBAction::GetPreConfDefFromFact(IBFact* pPreCond) const
 	ASSERT(false);
 	return NullDef;
 }
+
+IBFact* IBAction::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) const
+{
+	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	{
+		IBFact* pFact = m_aPreCond[i];
+
+		if (pFact == pInstigator)
+			continue;
+
+		if (pFact != pModelFact && !pFact->m_bToDelete && *pFact == *pModelFact)
+			return pFact;
+		
+		const ActionSet& CauseAction = pFact->GetCauseAction();
+
+		for (ActionSet::const_iterator it = CauseAction.begin() ; it != CauseAction.end() ; ++it)
+		{
+			IBAction* pAction = *it;
+
+			pFact = pAction->FindEqualFact(pModelFact, pInstigator);
+			if (pFact != NULL)
+				return pFact;
+		}
+	}
+
+	return NULL;
+}
+
 
 
 // Resolve Variable data of Action from the post cond
@@ -442,6 +481,9 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
 		results[preres]++;
 	}
 
+	if (m_aPreCond.size() == 0)
+		return IBF_OK;
+
 	if (results[IBF_DELETE] == m_aPreCond.size())
 		return IBF_DELETE;
 
@@ -458,6 +500,24 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
 		return IBF_RESOLVED;
 
 	return IBF_UNKNOW;
+}
+
+IBF_Result IBAction::ResolveCounterPostCond(IBPlanner* pPlanner)
+{
+	bool fail = false;
+
+	m_aCounterFact.resize(m_aCounterPostCond.size(), NULL);
+
+	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
+	{
+		IBFact* pFact = m_aCounterPostCond[i];
+
+		m_aCounterFact[i] = pPlanner->FindEqualFact(pFact, GetFirstPostCond());
+
+		fail |= (m_aCounterFact[i] != NULL);
+	}
+	
+	return (fail ? IBF_IMPOSSIBLE : IBF_OK);
 }
 
 
@@ -482,21 +542,37 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 				pPlanner->SetCurrentAction(NULL);
 			if (m_bToDelete)
 				SetState(IBA_Destroy);
-			res = ResolvePreCond(pPlanner, bExecute);
-			if (res == IBF_IMPOSSIBLE)
+
+			if (ResolveCounterPostCond(pPlanner) == IBF_IMPOSSIBLE)
 			{
-				SetState(IBA_Impossible);
-				PrepareToDelete();
+				SetState(IBA_Counter);
 			}
-			else if (res == IBF_OK && bExecute && pPlanner->GetCurrentAction() == NULL)
+			else
 			{
-				pPlanner->SetCurrentAction(this);
-				SetState(IBA_Start);
+				res = ResolvePreCond(pPlanner, bExecute);
+
+				if (res == IBF_IMPOSSIBLE)
+				{
+					SetState(IBA_Impossible);
+					PrepareToDelete();
+				}
+				else if (res == IBF_OK && bExecute && pPlanner->GetCurrentAction() == NULL)
+				{
+					pPlanner->SetCurrentAction(this);
+					SetState(IBA_Start);
+				}
+				else if (res == IBF_OK || res == IBF_RESOLVED)
+				{
+					SetState(IBAction::IBA_Resolved);
+				}
 			}
-			else if (res == IBF_OK || res == IBF_RESOLVED)
-			{
-				SetState(IBAction::IBA_Resolved);
-			}
+			break;
+
+		case IBA_Counter:
+			if (m_bToDelete)
+				SetState(IBA_Destroy);
+			if (ResolveCounterPostCond(pPlanner) == IBF_OK)
+				SetState(IBA_Unresolved);
 			break;
 
 		case IBA_Impossible:
@@ -526,10 +602,10 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 
 		case IBA_Finish:
 			Finish();
-			if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
-				SetState(IBA_Unresolved);
-			else if (m_pDef->Finish(this))
+			if (m_pDef->Finish(this))
 				SetState(IBA_Destroy);
+			else if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
+				SetState(IBA_Unresolved);
 			break;
 
 		case IBA_Abort:

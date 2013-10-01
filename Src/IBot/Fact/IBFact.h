@@ -29,6 +29,8 @@ class IBFact
 		virtual ~IBFact();
 
 	public:
+		bool operator==(const IBFact& other) const;
+
 		IBFactDef*					GetFactDef() const { return m_pDef; }
 
 		bool						HasCauseAction() const { return (m_aCauseAction.size() > 0); }

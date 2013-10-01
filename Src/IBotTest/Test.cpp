@@ -22,7 +22,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 	IBCubeWorld oWorld;
 
 	int w = 1280;
-	int h = 996;
+	int h = 860;
 	int top = 192;
 	int bRealTime = false;
 

@@ -5,6 +5,8 @@
 #include "IBGPlanner.h"
 #include "World/IBObject.h"
 
+#define DEBUG_POINTER 0
+
 IBGFactBox::IBGFactBox(Canvas& parent, IBFact* pFact)
 	: IBGBoxBase(parent)
 	, m_pFact(pFact)
@@ -22,7 +24,12 @@ void IBGFactBox::Resize()
 	int width = IBGPlanner::s_iFactMinWidth;
 
 	int w, h;
+#if DEBUG_POINTER
+	m_oCanvas.CanvasBase::TextSize(w, h, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleSize, "%s 0x%x", m_pFact->GetFactDef()->GetName().c_str(), m_pFact);
+#else
 	m_oCanvas.CanvasBase::TextSize(w, h, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleSize, m_pFact->GetFactDef()->GetName().c_str());
+#endif
+
 	width = std::max<int>(width, w+4);
 
 	for (uint i=0 ; i<m_pFact->GetVariables().size() ; ++i)
@@ -59,7 +66,11 @@ void IBGFactBox::Draw() const
 	m_oCanvas.Print(w, IBGPlanner::s_iFactEvalHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactEvalSize, RightCenter, 42, 255, 255, IBF_ResultString[res]);
 
 	m_oCanvas.CanvasBase::DrawLine(x, y+IBGPlanner::s_iFactTitleHeight, x+w-1, y+IBGPlanner::s_iFactTitleHeight, oColor);
+#if DEBUG_POINTER
+	m_oCanvas.CanvasBase::Print(x+w/2, y+IBGPlanner::s_iFactTitleHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleSize, Center, IBGPlanner::s_oFactColor, "%s 0x%x", m_pFact->GetFactDef()->GetName().c_str(), m_pFact);
+#else
 	m_oCanvas.CanvasBase::Print(x+w/2, y+IBGPlanner::s_iFactTitleHeight/2, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleSize, Center, IBGPlanner::s_oFactColor, "%s", m_pFact->GetFactDef()->GetName().c_str());
+#endif
 
 	for (uint i=0 ; i<m_pFact->GetVariables().size() ; ++i)
 	{

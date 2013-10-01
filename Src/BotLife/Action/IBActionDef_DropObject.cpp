@@ -29,6 +29,8 @@ void IBActionDef_DropObject::Define()
 
 	AddPostCondition("IBFactDef_BotIsEmpty");
 	AddPostCondition("IBFactDef_ObjectAtPos", "Obj", "Pos");
+
+	AddCounterPostCondition("IBFactDef_PosIsFree", "Pos");
 }
 
 float IBActionDef_DropObject::Evaluate(const IBAction* pAction) const

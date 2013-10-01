@@ -178,4 +178,41 @@ int IBPlanner::FindActionToResolve(IBFact* pFact)
 	return 0;
 }
 
+IBFact* IBPlanner::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) const
+{
+	IBFact* pFound = NULL;
+
+	for (FactSet::iterator it_goal = m_aGoals.begin() ; it_goal != m_aGoals.end() ; ++it_goal)
+	{
+		IBFact* pFact = *it_goal;
+
+		if (pFact == pInstigator)
+			continue;
+
+		if (pFact != pModelFact && *pFact == *pModelFact)
+		{
+			pFound = pFact;
+			break;
+		}
+		
+		const ActionSet& CauseAction = pFact->GetCauseAction();
+
+		for (ActionSet::const_iterator it = CauseAction.begin() ; it != CauseAction.end() ; ++it)
+		{
+			IBAction* pAction = *it;
+
+			pFact = pAction->FindEqualFact(pModelFact, pInstigator);
+			if (pFact != NULL)
+			{
+				pFound = pFact;
+				break;
+			}
+		}
+	}
+
+	//LOG("Found : 0x%x From 0x%x\n", pFound, pInstigator);
+
+	return pFound;
+}
+
 

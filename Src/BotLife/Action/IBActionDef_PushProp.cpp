@@ -34,6 +34,8 @@ void IBActionDef_PushProp::Define()
 
 	AddPostCondition("IBFactDef_ObjectAtPos", "Obj", "DestPos");
 	AddPostCondition("IBFactDef_PosIsFree", "ObjPos");
+
+	AddCounterPostCondition("IBFactDef_PosIsFree", "DestPos");
 }
 
 float IBActionDef_PushProp::Evaluate(const IBAction* pAction) const

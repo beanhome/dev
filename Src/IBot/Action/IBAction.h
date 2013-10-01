@@ -27,6 +27,7 @@ class IBAction
 			IBA_Unresolved,
 			IBA_Resolved,
 			IBA_Impossible,
+			IBA_Counter,
 			IBA_Start,
 			IBA_Execute,
 			IBA_Abort,
@@ -57,6 +58,7 @@ class IBAction
 		const vector<IBFact*>&	GetPreCond() const { return m_aPreCond; }
 		const vector<IBFact*>&	GetPostCond() const { return m_aPostCond; }
 		const vector<IBFact*>&	GetCounterPostCond() const { return m_aCounterPostCond; }
+		const IBFact*			GetFirstPostCond() const;
 
 		void*					GetUserData() { return m_pUserData; }
 		void					SetUserData(void* pUserData) { m_pUserData = pUserData; }
@@ -74,6 +76,8 @@ class IBAction
 
 		const FactCondDef&		GetPostConfDefFromFact(IBFact* pPostCond) const;
 		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;
+		
+		IBFact*					FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) const;
 
 		void					ResolveVariableName(uint i, IBFact* pPreCond, FactCondDef* pPostCondDef);
 		void					ResolveVariableNameFromPostCond(uint i, IBFact* pPreCond);
@@ -90,6 +94,9 @@ class IBAction
 		State					Resolve(IBPlanner* pPlanner, bool bExecute);
 		IBF_Result				ResolvePreCond(IBPlanner* pPlanner, bool bExecute);
 		float					Evaluate() const;
+
+		IBF_Result				ResolveCounterPostCond(IBPlanner* pPlanner);
+
 
 		void					PrepareToDelete();
 		bool					IsReadyToDelete();
@@ -122,6 +129,8 @@ class IBAction
 		vector<IBFact*>			m_aPreCond;
 		vector<IBFact*>			m_aPostCond;
 		vector<IBFact*>			m_aCounterPostCond;
+
+		vector<IBFact*>			m_aCounterFact; // ref to Fact that counter
 		
 		void*					m_pUserData;
 

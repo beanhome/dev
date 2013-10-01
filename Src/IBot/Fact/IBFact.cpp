@@ -52,6 +52,22 @@ IBFact::~IBFact()
 	}
 }
 
+bool IBFact::operator==(const IBFact& other) const
+{
+	if (m_pDef != other.m_pDef)
+		return false;
+
+	ASSERT(m_aUserData.size() == other.m_aUserData.size());			
+
+	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	{
+		if (m_aUserData[i] != other.m_aUserData[i])
+			return false;
+	}
+
+	return true;
+}
+
 SortedActionSet IBFact::GetActionOrdered() const
 {
 	SortedActionSet pActionOrdered;

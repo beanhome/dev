@@ -30,6 +30,9 @@ void IBActionDef_PickObject::Define()
 
 	AddPostCondition("IBFactDef_BotHasObject", "Obj");
 	AddPostCondition("IBFactDef_PosIsFree", "ObjPos");
+
+	AddCounterPostCondition("IBFactDef_BotIsEmpty");
+
 }
 
 float IBActionDef_PickObject::Evaluate(const IBAction* pAction) const
