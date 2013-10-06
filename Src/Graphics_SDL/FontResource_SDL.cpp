@@ -1,5 +1,6 @@
-#include "FontResource_SDL.h"
 #include "SDL_ttf.h"
+
+#include "FontResource_SDL.h"
 #include "GEngine.h"
 
 FontResource_SDL::FontResource_SDL(GEngine* pGEngine, uint32 crc, const char* path, uint16 size)

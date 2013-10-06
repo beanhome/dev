@@ -45,6 +45,8 @@ typedef wchar_t wchar;
 
 #ifdef _DEBUG
 #include "Alloc.h"
+#include "StlAllocator.h"
+#define string std::basic_string<char, std::char_traits<char>, StlAllocator<char> >
 #endif
 
 void InitLog(int argc, char *argv[]);

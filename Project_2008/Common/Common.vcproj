@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Common\StlAllocator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Common\Timer.h"
 				>
 			</File>

@@ -54,7 +54,6 @@ class IBPlanner
 
 	private:
 		void*					m_pOwner;
-		set<IBFactDef*>			m_aGoalsDef;
 		
 	protected:
 		const IBAction*			m_pCurrentAction;

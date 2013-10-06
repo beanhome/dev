@@ -182,7 +182,7 @@ IBFact* IBPlanner::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) 
 {
 	IBFact* pFound = NULL;
 
-	for (FactSet::iterator it_goal = m_aGoals.begin() ; it_goal != m_aGoals.end() ; ++it_goal)
+	for (FactSet::const_iterator it_goal = m_aGoals.begin() ; it_goal != m_aGoals.end() ; ++it_goal)
 	{
 		IBFact* pFact = *it_goal;
 
