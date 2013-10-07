@@ -1,8 +1,8 @@
-#include "Utils.h"
+#include "SDL.h"
 
+#include "Utils.h"
 #include "InputEvent_SDL.h"
 
-#include "SDL.h"
 
 InputEvent_SDL::InputEvent_SDL()
 	: m_pSDLEvent(new SDL_Event)

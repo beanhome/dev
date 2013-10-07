@@ -1,6 +1,3 @@
-#include "ImageResource_SDL.h"
-#include "GEngine.h"
-
 #include "SDL.h"
 #include "SDL_video.h"
 //#include "SDL_draw.h"
@@ -8,6 +5,8 @@
 #include "SDL_rotozoom.h"
 #include "SDL_image.h"
 
+#include "ImageResource_SDL.h"
+#include "GEngine.h"
 
 ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* pPath)
 	: ImageResource(pGEngine, crc, pPath)

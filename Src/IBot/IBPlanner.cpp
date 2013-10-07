@@ -185,7 +185,7 @@ IBFact* IBPlanner::FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pIn
 {
 	IBFact* pFound = NULL;
 
-	for (FactSet::iterator it_goal = m_aGoals.begin() ; it_goal != m_aGoals.end() ; ++it_goal)
+	for (FactSet::const_iterator it_goal = m_aGoals.begin() ; it_goal != m_aGoals.end() ; ++it_goal)
 	{
 		IBFact* pFact = *it_goal;
 

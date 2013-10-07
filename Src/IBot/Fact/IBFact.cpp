@@ -60,7 +60,7 @@ SortedActionSet IBFact::GetActionOrdered() const
 {
 	SortedActionSet pActionOrdered;
 
-	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 		pActionOrdered.insert(*it);
 
 	return pActionOrdered;

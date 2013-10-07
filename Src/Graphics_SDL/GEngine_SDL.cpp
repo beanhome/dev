@@ -1,7 +1,3 @@
-#include "Utils.h"
-#include "GEngine_SDL.h"
-#include "InputEvent_SDL.h"
-
 #include "SDL.h"
 #include "SDL_video.h"
 //#include "SDL_draw.h"
@@ -12,6 +8,8 @@
 #include "SDL_gfxPrimitives.h"
 #include "SDL_gfxBlitFunc.h"
 
+#include "GEngine_SDL.h"
+#include "InputEvent_SDL.h"
 
 GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: GEngine(width, height, depth, rootpath)
