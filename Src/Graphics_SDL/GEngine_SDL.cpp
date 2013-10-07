@@ -371,7 +371,9 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 #else
 	int ln = vsnprintf(NULL, 0, format, oArgs) + 1;
 #endif
-	char* str = new char[ln];
+	const int bufferln = 32;
+	char buffer[bufferln];
+	char* str = (ln > bufferln ? new char[ln] : buffer);
 #ifdef _WIN32
 	vsprintf_s(str, ln, format, oArgs);
 #else
@@ -384,7 +386,8 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 	color.g = g;
 	color.b = b;
 	texte = TTF_RenderText_Solid(pFont->m_pFont, str, color);
-	delete [] str;
+	if (ln > bufferln)
+		delete [] str;
 	if (texte == NULL)
 		return;
 

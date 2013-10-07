@@ -37,7 +37,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 	oWorld.Init(0);
 	oWorld.Print();
 	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeA(), oWorld.GetCubeB());
-	//oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
+	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
 
 	bool bQuit = false;
 	int i=0;

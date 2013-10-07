@@ -11,6 +11,8 @@ class IBInt : public IBObject
 
 		IBInt& operator=(int v);
 
+		IBObject* Clone() const { return new IBInt(*this); }
+
 		int GetValue() const { return m_iValue; }
 
 		virtual void FormatData() const;

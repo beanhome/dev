@@ -32,9 +32,8 @@ BLApp::~BLApp()
 	delete m_pWorldCanva;
 	delete m_pGraphCanva;
 
-	delete m_pWorld;
-
 	delete m_pGoalMenu;
+	delete m_pWorld;
 }
 
 

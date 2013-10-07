@@ -11,6 +11,8 @@ class IBObject
 		IBObject(const string& name, bool bInstance = false);
 		virtual ~IBObject();
 
+		virtual IBObject* Clone() const = 0;
+
 		const string&		GetName() const { return m_sName; }
 		void				SetName(const string& name) { m_sName = name; }
 

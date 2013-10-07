@@ -11,12 +11,10 @@ IBGFactBox::IBGFactBox(Canvas& parent, IBFact* pFact)
 	: IBGBoxBase(parent)
 	, m_pFact(pFact)
 {
-	LOG("Create IBGFactBox %s\n", m_pFact->GetFactDef()->GetName().c_str());
 }
 
 IBGFactBox::~IBGFactBox()
 {
-	LOG("Destroy IBGFactBox %s\n", m_pFact->GetFactDef()->GetName().c_str());
 }
 
 

@@ -23,6 +23,7 @@ BLGoalMenu::BLGoalMenu(CanvasBase& oParent, BLBot& oBot)
 
 BLGoalMenu::~BLGoalMenu()
 {
+	m_aGoals.clear();
 }
 
 

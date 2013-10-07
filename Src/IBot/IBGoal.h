@@ -18,7 +18,8 @@ class IBGoal
 		IBGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2);
 		IBGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3);
 
-		~IBGoal() {};
+		IBGoal(const IBGoal& Original);
+		~IBGoal();
 
 		const string& GetName() const { return m_sName; }
 		string GetData() const;

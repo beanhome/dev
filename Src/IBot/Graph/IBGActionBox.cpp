@@ -52,19 +52,22 @@ void IBGActionBox::Draw() const
 	if (m_pAction->GetState() == IBAction::IBA_Execute)
 		m_oCanvas.CanvasBase::Print(w, 0, m_oCanvas.GetPrintFont(), 10, RightBottom, IBGPlanner::s_oActionColor, "%d", m_pAction->GetExecCounter());
 
-	int k=0;
-	for (IBAction::VarMap::const_iterator it = m_pAction->GetVariables().begin() ; it != m_pAction->GetVariables().end() ; ++it, ++k)
+	if (m_pAction->GetState() != IBAction::IBA_Destroyed)
 	{
-		const string& sName = it->first;
+		int k=0;
+		for (IBAction::VarMap::const_iterator it = m_pAction->GetVariables().begin() ; it != m_pAction->GetVariables().end() ; ++it, ++k)
+		{
+			const string& sName = it->first;
 
-		const IBObject* pObject = ((const IBObject*)it->second);
-		m_oCanvas.CanvasBase::Print(x+w/2,
-			y+IBGPlanner::s_iActionTitleHeight+(IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)/2 + (IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)*(k),
-			m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionVarHeight, RightCenter, IBGPlanner::s_oActionColor, "%s:", sName.c_str());
+			const IBObject* pObject = ((const IBObject*)it->second);
+			m_oCanvas.CanvasBase::Print(x+w/2,
+				y+IBGPlanner::s_iActionTitleHeight+(IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)/2 + (IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)*(k),
+				m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionVarHeight, RightCenter, IBGPlanner::s_oActionColor, "%s:", sName.c_str());
 
-		m_oCanvas.CanvasBase::Print(x+w/2,
-			y+IBGPlanner::s_iActionTitleHeight+(IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)/2 + (IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)*(k),
-			m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionVarHeight, LeftCenter, IBGPlanner::s_oActionColor, " %s", (pObject != NULL ? pObject->GetName().c_str() : "NULL"));
+			m_oCanvas.CanvasBase::Print(x+w/2,
+				y+IBGPlanner::s_iActionTitleHeight+(IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)/2 + (IBGPlanner::s_iActionVarHeight+IBGPlanner::s_iActionVarSpace)*(k),
+				m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionVarHeight, LeftCenter, IBGPlanner::s_oActionColor, " %s", (pObject != NULL ? pObject->GetName().c_str() : "NULL"));
+		}
 	}
 }
 

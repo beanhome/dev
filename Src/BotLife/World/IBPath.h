@@ -14,6 +14,8 @@ class IBPath : public IBObject, public Path
 		IBPath(const string& name, const Vector2& start, const deque<Vector2>& oPath, bool bInstance = false);
 		virtual ~IBPath();
 		
+		IBObject* Clone() const { return new IBPath(*this); }
+
 		virtual void FormatData() const;
 		virtual void Print() const;
 

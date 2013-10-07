@@ -56,6 +56,28 @@ IBGoal::IBGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, I
 	m_aUserData.push_back(pUserData3);
 }
 
+IBGoal::IBGoal(const IBGoal& Original)
+	: m_sName(Original.m_sName)
+{
+	m_aUserData.resize(Original.m_aUserData.size());
+
+	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	{
+		m_aUserData[i] = (Original.m_aUserData[i]->IsInstance() ? Original.m_aUserData[i]->Clone() : Original.m_aUserData[i]);
+	}
+}
+
+IBGoal::~IBGoal()
+{
+	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	{
+		if (m_aUserData[i]->IsInstance())
+			delete m_aUserData[i];
+	}
+}
+
+
+
 string IBGoal::GetData() const
 {
 	string sData = "(";

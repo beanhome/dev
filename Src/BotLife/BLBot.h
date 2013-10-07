@@ -20,6 +20,8 @@ class BLBot : public IBObject
 		BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas);
 		~BLBot();
 
+		IBObject* Clone() const { return new BLBot(*this); }
+
 		enum BotState
 		{
 			Idle,

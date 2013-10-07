@@ -71,6 +71,12 @@ IBAction::~IBAction()
 	ASSERT(m_aPreCond.size() == 0);
 	ASSERT(m_aCounterPostCond.size() == 0);
 
+	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
+	{
+		if (m_aPostCond[i] != NULL)
+			m_aPostCond[i]->RemoveCauseAction(this);
+	}
+
 	uint count = 0;
 	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
 	{
@@ -90,12 +96,6 @@ void IBAction::Destroy()
 		delete m_aPreCond[i];
 	}
 	m_aPreCond.clear();
-
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		if (m_aPostCond[i] != NULL)
-			m_aPostCond[i]->RemoveCauseAction(this);
-	}
 
 	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
 	{

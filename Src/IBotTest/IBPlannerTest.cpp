@@ -17,8 +17,8 @@ IBPlannerTest::IBPlannerTest(void* pOwner, CanvasBase& oGraphCanva)
 	REGISTER_FACT(IBFactDef_IsTopOf);
 
 	REGISTER_ACTION(IBActionDef_MoveCubeFromTableToCube);
-	//REGISTER_ACTION(IBActionDef_MoveCubeFromCubeToTable);
-	//REGISTER_ACTION(IBActionDef_MoveCubeFromCubeToCube);
+	REGISTER_ACTION(IBActionDef_MoveCubeFromCubeToTable);
+	REGISTER_ACTION(IBActionDef_MoveCubeFromCubeToCube);
 }
 
 IBPlannerTest::~IBPlannerTest()

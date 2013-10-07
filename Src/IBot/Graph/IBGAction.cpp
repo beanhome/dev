@@ -13,13 +13,11 @@ IBGAction::IBGAction(IBActionDef* pDef, IBFact* pPostCond1)
 	, IBGBoxBase(static_cast<IBGFact*>(pPostCond1)->GetCanvas())
 	, m_pActionBox(NULL)
 {
-	LOG("Create IBGAction %s\n", pDef->GetName().c_str());
 	m_pActionBox = new IBGActionBox(m_oCanvas, this);
 }
 
 IBGAction::~IBGAction()
 {
-	LOG("Delete IBGAction %s\n", GetDef()->GetName().c_str());
 	if (m_pActionBox != NULL)
 		delete m_pActionBox;
 }
