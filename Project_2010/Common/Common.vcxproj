@@ -73,6 +73,7 @@
     <ClInclude Include="..\..\Src\Common\Alloc.h" />
     <ClInclude Include="..\..\Src\Common\Allocator.h" />
     <ClInclude Include="..\..\Src\Common\CRC32.h" />
+    <ClInclude Include="..\..\Src\Common\StlAllocator.h" />
     <ClInclude Include="..\..\Src\Common\Timer.h" />
     <ClInclude Include="..\..\Src\Common\Utils.h" />
     <ClInclude Include="..\..\Src\Common\Vector2.h" />

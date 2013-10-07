@@ -49,5 +49,8 @@
     <ClInclude Include="..\..\Src\Common\Vector2.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Src\Common\StlAllocator.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

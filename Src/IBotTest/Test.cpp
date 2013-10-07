@@ -39,7 +39,6 @@ extern "C" int SDL_main(int argc, char *argv[])
 	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeA(), oWorld.GetCubeB());
 	//oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
 
-
 	bool bQuit = false;
 	int i=0;
 	double fTime = Timer::Get();

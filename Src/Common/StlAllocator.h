@@ -15,6 +15,10 @@ template<typename T>
 struct is_pointer<T*> { static const bool value = true; };
 */
 
+#ifdef max
+#undef max
+#endif
+
 template <typename T>
 class StlAllocator
 {
@@ -62,10 +66,6 @@ public:
 	{
 	}
 
-#ifdef max
-#undef max
-#endif
-
 	// return maximum number of elements that can be allocated
 	size_type max_size () const throw()
 	{
@@ -80,11 +80,12 @@ public:
 		return ret;
 	}
 
+
 	// initialize elements of allocated storage p with value value
 	void construct (pointer p, const T& value)
 	{
 		// initialize memory with placement new
-		new((void*)p)T(value);
+		new ((T*)p) T(value);
 	}
 
 	// destroy elements of initialized storage p
@@ -104,7 +105,7 @@ private:
 	//const char* m_sType;
 };
 
-
+/*
 template <typename T>
 class StlAllocator<T*>
 {
@@ -121,6 +122,9 @@ public:
 	{
 	}
 };
+*/
+
+
 
 // return that all specializations of this allocator are interchangeable
 template <class T1, class T2>

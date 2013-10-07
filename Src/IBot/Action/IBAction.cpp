@@ -670,7 +670,6 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 			{
 				m_pDef->Destroy(this);
 				Destroy();
-				delete this;
 				SetState(IBA_Destroyed);
 			}
 			else

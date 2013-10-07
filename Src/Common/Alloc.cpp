@@ -9,6 +9,13 @@
 const char *del_FILE;
 unsigned long del_LINE;
 
+int SetAllocContext(const char* file, unsigned long line)
+{
+	del_FILE = file;
+	del_LINE = line;
+	return 0;
+}
+
 void *_Malloc(size_t size, const char* file_name, unsigned int line_num)
 {
 	return Allocator::Malloc(size, file_name, line_num);
@@ -32,7 +39,9 @@ void _Free(void *block, const char* file_name, unsigned int line_num)
 
 void* operator new (size_t size) throw (std::bad_alloc)
 {
-	void* ptr = Allocator::Malloc(size, "unknown", 0);
+	void* ptr = Allocator::Malloc(size, del_FILE, del_LINE);
+	del_FILE = NULL;
+	del_LINE = 0;
 
 	if (ptr == NULL)
 		throw std::bad_alloc();
@@ -42,7 +51,9 @@ void* operator new (size_t size) throw (std::bad_alloc)
 
 void* operator new[] (size_t size) throw (std::bad_alloc)
 {
-	void* ptr = Allocator::Malloc(size, "unknown", 0);
+	void* ptr = Allocator::Malloc(size, del_FILE, del_LINE);
+	del_FILE = NULL;
+	del_LINE = 0;
 
 	if (ptr == NULL)
 		throw std::bad_alloc();
@@ -50,6 +61,7 @@ void* operator new[] (size_t size) throw (std::bad_alloc)
 	return ptr;
 }
 
+/*
 void* operator new (size_t size, const char* file_name, unsigned int line_num) throw (std::bad_alloc)
 {
 	void* ptr = Allocator::Malloc(size, file_name, line_num);
@@ -79,6 +91,7 @@ void operator delete[] (void *ptr, const char* file_name, unsigned int line_num)
 {
 	Allocator::Free(ptr, file_name, line_num);
 }
+*/
 
 void operator delete (void* ptr) throw ()
 {
