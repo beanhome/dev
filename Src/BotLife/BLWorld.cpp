@@ -151,6 +151,7 @@ void BLWorld::DrawDebug() const
 	IBFactVisitor FactVisitor(m_pBot->GetPlanner());
 
 	// goals
+	/*
 	for (FactSet::const_iterator it = m_pBot->GetPlanner().GetGoals().begin() ; it != m_pBot->GetPlanner().GetGoals().end() ; ++it)
 	{
 		const IBGFact* pFact = static_cast<const IBGFact*>(*it);
@@ -160,6 +161,7 @@ void BLWorld::DrawDebug() const
 			DrawDebugObject(pObj);
 		}
 	}
+	*/
 
 	// mouse overlaping
 	for (const IBFact* fact = FactVisitor.Begin() ; fact != NULL ; fact = FactVisitor.Next())

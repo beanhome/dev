@@ -25,7 +25,10 @@ IBPlanner::IBPlanner(void* pOwner)
 IBPlanner::~IBPlanner()
 {
 	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
+	{
+		(*it)->Destroy();
 		delete (*it);
+	}
 }
 
 
@@ -178,7 +181,7 @@ int IBPlanner::FindActionToResolve(IBFact* pFact)
 	return 0;
 }
 
-IBFact* IBPlanner::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) const
+IBFact* IBPlanner::FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pInstigator) const
 {
 	IBFact* pFound = NULL;
 
@@ -201,7 +204,7 @@ IBFact* IBPlanner::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) 
 		{
 			IBAction* pAction = *it;
 
-			pFact = pAction->FindEqualFact(pModelFact, pInstigator);
+			pFact = pAction->FindEqualFact_TopBottom(pModelFact, pInstigator);
 			if (pFact != NULL)
 			{
 				pFound = pFact;

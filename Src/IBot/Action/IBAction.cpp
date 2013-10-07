@@ -68,18 +68,40 @@ IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
 
 IBAction::~IBAction()
 {
+	ASSERT(m_aPreCond.size() == 0);
+	ASSERT(m_aCounterPostCond.size() == 0);
+
+	uint count = 0;
+	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
+	{
+		if (m_aPostCond[i] != NULL)
+			count++;
+	}
+	ASSERT(count == 1);
+}
+
+void IBAction::Destroy()
+{
 	m_pDef->PreDestroy(m_aVariables);
 
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
+		m_aPreCond[i]->Destroy();
 		delete m_aPreCond[i];
 	}
+	m_aPreCond.clear();
 
 	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
 	{
 		if (m_aPostCond[i] != NULL)
 			m_aPostCond[i]->RemoveCauseAction(this);
 	}
+
+	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
+	{
+		delete m_aCounterPostCond[i];
+	}
+	m_aCounterPostCond.clear();
 }
 
 IBObject* IBAction::FindVariables(const string& name) const
@@ -195,7 +217,7 @@ const FactCondDef& IBAction::GetPreConfDefFromFact(IBFact* pPreCond) const
 	return NullDef;
 }
 
-IBFact* IBAction::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) const
+IBFact* IBAction::FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pInstigator) const
 {
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
@@ -213,7 +235,24 @@ IBFact* IBAction::FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) c
 		{
 			IBAction* pAction = *it;
 
-			pFact = pAction->FindEqualFact(pModelFact, pInstigator);
+			pFact = pAction->FindEqualFact_TopBottom(pModelFact, pInstigator);
+			if (pFact != NULL)
+				return pFact;
+		}
+	}
+
+	return NULL;
+}
+
+const IBFact* IBAction::FindEqualFact_BottomTop(IBFact* pModelFact) const
+{
+	const IBFact* pFact = NULL;
+
+	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
+	{
+		if (m_aPostCond[i] != NULL)
+		{
+			pFact = m_aPostCond[i]->FindEqualFact_BottomTop(pModelFact);
 			if (pFact != NULL)
 				return pFact;
 		}
@@ -441,7 +480,7 @@ bool IBAction::IsReadyToDestroy()
 
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
-		if (!m_aPreCond[i]->IsReadyToDelete())
+		if (!m_aPreCond[i]->IsReadyToDestroy())
 			return false;
 	}
 
@@ -450,7 +489,16 @@ bool IBAction::IsReadyToDestroy()
 
 bool IBAction::IsReadyToDelete()
 {
-	return (IsReadyToDestroy() && GetState() == IBA_Destroyed);
+	if (!m_bToDelete || GetState() != IBA_Destroyed)
+		return false;
+
+	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	{
+		if (!m_aPreCond[i]->IsReadyToDelete())
+			return false;
+	}
+
+	return true;
 }
 
 
@@ -512,7 +560,7 @@ IBF_Result IBAction::ResolveCounterPostCond(IBPlanner* pPlanner)
 	{
 		IBFact* pFact = m_aCounterPostCond[i];
 
-		m_aCounterFact[i] = pPlanner->FindEqualFact(pFact, GetFirstPostCond());
+		m_aCounterFact[i] = pPlanner->FindEqualFact_TopBottom(pFact, GetFirstPostCond());
 
 		fail |= (m_aCounterFact[i] != NULL);
 	}
@@ -621,6 +669,8 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 			if (IsReadyToDestroy())
 			{
 				m_pDef->Destroy(this);
+				Destroy();
+				delete this;
 				SetState(IBA_Destroyed);
 			}
 			else
@@ -631,6 +681,14 @@ IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
 
 		case IBA_Destroyed:
 			//LOG("IBA_Destroy\n");
+			if (IsReadyToDelete())
+			{
+				delete this;
+			}
+			else
+			{
+				ResolvePreCond(pPlanner, bExecute);
+			}
 			break;
 	}
 

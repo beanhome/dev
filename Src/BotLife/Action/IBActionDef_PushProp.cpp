@@ -143,6 +143,9 @@ bool IBActionDef_PushProp::Init(IBAction* pAction)
 		pAction->SetVariable("Dist", pDist);
 	}
 
+	ASSERT(pObjPos == NULL || pDestPos == NULL || (pObjPos != pDestPos && *pObjPos != *pDestPos));
+	ASSERT(pObjPos == NULL || pPushPos == NULL || (pObjPos != pPushPos && *pObjPos != *pPushPos));
+
 	return (pObj != NULL && pObjPos != NULL && pDestPos != NULL && pPushPos != NULL && pDist != NULL);
 }
 

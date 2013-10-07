@@ -13,6 +13,7 @@ class IBGFactBox : public IBGBoxBase
 {
 public:
 	IBGFactBox(Canvas& parent, IBFact* pFact);
+	~IBGFactBox();
 
 	IBFact*				GetFact() { return m_pFact; }
 

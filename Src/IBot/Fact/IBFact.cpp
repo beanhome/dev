@@ -20,35 +20,23 @@ IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
 
 IBFact::~IBFact()
 {
+}
+
+void IBFact::Destroy()
+{
 	while (m_aCauseAction.begin() != m_aCauseAction.end())
 	{
-		delete *(m_aCauseAction.begin());
+		IBAction* pAction = *m_aCauseAction.begin();
+		pAction->Destroy();
+		delete pAction;
 	}
-
-#if 0
-	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; /*++it*/)
-	{
-		IBAction* pAction = *it;
-
-		//if (pAction->GetPostCond().size() == 1)
-		{
-			delete pAction;
-			it++;
-		}
-		/*
-		else
-		{
-			pAction->RemPostCond(this);
-			it++;
-		}
-		*/
-	}
-#endif
 
 	for (uint i=0 ; i<m_aUserData.size() ; ++i)
 	{
 		if (m_aUserData[i] != NULL && m_aUserData[i]->IsInstance() && m_aUserData[i]->GetOwner() == this)
+		{
 			delete m_aUserData[i];
+		}
 	}
 }
 
@@ -88,6 +76,20 @@ void IBFact::SetVariable(uint i, IBObject* pVar)
 
 	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 		(*it)->UpdateVariableFromPostCond();
+}
+
+bool IBFact::IsReadyToDestroy() const
+{
+	if (!m_bToDelete)
+		return false;
+
+	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+	{
+		if (!(*it)->IsReadyToDestroy())
+			return false;
+	}
+
+	return true;
 }
 
 bool IBFact::IsReadyToDelete() const
@@ -180,7 +182,13 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 			break;
 
 		case IBF_FAIL:
-			if (!m_bToDelete && m_aCauseAction.size() == 0)
+			// TODO Find Equal Fact BottomTop
+			// -> Impossible
+			if (FindEqualFact_BottomTop(this) != NULL)
+			{
+				res = IBF_IMPOSSIBLE;
+			}
+			else if (!m_bToDelete && m_aCauseAction.size() == 0)
 			{
 				pPlanner->FindActionToResolve(this);
 				if (m_aCauseAction.size() == 0)
@@ -249,4 +257,11 @@ bool IBFact::IsResolved() const
 	return false;
 }
 
+const IBFact* IBFact::FindEqualFact_BottomTop(IBFact* pModelFact) const
+{
+	if (this != pModelFact && *this == *pModelFact)
+		return this;
+
+	return (m_pEffectAction != NULL ? m_pEffectAction->FindEqualFact_BottomTop(pModelFact) : NULL);
+}
 

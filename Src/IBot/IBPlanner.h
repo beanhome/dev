@@ -41,7 +41,7 @@ class IBPlanner
 		void					SetCurrentAction(const IBAction* pAction) { m_pCurrentAction = pAction; }
 
 		int						FindActionToResolve(IBFact* pFact);
-		IBFact*					FindEqualFact(IBFact* pFact, const IBFact* pInstigator) const;
+		IBFact*					FindEqualFact_TopBottom(IBFact* pFact, const IBFact* pInstigator) const;
 
 		void*					GetOwner() const { return m_pOwner; }
 		const FactSet&			GetGoals() const { return m_aGoals; }

@@ -43,6 +43,8 @@ class IBAction
 		typedef pair<string, IBObject*> VarPair;
 
 	public:
+		void					Destroy();
+
 		State					GetState() const { return m_eState; }
 		void					SetState(State state) { m_eState = state; }
 
@@ -77,7 +79,8 @@ class IBAction
 		const FactCondDef&		GetPostConfDefFromFact(IBFact* pPostCond) const;
 		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;
 		
-		IBFact*					FindEqualFact(IBFact* pModelFact, const IBFact* pInstigator) const;
+		IBFact*					FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pInstigator) const;
+		const IBFact*			FindEqualFact_BottomTop(IBFact* pModelFact) const;
 
 		void					ResolveVariableName(uint i, IBFact* pPreCond, FactCondDef* pPostCondDef);
 		void					ResolveVariableNameFromPostCond(uint i, IBFact* pPreCond);

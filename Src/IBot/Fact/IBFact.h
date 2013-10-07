@@ -31,6 +31,8 @@ class IBFact
 	public:
 		bool operator==(const IBFact& other) const;
 
+		void						Destroy();
+
 		IBFactDef*					GetFactDef() const { return m_pDef; }
 
 		bool						HasCauseAction() const { return (m_aCauseAction.size() > 0); }
@@ -50,6 +52,7 @@ class IBFact
 		void						SetVariable(uint i, IBObject* pVar);
 
 		bool						IsReadyToDelete() const;
+		bool						IsReadyToDestroy() const;
 		void						PrepareToDelete();
 		bool						IsMarkToDelete() const { return m_bToDelete; }
 
@@ -62,6 +65,8 @@ class IBFact
 
 		IBF_Result 					Resolve(IBPlanner* pPlanner, bool bExecute);
 		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
+
+		const IBFact*				FindEqualFact_BottomTop(IBFact* pModelFact) const;
 
 	public:
 		static bool	RemoveAndDelete(IBFact* pFact) { if (pFact->IsReadyToDelete()) { delete pFact; return true; } else { return false; } }
