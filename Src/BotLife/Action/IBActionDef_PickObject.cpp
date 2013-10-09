@@ -57,7 +57,7 @@ bool IBActionDef_PickObject::Init(IBAction* pAction)
 
 	if (pDist == NULL)
 	{
-		pDist = new IBInt("NearDist", 1);
+		pDist = new IBInt("NearDist", 1, true);
 		pAction->SetVariable("Dist", pDist);
 	}
 

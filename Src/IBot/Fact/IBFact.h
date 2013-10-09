@@ -69,7 +69,7 @@ class IBFact
 		const IBFact*				FindEqualFact_BottomTop(IBFact* pModelFact) const;
 
 	public:
-		static bool	RemoveAndDelete(IBFact* pFact) { if (pFact->IsReadyToDelete()) { delete pFact; return true; } else { return false; } }
+		static bool	RemoveAndDelete(IBFact* pFact) { if (pFact->IsReadyToDelete()) { pFact->Destroy(); delete pFact; return true; } else { return false; } }
 
 	public:
 		IBF_Result					Test() const { return m_pDef->Test(m_aUserData); }

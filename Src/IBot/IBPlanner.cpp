@@ -152,7 +152,7 @@ int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 	{
 		for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; /* blank */)
 		{
-			if (IBFact::RemoveAndDelete(*it))			
+			if (IBFact::RemoveAndDelete(*it))
 				m_aGoals.erase(it++);
 			else
 				++it;

@@ -71,7 +71,7 @@ IBGoal::~IBGoal()
 {
 	for (uint i=0 ; i<m_aUserData.size() ; ++i)
 	{
-		if (m_aUserData[i]->IsInstance())
+		if (m_aUserData[i]->IsInstance() && m_aUserData[i]->GetOwner() == NULL)
 			delete m_aUserData[i];
 	}
 }
