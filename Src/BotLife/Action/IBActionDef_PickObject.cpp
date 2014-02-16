@@ -46,14 +46,12 @@ bool IBActionDef_PickObject::Init(IBAction* pAction)
 	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
 	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
 
-	/*
 	if (pObjPos == NULL)
 	{
 		pObjPos = (IBVector2*)&pObj->GetPos();
 		pObjPos->SetName(pObj->GetName() + "Pos");
 		pAction->SetVariable("ObjPos", pObjPos);
 	}
-	*/
 
 	if (pDist == NULL)
 	{

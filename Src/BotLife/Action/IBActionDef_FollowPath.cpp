@@ -61,6 +61,15 @@ bool IBActionDef_FollowPath::Init(IBAction* pAction)
 		pAction->SetVariable("Path", pPath);
 	}
 
+	if (pStart == NULL)
+	{
+		void* pOwner =  m_pPlanner->GetOwner();
+		ASSERT(pOwner != NULL);
+		BLBot* pBot = static_cast<BLBot*>(pOwner);
+		pStart = pBot->GetIBPosAd();
+		pAction->SetVariable("Start", pStart);
+	}
+
 	return (pStart != NULL && pTarget != NULL && pPath != NULL);
 }
 
