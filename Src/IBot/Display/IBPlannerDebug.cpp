@@ -62,7 +62,9 @@ void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 	}
 	for (uint i=0 ; i<oAction.GetCounterPostCond().size() ; ++i)
 	{
-		PrintFact(*oAction.GetCounterPostCond()[i], tab+1, true);
+		IBFact* pFact = oAction.GetCounterPostCond()[i];
+		if (pFact != NULL)
+			PrintFact(*pFact, tab+1, true);
 	}
 
 }

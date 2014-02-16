@@ -23,6 +23,13 @@ class IBGAction : public IBAction, public IBGBoxBase
 
 	protected:
 		IBGActionBox*	m_pActionBox;
+
+		int				m_iPreCondHeight;
+		int				m_iPreCondWidth;
+		int				m_iCounterHeight;
+		int				m_iCounterWidth;
+
+
 };
 
 #endif

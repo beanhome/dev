@@ -523,8 +523,8 @@ IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
 	{
 		IBF_Result preres = m_aPreCond[i]->Resolve(pPlanner, bExecute);
 
-		if (preres == IBF_FAIL)
-			bExecute = false;
+		//if (preres == IBF_FAIL)
+		//	bExecute = false;
 
 		results[preres]++;
 	}

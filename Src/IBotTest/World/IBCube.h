@@ -10,6 +10,8 @@ class IBCube : public IBObject
 		IBCube(const string& name);
 		virtual ~IBCube();
 
+		virtual IBObject* Clone() const { return new IBCube(*this); }
+
 		void PutCube(IBCube* pCube);
 		void TakeCube();
 		
