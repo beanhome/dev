@@ -211,8 +211,8 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 					IBAction::State st = pAction->Resolve(pPlanner, bExecute);
 					bResolved = pAction->IsResolved();
 
-					if (st != IBAction::IBA_Destroyed)
-						bExecute = false;
+					//if (st != IBAction::IBA_Destroyed)
+					//	bExecute = false;
 
 					if (st != IBAction::IBA_Impossible)
 						imp = false;
@@ -230,9 +230,11 @@ IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
 
 		case IBF_UNKNOW:
 			// Find variable object
+			/*
 			ResolveVariable();
 			if (GetEffectAction() != NULL)
 				GetEffectAction()->SpreadPreCondVariable(this);
+			*/
 			break;
 	}
 

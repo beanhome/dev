@@ -28,30 +28,44 @@ void IBGAction::Resize()
 
 	m_pActionBox->Resize();
 
-	int w = 0;
-	int h = 0;
-
+	// Pre Cond Size
+	m_iPreCondHeight = 0;
+	m_iPreCondWidth = 0;
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
 		IBGFact* pFact = static_cast<IBGFact*>(m_aPreCond[i]);
 
 		pFact->Resize();
-		w = std::max<int>(w, pFact->GetW());
-		h += pFact->GetH();
+		m_iPreCondWidth = std::max<int>(m_iPreCondWidth, pFact->GetW());
+		m_iPreCondHeight += pFact->GetH();
 		if (i<m_aPreCond.size()-1)
-			h += IBGPlanner::s_iFactMinSpace;
+			m_iPreCondHeight += IBGPlanner::s_iFactMinSpace;
 	}
 	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
 	{
 		IBGFact* pFact = static_cast<IBGFact*>(m_aPreCond[i]);
-		pFact->SetW(w);
+		pFact->SetW(m_iPreCondWidth);
 	}
 
 	if (m_aPreCond.size() > 0)
-		w += IBGPlanner::s_iLinkWidth;
+		m_iPreCondWidth += IBGPlanner::s_iLinkWidth;
 
-	w += m_pActionBox->GetW();
-	h = std::max<int>(h, m_pActionBox->GetH());
+	// Counter
+	m_iCounterHeight = 0;
+	m_iCounterWidth = 0;
+	if (m_eState == IBAction::IBA_Counter)
+	{
+		for (uint i=0 ; i<GetCounterPostCond().size() ; ++i)
+		{
+			IBGFact* pFact = static_cast<IBGFact*>(GetCounterPostCond()[i]);
+			pFact->GetFactBox()->Resize();
+			m_iCounterWidth = std::max<int>(m_iCounterWidth, pFact->GetFactBox()->GetW());
+			m_iCounterHeight += pFact->GetFactBox()->GetH();
+		}
+	}
+
+	int w = m_iPreCondWidth + std::max<int>(m_pActionBox->GetW(), m_iCounterWidth);
+	int h = std::max<int>(m_iPreCondHeight, m_pActionBox->GetH() + m_iCounterHeight);
 	
 	SetW(w);
 	SetH(h);
@@ -67,12 +81,28 @@ void IBGAction::Draw() const
 	int x = 0;
 	int y = 0;
 
-	x = GetW() - m_pActionBox->GetW();
-	y = GetH()/2 - m_pActionBox->GetH()/2;
+	// Action Box
+	x = m_iPreCondWidth;
+	y = GetH()/2 - (m_pActionBox->GetH() + m_iCounterHeight)/2;
 	m_pActionBox->SetX(x);
 	m_pActionBox->SetY(y);
 	m_pActionBox->Draw();
 
+	// Counter
+	if (m_eState == IBAction::IBA_Counter)
+	{
+		y += m_pActionBox->GetH();
+		for (uint i=0 ; i<GetCounterPostCond().size() ; ++i)
+		{
+			IBGFact* pFact = static_cast<IBGFact*>(GetCounterPostCond()[i]);
+			pFact->GetFactBox()->SetX(x);
+			pFact->GetFactBox()->SetY(y);
+			pFact->GetFactBox()->Draw();
+			y += pFact->GetFactBox()->GetH();
+		}
+	}
+
+	// PreCond
 	if (m_aPreCond.size())
 	{
 		x = 0;

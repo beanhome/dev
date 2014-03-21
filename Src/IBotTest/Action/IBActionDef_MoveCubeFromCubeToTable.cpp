@@ -36,6 +36,12 @@ bool IBActionDef_MoveCubeFromCubeToTable::Init(IBAction* pAction)
 	IBCube* pCube = pAction->FindVariables<IBCube>("Cube");
 	IBCube* pSrcCube = pAction->FindVariables<IBCube>("SrcCube");
 
+	if (pCube == NULL && pSrcCube != NULL)
+	{
+		pCube = (IBCube*) pSrcCube->GetTopCube();
+		pAction->SetVariable("Cube", pCube);
+	}
+
 	ASSERT(pCube == NULL || pCube != pSrcCube);
 
 	return (pCube != NULL && pSrcCube != NULL);

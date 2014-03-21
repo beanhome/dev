@@ -71,9 +71,6 @@ IBFact* IBGPlanner::InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aU
 
 void IBGPlanner::Draw()
 {
-	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
-
-	
 	int width = 0;
 	int height = 0;
 	m_iMaxHeight = 0;
@@ -145,6 +142,8 @@ void IBGPlanner::Draw()
 			y += pFact->GetH() + s;
 		}
 	}
+
+	m_oCanvas.GetParent().CanvasBase::DrawRect(0, 0, m_oCanvas.GetWidth()-1, m_oCanvas.GetHeight()-1, Color(0, 255, 0));
 }
 
 void IBGPlanner::StartDrag()

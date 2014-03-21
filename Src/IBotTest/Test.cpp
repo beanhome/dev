@@ -23,7 +23,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	int w = 1280;
 	int h = 860;
-	int top = 192;
+	int top = 256;
 	int bRealTime = false;
 
 	GEngine_SDL ge(w, h, 32, "../../");
@@ -34,10 +34,11 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	IBPlannerTest oPlanner(&oWorld, graph_canva);
 	
-	oWorld.Init(0);
+	oWorld.Init(3);
 	oWorld.Print();
 	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeA(), oWorld.GetCubeB());
 	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeB(), oWorld.GetCubeC()); // uncomment to add
+	oPlanner.AddGoal("IBFactDef_IsTopOf", oWorld.GetCubeC(), oWorld.GetCubeD()); // uncomment to add
 
 	bool bQuit = false;
 	int i=0;
