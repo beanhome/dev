@@ -13,6 +13,8 @@ public class Board : MonoBehaviour
 	void Start ()
 	{
 		m_fBlockSize = m_vInnerSize.x / m_vBlockCount.x;
+
+		Debug.Log("Board " + m_fBlockSize);
 	}
 	
 	// Update is called once per frame

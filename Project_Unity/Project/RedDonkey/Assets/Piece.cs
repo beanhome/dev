@@ -14,6 +14,8 @@ public class Piece : MonoBehaviour
 		m_Board = GameObject.Find ("Board").GetComponent<Board>();
 
 		transform.position = (m_vPosition * m_Board.M_fBlockSize);
+
+		Debug.Log("Piece " + ToString() + " at " + transform.position);
 	}
 	
 	// Update is called once per frame
