@@ -3,8 +3,10 @@ using System.Collections;
 
 public class Piece : MonoBehaviour
 {
-	public Vector2 m_vSize;
-	public Vector2 m_vPosition;
+	public int m_iSizeX;
+	public int m_iSizeY;
+	public int m_iPosX;
+	public int m_iPosY;
 
 	private Board m_Board;
 
@@ -20,10 +22,9 @@ public class Piece : MonoBehaviour
 
 	private EState m_eState;
 
-	public bool AtPos(Vector2 pos)
+	public bool AtPos(int i, int j)
 	{
-		return (int)pos.x >= (int)m_vPosition.x && (int)pos.x < (int)m_vPosition.x + (int)m_vSize.x
-			&& (int)pos.y >= (int)m_vPosition.y && (int)pos.y < (int)m_vPosition.y + (int)m_vSize.y;
+		return i >= m_iPosX && i < m_iPosX + m_iSizeX && j >= m_iPosY && j < m_iPosY + m_iSizeY;
 	}
 
 	// Use this for initialization
@@ -32,26 +33,11 @@ public class Piece : MonoBehaviour
 		m_eState = EState.ES_Fix;
 		m_Board = GameObject.Find ("Board").GetComponent<Board>();
 
-		Vector2 vOrigin = (Vector2)m_Board.transform.position - m_Board.m_vInnerSize * 0.5f;
+		transform.position = m_Board.GetWorldPosition (m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
 
-		Vector2 vPos = vOrigin + ((m_vPosition + m_vSize*0.5f) * m_Board.M_fBlockSize);
-		transform.position = vPos;
-
-		m_Board.SetPiece(m_vPosition, m_vSize);
+		m_Board.SetPiece(m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
 
 		Debug.Log("Piece " + ToString() + " at " + transform.position);
-	}
-
-	Vector2 GetWorldPosition()
-	{
-		Vector2 vOrigin = (Vector2)m_Board.transform.position - m_Board.m_vInnerSize * 0.5f;
-		return vOrigin + ((m_vPosition + m_vSize*0.5f) * m_Board.M_fBlockSize);
-	}
-
-	Vector2 GetWorldPosition(Vector2 pos)
-	{
-		Vector2 vOrigin = (Vector2)m_Board.transform.position - m_Board.m_vInnerSize * 0.5f;
-		return vOrigin + (pos * m_Board.M_fBlockSize);
 	}
 
 	// Update is called once per frame
@@ -65,16 +51,16 @@ public class Piece : MonoBehaviour
 		vMin = Vector2.zero;
 		vMax = Vector2.zero;
 
-		if (m_Board.IsFree(m_vPosition + new Vector2(1f,0f), m_vSize, this))
+		if (m_Board.IsFree(m_iPosX + 1, m_iPosY, m_iSizeX, m_iSizeY, this))
 			vMax.x += 1f;
-		if (m_Board.IsFree(m_vPosition + new Vector2(-1f,0f), m_vSize, this))
+		if (m_Board.IsFree(m_iPosX - 1, m_iPosY, m_iSizeX, m_iSizeY, this))
 			vMin.x -= 1f;
-		if (m_Board.IsFree(m_vPosition + new Vector2(0f,1f), m_vSize, this))
+		if (m_Board.IsFree(m_iPosX, m_iPosY + 1, m_iSizeX, m_iSizeY, this))
 			vMax.y += 1f;
-		if (m_Board.IsFree(m_vPosition + new Vector2(0f,-1f), m_vSize, this))
+		if (m_Board.IsFree(m_iPosX, m_iPosY - 1, m_iSizeX, m_iSizeY, this))
 			vMin.y -= 1f;
 
-		DrawSquare(GetWorldPosition((m_vPosition + m_vSize*0.5f)+(vMin+vMax)*0.5f), (vMax-vMin), Color.blue);
+		DrawSquare(m_Board.GetWorldPosition(m_iPosX, m_iPosY, m_iSizeX, m_iSizeY)+(vMin+vMax)*0.5f, (vMax-vMin), Color.blue);
 
 		vMin *= m_Board.M_fBlockSize;
 		vMax *= m_Board.M_fBlockSize;
