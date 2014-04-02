@@ -27,13 +27,28 @@ public class Piece : MonoBehaviour
 		return i >= m_iPosX && i < m_iPosX + m_iSizeX && j >= m_iPosY && j < m_iPosY + m_iSizeY;
 	}
 
+	public bool IsFree()
+	{
+		return m_Board.IsFree(m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
+	}
+
+	public Vector2 GetWorldPosition()
+	{
+		return m_Board.GetWorldPosition (m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
+	}
+
+	public void GetBlockPosition()
+	{
+		m_Board.GetBlockPosition (transform.position.x + (1f-(float)m_iSizeX)*m_Board.M_fBlockSize*0.5f, transform.position.y + (1f-(float)m_iSizeY)*m_Board.M_fBlockSize*0.5f, 1, 1, out m_iPosX, out m_iPosY);
+	}
+
 	// Use this for initialization
 	void Start ()
 	{
 		m_eState = EState.ES_Fix;
 		m_Board = GameObject.Find ("Board").GetComponent<Board>();
 
-		transform.position = m_Board.GetWorldPosition (m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
+		transform.position = GetWorldPosition();
 
 		m_Board.SetPiece(m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
 
@@ -43,48 +58,45 @@ public class Piece : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Vector2 vMove;
+		Vector2 vCenter, vMove;
 		Vector2 vMin, vMax;
 
-		//vMin = m_vPosition + m_vSize * 0.5f;
-		//vMax = vMin;
 		vMin = Vector2.zero;
 		vMax = Vector2.zero;
 
-		if (m_Board.IsFree(m_iPosX + 1, m_iPosY, m_iSizeX, m_iSizeY, this))
+		for (int i=1 ; m_Board.IsFree(m_iPosX + i, m_iPosY, m_iSizeX, m_iSizeY, this) ; ++i)
 			vMax.x += 1f;
-		if (m_Board.IsFree(m_iPosX - 1, m_iPosY, m_iSizeX, m_iSizeY, this))
-			vMin.x -= 1f;
-		if (m_Board.IsFree(m_iPosX, m_iPosY + 1, m_iSizeX, m_iSizeY, this))
-			vMax.y += 1f;
-		if (m_Board.IsFree(m_iPosX, m_iPosY - 1, m_iSizeX, m_iSizeY, this))
-			vMin.y -= 1f;
 
-		DrawSquare(m_Board.GetWorldPosition(m_iPosX, m_iPosY, m_iSizeX, m_iSizeY)+(vMin+vMax)*0.5f, (vMax-vMin), Color.blue);
+		for (int i=1 ; m_Board.IsFree(m_iPosX - i, m_iPosY, m_iSizeX, m_iSizeY, this) ; ++i)
+			vMin.x -= 1f;
+
+		for (int i=1 ; m_Board.IsFree(m_iPosX, m_iPosY + i, m_iSizeX, m_iSizeY, this) ; ++i)
+			vMax.y += 1f;
+
+		for (int i=1 ; m_Board.IsFree(m_iPosX, m_iPosY - i, m_iSizeX, m_iSizeY, this) ; ++i)
+			vMin.y -= 1f;
 
 		vMin *= m_Board.M_fBlockSize;
 		vMax *= m_Board.M_fBlockSize;
 
+		vCenter = GetWorldPosition();
+
+		Board.DrawSquare(vCenter+(vMin+vMax)*0.5f, (vMax-vMin), Color.blue);
+
 		vMove = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition) + m_vDragOffset - (Vector2)transform.position;
-
-		vMove.x = Mathf.Clamp(vMove.x, vMin.x, vMax.x);
-		vMove.y = Mathf.Clamp(vMove.y, vMin.y, vMax.y);
-
-		/*
-		if (Mathf.Abs(vMove.x) > Mathf.Abs(vMove.y))
-			vMove.y = 0f;
-		else
-			vMove.x = 0f;
-
-		vMove.x = Mathf.Clamp(transform.position.x + vMove.x, vMin.x, vMax.x);
-		vMove.y = Mathf.Clamp(transform.position.y + vMove.y, vMin.y, vMax.y);
-		transform.position = vMove;
-		*/
 
 		switch (m_eState)
 		{
 			case EState.ES_Fix:
 				vMove = Vector2.zero;
+				Vector2 vDestination = m_Board.GetWorldPosition(m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
+				float fDist = ((Vector2)transform.position - vDestination).magnitude;
+				if (fDist > 0f)
+				{
+					float fSpeed = 10f;
+					float fAlpha = Time.deltaTime / (fDist / fSpeed);
+					transform.position = Vector3.Lerp(transform.position, vDestination, fAlpha);
+				}
 				break;
 
 			case EState.ES_Stand:
@@ -93,7 +105,7 @@ public class Piece : MonoBehaviour
 					vMove.y = 0f;
 					m_eState = EState.ES_MoveHoriz;
 				}
-				else
+				else if (Mathf.Abs(vMove.x) < Mathf.Abs(vMove.y))
 				{
 					vMove.x = 0f;
 					m_eState = EState.ES_MoveVerti;
@@ -109,25 +121,19 @@ public class Piece : MonoBehaviour
 			break;
 		}
 
-		transform.position += (Vector3)vMove;
+		vMove.x = Mathf.Clamp(transform.position.x + vMove.x, vCenter.x + vMin.x, vCenter.x + vMax.x);
+		vMove.y = Mathf.Clamp(transform.position.y + vMove.y, vCenter.y + vMin.y, vCenter.y + vMax.y);
+		transform.position = vMove;
+
+		m_Board.ClearPiece (m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
+		GetBlockPosition ();
+		//m_Board.GetBlockPosition (transform.position.x, transform.position.y, m_iSizeX, m_iSizeY, out m_iPosX, out m_iPosY);
+		m_Board.SetPiece (m_iPosX, m_iPosY, m_iSizeX, m_iSizeY);
 	}
 
 	void OnMouseOver ()
 	{
-		DrawSquare(transform.position, collider.bounds.size, Color.green);
-	}
-
-	void DrawSquare(Vector2 pos, Vector2 size, Color col)
-	{
-		float xmin = pos.x - size.x *0.5f;
-		float xmax = pos.x + size.x *0.5f;
-		float ymin = pos.y - size.y *0.5f;
-		float ymax = pos.y + size.y *0.5f;
-
-		Debug.DrawLine(new Vector2(xmin, ymin), new Vector2(xmax, ymin), col, 0f, false);
-		Debug.DrawLine(new Vector2(xmax, ymin), new Vector2(xmax, ymax), col, 0f, false);
-		Debug.DrawLine(new Vector2(xmax, ymax), new Vector2(xmin, ymax), col, 0f, false);
-		Debug.DrawLine(new Vector2(xmin, ymax), new Vector2(xmin, ymin), col, 0f, false);
+		Board.DrawSquare(transform.position, collider.bounds.size, IsFree() ? Color.green : Color.red);
 	}
 
 	void OnMouseDown()
@@ -143,9 +149,11 @@ public class Piece : MonoBehaviour
 
 	void OnGUI()
 	{
+		/*
 		Vector3 pos = transform.position;
 		pos.y = -pos.y;
 		pos = Camera.main.WorldToScreenPoint(pos);
 		GUI.Label(new Rect(pos.x-30,pos.y-10,60,20), name.ToString());
+		*/
 	}
 }
