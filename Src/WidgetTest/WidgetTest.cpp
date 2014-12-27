@@ -1,10 +1,11 @@
 #include "Utils.h"
 
 #include "GEngine_SDL.h"
-#include "InputEvent_SDL.h"
+#include "Event_SDL.h"
 #include "Timer.h"
-#include "Input.h"
+#include "EventManager.h"
 #include "Widget.h"
+#include "WidgetEditor.h"
 
 
 extern "C" int SDL_main(int argc, char *argv[])
@@ -56,6 +57,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 	pWin3->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
 	pWin3->SetVertiOffset(-0.5f, 0);
 
+	WidgetEditor oWidgetEditor;
 
 	bool bQuit = false;
 	int i=0;
@@ -63,9 +65,18 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	while (!bQuit)
 	{
-		ge.UpdateInput();
+		uint16 w = ge.GetWidth();
+		uint16 h = ge.GetHeight();
 
-		bQuit = (ge.GetInput()->IsQuit() || ge.GetInput()->GetVirtualKey(KEY_ESC) == KeyPressed);
+		ge.UpdateEvent();
+
+		if (w != ge.GetWidth())
+			MainWin.SetDirtySide(SideEnum::Right);
+
+		if (h != ge.GetHeight())
+			MainWin.SetDirtySide(SideEnum::Bottom);
+
+		bQuit = (ge.GetEventManager()->IsQuit() || ge.GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
 
 		ge.Clear();
 

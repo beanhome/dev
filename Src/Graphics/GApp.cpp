@@ -1,9 +1,9 @@
 #include "GApp.h"
 #include "GEngine.h"
 #include "Timer.h"
-#include "InputEvent.h"
+#include "Event.h"
 #include <complex>
-#include "Input.h"
+#include "EventManager.h"
 
 GAppBase::GAppBase()
 	: m_pEngine(NULL)
@@ -65,12 +65,12 @@ int GAppBase::Loop()
 
 		m_pEngine->Flip();
 
-		m_pEngine->UpdateInput();
+		m_pEngine->UpdateEvent();
 
-		bQuit = m_pEngine->GetInput()->IsQuit();
-		bQuit |= (m_pEngine->GetInput()->GetVirtualKey(KEY_ESC) == KeyPressed);
+		bQuit = m_pEngine->GetEventManager()->IsQuit();
+		bQuit |= (m_pEngine->GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
 
-		if (m_pEngine->GetInput()->GetVirtualKey(KEY_SPACE) == KeyPressed)
+		if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyPressed)
 			m_bPause = !m_bPause;
 	}
 

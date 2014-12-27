@@ -23,6 +23,8 @@ class GEngine_SDL : public GEngine
 		void 							Clear();
 		void 							Flip();
 
+		void							Resize(uint16 w, uint16 h);
+
 		virtual void					DrawImage(const ImageResource& image, sint16 x, sint16 y) const;
 		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, float fAngle, float fZoom) const;
 		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const;
@@ -39,11 +41,8 @@ class GEngine_SDL : public GEngine
 		virtual void					ClampClear() const;
 		virtual void					ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const;
 
-
-
-		void							SaveEvent();
 		bool							PollEvent();
-		const InputEvent&				WaitEvent();
+		const Event&					WaitEvent();
 
 		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) const { return GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(oDesc)); }
 		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) const { return GetResource<FontResource_SDL>(FontResource_SDL::Desc(oDesc)); }

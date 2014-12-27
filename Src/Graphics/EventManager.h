@@ -1,17 +1,17 @@
-#ifndef __INPUT_H__
-#define __INPUT_H__
+#ifndef __EVENTMANAGER_H__
+#define __EVENTMANAGER_H__
 
 #include "Utils.h"
 
-#include "InputEvent.h"
+#include "Event.h"
 
 class GEngine;
 
-class Input
+class EventManager
 {
 	public:
-		Input(GEngine& ge);
-		~Input();
+		EventManager(GEngine& ge);
+		~EventManager();
 
 		void					Update();
 		
@@ -37,5 +37,5 @@ class Input
 };
 
 
-#endif // __Input_H__
+#endif // __EVENTMANAGER_H__
 

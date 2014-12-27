@@ -1,27 +1,30 @@
-#ifndef __INPUTEVENT_SDL_H__
-#define __INPUTEVENT_SDL_H__
+#ifndef __EVENT_SDL_H__
+#define __EVENT_SDL_H__
 
-#include "InputEvent.h"
+#include "Event.h"
 
 union SDL_Event;
 
-class InputEvent_SDL : public InputEvent
+class Event_SDL : public Event
 {
 	public:
-		InputEvent_SDL();
-		virtual ~InputEvent_SDL();
+		Event_SDL();
+		virtual ~Event_SDL();
 
-		InputEvent_SDL& operator=(const InputEvent_SDL& src);
+		Event_SDL& operator=(const Event_SDL& src);
 
 		bool IsQuit() const;
 		bool IsMouse() const;
 		bool IsKeyboard() const;
+		bool IsResize() const;
 		
 		EMouseEvent GetMouseEvent() const;
 		bool GetMouseMove(sint32& x, sint32& y) const;
 
 		EKeyboardEvent GetKeyboardEvent() const;
 		EKeyboardKey GetKeyboardKey() const;
+
+		void GetResizeEvent(sint32& w, sint32& h) const;
 
 		SDL_Event* GetSDLEvent() { return m_pSDLEvent; }
 
@@ -30,5 +33,5 @@ class InputEvent_SDL : public InputEvent
 };
 
 
-#endif // __INPUTEVENT_SDL_H__
+#endif // __EVENT_SDL_H__
 

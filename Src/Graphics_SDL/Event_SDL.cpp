@@ -1,20 +1,20 @@
 #include "SDL.h"
 
 #include "Utils.h"
-#include "InputEvent_SDL.h"
+#include "Event_SDL.h"
 
 
-InputEvent_SDL::InputEvent_SDL()
+Event_SDL::Event_SDL()
 	: m_pSDLEvent(new SDL_Event)
 {
 }
 
-InputEvent_SDL::~InputEvent_SDL()
+Event_SDL::~Event_SDL()
 {
 	delete m_pSDLEvent;
 }
 
-InputEvent_SDL& InputEvent_SDL::operator=(const InputEvent_SDL& src)
+Event_SDL& Event_SDL::operator=(const Event_SDL& src)
 {
 	*m_pSDLEvent = *(src.m_pSDLEvent);
 
@@ -22,12 +22,12 @@ InputEvent_SDL& InputEvent_SDL::operator=(const InputEvent_SDL& src)
 }
 
 
-bool InputEvent_SDL::IsQuit() const
+bool Event_SDL::IsQuit() const
 {
 	return (m_pSDLEvent->type == SDL_QUIT);
 }
 
-bool InputEvent_SDL::IsMouse() const
+bool Event_SDL::IsMouse() const
 {
 	switch (m_pSDLEvent->type)
 	{
@@ -41,7 +41,7 @@ bool InputEvent_SDL::IsMouse() const
 	}
 }
 
-bool InputEvent_SDL::IsKeyboard() const
+bool Event_SDL::IsKeyboard() const
 {
 	switch (m_pSDLEvent->type)
 	{
@@ -54,7 +54,21 @@ bool InputEvent_SDL::IsKeyboard() const
 	}
 }
 
-EMouseEvent InputEvent_SDL::GetMouseEvent() const
+bool Event_SDL::IsResize() const
+{
+	switch (m_pSDLEvent->type)
+	{
+		case SDL_VIDEORESIZE:
+			return true;
+
+		default:
+			return false;
+	}
+
+}
+
+
+EMouseEvent Event_SDL::GetMouseEvent() const
 {
 	switch (m_pSDLEvent->type)
 	{
@@ -88,7 +102,7 @@ EMouseEvent InputEvent_SDL::GetMouseEvent() const
 	}
 }
 
-bool InputEvent_SDL::GetMouseMove(sint32& x, sint32& y) const
+bool Event_SDL::GetMouseMove(sint32& x, sint32& y) const
 {
 	/*
 	if (m_pSDLEvent->type != SDL_MOUSEMOTION)
@@ -107,7 +121,7 @@ bool InputEvent_SDL::GetMouseMove(sint32& x, sint32& y) const
 }
 
 
-EKeyboardEvent InputEvent_SDL::GetKeyboardEvent() const
+EKeyboardEvent Event_SDL::GetKeyboardEvent() const
 {
 	switch (m_pSDLEvent->type)
 	{
@@ -119,7 +133,7 @@ EKeyboardEvent InputEvent_SDL::GetKeyboardEvent() const
 	}
 }
 
-EKeyboardKey InputEvent_SDL::GetKeyboardKey() const
+EKeyboardKey Event_SDL::GetKeyboardKey() const
 {
 	switch (m_pSDLEvent->key.keysym.sym)
 	{
@@ -146,4 +160,10 @@ EKeyboardKey InputEvent_SDL::GetKeyboardKey() const
 
 		default:				return EKeyboardKey_Error;
 	}
+}
+
+void Event_SDL::GetResizeEvent(sint32& w, sint32& h) const
+{
+	w = m_pSDLEvent->resize.w;
+	h = m_pSDLEvent->resize.h;
 }

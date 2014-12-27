@@ -148,6 +148,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\Src\Graphics_SDL\Event_SDL.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Graphics_SDL\FontResource_SDL.cpp"
 				>
 			</File>
@@ -159,16 +163,16 @@
 				RelativePath="..\..\Src\Graphics_SDL\ImageResource_SDL.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\Src\Graphics_SDL\InputEvent_SDL.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Headers"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\Src\Graphics_SDL\Event_SDL.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\Src\Graphics_SDL\FontResource_SDL.h"
 				>
@@ -179,10 +183,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Graphics_SDL\ImageResource_SDL.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Src\Graphics_SDL\InputEvent_SDL.h"
 				>
 			</File>
 		</Filter>

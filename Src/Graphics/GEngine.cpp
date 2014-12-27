@@ -2,22 +2,21 @@
 #include "GEngine.h"
 #include "Resource.h"
 #include "Canvas.h"
-#include "Input.h"
+#include "EventManager.h"
 
 GEngine::GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: CanvasBase(width, height)
 	, m_iDepth(depth)
 	, m_sRootPath(rootpath)
-	, m_pInputEvent(NULL)
-	, m_pPreviousInputEvent(NULL)
-	, m_pInput(NULL)
+	, m_pEvent(NULL)
+	, m_pEventManager(NULL)
 {
-	m_pInput = new Input(*this);
+	m_pEventManager = new EventManager(*this);
 }
 
 GEngine::~GEngine()
 {
-	delete m_pInput;
+	delete m_pEventManager;
 	PurgeResource(); // probablement vide
 }
 
@@ -71,22 +70,17 @@ bool GEngine::RemResource(Resource* pRes)
 	return false;
 }
 
-void GEngine::SaveEvent()
+void GEngine::UpdateEvent()
 {
-	assert(false);
-}
-
-void GEngine::UpdateInput()
-{
-	m_pInput->Update();
+	m_pEventManager->Update();
 }
 
 sint32 GEngine::GetMouseX() const
 {
-	return m_pInput->GetMouseX();
+	return m_pEventManager->GetMouseX();
 }
 
 sint32 GEngine::GetMouseY() const
 {
-	return m_pInput->GetMouseY();
+	return m_pEventManager->GetMouseY();
 }

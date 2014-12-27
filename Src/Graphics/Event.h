@@ -1,5 +1,5 @@
-#ifndef __INPUTEVENT_H__
-#define __INPUTEVENT_H__
+#ifndef __EVENT_H__
+#define __EVENT_H__
 
 enum EMouseEvent
 {
@@ -114,20 +114,23 @@ enum EKeyboardKey
 	EKeyboardKey_Max
 };
 
-class InputEvent
+class Event
 {
 	public:
-		InputEvent();
-		virtual ~InputEvent();
+		Event();
+		virtual ~Event();
 
-		//virtual InputEvent& operator=(const InputEvent& src) = 0;
+		//virtual Event& operator=(const Event& src) = 0;
 
 		virtual bool IsQuit() const = 0;
 		virtual bool IsMouse() const = 0;
 		virtual bool IsKeyboard() const = 0;
-		
+		virtual bool IsResize() const = 0;
+
 		virtual EMouseEvent GetMouseEvent() const = 0;
 		virtual bool GetMouseMove(sint32& x, sint32& y) const = 0;
+
+		virtual void GetResizeEvent(sint32& w, sint32& h) const = 0;
 
 		virtual EKeyboardEvent GetKeyboardEvent() const = 0;
 		virtual EKeyboardKey GetKeyboardKey() const = 0;
@@ -136,5 +139,5 @@ class InputEvent
 };
 
 
-#endif // __INPUTEVENT_H__
+#endif // __EVENT_H__
 

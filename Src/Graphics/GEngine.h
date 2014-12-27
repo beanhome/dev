@@ -8,12 +8,12 @@
 
 class Resource;
 class Canvas;
-class Input;
+class EventManager;
 
 typedef map<uint32, Resource*> ResourceMap;
 typedef pair<uint32, Resource*> ResourcePair;
 
-class InputEvent;
+class Event;
 
 class GEngine : public CanvasBase
 {
@@ -29,15 +29,15 @@ class GEngine : public CanvasBase
 
 		virtual void					PurgeResource();
 
-		const Input*					GetInput() const { return m_pInput; }
-		void							UpdateInput();
+		const EventManager*				GetEventManager() const { return m_pEventManager; }
+		void							UpdateEvent();
 
-		virtual void					SaveEvent();
+		virtual void					Resize(uint16 w, uint16 h) = 0;
+
 		virtual bool					PollEvent() = 0;
-		virtual const InputEvent&		WaitEvent() = 0;
+		virtual const Event&			WaitEvent() = 0;
 
-		const InputEvent&				GetInputEvent() const { return *m_pInputEvent; }
-		const InputEvent&				GetPreviousInputEvent() const { return *m_pPreviousInputEvent; }
+		const Event&					GetEvent() const { return *m_pEvent; }
 
 		virtual sint32					GetMouseX() const;
 		virtual sint32					GetMouseY() const;
@@ -71,12 +71,11 @@ class GEngine : public CanvasBase
 		uint16							m_iDepth;
 		const char*						m_sRootPath;
 
-		InputEvent*						m_pInputEvent;
-		InputEvent*						m_pPreviousInputEvent;
+		Event*							m_pEvent;
 
 	private:
 		ResourceMap						m_aResources;
-		Input*							m_pInput;
+		EventManager*					m_pEventManager;
 };
 
 template<typename T>

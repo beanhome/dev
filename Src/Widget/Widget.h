@@ -51,6 +51,10 @@ public:
 	void SetMinHeight(sint32 iMinHeight) { m_iMinHeight = iMinHeight; }
 	void SetMaxHeight(sint32 iMaxHeight) { m_iMaxHeight = iMaxHeight; }
 
+	void SetDirtySide(SideEnum::Type eSide);
+	void NotifyChildDirty(Widget* pChild, SideEnum::Type eSide);
+	void NotifyParentDirty(SideEnum::Type eSide);
+
 	sint32 GetMinWidth() const { return m_iMinWidth; }
 	sint32 GetMaxWidth() const { return m_iMaxWidth; }
 	sint32 GetMinHeight() const { return m_iMinHeight; }

@@ -9,7 +9,7 @@
 #include "SDL_gfxBlitFunc.h"
 
 #include "GEngine_SDL.h"
-#include "InputEvent_SDL.h"
+#include "Event_SDL.h"
 
 GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: GEngine(width, height, depth, rootpath)
@@ -17,14 +17,12 @@ GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* 
 {
 	Init();
 
-	m_pInputEvent = new InputEvent_SDL;
-	m_pPreviousInputEvent = new InputEvent_SDL;
+	m_pEvent = new Event_SDL;
 }
 
 GEngine_SDL::~GEngine_SDL()
 {
-	delete m_pInputEvent;
-	delete m_pPreviousInputEvent;
+	delete m_pEvent;
 
 	if (m_pCursor != NULL)
 		SDL_FreeCursor(m_pCursor);
@@ -145,7 +143,7 @@ uint GEngine_SDL::Init()
 	}
 
 	LOG("SDL Set Video Mode.\n");
-	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, m_iDepth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT);
+	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, m_iDepth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT | SDL_RESIZABLE);
 	if (m_pScreen == NULL)
 	{
 		LOG("Couldn't set %dx%dx%d video mode: %s\n", m_iWidth, m_iHeight, m_iDepth, SDL_GetError());
@@ -192,6 +190,19 @@ void GEngine_SDL::Clear()
 void GEngine_SDL::Flip()
 {
 	SDL_Flip(m_pScreen);
+}
+
+void GEngine_SDL::Resize(uint16 w, uint16 h)
+{
+	m_iWidth = w;
+	m_iHeight = h;
+
+	//LOG("SDL Resize Screen.\n");
+
+	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, m_iDepth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT | SDL_RESIZABLE);
+	
+	if (m_pScreen == NULL)
+		LOG("Couldn't set %dx%dx%d video mode: %s\n", m_iWidth, m_iHeight, m_iDepth, SDL_GetError());
 }
 
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y) const
@@ -464,18 +475,13 @@ void GEngine_SDL::ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const
 
 bool GEngine_SDL::PollEvent()
 {
-	return (SDL_PollEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent()) != 0);
+	return (SDL_PollEvent(((Event_SDL*)m_pEvent)->GetSDLEvent()) != 0);
 }
 
-const InputEvent& GEngine_SDL::WaitEvent()
+const Event& GEngine_SDL::WaitEvent()
 {
-	SDL_WaitEvent(((InputEvent_SDL*)m_pInputEvent)->GetSDLEvent());
-	return *m_pInputEvent;
+	SDL_WaitEvent(((Event_SDL*)m_pEvent)->GetSDLEvent());
+	return *m_pEvent;
 }
 
 
-
-void GEngine_SDL::SaveEvent()
-{
-	*(InputEvent_SDL*)m_pPreviousInputEvent = *(InputEvent_SDL*)m_pInputEvent;
-}

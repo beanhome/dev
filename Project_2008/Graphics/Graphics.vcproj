@@ -158,6 +158,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Graphics\Event.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Graphics\EventManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Graphics\FontResource.cpp"
 				>
 			</File>
@@ -186,14 +194,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\Src\Graphics\Input.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Src\Graphics\InputEvent.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\Src\Graphics\Resource.cpp"
 				>
 			</File>
@@ -213,6 +213,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Graphics\Color.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Graphics\Event.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Graphics\EventManager.h"
 				>
 			</File>
 			<File
@@ -245,14 +253,6 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Graphics\ImageRotoZoom.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Src\Graphics\Input.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Src\Graphics\InputEvent.h"
 				>
 			</File>
 			<File

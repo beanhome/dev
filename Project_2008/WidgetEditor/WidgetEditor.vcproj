@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="WidgetTest"
-	ProjectGUID="{3CE910B8-B816-41F2-992E-8C357BAAF788}"
-	RootNamespace="WidgetTest"
+	Name="WidgetEditor"
+	ProjectGUID="{F8A68532-4D10-4CFF-A3C6-523D85402B81}"
+	RootNamespace="WidgetEditor"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -17,9 +17,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\Build\$(PlatformName)\exe\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)"
 			IntermediateDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)\obj\"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="2"
 			>
 			<Tool
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\WidgetEditor;..\..\Src\Widget;..\..\Src\WidgetTest;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\Widget;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -57,16 +57,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -78,17 +72,14 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\Build\$(PlatformName)\exe\$(ProjectName)\$(ConfigurationName)"
+			OutputDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)"
 			IntermediateDirectory="..\..\Build\$(PlatformName)\lib\$(ProjectName)\$(ConfigurationName)\obj\"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -111,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\Src\WidgetEditor;..\..\Src\Widget;..\..\Src\WidgetTest;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\Widget;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -127,18 +118,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -150,9 +133,6 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -161,12 +141,22 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Files"
+			Name="Sources"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\Src\WidgetTest\WidgetTest.cpp"
+				RelativePath="..\..\Src\WidgetEditor\WidgetEditor.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Headers"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath="..\..\Src\WidgetEditor\WidgetEditor.h"
 				>
 			</File>
 		</Filter>

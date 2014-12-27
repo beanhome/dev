@@ -390,9 +390,9 @@ void Widget::DetermineDimension()
 
 				SetPosX((sint16)(iLeft + iHorizOffset));
 				SetPosY((sint16)(iTop + iVertiOffset));
-				ASSERT(iRight - iLeft > 0);
+				ASSERT(iRight - iLeft >= 0);
 				SetWidth((uint16)(iRight - iLeft));
-				ASSERT(iBottom - iTop > 0);
+				ASSERT(iBottom - iTop >= 0);
 				SetHeight((uint16)(iBottom - iTop));
 			}
 
@@ -415,6 +415,65 @@ void Widget::DetermineDimension()
 	}
 }
 
+void Widget::SetDirtySide(SideEnum::Type eSide)
+{
+	m_eDimState = WidgetDimState::Unknown;
+	m_oSide[eSide].m_eState = WidgetDimState::Unknown;
+
+	for (uint i=0 ; i<SideEnum::Num ; ++i)
+	{
+		if (i != eSide
+		 && m_oSide[i].m_eState == WidgetDimState::Valid
+		 && m_oSide[i].m_eReference == WidgetReference::Self)
+		{
+			SetDirtySide((SideEnum::Type)i);
+		}
+	}
+
+	if (m_pWidgetParent != NULL)
+		m_pWidgetParent->NotifyChildDirty(this, eSide);
+
+	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	{
+		Widget* pChild = *it;
+		pChild->NotifyParentDirty(eSide);
+	}
+}
+
+void Widget::NotifyChildDirty(Widget* pChild, SideEnum::Type eSide)
+{
+	for (uint i=0 ; i<SideEnum::Num ; ++i)
+	{
+		if (m_oSide[i].m_eState == WidgetDimState::Valid
+		 && m_oSide[i].m_eReference == WidgetReference::Child)
+		{
+			SetDirtySide((SideEnum::Type)i);
+		}
+	}
+
+	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	{
+		Widget* pOtherChild = *it;
+
+		for (uint i=0 ; i<SideEnum::Num ; ++i)
+		{
+			if (pOtherChild != pChild
+			 && pOtherChild->m_oSide[i].m_eState == WidgetDimState::Valid
+			 && pOtherChild->m_oSide[i].m_eReference == WidgetReference::Brother
+			 && pOtherChild->m_oSide[i].m_oBrotherRefProp.m_id == pChild->m_id)
+				pOtherChild->SetDirtySide((SideEnum::Type)i);
+		}
+	}
+}
+
+void Widget::NotifyParentDirty(SideEnum::Type eSide)
+{
+	for (uint i=0 ; i<SideEnum::Num ; ++i)
+	{
+		if (m_oSide[i].m_eState == WidgetDimState::Valid && m_oSide[i].m_eReference == WidgetReference::Parent)
+			SetDirtySide((SideEnum::Type)i);
+	}
+}
 
 void Widget::Draw() const
 {
