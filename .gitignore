@@ -43,7 +43,6 @@ ExportedObj/
 *.csproj
 *.pidb
 *.suo
-*.sln
 *.user
 *.unityproj
 *.booproj

@@ -95,8 +95,8 @@ class CanvasBase
 		virtual ClampingRect			GetClampingRect() const = 0;
 
 	protected:
-		sint16							m_iOrigX; // position du Canva par rapport à l'origine
-		sint16							m_iOrigY; // position du Canva par rapport à l'origine
+		sint16							m_iOrigX; // Coord of the top left corner
+		sint16							m_iOrigY; // Coord of the top left corner
 
 		uint16							m_iWidth;
 		uint16							m_iHeight;

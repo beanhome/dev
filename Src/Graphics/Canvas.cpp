@@ -10,7 +10,6 @@ Canvas::Canvas(CanvasBase& oParent, sint16 x, sint16 y, uint16 w, uint16 h)
 	, m_iPosX(x)
 	, m_iPosY(y)
 {
-
 }
 
 Canvas::Canvas(CanvasBase& oParent)
@@ -19,7 +18,6 @@ Canvas::Canvas(CanvasBase& oParent)
 	, m_iPosX(0)
 	, m_iPosY(0)
 {
-
 }
 
 Canvas::~Canvas()
@@ -126,7 +124,7 @@ ClampingRect Canvas::GetClampingRect() const
 		mine.w = 0;
 	}
 
-	if (mine.x + mine.w > parent.x+parent.w)
+	else if (mine.x + mine.w > parent.x+parent.w)
 	{
 		mine.w = parent.x + parent.w - mine.x;
 	}
@@ -142,7 +140,7 @@ ClampingRect Canvas::GetClampingRect() const
 		mine.h = 0;
 	}
 
-	if (mine.y + mine.h > parent.y+parent.h)
+	else if (mine.y + mine.h > parent.y+parent.h)
 	{
 		mine.h = parent.y + parent.h - mine.y;
 	}
