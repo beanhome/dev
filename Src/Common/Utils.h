@@ -47,6 +47,7 @@ typedef wchar_t wchar;
 #include "Alloc.h"
 #include "StlAllocator.h"
 #define string std::basic_string<char, std::char_traits<char>, StlAllocator<char> >
+//typedef std::basic_string<char, std::char_traits<char>, StlAllocator<char> > string;
 #endif
 
 void InitLog(int argc, char *argv[]);
@@ -69,10 +70,12 @@ void Log(const char* format, ...);
 
 #ifdef _WIN32
 #define strnicmp _strnicmp
+#define snprintf sprintf_s
 #define fread(b, s, c, f) fread_s(b, s, s, c, f)
 #define fopen(p, m) myfopen(p, m)
 FILE* myfopen(const char *p, const char *m);
 #else
+// none
 #endif
 
 

@@ -88,7 +88,7 @@ void WidgetSide::DetermineDimension_Parent()
 			m_eState = WidgetDimState::Valid;
 			if (m_oParentRefProp.m_fRelativePos != 0.f)
 			{
-				uint16 iWidth = (m_pWidget->GetWidgetParent() == NULL ? m_pWidget->GetParent().GetWidth() : m_pWidget->GetWidgetParent()->GetWidth(m_eState));
+				uint16 iWidth = (m_pWidget->GetWidgetParent() == NULL ? m_pWidget->GetParent().GetWidth() : m_pWidget->GetWidgetParent()->GetWidgetWidth(m_eState));
 				m_iPixelPos = (sint32)(iWidth * m_oParentRefProp.m_fRelativePos);
 			}
 			m_iPixelPos += m_oParentRefProp.m_iPixOffset;
@@ -101,7 +101,7 @@ void WidgetSide::DetermineDimension_Parent()
 			m_eState = WidgetDimState::Valid;
 			if (m_oParentRefProp.m_fRelativePos != 0.f)
 			{
-				uint16 iHeight = (m_pWidget->GetWidgetParent() == NULL ? m_pWidget->GetParent().GetHeight() : m_pWidget->GetWidgetParent()->GetHeight(m_eState));
+				uint16 iHeight = (m_pWidget->GetWidgetParent() == NULL ? m_pWidget->GetParent().GetHeight() : m_pWidget->GetWidgetParent()->GetWidgetHeight(m_eState));
 				m_iPixelPos = (sint32)(iHeight * m_oParentRefProp.m_fRelativePos);
 			}
 			m_iPixelPos += m_oParentRefProp.m_iPixOffset;
@@ -170,6 +170,14 @@ void WidgetSide::DetermineDimension_Child()
 		return;
 	}
 
+	switch (m_eDesignation)
+	{
+		case SideEnum::Left:	m_oChildRefProp.m_fRelativePos = 0.f;	break;
+		case SideEnum::Right:	m_oChildRefProp.m_fRelativePos = 1.f;	break;
+		case SideEnum::Top:		m_oChildRefProp.m_fRelativePos = 0.f;	break;
+		case SideEnum::Bottom:	m_oChildRefProp.m_fRelativePos = 1.f;	break;
+	}
+
 	sint32 iOpposite;
 	switch (m_eDesignation)
 	{
@@ -190,6 +198,47 @@ void WidgetSide::DetermineDimension_Child()
 		case SideEnum::Bottom:	m_iPixelPos = iOpposite + pChild->GetSidePosition(SideEnum::Bottom, m_eState) + m_oChildRefProp.m_iPixOffset;	break;
 	}
 }
+
+sint32 WidgetSide::GetMouseDist()
+{
+	sint32 iDist = 0;
+
+	switch (m_eDesignation)
+	{
+		case SideEnum::Left:	iDist = abs(m_pWidget->GetMouseX());							break;
+		case SideEnum::Right:	iDist = abs(m_pWidget->GetWidth() - m_pWidget->GetMouseX());	break;
+		case SideEnum::Top:		iDist = abs(m_pWidget->GetMouseY());							break;
+		case SideEnum::Bottom:	iDist = abs(m_pWidget->GetHeight() - m_pWidget->GetMouseY());	break;
+	}
+
+	return iDist;
+}
+
+void WidgetSide::GetLineCoord(sint32& x1, sint32& y1, sint32& x2, sint32& y2) const
+{
+	uint16 w = m_pWidget->GetWidth()-1;
+	uint16 h = m_pWidget->GetHeight()-1;
+
+	x1 = y1 = x2 = y2 = 0;
+
+	switch (m_eDesignation)
+	{
+		case SideEnum::Left:	x1=0; y1=0; x2=0; y2=h;	break;
+		case SideEnum::Right:	x1=w; y1=0; x2=w; y2=h;	break;
+		case SideEnum::Top:		x1=0; y1=0; x2=w; y2=0;	break;
+		case SideEnum::Bottom:	x1=0; y1=h; x2=w; y2=h;	break;
+	}
+}
+
+void WidgetSide::GetLineCoord(sint32& x1, sint32& y1, sint32& x2, sint32& y2, sint32 ox, sint32 oy) const
+{
+	GetLineCoord(x1, y1, x2, y2);
+	x1 += ox;
+	x2 += ox;
+	y1 += oy;
+	y2 += oy;
+}
+
 
 
 

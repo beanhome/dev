@@ -39,7 +39,9 @@ public:
 	Widget* AddNewChild();
 
 	Widget* GetWidgetParent() { return m_pWidgetParent; }
+	const Widget* GetWidgetParent() const { return m_pWidgetParent; }
 	Widget* GetChild(uint32 id);
+	const Widget* GetChild(uint32 id) const;
 
 	void SetSideProp(SideEnum::Type eType, const WidgetSide::ParentRef& oParentRef)		{ m_oSide[eType].SetProp(oParentRef); }
 	void SetSideProp(SideEnum::Type eType, const WidgetSide::SelfRef& oSelfRef)			{ m_oSide[eType].SetProp(oSelfRef); }
@@ -67,13 +69,20 @@ public:
 
 	sint32 GetSideDimension(SideEnum::Type eType, WidgetDimState::Type& eState);
 	sint32 GetSidePosition(SideEnum::Type eType, WidgetDimState::Type& eState);
-	uint16 GetWidth(WidgetDimState::Type& eState);
-	uint16 GetHeight(WidgetDimState::Type& eState);
+	uint16 GetWidgetWidth(WidgetDimState::Type& eState);
+	uint16 GetWidgetHeight(WidgetDimState::Type& eState);
 
 	const WidgetSide& GetSide(SideEnum::Type eType) const { return m_oSide[eType]; }
 
 	sint32 GetChildWidth();
 	sint32 GetChildHeight();
+
+	bool IsNear(sint32 x, sint32 y, sint32 m=10) const { return (x>=m_iOrigX-m && x<m_iOrigX+m_iWidth+m && y>=m_iOrigY-m && y<m_iOrigY+m_iHeight+m); }
+	bool IsMouseNear(sint32 m=10) const { return IsNear(GetMouseX(), GetMouseY(), m); }
+
+	Widget* GetWidgetHover(sint32 m=10);
+	void GetWidgetHover(vector<Widget*>& aWidget, sint32 m=10);
+	WidgetSide* GetSideHover(sint32 m=10);
 
 	//uint16 GetSize(SideEnum::Type);
 

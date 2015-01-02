@@ -12,7 +12,7 @@ CanvasBase::CanvasBase(uint16 width, uint16 height)
 {
 }
 
-CanvasBase::CanvasBase(sint16 x, sint16 y, uint16 width, uint16 height)
+CanvasBase::CanvasBase(sint32 x, sint32 y, uint16 width, uint16 height)
 	: m_iOrigX(x)
 	, m_iOrigY(y)
 	, m_iWidth(width)
@@ -35,7 +35,7 @@ void CanvasBase::TextSize(int& w, int& h, const char* sFontPath, uint size, cons
 }
 
 
-void CanvasBase::Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const
+void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const
 {
 	va_list oArgs;
 	va_start(oArgs, format);
@@ -45,7 +45,7 @@ void CanvasBase::Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETe
 	va_end(oArgs);
 }
 
-void CanvasBase::Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor, const char* format, ... ) const
+void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor, const char* format, ... ) const
 {
 	va_list oArgs;
 	va_start(oArgs, format);
@@ -55,7 +55,7 @@ void CanvasBase::Print(sint16 x, sint16 y, const char* sFontPath, uint size, ETe
 	va_end(oArgs);
 }
 
-void CanvasBase::SetPrintParameter(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor)
+void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor)
 {
 	m_oPrintParam.x = x;
 	m_oPrintParam.y = y;
@@ -65,7 +65,7 @@ void CanvasBase::SetPrintParameter(sint16 x, sint16 y, const char* sFontPath, ui
 	m_oPrintParam.oColor = oColor;
 }
 
-void CanvasBase::SetPrintParameter(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign)
+void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign)
 {
 	m_oPrintParam.x = x;
 	m_oPrintParam.y = y;
@@ -80,7 +80,7 @@ void CanvasBase::SetPrintParameter(sint16 x, sint16 y, const char* sFontPath, ui
 		m_oPrintParam.eAlign = eAlign;
 }
 
-void CanvasBase::SetPrintPos(sint16 x, sint16 y)
+void CanvasBase::SetPrintPos(sint32 x, sint32 y)
 {
 	m_oPrintParam.x = x;
 	m_oPrintParam.y = y;
@@ -136,7 +136,7 @@ void CanvasBase::Print(const char* format, ... ) const
 
 
 /*
-bool GCanvasBase::IsMouseOverlapping(sint16 x, sint16 y, uint16 radius)
+bool GCanvasBase::IsMouseOverlapping(sint32 x, sint32 y, uint16 radius)
 {
 	 //return (m_iMouseX - x) * (m_iMouseX - x) + (m_iMouseY - y) * (m_iMouseY - y) < radius*radius;
 }

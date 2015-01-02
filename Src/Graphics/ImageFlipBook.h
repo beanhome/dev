@@ -11,7 +11,7 @@ class ImageFlipBook : public Image
 		//ImageFlipBook(CanvasBase& oCanvas, const char* path, uint16 row, uint16 col);
 		virtual ~ImageFlipBook();
 
-		int							GetCurrent() const { return m_iCurrent; }
+		sint32						GetCurrent() const { return m_iCurrent; }
 		void						SetCurrent(int cur);
 
 		uint16						GetRowCount() const { return m_iRowCount; }
@@ -23,7 +23,7 @@ class ImageFlipBook : public Image
 	protected:
 		uint16						m_iRowCount;
 		uint16						m_iColCount;
-		int							m_iCurrent;
+		sint32						m_iCurrent;
 };
 
 

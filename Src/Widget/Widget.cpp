@@ -142,14 +142,14 @@ sint32 Widget::GetSidePosition(SideEnum::Type eType, WidgetDimState::Type& eStat
 		case SideEnum::Left:
 		case SideEnum::Right:
 			if (m_oHorizOffset.m_fSizeCoeff != 0.f)
-				pos += (sint32)(GetWidth(eState) * m_oHorizOffset.m_fSizeCoeff);
+				pos += (sint32)(GetWidgetWidth(eState) * m_oHorizOffset.m_fSizeCoeff);
 			pos += m_oHorizOffset.m_iFixPixel;
 			break;
 
 		case SideEnum::Top:
 		case SideEnum::Bottom:
 			if (m_oVertiOffset.m_fSizeCoeff != 0.f)
-				pos += (sint32)(GetHeight(eState) * m_oVertiOffset.m_fSizeCoeff);
+				pos += (sint32)(GetWidgetHeight(eState) * m_oVertiOffset.m_fSizeCoeff);
 			pos += m_oVertiOffset.m_iFixPixel;
 			break;
 	}
@@ -158,7 +158,7 @@ sint32 Widget::GetSidePosition(SideEnum::Type eType, WidgetDimState::Type& eStat
 }
 
 
-uint16 Widget::GetWidth(WidgetDimState::Type& eState)
+uint16 Widget::GetWidgetWidth(WidgetDimState::Type& eState)
 {
 	switch (m_eDimState)
 	{
@@ -193,7 +193,7 @@ uint16 Widget::GetWidth(WidgetDimState::Type& eState)
 	return 0;
 }
 
-uint16 Widget::GetHeight(WidgetDimState::Type& eState)
+uint16 Widget::GetWidgetHeight(WidgetDimState::Type& eState)
 {
 	switch (m_eDimState)
 	{
@@ -348,6 +348,18 @@ Widget* Widget::GetChild(uint32 id)
 	return NULL;
 }
 
+const Widget* Widget::GetChild(uint32 id) const
+{
+	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	{
+		Widget* pChild = *it;
+		if (pChild->m_id == id)
+			return pChild;
+	}
+
+	return NULL;
+}
+
 
 void Widget::DetermineDimension()
 {
@@ -388,8 +400,8 @@ void Widget::DetermineDimension()
 				sint32 iHorizOffset	= (sint32)((iRight - iLeft) * m_oHorizOffset.m_fSizeCoeff) + m_oHorizOffset.m_iFixPixel;
 				sint32 iVertiOffset	= (sint32)((iBottom - iTop) * m_oVertiOffset.m_fSizeCoeff) + m_oVertiOffset.m_iFixPixel;
 
-				SetPosX((sint16)(iLeft + iHorizOffset));
-				SetPosY((sint16)(iTop + iVertiOffset));
+				SetPosX((sint32)(iLeft + iHorizOffset));
+				SetPosY((sint32)(iTop + iVertiOffset));
 				ASSERT(iRight - iLeft >= 0);
 				SetWidth((uint16)(iRight - iLeft));
 				ASSERT(iBottom - iTop >= 0);
@@ -473,6 +485,56 @@ void Widget::NotifyParentDirty(SideEnum::Type eSide)
 		if (m_oSide[i].m_eState == WidgetDimState::Valid && m_oSide[i].m_eReference == WidgetReference::Parent)
 			SetDirtySide((SideEnum::Type)i);
 	}
+}
+
+Widget* Widget::GetWidgetHover(sint32 m)
+{
+	if (IsMouseNear(m))
+	{
+		for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+		{
+			Widget* pChild = *it;
+			Widget* pHover = pChild->GetWidgetHover(m);
+			if (pHover != NULL)
+				return pHover;
+		}
+
+		return this;
+	}
+
+	return NULL;
+}
+
+void Widget::GetWidgetHover(vector<Widget*>& aWidget, sint32 m)
+{
+	if (IsMouseNear(m))
+	{
+		aWidget.push_back(this);
+
+		for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+		{
+			Widget* pChild = *it;
+			pChild->GetWidgetHover(aWidget, m);
+		}
+	}
+}
+
+WidgetSide* Widget::GetSideHover(sint32 m)
+{
+	if (!IsMouseNear(m))
+		return NULL;
+
+	sint32 x = GetMouseX();
+	sint32 y = GetMouseY();
+	uint16 w = GetWidth();
+	uint16 h = GetHeight();
+
+	if (x < m	&& y > 0 && y < h)	return &m_oSide[SideEnum::Left];
+	if (x > w-m	&& y > 0 && y < h)	return &m_oSide[SideEnum::Right];
+	if (y < m	&& x > 0 && x < w)	return &m_oSide[SideEnum::Top];
+	if (y > h-m	&& x > 0 && x < w)	return &m_oSide[SideEnum::Bottom];
+
+	return NULL;
 }
 
 void Widget::Draw() const

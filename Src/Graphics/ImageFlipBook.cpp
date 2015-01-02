@@ -37,10 +37,10 @@ void ImageFlipBook::Draw() const
 {
 	if (m_iCurrent != -1)
 	{
-		sint16 w = m_pImageResource->GetWidth() / m_iColCount;
-		sint16 h = m_pImageResource->GetHeight() / m_iRowCount;
-		sint16 x = w * (m_iCurrent % m_iColCount);
-		sint16 y = h * (m_iCurrent / m_iColCount);
+		uint16 w = m_pImageResource->GetWidth() / m_iColCount;
+		uint16 h = m_pImageResource->GetHeight() / m_iRowCount;
+		sint32 x = w * (m_iCurrent % m_iColCount);
+		sint32 y = h * (m_iCurrent / m_iColCount);
 
 		m_oCanvas.DrawImage(*m_pImageResource, m_iPosX, m_iPosY, x, y, w, h);
 	}
@@ -50,12 +50,12 @@ void ImageFlipBook::Draw(float fZoom) const
 {
 	if (m_iCurrent != -1)
 	{
-		sint16 sw = m_pImageResource->GetWidth() / m_iColCount;
-		sint16 sh = m_pImageResource->GetHeight() / m_iRowCount;
-		sint16 dw = (sint16)(sw * fZoom);
-		sint16 dh = (sint16)(sh * fZoom);
-		sint16 sx = sw * (m_iCurrent % m_iColCount);
-		sint16 sy = sh * (m_iCurrent / m_iColCount);
+		uint16 sw = m_pImageResource->GetWidth() / m_iColCount;
+		uint16 sh = m_pImageResource->GetHeight() / m_iRowCount;
+		uint16 dw = (uint16)(sw * fZoom);
+		uint16 dh = (uint16)(sh * fZoom);
+		sint32 sx = sw * (m_iCurrent % m_iColCount);
+		sint32 sy = sh * (m_iCurrent / m_iColCount);
 
 		m_oCanvas.DrawImage(*m_pImageResource, m_iPosX, m_iPosY, dw, dh, sx, sy, sw, sh);
 	}

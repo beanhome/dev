@@ -205,7 +205,7 @@ void GEngine_SDL::Resize(uint16 w, uint16 h)
 		LOG("Couldn't set %dx%dx%d video mode: %s\n", m_iWidth, m_iHeight, m_iDepth, SDL_GetError());
 }
 
-void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y) const
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y) const
 {
 	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
 
@@ -216,8 +216,8 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y) con
 		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
 
 	SDL_Rect oLoc;
-	oLoc.x = x - (sint16)image->w / 2;
-	oLoc.y = y - (sint16)image->h / 2;
+	oLoc.x = (sint16)(x - image->w / 2);
+	oLoc.y = (sint16)(y - image->h / 2);
 	oLoc.w = (uint16)image->w;
 	oLoc.h = (uint16)image->h;
 
@@ -227,7 +227,7 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y) con
 }
 
 
-void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, float fAngle, float fZoom) const
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, float fAngle, float fZoom) const
 {
 	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
 
@@ -242,8 +242,8 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, flo
 		return;
 
 	SDL_Rect oLoc;
-	oLoc.x = x - (sint16)pOutput->w / 2;
-	oLoc.y = y - (sint16)pOutput->h / 2;
+	oLoc.x = (sint16)(x - pOutput->w / 2);
+	oLoc.y = (sint16)(y - pOutput->h / 2);
 	oLoc.w = (uint16)pOutput->w;
 	oLoc.h = (uint16)pOutput->h;
 
@@ -254,7 +254,7 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, flo
 	SDL_FreeSurface(pOutput);
 }
 
-void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, uint16 w, uint16 h, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, uint16 w, uint16 h, sint32 sx, sint32 sy, uint16 sw, uint16 sh) const
 {
 	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
 
@@ -274,8 +274,8 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, uin
 			return;
 
 		SDL_Rect oDestRect;
-		oDestRect.x = x - (sint16)w / 2;
-		oDestRect.y = y - (sint16)h / 2;
+		oDestRect.x = (sint16)(x - w / 2);
+		oDestRect.y = (sint16)(y - h / 2);
 		oDestRect.w = w;
 		oDestRect.h = h;
 
@@ -294,16 +294,16 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, uin
 	else
 	{
 		SDL_Rect oDestRect;
-		oDestRect.x = x - (sint16)w / 2;
-		oDestRect.y = y - (sint16)h / 2;
+		oDestRect.x = (sint16)(x - w / 2);
+		oDestRect.y = (sint16)(y - h / 2);
 		oDestRect.w = w;
 		oDestRect.h = h;
 
 		SDL_Rect oSrcRect;
-		oSrcRect.x = sx;
-		oSrcRect.y = sy;
-		oSrcRect.w = sw;
-		oSrcRect.h = sh;
+		oSrcRect.x = (sint16)sx;
+		oSrcRect.y = (sint16)sy;
+		oSrcRect.w = (sint16)sw;
+		oSrcRect.h = (sint16)sh;
 
 		/* Blit onto the screen surface */
 		if(SDL_BlitSurface(image, &oSrcRect, m_pScreen, &oDestRect) < 0)
@@ -311,40 +311,40 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, uin
 	}
 }
 
-void GEngine_SDL::DrawImage(const ImageResource& _image, sint16 x, sint16 y, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const
+void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, sint32 sx, sint32 sy, uint16 sw, uint16 sh) const
 {
 	DrawImage(_image, x, y, sw, sh, sx, sy, sw, sh);
 }
 
 
-void GEngine_SDL::SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const
+void GEngine_SDL::SetPixel(sint32 x, sint32 y, uint8 r, uint8 g, uint8 b) const
 {
-	pixelRGBA(m_pScreen, x, y, r, g, b, 255);
+	pixelRGBA(m_pScreen, (sint16)x, (sint16)y, r, g, b, 255);
 }
 
-void GEngine_SDL::DrawRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const
+void GEngine_SDL::DrawRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
-	rectangleRGBA(m_pScreen, x, y, x+width, y+height, r, g, b, 255);
+	rectangleRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
 }
 
-void GEngine_SDL::DrawFillRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const
+void GEngine_SDL::DrawFillRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
-	boxRGBA(m_pScreen, x, y, x+width, y+height, r, g, b, 255);
+	boxRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
 }
 
-void GEngine_SDL::DrawCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const
+void GEngine_SDL::DrawCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const
 {
-	circleRGBA(m_pScreen, x, y, radius, r, g, b, 255);
+	circleRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)radius, r, g, b, 255);
 }
 
-void GEngine_SDL::DrawFillCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const
+void GEngine_SDL::DrawFillCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const
 {
-	filledCircleRGBA(m_pScreen, x, y, radius, r, g, b, 255);
+	filledCircleRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)radius, r, g, b, 255);
 }
 
-void GEngine_SDL::DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const
+void GEngine_SDL::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const
 {
-	lineRGBA(m_pScreen, x1, y1, x2, y2, r, g, b, 255);
+	lineRGBA(m_pScreen, (sint16)x1, (sint16)y1, (sint16)x2, (sint16)y2, r, g, b, 255);
 }
 
 void GEngine_SDL::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
@@ -371,7 +371,7 @@ void GEngine_SDL::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size,
 	delete [] str;
 }
 
-void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
+void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	ASSERT(sFontPath != NULL);
 
@@ -406,27 +406,27 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 	uint16 iHeight = (uint16)texte->h;
 
 	SDL_Rect position;
-	position.x = x;
-	position.y = y;
+	position.x = (sint16)x;
+	position.y = (sint16)y;
 
 	switch (eAlign)
 	{
 		case LeftTop:
 		case LeftCenter:
 		case LeftBottom:
-			position.x = x;
+			position.x = (sint16)x;
 			break;
 
 		case CenterTop:
 		case Center:
 		case CenterBottom:
-			position.x = x - iWidth / 2;	
+			position.x = (sint16)(x - iWidth / 2);	
 			break;
 
 		case RightTop:
 		case RightCenter:
 		case RightBottom:
-			position.x = x - iWidth;		
+			position.x = (sint16)(x - iWidth);		
 			break;
 	}
 
@@ -435,19 +435,19 @@ void GEngine_SDL::PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size
 		case LeftTop:
 		case CenterTop:
 		case RightTop:
-			position.y = y;
+			position.y = (sint16)y;
 			break;
 
 		case LeftCenter:
 		case Center:
 		case RightCenter:
-			position.y = y - iHeight / 2;
+			position.y = (sint16)(y - iHeight / 2);
 			break;
 
 		case LeftBottom:
 		case CenterBottom:
 		case RightBottom:
-			position.y = y - iHeight;
+			position.y = (sint16)(y - iHeight);
 			break;
 	}
 
@@ -462,13 +462,13 @@ void GEngine_SDL::ClampClear() const
 }
 
 
-void GEngine_SDL::ClampRect(sint16 x, sint16 y, uint16 w, uint16 h) const
+void GEngine_SDL::ClampRect(sint32 x, sint32 y, uint16 w, uint16 h) const
 {
 	SDL_Rect rect;
-	rect.x = x;
-	rect.y = y;
-	rect.w = w;
-	rect.h = h;
+	rect.x = (sint16)x;
+	rect.y = (sint16)y;
+	rect.w = (sint16)w;
+	rect.h = (sint16)h;
 	SDL_SetClipRect(m_pScreen, &rect);
 }
 

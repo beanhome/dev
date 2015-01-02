@@ -56,6 +56,20 @@ public:
 	};
 
 public:
+	SideEnum::Type GetDesignation() const { return m_eDesignation; }
+	const Widget* GetWidget() const { return m_pWidget; }
+	sint32 GetDimension() const { return m_iPixelPos; }
+	void GetLineCoord(sint32& x1, sint32& y1, sint32& x2, sint32& y2) const;
+	void GetLineCoord(sint32& x1, sint32& y1, sint32& x2, sint32& y2, sint32 ox, sint32 oy) const;
+	WidgetReference::Type GetReference() const { return m_eReference; }
+
+	const WidgetSide::ParentRef& GetParentRefProp() const { return m_oParentRefProp; }
+	const WidgetSide::SelfRef& GetSelfRefProp() const { return m_oSelfRefProp; }
+	const WidgetSide::BrotherRef& GetBrotherRefProp() const { return m_oBrotherRefProp; }
+	const WidgetSide::ChildRef& GetChildRefProp() const { return m_oChildRefProp; }
+
+	sint32 GetMouseDist();
+
 	void SetProp(const WidgetSide::ParentRef& oParentRef)	{ m_eReference = WidgetReference::Parent;	m_oParentRefProp = oParentRef; }
 	void SetProp(const WidgetSide::SelfRef& oSelfRef)		{ m_eReference = WidgetReference::Self;		m_oSelfRefProp = oSelfRef; }
 	void SetProp(const WidgetSide::BrotherRef& oBrotherRef)	{ m_eReference = WidgetReference::Brother;	m_oBrotherRefProp = oBrotherRef; }
@@ -73,7 +87,6 @@ private:
 	SideEnum::Type m_eDesignation;
 	WidgetDimState::Type m_eState;
 	WidgetReference::Type m_eReference;
-
 	Widget* m_pWidget;
 
 	ParentRef m_oParentRefProp;

@@ -7,37 +7,37 @@
 class Canvas : public CanvasBase
 {
 	public:
-		Canvas(CanvasBase& oParent, sint16 x, sint16 y, uint16 w, uint16 h);
+		Canvas(CanvasBase& oParent, sint32 x, sint32 y, uint16 w, uint16 h);
 		Canvas(CanvasBase& oParent);
 		virtual ~Canvas();
 
-		sint16							GetPosX() const { return m_iPosX; }
-		sint16							GetPosY() const { return m_iPosY; }
-		sint16							GetScreenPosX() const { return m_oParent.GetScreenPosX() - m_iOrigX + m_iPosX; }
-		sint16							GetScreenPosY() const { return m_oParent.GetScreenPosY() - m_iOrigY + m_iPosY; }
+		sint32							GetPosX() const { return m_iPosX; }
+		sint32							GetPosY() const { return m_iPosY; }
+		sint32							GetScreenPosX() const { return m_oParent.GetScreenPosX() - m_iOrigX + m_iPosX; }
+		sint32							GetScreenPosY() const { return m_oParent.GetScreenPosY() - m_iOrigY + m_iPosY; }
 
 		const CanvasBase&				GetParent() const { return m_oParent; }
 
-		void							SetPosX(sint16 x) { m_iPosX = x; }
-		void							SetPosY(sint16 y) { m_iPosY = y; }
+		void							SetPosX(sint32 x) { m_iPosX = x; }
+		void							SetPosY(sint32 y) { m_iPosY = y; }
 
 		GEngine*						GetGEngine() { return m_oParent.GetGEngine(); }
 		const GEngine*					GetGEngine() const { return m_oParent.GetGEngine(); }
 
-		virtual void					DrawImage(const ImageResource& image, sint16 x, sint16 y) const;
-		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, float fAngle, float fZoom) const;
-		virtual void 					DrawImage(const ImageResource& image, sint16 x, sint16 y, uint16 w, uint16 h, sint16 sx, sint16 sy, uint16 sw, uint16 sh) const;
-		virtual void 					SetPixel(sint16 x, sint16 y, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					DrawRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					DrawFillRect(sint16 x, sint16 y, sint16 width, sint16 height, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					DrawCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					DrawFillCircle(sint16 x, sint16 y, sint16 radius, uint8 r, uint8 g, uint8 b) const;
-		virtual void 					DrawLine(sint16 x1, sint16 y1, sint16 x2, sint16 y2, uint8 r, uint8 g, uint8 b) const;
+		virtual void					DrawImage(const ImageResource& image, sint32 x, sint32 y) const;
+		virtual void 					DrawImage(const ImageResource& image, sint32 x, sint32 y, float fAngle, float fZoom) const;
+		virtual void 					DrawImage(const ImageResource& image, sint32 x, sint32 y, uint16 w, uint16 h, sint32 sx, sint32 sy, uint16 sw, uint16 sh) const;
+		virtual void 					SetPixel(sint32 x, sint32 y, uint8 r, uint8 g, uint8 b) const;
+		virtual void 					DrawRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const;
+		virtual void 					DrawFillRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const;
+		virtual void 					DrawCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const;
+		virtual void 					DrawFillCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const;
+		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const;
 		virtual void					TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const;
-		virtual void 					PrintArgs(sint16 x, sint16 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
+		virtual void 					PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
 
 		virtual const char*				GetPrintFont() const;
-		//bool IsMouseOverlapping(sint16 x, sint16 y, uint16 radius);
+		//bool IsMouseOverlapping(sint32 x, sint32 y, uint16 radius);
 
 		virtual sint32					GetMouseX() const;
 		virtual sint32					GetMouseY() const;
@@ -45,15 +45,15 @@ class Canvas : public CanvasBase
 		virtual ClampingRect			GetClampingRect() const;
 
 	protected:
-		//void ConvertFrameToGraphic(sint16& x, sint16& y) const;
-		//void ConvertFrameToGraphic(sint16& x, sint16& y, uint16& xl, uint16& yl) const;
-		//void ConvertGraphicToFrame(sint16& x, sint16& y) const;
-		//void ConvertGraphicToFrame(sint16& x, sint16& y, uint16& xl, uint16& yl) const;
+		//void ConvertFrameToGraphic(sint32& x, sint32& y) const;
+		//void ConvertFrameToGraphic(sint32& x, sint32& y, uint16& xl, uint16& yl) const;
+		//void ConvertGraphicToFrame(sint32& x, sint32& y) const;
+		//void ConvertGraphicToFrame(sint32& x, sint32& y, uint16& xl, uint16& yl) const;
 
 	private:
 		CanvasBase&						m_oParent;
-		sint16							m_iPosX; // position dans le parent
-		sint16							m_iPosY; // position dans le parent
+		sint32							m_iPosX; // position dans le parent
+		sint32							m_iPosY; // position dans le parent
 
 };
 

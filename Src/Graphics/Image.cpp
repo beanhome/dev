@@ -29,14 +29,14 @@ Image::~Image()
 }
 
 
-void Image::SetPos(sint16 x, sint16 y)
+void Image::SetPos(sint32 x, sint32 y)
 {
 	m_iPosX = x;
 	m_iPosY = y;
 }
 
 
-void Image::SetCenter(sint16 x, sint16 y)
+void Image::SetCenter(sint32 x, sint32 y)
 {
 	m_iCenterX = x;
 	m_iCenterY = y;
