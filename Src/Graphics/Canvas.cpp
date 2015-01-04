@@ -28,21 +28,21 @@ Canvas::~Canvas()
 void Canvas::DrawImage(const ImageResource& image, sint32 x, sint32 y) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawImage(image, GetScreenPosX() + x, GetScreenPosY() + y);
+	GetGEngine()->DrawImage(image, GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawImage(const ImageResource& image, sint32 x, sint32 y, float fAngle, float fZoom) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawImage(image, GetScreenPosX() + x, GetScreenPosY() + y, fAngle, fZoom);
+	GetGEngine()->DrawImage(image, GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, fAngle, fZoom);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawImage(const ImageResource& image, sint32 x, sint32 y, uint16 w, uint16 h, sint32 sx, sint32 sy, uint16 sw, uint16 sh) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawImage(image, GetScreenPosX() + x, GetScreenPosY() + y, w, h, sx, sy, sw, sh);
+	GetGEngine()->DrawImage(image, GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, w, h, sx, sy, sw, sh);
 	GetGEngine()->ClampClear();
 }
 
@@ -50,46 +50,46 @@ void Canvas::DrawImage(const ImageResource& image, sint32 x, sint32 y, uint16 w,
 void Canvas::SetPixel(sint32 x, sint32 y, uint8 r, uint8 g, uint8 b) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->SetPixel(GetScreenPosX() + x, GetScreenPosY() + y, r, g, b);
+	GetGEngine()->SetPixel(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, r, g, b);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawRect(GetScreenPosX() + x, GetScreenPosY() + y, width, height, r, g, b);
+	GetGEngine()->DrawRect(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, width, height, r, g, b);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawFillRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawFillRect(GetScreenPosX() + x, GetScreenPosY() + y, width, height, r, g, b);
+	GetGEngine()->DrawFillRect(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, width, height, r, g, b);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawCircle(GetScreenPosX() + x, GetScreenPosY() + y, radius, r, g, b);
+	GetGEngine()->DrawCircle(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, radius, r, g, b);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawFillCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b ) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawFillCircle(GetScreenPosX() + x, GetScreenPosY() + y, radius, r, g, b);
+	GetGEngine()->DrawFillCircle(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, radius, r, g, b);
 	GetGEngine()->ClampClear();
 }
 
 void Canvas::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b ) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->DrawLine(GetScreenPosX() + x1, GetScreenPosY() + y1, GetScreenPosX() + x2, GetScreenPosY() + y2, r, g, b);
+	GetGEngine()->DrawLine(GetScreenPosX() - GetOrigX() + x1, GetScreenPosY() - GetOrigY() + y1, GetScreenPosX() - GetOrigX() + x2, GetScreenPosY() - GetOrigY() + y2, r, g, b);
 	GetGEngine()->ClampClear();
 }
 
-void Canvas::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
+void Canvas::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
 {
 	GetGEngine()->TextSizeArgs(w, h, sFontPath, size, format, oArgs);
 }
@@ -97,18 +97,18 @@ void Canvas::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, cons
 void Canvas::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->PrintArgs(GetScreenPosX() + x, GetScreenPosY() + y, sFontPath, size, eAlign, r, g, b, format, oArgs);
+	GetGEngine()->PrintArgs(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, sFontPath, size, eAlign, r, g, b, format, oArgs);
 	GetGEngine()->ClampClear();
 }
 
 sint32 Canvas::GetMouseX() const
 {
-	return GetGEngine()->GetMouseX() - GetScreenPosX();
+	return GetGEngine()->GetMouseX() - GetScreenPosX() + m_iOrigX;
 }
 
 sint32 Canvas::GetMouseY() const
 {
-	return GetGEngine()->GetMouseY() - GetScreenPosY();
+	return GetGEngine()->GetMouseY() - GetScreenPosY() + m_iOrigX;
 }
 
 const char* Canvas::GetPrintFont() const
@@ -121,7 +121,7 @@ ClampingRect Canvas::GetClampingRect() const
 {
 	ClampingRect parent = m_oParent.GetClampingRect();
 
-	ClampingRect mine(GetScreenPosX(), GetScreenPosY(), (uint16)GetOrigX()+GetWidth(), (uint16)GetOrigY()+GetHeight());
+	ClampingRect mine(GetScreenPosX(), GetScreenPosY(), GetWidth(), GetHeight());
 
 	if (mine.x < parent.x)
 	{
@@ -158,36 +158,3 @@ ClampingRect Canvas::GetClampingRect() const
 	return mine;
 }
 
-
-
-#if 0
-bool Canvas::IsMouseOverlapping(sint32 x, sint32 y, uint16 radius)
-{
-	ConvertFrameToGraphic(x, y);
-	return m_pCanvas->IsMouseOverlapping(x, y, radius);
-}
-
-void Canvas::ConvertFrameToGraphic(sint32& x, sint32& y) const
-{
-	x = m_iPosX + x;
-	y = m_iPosY + y;
-}
-
-void Canvas::ConvertFrameToGraphic(sint32& x, sint32& y, uint16& /*xl*/, uint16& /*yl*/) const
-{
-	x = m_iPosX + x;
-	y = m_iPosY + y;
-}
-
-void Canvas::ConvertGraphicToFrame(sint32& x, sint32& y) const
-{
-	x = x - m_iPosX;
-	y = x - m_iPosY;
-}
-
-void Canvas::ConvertGraphicToFrame(sint32& x, sint32& y, uint16& /*xl*/, uint16& /*yl*/) const
-{
-	x = x - m_iPosX;
-	y = x - m_iPosY;
-}
-#endif

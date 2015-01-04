@@ -12,14 +12,8 @@
 class Widget : public Canvas
 {
 public:
-	Widget(CanvasBase& oParent);
-	Widget(CanvasBase& oParent, sint32 id, const string& sName);
-	Widget(CanvasBase& oParent, const string& sName);
-	Widget(CanvasBase& oParent, sint32 id);
-	Widget(Widget& oParent);
-	Widget(Widget& oParent, sint32 id, const string& sName);
-	Widget(Widget& oParent, const string& sName);
-	Widget(Widget& oParent, sint32 id);
+	Widget(CanvasBase& oParent, sint32 id = -1, const string& sName = "unknow");
+	Widget(Widget& oParent, sint32 id = -1, const string& sName = "unknow");
 	void Init();
 
 	~Widget();
@@ -33,15 +27,13 @@ public:
 	};
 
 public:
-	Widget* AddNewChild(sint32 id, const string& sName);
-	Widget* AddNewChild(const string& sName);
-	Widget* AddNewChild(sint32 id);
-	Widget* AddNewChild();
+	template<typename T>
+	Widget* AddNewChild(typename T::Desc oDesc, sint32 id = -1, const string& sName = "unknow");
 
 	Widget* GetWidgetParent() { return m_pWidgetParent; }
 	const Widget* GetWidgetParent() const { return m_pWidgetParent; }
-	Widget* GetChild(uint32 id);
-	const Widget* GetChild(uint32 id) const;
+	virtual Widget* GetChild(uint32 id);
+	virtual const Widget* GetChild(uint32 id) const;
 
 	void SetSideProp(SideEnum::Type eType, const WidgetSide::ParentRef& oParentRef)		{ m_oSide[eType].SetProp(oParentRef); }
 	void SetSideProp(SideEnum::Type eType, const WidgetSide::SelfRef& oSelfRef)			{ m_oSide[eType].SetProp(oSelfRef); }
@@ -74,6 +66,9 @@ public:
 
 	const WidgetSide& GetSide(SideEnum::Type eType) const { return m_oSide[eType]; }
 
+	virtual sint32 GetAutoWidth() { return 0; }
+	virtual sint32 GetAutoHeight() { return 0; }
+
 	sint32 GetChildWidth();
 	sint32 GetChildHeight();
 
@@ -84,19 +79,24 @@ public:
 	void GetWidgetHover(vector<Widget*>& aWidget, sint32 m=10);
 	WidgetSide* GetSideHover(sint32 m=10);
 
-	//uint16 GetSize(SideEnum::Type);
-
 	virtual void Draw() const;
 
 public:
 	typedef list<Widget*> ChildrenList;
 	void DetermineDimension();
+	virtual void OnDimensionChanged(SideEnum::Type eSide) {};
+	virtual Widget* GetParentRef() { return this; }
+	virtual void InsertChild(Widget* pChild);
 
-private:
-	Widget* m_pWidgetParent;
+protected:
+	WidgetDimState::Type m_eDimState;
 	sint32 m_id;
 	string m_sName;
 	WidgetSide m_oSide[SideEnum::Num];
+	ChildrenList m_vChildren;
+
+private:
+	Widget* m_pWidgetParent;
 
 	WidgetOffset m_oHorizOffset;
 	WidgetOffset m_oVertiOffset;
@@ -105,13 +105,16 @@ private:
 	sint32 m_iMaxWidth;
 	sint32 m_iMinHeight;
 	sint32 m_iMaxHeight;
-
-	WidgetDimState::Type m_eDimState;
-
-	ChildrenList m_vChildren;
-
-	static Color s_oStateColor[WidgetDimState::Num];
 };
+
+
+template<typename T>
+Widget* Widget::AddNewChild(typename T::Desc oDesc, sint32 id, const string& sName)
+{
+	Widget* pWidget = new T(*GetParentRef(), oDesc, id, sName);
+	InsertChild(pWidget);
+	return pWidget;	
+}
 
 #endif
 

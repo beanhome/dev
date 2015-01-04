@@ -3,9 +3,11 @@
 #define __WIDGETEDITOR_H__
 
 #include "Utils.h"
-#include "Widget.h"
 
 class GEngine;
+class Widget;
+class WidgetSide;
+class CanvasBase;
 
 class WidgetEditor
 {
@@ -37,7 +39,7 @@ private:
 	void DrawCoeffArrow(const CanvasBase& oParent, sint32 x1, sint32 y1, sint32 x2, sint32 y2, float fCoeff, Orient eOrient, uint8 r, uint8 g, uint8 b);
 private:
 	GEngine& m_oGEngine;
-	Widget m_oMainWin;
+	Widget* m_pMainWin;
 };
 #endif
 

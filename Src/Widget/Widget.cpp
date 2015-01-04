@@ -5,24 +5,6 @@
 #include "Utils.h"
 #include "Color.h"
 
-Color Widget::s_oStateColor[] =
-{
-	Color(128, 128, 128), // Unknown
-	Color(0,   0,   255), // Process
-	Color(255, 255, 255), // Valid
-	Color(255, 0,   0)    // Invalid
-};
-
-Widget::Widget(CanvasBase& oParent)
-	: Canvas(oParent)
-	, m_pWidgetParent(NULL)
-	, m_id(-1)
-	, m_sName("unknown")
-	, m_eDimState(WidgetDimState::Unknown)
-{
-	Init();
-}
-
 Widget::Widget(CanvasBase& oParent, sint32 id, const string& sName)
 	: Canvas(oParent)
 	, m_pWidgetParent(NULL)
@@ -33,61 +15,11 @@ Widget::Widget(CanvasBase& oParent, sint32 id, const string& sName)
 	Init();
 }
 
-Widget::Widget(CanvasBase& oParent, const string& sName)
-	: Canvas(oParent)
-	, m_pWidgetParent(NULL)
-	, m_id(-1)
-	, m_sName(sName)
-	, m_eDimState(WidgetDimState::Unknown)
-{
-	Init();
-}
-
-Widget::Widget(CanvasBase& oParent, sint32 id)
-	: Canvas(oParent)
-	, m_pWidgetParent(NULL)
-	, m_id(-id)
-	, m_sName("unknown")
-	, m_eDimState(WidgetDimState::Unknown)
-{
-	Init();
-}
-
-Widget::Widget(Widget& oParent)
-	: Canvas((CanvasBase&)oParent)
-	, m_pWidgetParent(&oParent)
-	, m_id(-1)
-	, m_sName("unknown")
-	, m_eDimState(WidgetDimState::Unknown)
-{
-	Init();
-}
-
 Widget::Widget(Widget& oParent, sint32 id, const string& sName)
 	: Canvas((CanvasBase&)oParent)
 	, m_pWidgetParent(&oParent)
 	, m_id(id)
 	, m_sName(sName)
-	, m_eDimState(WidgetDimState::Unknown)
-{
-	Init();
-}
-
-Widget::Widget(Widget& oParent, const string& sName)
-	: Canvas((CanvasBase&)oParent)
-	, m_pWidgetParent(&oParent)
-	, m_id(-1)
-	, m_sName(sName)
-	, m_eDimState(WidgetDimState::Unknown)
-{
-	Init();
-}
-
-Widget::Widget(Widget& oParent, sint32 id)
-	: Canvas((CanvasBase&)oParent)
-	, m_pWidgetParent(&oParent)
-	, m_id(-id)
-	, m_sName("unknown")
 	, m_eDimState(WidgetDimState::Unknown)
 {
 	Init();
@@ -122,6 +54,12 @@ Widget::~Widget()
 	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
 		delete *it;
 }
+
+void Widget::InsertChild(Widget* pChild)
+{
+	m_vChildren.push_back(pChild);
+}
+
 
 sint32 Widget::GetSideDimension(SideEnum::Type eType, WidgetDimState::Type& eState)
 {
@@ -286,54 +224,6 @@ sint32 Widget::GetChildHeight()
 	}
 
 	return iMax - iMin;
-}
-
-
-/*
-uint16 Widget::GetSize(SideEnum::Type eSide)
-{
-	switch (eSide)
-	{
-		case SideEnum::Left:
-		case SideEnum::Right:
-			return GetWidth();
-
-		case SideEnum::Top:
-		case SideEnum::Bottom:
-			return GetHeight();
-	}
-
-	return 0;
-}
-*/
-
-
-Widget* Widget::AddNewChild(sint32 id, const string& sName)
-{
-	Widget* pWidget = new Widget(*this, id, sName);
-	m_vChildren.push_back(pWidget);
-	return pWidget;
-}
-
-Widget* Widget::AddNewChild(const string& sName)
-{
-	Widget* pWidget = new Widget(*this, sName);
-	m_vChildren.push_back(pWidget);
-	return pWidget;
-}
-
-Widget* Widget::AddNewChild(sint32 id)
-{
-	Widget* pWidget = new Widget(*this, id);
-	m_vChildren.push_back(pWidget);
-	return pWidget;
-}
-
-Widget* Widget::AddNewChild()
-{
-	Widget* pWidget = new Widget(*this);
-	m_vChildren.push_back(pWidget);
-	return pWidget;
 }
 
 Widget* Widget::GetChild(uint32 id)
@@ -524,8 +414,8 @@ WidgetSide* Widget::GetSideHover(sint32 m)
 	if (!IsMouseNear(m))
 		return NULL;
 
-	sint32 x = GetMouseX();
-	sint32 y = GetMouseY();
+	sint32 x = GetMouseX() - GetOrigX();
+	sint32 y = GetMouseY() - GetOrigY();
 	uint16 w = GetWidth();
 	uint16 h = GetHeight();
 
@@ -539,9 +429,6 @@ WidgetSide* Widget::GetSideHover(sint32 m)
 
 void Widget::Draw() const
 {
-	DrawRect(0, 0, m_iWidth-1, m_iHeight-1, s_oStateColor[m_eDimState].r, s_oStateColor[m_eDimState].g, s_oStateColor[m_eDimState].b);
-	Print(2, 2, GetPrintFont(), 15, LeftTop, 255, 255, 255, m_sName.c_str());
-
 	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
 	{
 		Widget* pChild = *it;
@@ -559,4 +446,13 @@ void Widget::Draw() const
 				break;
 		}
 	}
+
+	/*
+	Print(GetOrigX() + 20, GetOrigY() + 8, GetPrintFont(), 12, LeftTop, 255, 255, 255,  "Pos        : %d - %d", GetPosX(), GetPosY());
+	Print(GetOrigX() + 20, GetOrigY() + 20, GetPrintFont(), 12, LeftTop, 255, 255, 255, "Orig       : %d - %d", GetOrigX(), GetOrigY());
+	Print(GetOrigX() + 20, GetOrigY() + 32, GetPrintFont(), 12, LeftTop, 255, 255, 255, "Screen Pos : %d - %d", GetScreenPosX(), GetScreenPosY());
+	*/
+	
+	//Print(GetOrigX() + 200, GetOrigY() + 8, GetPrintFont(), 12, LeftTop, 255, 255, 255, "Mouse : %d - %d", GetMouseX(), GetMouseY());
 }
+

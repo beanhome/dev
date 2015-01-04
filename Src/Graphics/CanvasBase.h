@@ -24,8 +24,8 @@ class CanvasBase
 		CanvasBase(sint32 x, sint32 y, uint16 xl, uint16 yl);
 		virtual ~CanvasBase();
 
-		virtual sint32					GetScreenPosX() const { return -m_iOrigX; }
-		virtual sint32					GetScreenPosY() const { return -m_iOrigY; }
+		virtual sint32					GetScreenPosX() const { assert(m_iOrigX == 0); return -m_iOrigX; }
+		virtual sint32					GetScreenPosY() const { assert(m_iOrigY == 0); return -m_iOrigY; }
 
 		sint32							GetOrigX() const { return m_iOrigX; }
 		sint32							GetOrigY() const { return m_iOrigY; }
@@ -65,8 +65,8 @@ class CanvasBase
 		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const = 0;
 		void 							DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, const Color& oColor) const { DrawLine(x1, y1, x2, y2, oColor.r, oColor.g, oColor.b); }
 
-		virtual void					TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const = 0;
-		void							TextSize(int& w, int& h, const char* sFontPath, uint size, const char* format, ...) const;
+		virtual void					TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const = 0;
+		void							TextSize(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, ...) const;
 
 		virtual void 					PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const = 0;
 		void 							Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const;
@@ -85,9 +85,6 @@ class CanvasBase
 		bool							IsInside(sint32 x, sint32 y) const { return (x>=m_iOrigX && x<m_iOrigX+m_iWidth && y>=m_iOrigY && y<m_iOrigY+m_iHeight); }
 
 		bool							IsMouseInside() const { return IsInside(GetMouseX(), GetMouseY()); }
-
-
-		//virtual bool IsMouseOverlapping(sint32 x, sint32 y, uint16 radius);
 
 		virtual sint32					GetMouseX() const = 0;
 		virtual sint32					GetMouseY() const = 0;

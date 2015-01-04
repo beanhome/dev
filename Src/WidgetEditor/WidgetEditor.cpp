@@ -6,27 +6,45 @@
 #include "Widget.h"
 #include "Event.h"
 #include "EventManager.h"
+#include "Component\WDebug.h"
+#include "Component\WImage.h"
+#include "Component\WText.h"
+#include "Component\WWindow.h"
+#include "Component\WBackground.h"
 
 WidgetEditor::WidgetEditor(GEngine& oGEngine)
 	: m_oGEngine(oGEngine)
-	, m_oMainWin(m_oGEngine, "main")
 {
+	m_pMainWin = new WBackground(m_oGEngine, WBackground::Desc("Widget/bg.png"), 0, "main");
+	//m_pMainWin = new WDebug(m_oGEngine, WDebug::Desc(), 0, "main");
+	//m_pMainWin->SetOrigX(50);
+	//m_pMainWin->SetOrigY(50);
+
 	m_oGEngine.SetPrintFont(FONT_PATH, 14);
-	m_oMainWin.SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 100));
-	m_oMainWin.SetSideProp(SideEnum::Right,		WidgetSide::ParentRef(1.f, -100));
-	m_oMainWin.SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
-	m_oMainWin.SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
+	m_pMainWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 10));
+	m_pMainWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, -10));
+	m_pMainWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
+	m_pMainWin->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
+
+	/*
+	Widget* pWin = m_pMainWin->AddNewChild<WDebug>(WDebug::Desc(), 0, "sub");
+	pWin->SetSideProp(SideEnum::Left,	WidgetSide::ParentRef(0.f, 100));
+	pWin->SetSideProp(SideEnum::Right,	WidgetSide::SelfRef(500));
+	pWin->SetSideProp(SideEnum::Top,	WidgetSide::ParentRef(0.f, 100));
+	pWin->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(500));
+	*/
 
 	InitBase();
 }
 
 WidgetEditor::~WidgetEditor()
 {
+	delete m_pMainWin;
 }
 
 void WidgetEditor::InitBase()
 {
-	Widget* pWin1 = m_oMainWin.AddNewChild(0, "sub1");
+	Widget* pWin1 = m_pMainWin->AddNewChild<WWindow>(WWindow::Desc("Widget/win_", "png", 11, 10, 11, 19), 0, "sub1");
 	pWin1->SetMinWidth(50);
 	pWin1->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.5f));
 	pWin1->SetSideProp(SideEnum::Right,		WidgetSide::ChildRef(1, 0.f, 55));
@@ -34,29 +52,29 @@ void WidgetEditor::InitBase()
 	pWin1->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(0.75f, -30));
 	pWin1->SetHorizOffset(-0.5f, 0);
 
-	Widget* pWin11 = pWin1->AddNewChild(0, "sub11");
+	Widget* pWin11 = pWin1->AddNewChild<WDebug>(WDebug::Desc(), 0, "sub11");
 	pWin11->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 5));
 	pWin11->SetSideProp(SideEnum::Right,	WidgetSide::SelfRef(100));
 	pWin11->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 5));
 	pWin11->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
 
-	Widget* pWin12 = pWin1->AddNewChild(1, "sub12");
+	Widget* pWin12 = pWin1->AddNewChild<WDebug>(WDebug::Desc(), 1, "sub12");
 	pWin12->SetSideProp(SideEnum::Left,		WidgetSide::BrotherRef(0, 1.f, 25));
 	pWin12->SetSideProp(SideEnum::Right,	WidgetSide::SelfRef(100));
 	pWin12->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 5));
 	pWin12->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
 
-	Widget* pWin2 = m_oMainWin.AddNewChild(1, "sub2");
+	Widget* pWin2 = m_pMainWin->AddNewChild<WText>(WText::Desc("Lorem ipsum dolor sit amet"), 1, "sub2");
 	pWin2->SetSideProp(SideEnum::Left,		WidgetSide::BrotherRef(0, 1.f, 10));
 	pWin2->SetSideProp(SideEnum::Right,		WidgetSide::SelfRef(100));
 	pWin2->SetSideProp(SideEnum::Top,		WidgetSide::BrotherRef(0, 0.f, 40));
-	pWin2->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
+	pWin2->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef());
 
-	Widget* pWin3 = m_oMainWin.AddNewChild(1, "sub3");
-	pWin3->SetSideProp(SideEnum::Left,		WidgetSide::SelfRef(100));
+	Widget* pWin3 = m_pMainWin->AddNewChild<WImage>(WImage::Desc("Test/small_01.png"), 2, "sub3");
+	pWin3->SetSideProp(SideEnum::Left,		WidgetSide::SelfRef());
 	pWin3->SetSideProp(SideEnum::Right,		WidgetSide::ParentRef(1.f, -10));
 	pWin3->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.5f));
-	pWin3->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
+	pWin3->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef());
 	pWin3->SetVertiOffset(-0.5f, 0);
 }
 
@@ -72,17 +90,17 @@ int WidgetEditor::Loop()
 		m_oGEngine.UpdateEvent();
 
 		if (w != m_oGEngine.GetWidth())
-			m_oMainWin.SetDirtySide(SideEnum::Right);
+			m_pMainWin->SetDirtySide(SideEnum::Right);
 
 		if (h != m_oGEngine.GetHeight())
-			m_oMainWin.SetDirtySide(SideEnum::Bottom);
+			m_pMainWin->SetDirtySide(SideEnum::Bottom);
 
 		bQuit = (m_oGEngine.GetEventManager()->IsQuit() || m_oGEngine.GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
 
 		m_oGEngine.Clear();
 
-		m_oMainWin.DetermineDimension();
-		m_oMainWin.Draw();
+		m_pMainWin->DetermineDimension();
+		m_pMainWin->Draw();
 
 		sint32 iMargin = 20;
 		vector<Widget*> aWidget;
@@ -121,12 +139,12 @@ int WidgetEditor::Loop()
 
 Widget* WidgetEditor::FindHoverWidget(sint32 m)
 {
-	return m_oMainWin.GetWidgetHover(m);
+	return m_pMainWin->GetWidgetHover(m);
 }
 
 void WidgetEditor::FindHoverWidget(vector<Widget*>& aWidget, sint32 m)
 {
-	m_oMainWin.GetWidgetHover(aWidget, m);
+	m_pMainWin->GetWidgetHover(aWidget, m);
 
 }
 
@@ -134,7 +152,7 @@ void WidgetEditor::DrawWidget(const Widget* pWidget, bool bReal, uint8 r, uint8 
 {
 	if (bReal)
 	{
-		pWidget->DrawRect(0, 0, pWidget->GetWidth(), pWidget->GetHeight(), r, g, b);
+		pWidget->GetParent().DrawRect(pWidget->GetPosX(), pWidget->GetPosY(), pWidget->GetWidth(), pWidget->GetHeight(), r, g, b);
 	}
 	else
 	{
@@ -164,8 +182,8 @@ void WidgetEditor::DrawSide(WidgetSide* pSide)
 
 	DrawSide_Offset(pSide);
 
-	pSide->GetLineCoord(x1, y1, x2, y2);
-	pSide->GetWidget()->DrawLine(x1, y1, x2, y2, r, g, b);
+	pSide->GetLineCoord(x1, y1, x2, y2, pSide->GetWidget()->GetPosX(), pSide->GetWidget()->GetPosY());
+	pSide->GetWidget()->GetParent().DrawLine(x1, y1, x2, y2, r, g, b);
 }
 
 void WidgetEditor::DrawSide_ParentRef(WidgetSide* pSide)
@@ -282,7 +300,6 @@ void WidgetEditor::DrawSide_SelfRef_Auto(WidgetSide* pSide)
 void WidgetEditor::DrawSide_SelfRef_Fix(WidgetSide* pSide)
 {
 	const CanvasBase& oCanvas = *pSide->GetWidget();
-	//const CanvasBase& oParent = oCanvas.GetParent();
 
 	switch (pSide->GetDesignation())
 	{

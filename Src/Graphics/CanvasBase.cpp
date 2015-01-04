@@ -24,7 +24,7 @@ CanvasBase::~CanvasBase()
 {
 }
 
-void CanvasBase::TextSize(int& w, int& h, const char* sFontPath, uint size, const char* format, ...) const
+void CanvasBase::TextSize(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, ...) const
 {
 	va_list oArgs;
 	va_start(oArgs, format);
@@ -132,12 +132,3 @@ void CanvasBase::Print(const char* format, ... ) const
 
 	va_end(oArgs);
 }
-
-
-
-/*
-bool GCanvasBase::IsMouseOverlapping(sint32 x, sint32 y, uint16 radius)
-{
-	 //return (m_iMouseX - x) * (m_iMouseX - x) + (m_iMouseY - y) * (m_iMouseY - y) < radius*radius;
-}
-*/

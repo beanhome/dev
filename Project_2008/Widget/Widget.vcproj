@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\Widget;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -102,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\Widget;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -169,6 +169,50 @@
 			</File>
 			<File
 				RelativePath="..\..\Src\Widget\WidgetSide.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Component"
+			>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WBackground.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WBackground.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WDebug.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WDebug.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WText.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WWindow.h"
 				>
 			</File>
 		</Filter>

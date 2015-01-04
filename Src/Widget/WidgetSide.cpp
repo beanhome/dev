@@ -73,6 +73,8 @@ void WidgetSide::DetermineDimension()
 			break;
 		}
 	}
+
+	m_pWidget->OnDimensionChanged(m_eDesignation);
 }
 
 
@@ -115,18 +117,23 @@ void WidgetSide::DetermineDimension_Self()
 	switch (m_oSelfRefProp.m_eType)
 	{
 		case WidgetSelfReference::Auto:
-			// selon le contenu
-			m_iPixelPos = 0;
+			switch (m_eDesignation)
+			{
+				case SideEnum::Left:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Right, m_eState)	- m_pWidget->GetAutoWidth();	break;
+				case SideEnum::Right:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Left, m_eState)		+ m_pWidget->GetAutoWidth();	break;
+				case SideEnum::Top:		m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Bottom, m_eState)	- m_pWidget->GetAutoHeight();	break;
+				case SideEnum::Bottom:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Top, m_eState)		+ m_pWidget->GetAutoHeight();	break;
+			}
 			m_eState = WidgetDimState::Valid;
 			break;
 
 		case WidgetSelfReference::Fix:
 			switch (m_eDesignation)
 			{
-				case SideEnum::Left:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Right, m_eState) - m_oSelfRefProp.m_iFixSize;	break;
-				case SideEnum::Right:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Left, m_eState) + m_oSelfRefProp.m_iFixSize;	break;
-				case SideEnum::Top:		m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Bottom, m_eState) - m_oSelfRefProp.m_iFixSize;	break;
-				case SideEnum::Bottom:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Top, m_eState) + m_oSelfRefProp.m_iFixSize;	break;
+				case SideEnum::Left:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Right, m_eState)	- m_oSelfRefProp.m_iFixSize;	break;
+				case SideEnum::Right:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Left, m_eState)		+ m_oSelfRefProp.m_iFixSize;	break;
+				case SideEnum::Top:		m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Bottom, m_eState)	- m_oSelfRefProp.m_iFixSize;	break;
+				case SideEnum::Bottom:	m_iPixelPos = m_pWidget->GetSideDimension(SideEnum::Top, m_eState)		+ m_oSelfRefProp.m_iFixSize;	break;
 			}
 			break;
 	}

@@ -13,8 +13,8 @@ class Canvas : public CanvasBase
 
 		sint32							GetPosX() const { return m_iPosX; }
 		sint32							GetPosY() const { return m_iPosY; }
-		sint32							GetScreenPosX() const { return m_oParent.GetScreenPosX() - m_iOrigX + m_iPosX; }
-		sint32							GetScreenPosY() const { return m_oParent.GetScreenPosY() - m_iOrigY + m_iPosY; }
+		sint32							GetScreenPosX() const { return m_oParent.GetScreenPosX() - m_oParent.GetOrigX() + m_iPosX; }
+		sint32							GetScreenPosY() const { return m_oParent.GetScreenPosY() - m_oParent.GetOrigY() + m_iPosY; }
 
 		const CanvasBase&				GetParent() const { return m_oParent; }
 
@@ -33,22 +33,15 @@ class Canvas : public CanvasBase
 		virtual void 					DrawCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawFillCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const;
-		virtual void					TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const;
+		virtual void					TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const;
 		virtual void 					PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
 
 		virtual const char*				GetPrintFont() const;
-		//bool IsMouseOverlapping(sint32 x, sint32 y, uint16 radius);
 
 		virtual sint32					GetMouseX() const;
 		virtual sint32					GetMouseY() const;
 
 		virtual ClampingRect			GetClampingRect() const;
-
-	protected:
-		//void ConvertFrameToGraphic(sint32& x, sint32& y) const;
-		//void ConvertFrameToGraphic(sint32& x, sint32& y, uint16& xl, uint16& yl) const;
-		//void ConvertGraphicToFrame(sint32& x, sint32& y) const;
-		//void ConvertGraphicToFrame(sint32& x, sint32& y, uint16& xl, uint16& yl) const;
 
 	private:
 		CanvasBase&						m_oParent;

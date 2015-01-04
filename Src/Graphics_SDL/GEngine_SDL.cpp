@@ -347,7 +347,7 @@ void GEngine_SDL::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, 
 	lineRGBA(m_pScreen, (sint16)x1, (sint16)y1, (sint16)x2, (sint16)y2, r, g, b, 255);
 }
 
-void GEngine_SDL::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
+void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
 {
 	ASSERT(sFontPath != NULL);
 
@@ -366,7 +366,7 @@ void GEngine_SDL::TextSizeArgs(int& w, int& h, const char* sFontPath, uint size,
 	vsnprintf(str, ln, format, oArgs);
 #endif
 
-	TTF_SizeText(pFont->m_pFont, str, &w, &h);
+	TTF_SizeText(pFont->m_pFont, str, (int*)&w, (int*)&h);
 
 	delete [] str;
 }

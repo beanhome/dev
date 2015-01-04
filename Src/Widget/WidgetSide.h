@@ -62,6 +62,7 @@ public:
 	void GetLineCoord(sint32& x1, sint32& y1, sint32& x2, sint32& y2) const;
 	void GetLineCoord(sint32& x1, sint32& y1, sint32& x2, sint32& y2, sint32 ox, sint32 oy) const;
 	WidgetReference::Type GetReference() const { return m_eReference; }
+	bool IsValid() const { return m_eState == WidgetDimState::Valid; }
 
 	const WidgetSide::ParentRef& GetParentRefProp() const { return m_oParentRefProp; }
 	const WidgetSide::SelfRef& GetSelfRefProp() const { return m_oSelfRefProp; }
