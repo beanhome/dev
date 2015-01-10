@@ -28,7 +28,6 @@ EKeyboardEvent EventManager::s_eMouseToEvent[EMouseEvent_MAX] =
 
 EventManager::EventManager(GEngine& ge)
 	: m_oEngine(ge)
-	, m_bQuit(false)
 {
 	for (uint i=0 ; i<EKeyboardKey_Max ; ++i)
 	{
@@ -57,46 +56,46 @@ void EventManager::Update()
 		}
 	}
 
-	while (m_oEngine.PollEvent())
+	Event* pEvent = m_oEngine.CreateEvent();
+
+	while (m_oEngine.PollEvent(pEvent))
 	{
-		m_bQuit = m_oEngine.GetEvent().IsQuit();
-
-		if (m_oEngine.GetEvent().IsResize())
+		if (pEvent->IsKeyboard())
 		{
-			sint32 w, h;
-			m_oEngine.GetEvent().GetResizeEvent(w, h);
-			m_oEngine.Resize((uint16)w, (uint16)h);
-		}
-
-		if (m_oEngine.GetEvent().IsKeyboard())
-		{
-			EKeyboardEvent& oKey = m_aVirtualKey[m_oEngine.GetEvent().GetKeyboardKey()];
-			switch (oKey)
-			{
-				case KeyUp:			oKey = (m_oEngine.GetEvent().GetKeyboardEvent() == KeyDown ? KeyPressed : KeyUp);			break;
-				case KeyDown:		oKey = (m_oEngine.GetEvent().GetKeyboardEvent() == KeyDown ? KeyRepeat : KeyReleased);		break;
-				case KeyPressed:	oKey = (m_oEngine.GetEvent().GetKeyboardEvent() == KeyDown ? KeyDown : KeyReleased);		break;
-				case KeyReleased:	oKey = (m_oEngine.GetEvent().GetKeyboardEvent() == KeyDown ? KeyPressed : KeyUp);			break;
-				case KeyRepeat:		oKey = (m_oEngine.GetEvent().GetKeyboardEvent() == KeyDown ? KeyRepeat : KeyReleased);		break;
-			}
-		}
-
-		if (m_oEngine.GetEvent().IsMouse())
-		{
-			m_oEngine.GetEvent().GetMouseMove(m_iMouseX, m_iMouseY);
-
-			EKeyboardEvent& oKey = m_aVirtualKey[s_eMouseToKey[m_oEngine.GetEvent().GetMouseEvent()]];
+			EKeyboardEvent& oKey = m_aVirtualKey[pEvent->GetKeyboardKey()];
+			EKeyboardEvent oEvent = pEvent->GetKeyboardEvent();
 
 			switch (oKey)
 			{
-				case KeyUp:			oKey = (s_eMouseToEvent[m_oEngine.GetEvent().GetMouseEvent()] == KeyDown ? KeyPressed : KeyUp);			break;
-				case KeyDown:		oKey = (s_eMouseToEvent[m_oEngine.GetEvent().GetMouseEvent()] == KeyDown ? KeyRepeat : KeyReleased);		break;
-				case KeyPressed:	oKey = (s_eMouseToEvent[m_oEngine.GetEvent().GetMouseEvent()] == KeyDown ? KeyDown : KeyReleased);			break;
-				case KeyReleased:	oKey = (s_eMouseToEvent[m_oEngine.GetEvent().GetMouseEvent()] == KeyDown ? KeyPressed : KeyUp);			break;
-				case KeyRepeat:		oKey = (s_eMouseToEvent[m_oEngine.GetEvent().GetMouseEvent()] == KeyDown ? KeyRepeat : KeyReleased);		break;
+				case KeyUp:			oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyDown:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyPressed:	oKey = (oEvent == KeyDown ? KeyDown		: KeyReleased);		break;
+				case KeyReleased:	oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyRepeat:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
 			}
 		}
+
+		if (pEvent->IsMouse())
+		{
+			pEvent->GetMouseMove(m_iMouseX, m_iMouseY);
+
+			EKeyboardEvent& oKey = m_aVirtualKey[s_eMouseToKey[pEvent->GetMouseEvent()]];
+			EKeyboardEvent& oEvent = s_eMouseToEvent[pEvent->GetMouseEvent()];
+
+			switch (oKey)
+			{
+				case KeyUp:			oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyDown:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyPressed:	oKey = (oEvent == KeyDown ? KeyDown		: KeyReleased);		break;
+				case KeyReleased:	oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyRepeat:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+			}
+		}
+
+		m_oEngine.ReceiveEvent(pEvent);
 	}
+
+	delete pEvent;
 }
 
 

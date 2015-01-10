@@ -16,14 +16,17 @@ GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* 
 	, m_pCursor(NULL)
 {
 	Init();
+}
 
-	m_pEvent = new Event_SDL;
+GEngine_SDL::GEngine_SDL(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, const char* rootpath)
+	: GEngine(pApp, width, height, depth, rootpath)
+	, m_pCursor(NULL)
+{
+	Init();
 }
 
 GEngine_SDL::~GEngine_SDL()
 {
-	delete m_pEvent;
-
 	if (m_pCursor != NULL)
 		SDL_FreeCursor(m_pCursor);
 
@@ -473,15 +476,19 @@ void GEngine_SDL::ClampRect(sint32 x, sint32 y, uint16 w, uint16 h) const
 }
 
 
-bool GEngine_SDL::PollEvent()
+Event* GEngine_SDL::CreateEvent() const
 {
-	return (SDL_PollEvent(((Event_SDL*)m_pEvent)->GetSDLEvent()) != 0);
+	return new Event_SDL();
 }
 
-const Event& GEngine_SDL::WaitEvent()
+bool GEngine_SDL::PollEvent(Event* pEvent)
 {
-	SDL_WaitEvent(((Event_SDL*)m_pEvent)->GetSDLEvent());
-	return *m_pEvent;
+	return (SDL_PollEvent(((Event_SDL*)pEvent)->GetSDLEvent()) != 0);
 }
 
+const Event& GEngine_SDL::WaitEvent(Event* pEvent)
+{
+	SDL_WaitEvent(((Event_SDL*)pEvent)->GetSDLEvent());
+	return *pEvent;
+}
 

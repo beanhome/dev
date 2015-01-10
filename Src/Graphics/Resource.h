@@ -12,7 +12,7 @@ class Resource
 		virtual ~Resource();
 
 	private:
-		GEngine* m_pGEngine;
+		GEngine* m_pEngine;
 };
 
 

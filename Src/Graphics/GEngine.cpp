@@ -3,12 +3,23 @@
 #include "Resource.h"
 #include "Canvas.h"
 #include "EventManager.h"
+#include "GApp.h"
 
 GEngine::GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: CanvasBase(width, height)
+	, m_pApp(NULL)
 	, m_iDepth(depth)
 	, m_sRootPath(rootpath)
-	, m_pEvent(NULL)
+	, m_pEventManager(NULL)
+{
+	m_pEventManager = new EventManager(*this);
+}
+
+GEngine::GEngine(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, const char* rootpath)
+	: CanvasBase(width, height)
+	, m_pApp(pApp)
+	, m_iDepth(depth)
+	, m_sRootPath(rootpath)
 	, m_pEventManager(NULL)
 {
 	m_pEventManager = new EventManager(*this);
@@ -83,4 +94,10 @@ sint32 GEngine::GetMouseX() const
 sint32 GEngine::GetMouseY() const
 {
 	return m_pEventManager->GetMouseY();
+}
+
+void GEngine::ReceiveEvent( Event* pEvent )
+{
+	if (m_pApp != NULL)
+		m_pApp->CatchEvent(pEvent);
 }

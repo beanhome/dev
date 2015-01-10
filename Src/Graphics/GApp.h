@@ -4,6 +4,7 @@
 #include "Utils.h"
 
 class GEngine;
+class Event;
 
 class GAppBase
 {
@@ -24,13 +25,17 @@ class GAppBase
 		virtual int UpdatePause() { return 0; };
 		virtual int Draw() = 0;
 
+		virtual void Init() {}
 		virtual int Loop();
+		virtual void Close() {}
 
+		virtual void CatchEvent(Event* pEvent);
 	protected:
 		GEngine* m_pEngine;
 		bool m_bNoClearScreen;
 		bool m_bPause;
 		float m_fSlomo;
+		bool m_bQuit;
 };
 
 template <typename ENGINE>
@@ -39,7 +44,11 @@ class GApp : public GAppBase
 	public:
 		GApp(int w, int h, const char* rootpath)
 		{
-			m_pEngine = new ENGINE(w, h, 32, rootpath);
+			m_pEngine = new ENGINE(this, w, h, 32, rootpath);
+		}
+
+		virtual void Init()
+		{
 		}
 };
 

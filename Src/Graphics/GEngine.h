@@ -9,6 +9,8 @@
 class Resource;
 class Canvas;
 class EventManager;
+class Event;
+class GAppBase;
 
 typedef map<uint32, Resource*> ResourceMap;
 typedef pair<uint32, Resource*> ResourcePair;
@@ -19,6 +21,7 @@ class GEngine : public CanvasBase
 {
 	public:
 		GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath);
+		GEngine(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, const char* rootpath);
 		virtual ~GEngine();
 
 		GEngine*						GetGEngine() { return this; }
@@ -34,10 +37,8 @@ class GEngine : public CanvasBase
 
 		virtual void					Resize(uint16 w, uint16 h) = 0;
 
-		virtual bool					PollEvent() = 0;
-		virtual const Event&			WaitEvent() = 0;
-
-		const Event&					GetEvent() const { return *m_pEvent; }
+		virtual bool					PollEvent(Event* pEvent) = 0;
+		virtual const Event&			WaitEvent(Event* pEvent) = 0;
 
 		virtual sint32					GetMouseX() const;
 		virtual sint32					GetMouseY() const;
@@ -60,6 +61,9 @@ class GEngine : public CanvasBase
 		void							ClampCanvas(const Canvas& canvas) const;
 		virtual ClampingRect			GetClampingRect() const { return ClampingRect(0, 0, GetWidth(), GetHeight()); }
 
+		virtual Event*					CreateEvent() const = 0;
+		void							ReceiveEvent(Event* pEvent);
+
 	protected:
 		template<typename T>
 		T*								CreateResource(uint32 crc, const typename T::Desc& oDesc);
@@ -71,9 +75,9 @@ class GEngine : public CanvasBase
 		uint16							m_iDepth;
 		const char*						m_sRootPath;
 
-		Event*							m_pEvent;
-
 	private:
+		GAppBase*						m_pApp;
+
 		ResourceMap						m_aResources;
 		EventManager*					m_pEventManager;
 };

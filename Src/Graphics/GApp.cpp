@@ -10,6 +10,7 @@ GAppBase::GAppBase()
 	, m_bNoClearScreen(false)
 	, m_bPause(false)
 	, m_fSlomo(1.f)
+	, m_bQuit(false)
 {
 }
 
@@ -18,15 +19,36 @@ GAppBase::~GAppBase()
 	delete m_pEngine;
 }
 
+void GAppBase::CatchEvent(Event* pEvent)
+{
+	m_bQuit = pEvent->IsQuit();
+
+	if (pEvent->IsKeyboard())
+	{
+		m_bQuit |= (m_pEngine->GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
+
+		/*
+		if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyPressed)
+			m_bPause = !m_bPause;
+		*/
+	}
+
+	if (pEvent->IsResize())
+	{
+		sint32 w, h;
+		pEvent->GetResizeEvent(w, h);
+		m_pEngine->Resize((uint16)w, (uint16)h);
+	}
+}
+
 
 int GAppBase::Loop()
 {
 	int res;
-	bool bQuit = false;
 	double fTime = Timer::Get();
 	double fLastTime = fTime;
 
-	while (!bQuit)
+	while (!m_bQuit)
 	{
 		fLastTime = fTime;
 		fTime = Timer::Get();
@@ -66,15 +88,8 @@ int GAppBase::Loop()
 		m_pEngine->Flip();
 
 		m_pEngine->UpdateEvent();
-
-		bQuit = m_pEngine->GetEventManager()->IsQuit();
-		bQuit |= (m_pEngine->GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
-
-		if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyPressed)
-			m_bPause = !m_bPause;
 	}
 
 	return 0;
 }
-
 

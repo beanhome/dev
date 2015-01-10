@@ -15,8 +15,6 @@ class EventManager
 
 		void					Update();
 		
-		bool					IsQuit() const { return m_bQuit; }
-
 		EKeyboardEvent			GetVirtualKey(EKeyboardKey eKey) const { return m_aVirtualKey[eKey]; }
 
 		sint32					GetMouseX() const { return m_iMouseX; }
@@ -24,7 +22,6 @@ class EventManager
 
 	private:
 		GEngine& m_oEngine;
-		bool m_bQuit;
 
 		EKeyboardEvent m_aVirtualKey[EKeyboardKey_Max];
 

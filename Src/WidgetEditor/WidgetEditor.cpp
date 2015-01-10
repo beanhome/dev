@@ -12,15 +12,15 @@
 #include "Component\WWindow.h"
 #include "Component\WBackground.h"
 
-WidgetEditor::WidgetEditor(GEngine& oGEngine)
-	: m_oGEngine(oGEngine)
+WidgetEditor::WidgetEditor(int w, int h, const char* rootpath)
+	: GApp<GEngine_SDL>(w, h, rootpath)
 {
-	m_pMainWin = new WBackground(m_oGEngine, WBackground::Desc("Widget/bg.png"), 0, "main");
+	m_pMainWin = new WBackground(*m_pEngine, WBackground::Desc("Widget/bg.png"), 0, "main");
 	//m_pMainWin = new WDebug(m_oGEngine, WDebug::Desc(), 0, "main");
 	//m_pMainWin->SetOrigX(50);
 	//m_pMainWin->SetOrigY(50);
 
-	m_oGEngine.SetPrintFont(FONT_PATH, 14);
+	m_pEngine->SetPrintFont(FONT_PATH, 14);
 	m_pMainWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 10));
 	m_pMainWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, -10));
 	m_pMainWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
@@ -78,63 +78,58 @@ void WidgetEditor::InitBase()
 	pWin3->SetVertiOffset(-0.5f, 0);
 }
 
-int WidgetEditor::Loop()
+int WidgetEditor::Update(float dt)
 {
-	bool bQuit = false;
+	m_pMainWin->DetermineDimension();
 
-	while (!bQuit)
+	sint32 iMargin = 20;
+	vector<Widget*> aWidget;
+	aWidget.clear();
+
+	FindHoverWidget(aWidget, iMargin);
+
+	m_pNearestSide = NULL;
+	sint32 iBestDist = 0x7FFFFFFF;
+	for (uint32 i=0 ; i<aWidget.size() ; ++i)
 	{
-		uint16 w = m_oGEngine.GetWidth();
-		uint16 h = m_oGEngine.GetHeight();
+		WidgetSide* pSide = aWidget[i]->GetSideHover(iMargin);
+		if (pSide == NULL)
+			continue;
 
-		m_oGEngine.UpdateEvent();
-
-		if (w != m_oGEngine.GetWidth())
-			m_pMainWin->SetDirtySide(SideEnum::Right);
-
-		if (h != m_oGEngine.GetHeight())
-			m_pMainWin->SetDirtySide(SideEnum::Bottom);
-
-		bQuit = (m_oGEngine.GetEventManager()->IsQuit() || m_oGEngine.GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
-
-		m_oGEngine.Clear();
-
-		m_pMainWin->DetermineDimension();
-		m_pMainWin->Draw();
-
-		sint32 iMargin = 20;
-		vector<Widget*> aWidget;
-		aWidget.clear();
-
-		FindHoverWidget(aWidget, iMargin);
-
-		WidgetSide* pNearestSide = NULL;
-		sint32 iBestDist = 0x7FFFFFFF;
-		for (uint32 i=0 ; i<aWidget.size() ; ++i)
+		sint32 iDist = pSide->GetMouseDist();
+		if (m_pNearestSide == NULL || iDist < iBestDist)
 		{
-			WidgetSide* pSide = aWidget[i]->GetSideHover(iMargin);
-			if (pSide == NULL)
-				continue;
-				
-			sint32 iDist = pSide->GetMouseDist();
-			if (pNearestSide == NULL || iDist < iBestDist)
-			{
-				pNearestSide = pSide;
-				iBestDist = iDist;
-			}
+			m_pNearestSide = pSide;
+			iBestDist = iDist;
 		}
-
-		if (pNearestSide != NULL)
-		{
-			DrawWidget(pNearestSide->GetWidget(), false, 192, 192, 192);
-			DrawWidget(pNearestSide->GetWidget(), true, 255, 255, 255);
-			DrawSide(pNearestSide);
-		}
-
-		m_oGEngine.Flip();
 	}
 
 	return 0;
+}
+
+int WidgetEditor::Draw()
+{
+	m_pMainWin->Draw();
+
+	if (m_pNearestSide != NULL)
+	{
+		DrawWidget(m_pNearestSide->GetWidget(), false, 192, 192, 192);
+		DrawWidget(m_pNearestSide->GetWidget(), true, 255, 255, 255);
+		DrawSide(m_pNearestSide);
+	}
+
+	return 0;
+}
+
+void WidgetEditor::CatchEvent(Event* pEvent)
+{
+	GAppBase::CatchEvent(pEvent);
+
+	if (pEvent->IsResize())
+	{
+		m_pMainWin->SetDirtySide(SideEnum::Right);
+		m_pMainWin->SetDirtySide(SideEnum::Bottom);
+	}
 }
 
 Widget* WidgetEditor::FindHoverWidget(sint32 m)

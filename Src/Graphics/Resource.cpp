@@ -2,12 +2,12 @@
 #include "GEngine.h"
 
 Resource::Resource(GEngine* pGEngine, uint32 crc)
-	: m_pGEngine(pGEngine)
+	: m_pEngine(pGEngine)
 {
-	m_pGEngine->AddResource(crc, this);
+	m_pEngine->AddResource(crc, this);
 }
 
 Resource::~Resource()
 {
-	m_pGEngine->RemResource(this);
+	m_pEngine->RemResource(this);
 }

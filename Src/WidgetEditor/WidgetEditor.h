@@ -3,19 +3,23 @@
 #define __WIDGETEDITOR_H__
 
 #include "Utils.h"
+#include "GApp.h"
+#include "GEngine_SDL.h"
 
 class GEngine;
 class Widget;
 class WidgetSide;
 class CanvasBase;
+class Event;
 
-class WidgetEditor
+class WidgetEditor : public GApp<GEngine_SDL>
 {
 public:
-	WidgetEditor(GEngine& oGEngine);
+	WidgetEditor(int w, int h, const char* rootpath);
 	~WidgetEditor();
 
-	int Loop();
+	virtual int Update(float dt);
+	virtual int Draw();
 
 private:
 	void InitBase();
@@ -37,9 +41,12 @@ private:
 	void DrawLerpArrow(const CanvasBase& oParent, sint32 x1, sint32 y1, sint32 x2, sint32 y2, float fRatio, Orient eOrient, uint8 r, uint8 g, uint8 b);
 	void DrawPixArrow(const CanvasBase& oParent, sint32 x1, sint32 y1, sint32 x2, sint32 y2, Orient eOrient, uint8 r, uint8 g, uint8 b);
 	void DrawCoeffArrow(const CanvasBase& oParent, sint32 x1, sint32 y1, sint32 x2, sint32 y2, float fCoeff, Orient eOrient, uint8 r, uint8 g, uint8 b);
+
+	virtual void CatchEvent(Event* pEvent);
+
 private:
-	GEngine& m_oGEngine;
 	Widget* m_pMainWin;
+	WidgetSide* m_pNearestSide;
 };
 #endif
 

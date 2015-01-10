@@ -18,6 +18,7 @@ class GEngine_SDL : public GEngine
 {
 	public:
 		GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* rootpath);
+		GEngine_SDL(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, const char* rootpath);
 		virtual ~GEngine_SDL();
 
 		void 							Clear();
@@ -41,11 +42,14 @@ class GEngine_SDL : public GEngine
 		virtual void					ClampClear() const;
 		virtual void					ClampRect(sint32 x, sint32 y, uint16 w, uint16 h) const;
 
-		bool							PollEvent();
-		const Event&					WaitEvent();
+		virtual Event*					CreateEvent() const;
+		virtual bool					PollEvent(Event* pEvent);
+		virtual const Event&			WaitEvent(Event* pEvent);
 
 		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) const { return GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(oDesc)); }
 		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) const { return GetResource<FontResource_SDL>(FontResource_SDL::Desc(oDesc)); }
+
+
 
 	protected:
 		uint 							Init();
