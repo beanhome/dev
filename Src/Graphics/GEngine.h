@@ -33,7 +33,7 @@ class GEngine : public CanvasBase
 		virtual void					PurgeResource();
 
 		const EventManager*				GetEventManager() const { return m_pEventManager; }
-		void							UpdateEvent();
+		void							UpdateEvent(float dt);
 
 		virtual void					Resize(uint16 w, uint16 h) = 0;
 
@@ -43,7 +43,7 @@ class GEngine : public CanvasBase
 		virtual sint32					GetMouseX() const;
 		virtual sint32					GetMouseY() const;
 
-		const char*						GetRootPath() const { return m_sRootPath; }
+		const string&					GetRootPath() const { return m_sRootPath; }
 
 		template<typename T>
 		T* const						GetResource(const typename T::Desc& oDesc) const;
@@ -73,7 +73,7 @@ class GEngine : public CanvasBase
 
 	protected:
 		uint16							m_iDepth;
-		const char*						m_sRootPath;
+		string							m_sRootPath;
 
 	private:
 		GAppBase*						m_pApp;

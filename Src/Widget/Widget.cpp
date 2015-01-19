@@ -11,6 +11,9 @@ Widget::Widget(CanvasBase& oParent, sint32 id, const string& sName)
 	, m_id(id)
 	, m_sName(sName)
 	, m_eDimState(WidgetDimState::Unknown)
+	, m_eFocus(WidgetFocusState::Out)
+	, m_pOnFocusEnterFunctor(NULL)
+	, m_pOnFocusExitFunctor(NULL)
 {
 	Init();
 }
@@ -21,6 +24,34 @@ Widget::Widget(Widget& oParent, sint32 id, const string& sName)
 	, m_id(id)
 	, m_sName(sName)
 	, m_eDimState(WidgetDimState::Unknown)
+	, m_eFocus(WidgetFocusState::Out)
+	, m_pOnFocusEnterFunctor(NULL)
+	, m_pOnFocusExitFunctor(NULL)
+{
+	Init();
+}
+Widget::Widget(CanvasBase& oParent, const Desc& oDesc, sint32 id, const string& sName)
+	: Canvas(oParent)
+	, m_pWidgetParent(NULL)
+	, m_id(id)
+	, m_sName(sName)
+	, m_eDimState(WidgetDimState::Unknown)
+	, m_eFocus(WidgetFocusState::Out)
+	, m_pOnFocusEnterFunctor(NULL)
+	, m_pOnFocusExitFunctor(NULL)
+{
+	Init();
+}
+
+Widget::Widget(Widget& oParent, const Desc& oDesc, sint32 id, const string& sName)
+	: Canvas((CanvasBase&)oParent)
+	, m_pWidgetParent(&oParent)
+	, m_id(id)
+	, m_sName(sName)
+	, m_eDimState(WidgetDimState::Unknown)
+	, m_eFocus(WidgetFocusState::Out)
+	, m_pOnFocusEnterFunctor(NULL)
+	, m_pOnFocusExitFunctor(NULL)
 {
 	Init();
 }
@@ -53,6 +84,12 @@ Widget::~Widget()
 {
 	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
 		delete *it;
+
+	if (m_pOnFocusEnterFunctor != NULL)
+		delete m_pOnFocusEnterFunctor;
+
+	if (m_pOnFocusExitFunctor != NULL)
+		delete m_pOnFocusExitFunctor;
 }
 
 void Widget::InsertChild(Widget* pChild)
@@ -107,7 +144,7 @@ uint16 Widget::GetWidgetWidth(WidgetDimState::Type& eState)
 			 && m_oSide[SideEnum::Right].m_eState == WidgetDimState::Valid)
 			{
 				eState = WidgetDimState::Valid;
-				ASSERT(m_oSide[SideEnum::Right].m_iPixelPos - m_oSide[SideEnum::Left].m_iPixelPos > 0);
+				ASSERT(m_oSide[SideEnum::Right].m_iPixelPos - m_oSide[SideEnum::Left].m_iPixelPos >= 0);
 				return (uint16)(m_oSide[SideEnum::Right].m_iPixelPos - m_oSide[SideEnum::Left].m_iPixelPos);
 			}
 			else
@@ -124,7 +161,7 @@ uint16 Widget::GetWidgetWidth(WidgetDimState::Type& eState)
 
 		case WidgetDimState::Valid:
 			eState = WidgetDimState::Valid; 
-			ASSERT(m_oSide[SideEnum::Right].m_iPixelPos - m_oSide[SideEnum::Left].m_iPixelPos > 0);
+			ASSERT(m_oSide[SideEnum::Right].m_iPixelPos - m_oSide[SideEnum::Left].m_iPixelPos >= 0);
 			return (uint16)(m_oSide[SideEnum::Right].m_iPixelPos - m_oSide[SideEnum::Left].m_iPixelPos);
 	}
 
@@ -159,7 +196,7 @@ uint16 Widget::GetWidgetHeight(WidgetDimState::Type& eState)
 
 		case WidgetDimState::Valid:
 			eState = WidgetDimState::Valid;
-			ASSERT(m_oSide[SideEnum::Bottom].m_iPixelPos - m_oSide[SideEnum::Top].m_iPixelPos > 0);
+			ASSERT(m_oSide[SideEnum::Bottom].m_iPixelPos - m_oSide[SideEnum::Top].m_iPixelPos >= 0);
 			return (uint16)(m_oSide[SideEnum::Bottom].m_iPixelPos - m_oSide[SideEnum::Top].m_iPixelPos);
 	}
 
@@ -448,11 +485,53 @@ void Widget::Draw() const
 	}
 
 	/*
-	Print(GetOrigX() + 20, GetOrigY() + 8, GetPrintFont(), 12, LeftTop, 255, 255, 255,  "Pos        : %d - %d", GetPosX(), GetPosY());
-	Print(GetOrigX() + 20, GetOrigY() + 20, GetPrintFont(), 12, LeftTop, 255, 255, 255, "Orig       : %d - %d", GetOrigX(), GetOrigY());
-	Print(GetOrigX() + 20, GetOrigY() + 32, GetPrintFont(), 12, LeftTop, 255, 255, 255, "Screen Pos : %d - %d", GetScreenPosX(), GetScreenPosY());
+	Print(GetOrigX() + 20, GetOrigY() + 8, GetPrintFont(), 12, LeftTop, 0, 0, 0,  "Pos        : %d - %d", GetPosX(), GetPosY());
+	Print(GetOrigX() + 20, GetOrigY() + 20, GetPrintFont(), 12, LeftTop, 0, 0, 0, "Orig       : %d - %d", GetOrigX(), GetOrigY());
+	Print(GetOrigX() + 20, GetOrigY() + 32, GetPrintFont(), 12, LeftTop, 0, 0, 0, "Screen Pos : %d - %d", GetScreenPosX(), GetScreenPosY());
 	*/
 	
-	//Print(GetOrigX() + 200, GetOrigY() + 8, GetPrintFont(), 12, LeftTop, 255, 255, 255, "Mouse : %d - %d", GetMouseX(), GetMouseY());
+	//Print(GetOrigX() + 200, GetOrigY() + 8, GetPrintFont(), 12, LeftTop, 0, 0, 0, "Mouse : %d - %d", GetMouseX(), GetMouseY());
 }
 
+void Widget::UpdateFocus()
+{
+	bool bHasMouse = IsMouseInside();
+
+	switch (m_eFocus)
+	{
+		case WidgetFocusState::Out:
+		{
+			if (bHasMouse)
+			{
+				m_eFocus = WidgetFocusState::In;
+				OnFocusEnter();
+			}
+			break;
+		}
+
+		case WidgetFocusState::In:
+		{
+			if (!bHasMouse)
+			{
+				m_eFocus = WidgetFocusState::Out;
+				OnFocusExit();
+			}
+		}
+	}
+
+	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	{
+		Widget* pChild = *it;
+		pChild->UpdateFocus();
+	}
+}
+
+void Widget::CatchEvent(Event* pEvent)
+{
+	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	{
+		Widget* pChild = *it;
+		if (pChild->IsMouseInside())
+			pChild->CatchEvent(pEvent);
+	}
+}

@@ -23,6 +23,7 @@ class Event_SDL : public Event
 
 		EKeyboardEvent GetKeyboardEvent() const;
 		EKeyboardKey GetKeyboardKey() const;
+		uint16 GetKeyboardChar() const override;
 
 		void GetResizeEvent(sint32& w, sint32& h) const;
 
@@ -30,6 +31,9 @@ class Event_SDL : public Event
 
 	private:
 		SDL_Event* m_pSDLEvent;
+
+		static const EKeyboardKey s_eSDLKeyToKeyboardKey[SDLK_LAST];
+		static const SDLKey s_eKeyboardKeyToSDLKey[EKeyboardKey_Max];
 };
 
 

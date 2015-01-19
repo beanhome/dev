@@ -13,6 +13,9 @@ class FontResource_SDL : public FontResource
 		FontResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
 		~FontResource_SDL();
 
+		uint16 GetSize() const override;
+		uint16 GetLineSkip() const override;
+
 	public:
 		TTF_Font*		m_pFont;
 };

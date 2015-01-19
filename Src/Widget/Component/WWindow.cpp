@@ -24,7 +24,7 @@ void WWindow::Init()
 {
 	for (uint32 i=0 ; i<WinPart::Num ; ++i)
 	{
-		string sPath= FormatString("%s%s%s.%s", DATA_DIR, m_oDesc.sBasePath, WinPart::ToString[i], m_oDesc.sExt);
+		string sPath= FormatString("%s%s.%s", m_oDesc.sBasePath, WinPart::ToString[i], m_oDesc.sExt);
 		m_pImageResource[i] = GetGEngine()->GetImageResource(sPath.c_str());
 	}
 
@@ -59,7 +59,7 @@ const Widget* WWindow::GetChild(uint32 id) const
 
 void WWindow::DrawPart(ImageResource* res, sint32 x, sint32 y, uint16 w, uint16 h) const
 {
-	DrawImage(*res, x + w/2, y + h/2, w, h, 0, 0, res->GetWidth(), res->GetHeight());
+	DrawImage(*res, x, y, w, h, 0, 0, res->GetWidth(), res->GetHeight());
 }
 
 void WWindow::Draw() const

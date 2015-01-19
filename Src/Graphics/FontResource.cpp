@@ -1,17 +1,19 @@
 #include "FontResource.h"
 #include "CRC32.h"
 
-FontResource::FontResource(GEngine* pGEngine, uint32 crc, const char* path, uint16 size)
+FontResource::FontResource(GEngine* pGEngine, uint32 crc/*, const char* path, uint16 size*/)
 	: Resource(pGEngine, crc)
-	, m_sPath(path)
-	, m_iSize(size)
+	//, m_sPath(path)
+	//, m_iSize(size)
 {}
 
+/*
 FontResource::FontResource(GEngine* pGEngine, uint32 crc, const Desc& oDesc)
 	: Resource(pGEngine, crc)
-	, m_sPath(oDesc.path)
-	, m_iSize(oDesc.size)
+	//, m_sPath(oDesc.path)
+	//, m_iSize(oDesc.size)
 {}
+*/
 
 FontResource::~FontResource()
 {}

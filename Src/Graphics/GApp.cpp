@@ -21,7 +21,7 @@ GAppBase::~GAppBase()
 
 void GAppBase::CatchEvent(Event* pEvent)
 {
-	m_bQuit = pEvent->IsQuit();
+	m_bQuit |= pEvent->IsQuit();
 
 	if (pEvent->IsKeyboard())
 	{
@@ -87,7 +87,7 @@ int GAppBase::Loop()
 
 		m_pEngine->Flip();
 
-		m_pEngine->UpdateEvent();
+		m_pEngine->UpdateEvent(dt);
 	}
 
 	return 0;

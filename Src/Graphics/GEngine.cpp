@@ -12,6 +12,7 @@ GEngine::GEngine(uint16 width, uint16 height, uint16 depth, const char* rootpath
 	, m_sRootPath(rootpath)
 	, m_pEventManager(NULL)
 {
+	if (m_sRootPath[m_sRootPath.length()-1] != '/') m_sRootPath.push_back('/');
 	m_pEventManager = new EventManager(*this);
 }
 
@@ -22,6 +23,7 @@ GEngine::GEngine(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, cons
 	, m_sRootPath(rootpath)
 	, m_pEventManager(NULL)
 {
+	if (m_sRootPath[m_sRootPath.length()-1] != '/') m_sRootPath.push_back('/');
 	m_pEventManager = new EventManager(*this);
 }
 
@@ -81,9 +83,9 @@ bool GEngine::RemResource(Resource* pRes)
 	return false;
 }
 
-void GEngine::UpdateEvent()
+void GEngine::UpdateEvent(float dt)
 {
-	m_pEventManager->Update();
+	m_pEventManager->Update(dt);
 }
 
 sint32 GEngine::GetMouseX() const

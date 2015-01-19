@@ -28,7 +28,7 @@ void IBGFactBox::Resize()
 {
 	int width = IBGPlanner::s_iFactMinWidth;
 
-	int w, h;
+	sint32 int w, h;
 #if DEBUG_POINTER
 	m_oCanvas.CanvasBase::TextSize(w, h, m_oCanvas.GetPrintFont(), IBGPlanner::s_iFactTitleSize, "%s 0x%x", m_pFact->GetFactDef()->GetName().c_str(), m_pFact);
 #else

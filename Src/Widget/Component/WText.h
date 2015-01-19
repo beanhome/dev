@@ -14,7 +14,7 @@ public:
 	{
 		const char* sFontPath;
 
-		uint32 size;
+		uint16 size;
 
 		ETextAlign eAlign;
 
@@ -24,7 +24,7 @@ public:
 
 		string sText;
 
-		Desc(const string& _sText, uint32 _size = 12, ETextAlign _eAlign = LeftTop, uint8 _r = 255, uint8 _g = 255, uint8 _b = 255, const char* _sFontPath=FONT_PATH)
+		Desc(const string& _sText, uint16 _size = 12, ETextAlign _eAlign = LeftTop, uint8 _r = 128, uint8 _g = 128, uint8 _b = 128, const char* _sFontPath="")
 			: sText(_sText), size(_size), eAlign(_eAlign), r(_r), g(_g), b(_b), sFontPath(_sFontPath)
 		{}
 	};
@@ -42,15 +42,19 @@ public:
 
 	void Draw() const override;
 
-private:
+protected:
 	void OnDimensionChanged(SideEnum::Type eSide) override;
+	virtual void OnTextChanged();
 
+private:
 	void SliceText();
 
-private:
+protected:
 	Desc m_oDesc;
+	FontResource* m_pFont;
 
 	vector<string> m_aLine;
+	vector<string> m_aDrawLine;
 
 };
 

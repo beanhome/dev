@@ -86,7 +86,7 @@ void BLGoalMenu::UpdatePos()
 	int height = 0;
 	for (uint i=0 ; i<m_aGoals.size() ; ++i)
 	{
-		int w, h;
+		sint32 w, h;
 		m_oCanva.TextSize(w, h, m_oCanva.GetPrintFont(), s_iTextHeight, "%s %s", m_aGoals[i].GetName().c_str()+10, m_aGoals[i].GetData().c_str());
 
 		height += s_iYL;

@@ -1,6 +1,6 @@
 #include "SpriteViewApp.h"
 #include "Timer.h"
-#include "InputEvent.h"
+#include "Event.h"
 #include "ImageFlipBook.h"
 
 SpriteViewApp::SpriteViewApp(int w, int h, const char* rootpath)

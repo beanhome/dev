@@ -3,6 +3,15 @@
 #include "Utils.h"
 #include "Event_SDL.h"
 
+const EKeyboardKey Event_SDL::s_eSDLKeyToKeyboardKey[SDLK_LAST] = 
+{
+#include "Event_SDLKeyToKeyboardKey.h"
+};
+
+const SDLKey Event_SDL::s_eKeyboardKeyToSDLKey[EKeyboardKey_Max] =
+{
+#include "Event_KeyboardKeyToSDLKey.h"
+};
 
 Event_SDL::Event_SDL()
 	: m_pSDLEvent(new SDL_Event)
@@ -79,9 +88,11 @@ EMouseEvent Event_SDL::GetMouseEvent() const
 		{
 			switch (m_pSDLEvent->button.button)
 			{
-				case SDL_BUTTON_LEFT:	return LeftDown;
-				case SDL_BUTTON_MIDDLE:	return MiddleDown;
-				case SDL_BUTTON_RIGHT:	return RightDown;
+				case SDL_BUTTON_LEFT:		return LeftDown;
+				case SDL_BUTTON_MIDDLE:		return MiddleDown;
+				case SDL_BUTTON_RIGHT:		return RightDown;
+				case SDL_BUTTON_WHEELUP:	return WheelUpDown;
+				case SDL_BUTTON_WHEELDOWN:	return WheelDownDown;
 				default: return EMouseEvent_Error;
 			}
 		}
@@ -90,9 +101,11 @@ EMouseEvent Event_SDL::GetMouseEvent() const
 		{
 			switch (m_pSDLEvent->button.button)
 			{
-				case SDL_BUTTON_LEFT:	return LeftUp;
-				case SDL_BUTTON_MIDDLE:	return MiddleUp;
-				case SDL_BUTTON_RIGHT:	return RightUp;
+				case SDL_BUTTON_LEFT:		return LeftUp;
+				case SDL_BUTTON_MIDDLE:		return MiddleUp;
+				case SDL_BUTTON_RIGHT:		return RightUp;
+				case SDL_BUTTON_WHEELUP:	return WheelUpUp;
+				case SDL_BUTTON_WHEELDOWN:	return WheelDownUp;
 				default: return EMouseEvent_Error;
 			}
 		}
@@ -135,31 +148,7 @@ EKeyboardEvent Event_SDL::GetKeyboardEvent() const
 
 EKeyboardKey Event_SDL::GetKeyboardKey() const
 {
-	switch (m_pSDLEvent->key.keysym.sym)
-	{
-		case SDLK_UP:			return KEY_UP;
-		case SDLK_RIGHT:		return KEY_RIGHT;
-		case SDLK_DOWN:			return KEY_DOWN;
-		case SDLK_LEFT:			return KEY_LEFT;
-		case SDLK_SPACE:		return KEY_SPACE;
-
-		case SDLK_INSERT:		return KEY_INSERT;
-		case SDLK_DELETE:		return KEY_DELETE;
-		case SDLK_HOME:			return KEY_HOME;
-		case SDLK_END:			return KEY_END;
-		case SDLK_PAGEUP:		return KEY_PAGEUP;
-		case SDLK_PAGEDOWN:		return KEY_PAGEDOWN;
-
-		case SDLK_RETURN:		return KEY_ENTER;
-		case SDLK_ESCAPE:		return KEY_ESC;
-
-		case SDLK_F1:			return KEY_F1;
-		case SDLK_F2:			return KEY_F2;
-		case SDLK_F3:			return KEY_F3;
-		case SDLK_F4:			return KEY_F4;
-
-		default:				return EKeyboardKey_Error;
-	}
+	return s_eSDLKeyToKeyboardKey[m_pSDLEvent->key.keysym.sym];
 }
 
 void Event_SDL::GetResizeEvent(sint32& w, sint32& h) const
@@ -167,3 +156,9 @@ void Event_SDL::GetResizeEvent(sint32& w, sint32& h) const
 	w = m_pSDLEvent->resize.w;
 	h = m_pSDLEvent->resize.h;
 }
+
+uint16 Event_SDL::GetKeyboardChar() const
+{
+	return m_pSDLEvent->key.keysym.unicode;
+}
+

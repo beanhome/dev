@@ -19,8 +19,7 @@ WBackground::WBackground(Widget& oParent, const Desc& oDesc, sint32 id, const st
 
 void WBackground::Init()
 {
-	string sPath= FormatString("%s%s", DATA_DIR, m_oDesc.sPath);
-	m_pImageResource = GetGEngine()->GetImageResource(sPath.c_str());
+	m_pImageResource = GetGEngine()->GetImageResource(m_oDesc.sPath);
 }
 
 WBackground::~WBackground()
@@ -32,11 +31,14 @@ void WBackground::Draw() const
 	uint16 w = m_pImageResource->GetWidth();
 	uint16 h = m_pImageResource->GetHeight();
 
-	for (uint16 i=0 ; i<GetWidth()/w+2 ; ++i)
+	if (w>0 && h>0)
 	{
-		for (uint16 j=0 ; j<GetHeight()/h+2 ; ++j)
+		for (uint16 i=0 ; i<GetWidth()/w+2 ; ++i)
 		{
-			DrawImage(*m_pImageResource, i*w + w/2, j*h + h/2, w, h, 0, 0, w, h);
+			for (uint16 j=0 ; j<GetHeight()/h+2 ; ++j)
+			{
+				DrawImage(*m_pImageResource, i*w, j*h, w, h, 0, 0, w, h);
+			}
 		}
 	}
 

@@ -7,13 +7,22 @@
 #include "Utils.h"
 #include "WidgetCommon.h"
 #include "Color.h"
+#include "Functor.h"
 
+class Event;
 
 class Widget : public Canvas
 {
 public:
+	struct Desc
+	{
+	};
+
+public:
 	Widget(CanvasBase& oParent, sint32 id = -1, const string& sName = "unknow");
 	Widget(Widget& oParent, sint32 id = -1, const string& sName = "unknow");
+	Widget(CanvasBase& oParent, const Desc& oDesc, sint32 id = -1, const string& sName = "unknow");
+	Widget(Widget& oParent, const Desc& oDesc, sint32 id = -1, const string& sName = "unknow");
 	void Init();
 
 	~Widget();
@@ -29,6 +38,8 @@ public:
 public:
 	template<typename T>
 	Widget* AddNewChild(typename T::Desc oDesc, sint32 id = -1, const string& sName = "unknow");
+
+	const string& GetName() const { return m_sName; }
 
 	Widget* GetWidgetParent() { return m_pWidgetParent; }
 	const Widget* GetWidgetParent() const { return m_pWidgetParent; }
@@ -88,6 +99,19 @@ public:
 	virtual Widget* GetParentRef() { return this; }
 	virtual void InsertChild(Widget* pChild);
 
+	void UpdateFocus();
+	bool HasFocus() const { return m_eFocus == WidgetFocusState::In; }
+	virtual void CatchEvent(Event* pEvent);
+
+	template<typename Owner>
+	void SetOnFocusEnterEvent(Owner* pOwner, typename Functor<Owner>::Function pFunction) { m_pOnFocusEnterFunctor = new Functor<Owner>(pOwner, pFunction); }
+	template<typename Owner>
+	void SetOnFocusExitEvent(Owner* pOwner, typename Functor<Owner>::Function pFunction) { m_pOnFocusExitFunctor = new Functor<Owner>(pOwner, pFunction); }
+
+protected:
+	virtual void OnFocusEnter()	{	if (m_pOnFocusEnterFunctor != NULL)	(*m_pOnFocusEnterFunctor)(this);	}
+	virtual void OnFocusExit()	{	if (m_pOnFocusExitFunctor != NULL)	(*m_pOnFocusExitFunctor)(this);		}
+
 protected:
 	WidgetDimState::Type m_eDimState;
 	sint32 m_id;
@@ -97,6 +121,7 @@ protected:
 
 private:
 	Widget* m_pWidgetParent;
+	WidgetFocusState::Type m_eFocus;
 
 	WidgetOffset m_oHorizOffset;
 	WidgetOffset m_oVertiOffset;
@@ -105,6 +130,9 @@ private:
 	sint32 m_iMaxWidth;
 	sint32 m_iMinHeight;
 	sint32 m_iMaxHeight;
+
+	Functor_Base* m_pOnFocusEnterFunctor;
+	Functor_Base* m_pOnFocusExitFunctor;
 };
 
 

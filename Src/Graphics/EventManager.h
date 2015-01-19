@@ -13,9 +13,9 @@ class EventManager
 		EventManager(GEngine& ge);
 		~EventManager();
 
-		void					Update();
+		void					Update(float dt);
 		
-		EKeyboardEvent			GetVirtualKey(EKeyboardKey eKey) const { return m_aVirtualKey[eKey]; }
+		EKeyboardEvent			GetVirtualKey(EKeyboardKey eKey) const { return m_aVirtualKey[eKey].m_eState; }
 
 		sint32					GetMouseX() const { return m_iMouseX; }
 		sint32					GetMouseY() const { return m_iMouseY; }
@@ -23,7 +23,16 @@ class EventManager
 	private:
 		GEngine& m_oEngine;
 
-		EKeyboardEvent m_aVirtualKey[EKeyboardKey_Max];
+		struct VirtualKey
+		{
+			EKeyboardEvent m_eState;
+			float m_fDuration;
+			uint16 m_cChar;
+
+			VirtualKey() : m_eState(KeyUp), m_fDuration(0.f), m_cChar(0) {}
+		};
+
+		VirtualKey m_aVirtualKey[EKeyboardKey_Max];
 
 		sint32							m_iMouseX;
 		sint32							m_iMouseY;

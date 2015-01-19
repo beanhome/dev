@@ -17,13 +17,16 @@ class FontResource : public Resource
 		static uint32 ComputeCRC32(const Desc& oDesc);
 
 	public:
-		FontResource(GEngine* pGEngine, uint32 crc, const char* path, uint16 size);
-		FontResource(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
+		FontResource(GEngine* pGEngine, uint32 crc/*, const char* path, uint16 size*/);
+		//FontResource(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
 		~FontResource();
 
+		virtual uint16 GetSize() const = 0; /* { return m_iSize; }*/
+		virtual uint16 GetLineSkip() const = 0; /* { return m_iSize; }*/
+
 	public:
-		string			m_sPath;
-		uint16			m_iSize;
+		//string			m_sPath;
+		//uint16			m_iSize;
 };
 
 

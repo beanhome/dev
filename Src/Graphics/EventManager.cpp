@@ -12,6 +12,10 @@ EKeyboardKey EventManager::s_eMouseToKey[EMouseEvent_MAX] =
 	MOUSE_MIDDLE, /* MiddleDown */
 	MOUSE_RIGHT,  /* RightUp */
 	MOUSE_RIGHT,  /* RightDown */
+	MOUSE_WHEELUP,  /* WheelUpUp */
+	MOUSE_WHEELUP,  /* WheelUpDown */
+	MOUSE_WHEELDOWN,  /* WheelDownUp */
+	MOUSE_WHEELDOWN,  /* WheelDownDown */
 };
 
 EKeyboardEvent EventManager::s_eMouseToEvent[EMouseEvent_MAX] = 
@@ -23,36 +27,46 @@ EKeyboardEvent EventManager::s_eMouseToEvent[EMouseEvent_MAX] =
 	KeyDown,  /* MiddleDown */
 	KeyUp,    /* RightUp */
 	KeyDown,  /* RightDown */
+	KeyUp,    /* WheelUpUp */
+	KeyDown,  /* WheelUpDown */
+	KeyUp,    /* WheelDownUp */
+	KeyDown,  /* WheelDownDown */
 };
 
 
 EventManager::EventManager(GEngine& ge)
 	: m_oEngine(ge)
 {
-	for (uint i=0 ; i<EKeyboardKey_Max ; ++i)
-	{
-		m_aVirtualKey[i] = KeyUp;
-	}
 }
 
 EventManager::~EventManager()
 {
 }
 
-void EventManager::Update()
+void EventManager::Update(float dt)
 {
 	//LOG("EventManager::Update\n");
 
 	for (uint i=0 ; i<EKeyboardKey_Max ; ++i)
 	{
-		EKeyboardEvent& oKey = m_aVirtualKey[i];
-		switch (oKey)
+		VirtualKey& oKey = m_aVirtualKey[i];
+		switch (oKey.m_eState)
 		{
-			case KeyUp:			oKey = KeyUp;		break;
-			case KeyDown:		oKey = KeyDown;		break;
-			case KeyPressed:	oKey = KeyDown;		break;
-			case KeyReleased:	oKey = KeyUp;		break;
-			case KeyRepeat:		oKey = KeyDown;		break;
+			case KeyUp:			oKey.m_eState = KeyUp;		oKey.m_fDuration += dt;	break;
+			case KeyDown:		oKey.m_eState = KeyDown;	oKey.m_fDuration += dt;	break;
+			case KeyPressed:	oKey.m_eState = KeyDown;	oKey.m_fDuration = 0.f;	break;
+			case KeyReleased:	oKey.m_eState = KeyUp;		oKey.m_fDuration = 0.f;	break;
+			case KeyRepeat:		oKey.m_eState = KeyRepeat;	oKey.m_fDuration += dt;	break;
+		}
+
+		if (oKey.m_eState == KeyDown && oKey.m_fDuration > 0.5f
+		 || oKey.m_eState == KeyRepeat && oKey.m_fDuration > 0.1f)
+		{
+			oKey.m_eState = KeyRepeat;
+			oKey.m_fDuration = 0.f;
+
+			CustomEvent oRepeatEvent(KeyRepeat, (EKeyboardKey)i, oKey.m_cChar);
+			m_oEngine.ReceiveEvent(&oRepeatEvent);
 		}
 	}
 
@@ -62,33 +76,43 @@ void EventManager::Update()
 	{
 		if (pEvent->IsKeyboard())
 		{
-			EKeyboardEvent& oKey = m_aVirtualKey[pEvent->GetKeyboardKey()];
-			EKeyboardEvent oEvent = pEvent->GetKeyboardEvent();
+			EKeyboardKey eKey = pEvent->GetKeyboardKey();
+			EKeyboardEvent eEvent = pEvent->GetKeyboardEvent();
+			
+			if (eKey == EKeyboardKey_Error)
+				continue;
 
-			switch (oKey)
+			if (eEvent == EKeyboardEvent_Error)
+				continue;
+
+			VirtualKey& oKey = m_aVirtualKey[eKey];
+
+			switch (oKey.m_eState)
 			{
-				case KeyUp:			oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
-				case KeyDown:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
-				case KeyPressed:	oKey = (oEvent == KeyDown ? KeyDown		: KeyReleased);		break;
-				case KeyReleased:	oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
-				case KeyRepeat:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyUp:			oKey.m_eState = (eEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyDown:		oKey.m_eState = (eEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyPressed:	oKey.m_eState = (eEvent == KeyDown ? KeyDown	: KeyReleased);		break;
+				case KeyReleased:	oKey.m_eState = (eEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyRepeat:		oKey.m_eState = (eEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
 			}
+
+			oKey.m_cChar = pEvent->GetKeyboardChar();
 		}
 
 		if (pEvent->IsMouse())
 		{
 			pEvent->GetMouseMove(m_iMouseX, m_iMouseY);
 
-			EKeyboardEvent& oKey = m_aVirtualKey[s_eMouseToKey[pEvent->GetMouseEvent()]];
+			VirtualKey& oKey = m_aVirtualKey[s_eMouseToKey[pEvent->GetMouseEvent()]];
 			EKeyboardEvent& oEvent = s_eMouseToEvent[pEvent->GetMouseEvent()];
 
-			switch (oKey)
+			switch (oKey.m_eState)
 			{
-				case KeyUp:			oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
-				case KeyDown:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
-				case KeyPressed:	oKey = (oEvent == KeyDown ? KeyDown		: KeyReleased);		break;
-				case KeyReleased:	oKey = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
-				case KeyRepeat:		oKey = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyUp:			oKey.m_eState = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyDown:		oKey.m_eState = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyPressed:	oKey.m_eState = (oEvent == KeyDown ? KeyDown	: KeyReleased);		break;
+				case KeyReleased:	oKey.m_eState = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyRepeat:		oKey.m_eState = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
 			}
 		}
 

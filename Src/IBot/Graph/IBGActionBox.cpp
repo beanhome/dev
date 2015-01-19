@@ -16,7 +16,7 @@ void IBGActionBox::Resize()
 	int hl = IBGPlanner::s_iActionLinkSpace * m_pAction->GetPreCond().size();
 	int hv = (IBGPlanner::s_iActionVarHeight + IBGPlanner::s_iActionVarSpace) * m_pAction->GetVariables().size();
 
-	int w, h;
+	sint32 w, h;
 	m_oCanvas.CanvasBase::TextSize(w, h, m_oCanvas.GetPrintFont(), IBGPlanner::s_iActionTitleSize, m_pAction->GetDef()->GetName().c_str());
 	int width = std::max<int>(IBGPlanner::s_iActionMinWidth, w+4);
 

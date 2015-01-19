@@ -11,16 +11,20 @@
 #include "Component\WText.h"
 #include "Component\WWindow.h"
 #include "Component\WBackground.h"
+#include "Component\WButton.h"
+#include "Component\WSimpleWindow.h"
+#include "Component\WEditBox.h"
+#include "Functor.h"
 
 WidgetEditor::WidgetEditor(int w, int h, const char* rootpath)
 	: GApp<GEngine_SDL>(w, h, rootpath)
 {
-	m_pMainWin = new WBackground(*m_pEngine, WBackground::Desc("Widget/bg.png"), 0, "main");
+	m_pMainWin = new WBackground(*m_pEngine, WBackground::Desc("bg.png"), 0, "main");
 	//m_pMainWin = new WDebug(m_oGEngine, WDebug::Desc(), 0, "main");
 	//m_pMainWin->SetOrigX(50);
 	//m_pMainWin->SetOrigY(50);
 
-	m_pEngine->SetPrintFont(FONT_PATH, 14);
+	m_pEngine->SetPrintFont("Arial.ttf", 14);
 	m_pMainWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 10));
 	m_pMainWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, -10));
 	m_pMainWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
@@ -44,7 +48,8 @@ WidgetEditor::~WidgetEditor()
 
 void WidgetEditor::InitBase()
 {
-	Widget* pWin1 = m_pMainWin->AddNewChild<WWindow>(WWindow::Desc("Widget/win_", "png", 11, 10, 11, 19), 0, "sub1");
+	//Widget* pWin1 = m_pMainWin->AddNewChild<WWindow>(WWindow::Desc("win_", "png", 6, 7, 6, 8), 0, "sub1");
+	Widget* pWin1 = m_pMainWin->AddNewChild<WSimpleWindow>(WSimpleWindow::Desc("window.png", 12), 0, "sub1");
 	pWin1->SetMinWidth(50);
 	pWin1->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.5f));
 	pWin1->SetSideProp(SideEnum::Right,		WidgetSide::ChildRef(1, 0.f, 55));
@@ -52,7 +57,7 @@ void WidgetEditor::InitBase()
 	pWin1->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(0.75f, -30));
 	pWin1->SetHorizOffset(-0.5f, 0);
 
-	Widget* pWin11 = pWin1->AddNewChild<WDebug>(WDebug::Desc(), 0, "sub11");
+	Widget* pWin11 = pWin1->AddNewChild<WEditBox>(WEditBox::Desc("editbox.png", 8, "Lorem ipsum dolor sit amet", 12, LeftTop, 128, 128, 128, "calibrib.ttf"), 0, "sub11");
 	pWin11->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 5));
 	pWin11->SetSideProp(SideEnum::Right,	WidgetSide::SelfRef(100));
 	pWin11->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 5));
@@ -64,19 +69,48 @@ void WidgetEditor::InitBase()
 	pWin12->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 5));
 	pWin12->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
 
-	Widget* pWin2 = m_pMainWin->AddNewChild<WText>(WText::Desc("Lorem ipsum dolor sit amet"), 1, "sub2");
+	Widget* pWin2 = m_pMainWin->AddNewChild<WText>(WText::Desc("Lorem ipsum dolor sit amet", 12, LeftTop, 128, 128, 128, "calibrib.ttf"), 1, "sub2");
 	pWin2->SetSideProp(SideEnum::Left,		WidgetSide::BrotherRef(0, 1.f, 10));
 	pWin2->SetSideProp(SideEnum::Right,		WidgetSide::SelfRef(100));
 	pWin2->SetSideProp(SideEnum::Top,		WidgetSide::BrotherRef(0, 0.f, 40));
 	pWin2->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef());
 
-	Widget* pWin3 = m_pMainWin->AddNewChild<WImage>(WImage::Desc("Test/small_01.png"), 2, "sub3");
-	pWin3->SetSideProp(SideEnum::Left,		WidgetSide::SelfRef());
-	pWin3->SetSideProp(SideEnum::Right,		WidgetSide::ParentRef(1.f, -10));
-	pWin3->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.5f));
+	WButton* pWin3 = (WButton*) m_pMainWin->AddNewChild<WButton>(WButton::Desc("button_", ".png", 8), 2, "sub3");
+	pWin3->SetSideProp(SideEnum::Left,		WidgetSide::BrotherRef(0, 1.f, 10));
+	pWin3->SetSideProp(SideEnum::Right,		WidgetSide::SelfRef());
+	pWin3->SetSideProp(SideEnum::Top,		WidgetSide::BrotherRef(1, 1.f, 10));
 	pWin3->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef());
-	pWin3->SetVertiOffset(-0.5f, 0);
+	pWin3->SetOnFocusEnterEvent<WidgetEditor>(this, &WidgetEditor::OnEnter);
+	pWin3->SetOnFocusExitEvent<WidgetEditor>(this, &WidgetEditor::OnExit);
+	pWin3->SetOnClickEvent<WidgetEditor>(this, &WidgetEditor::OnClick);
+
+	Widget* pWin31 = pWin3->AddNewChild<WText>(WText::Desc("Button", 12, Center, 128, 128, 128, "calibrib.ttf"), 0, "sub31");
+
+	/*
+	Widget* pWin4 = m_pMainWin->AddNewChild<WImage>(WImage::Desc("Test/small_01.png"), 3, "sub4");
+	pWin4->SetSideProp(SideEnum::Left,		WidgetSide::SelfRef());
+	pWin4->SetSideProp(SideEnum::Right,		WidgetSide::ParentRef(1.f, -10));
+	pWin4->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.5f));
+	pWin4->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef());
+	pWin4->SetVertiOffset(-0.5f, 0);
+	*/
 }
+
+void WidgetEditor::OnClick(Widget* pWidget)
+{
+	LOG("OnClick : %s\n", pWidget->GetName().c_str());
+}
+
+void WidgetEditor::OnEnter(Widget* pWidget)
+{
+	LOG("OnEnter : %s\n", pWidget->GetName().c_str());
+}
+
+void WidgetEditor::OnExit(Widget* pWidget)
+{
+	LOG("OnExit : %s\n", pWidget->GetName().c_str());
+}
+
 
 int WidgetEditor::Update(float dt)
 {
@@ -111,12 +145,14 @@ int WidgetEditor::Draw()
 {
 	m_pMainWin->Draw();
 
+	/*
 	if (m_pNearestSide != NULL)
 	{
 		DrawWidget(m_pNearestSide->GetWidget(), false, 192, 192, 192);
-		DrawWidget(m_pNearestSide->GetWidget(), true, 255, 255, 255);
+		DrawWidget(m_pNearestSide->GetWidget(), true, 96, 96, 96);
 		DrawSide(m_pNearestSide);
 	}
+	*/
 
 	return 0;
 }
@@ -130,7 +166,33 @@ void WidgetEditor::CatchEvent(Event* pEvent)
 		m_pMainWin->SetDirtySide(SideEnum::Right);
 		m_pMainWin->SetDirtySide(SideEnum::Bottom);
 	}
+
+	if (pEvent->IsMouse())
+	{
+		if (pEvent->GetMouseEvent() == MouseMove)
+			UpateFocus();
+		else
+			ForwardEvent(pEvent);
+	}
+
+	if (pEvent->IsKeyboard())
+	{
+		ForwardEvent(pEvent);
+	}
 }
+
+
+void WidgetEditor::UpateFocus()
+{
+	m_pMainWin->UpdateFocus();
+}
+
+void WidgetEditor::ForwardEvent(Event* pEvent)
+{
+	if (m_pMainWin->HasFocus())
+		m_pMainWin->CatchEvent(pEvent);
+}
+
 
 Widget* WidgetEditor::FindHoverWidget(sint32 m)
 {
@@ -163,8 +225,8 @@ void WidgetEditor::DrawWidget(const Widget* pWidget, bool bReal, uint8 r, uint8 
 void WidgetEditor::DrawSide(WidgetSide* pSide)
 {
 	sint32 x1, y1, x2, y2;
-	uint8 r = 255;
-	uint8 g = 255;
+	uint8 r = 192;
+	uint8 g = 192;
 	uint8 b = 0;
 
 	switch (pSide->GetReference())
@@ -683,8 +745,6 @@ void WidgetEditor::DrawCoeffArrow( const CanvasBase& oParent, sint32 x1, sint32 
 		break;
 	}
 }
-
-
 
 
 

@@ -5,12 +5,14 @@
 #include "Utils.h"
 #include "GApp.h"
 #include "GEngine_SDL.h"
+#include "Functor.h"
 
 class GEngine;
 class Widget;
 class WidgetSide;
 class CanvasBase;
 class Event;
+class Functor_Base;
 
 class WidgetEditor : public GApp<GEngine_SDL>
 {
@@ -43,6 +45,12 @@ private:
 	void DrawCoeffArrow(const CanvasBase& oParent, sint32 x1, sint32 y1, sint32 x2, sint32 y2, float fCoeff, Orient eOrient, uint8 r, uint8 g, uint8 b);
 
 	virtual void CatchEvent(Event* pEvent);
+	void UpateFocus();
+	void ForwardEvent(Event* pEvent);
+
+	void OnClick(Widget* pWidget);
+	void OnEnter(Widget* pWidget);
+	void OnExit(Widget* pWidget);
 
 private:
 	Widget* m_pMainWin;

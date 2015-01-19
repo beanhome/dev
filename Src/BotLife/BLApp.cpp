@@ -3,11 +3,12 @@
 #include "BLWorld.h"
 #include "BLBot.h"
 #include "BLGoalMenu.h"
-#include "Input.h"
-#include "InputEvent.h"
+#include "Event.h"
 #include "Graph/IBGPlanner.h"
 #include "Graph/IBGFact.h"
 #include "Graph/IBGFactBox.h"
+#include "GEngine.h"
+#include "EventManager.h"
 
 BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
 	: GApp<GEngine_SDL>(w, h, rootpath)
@@ -55,7 +56,7 @@ int BLApp::UpdatePause()
 
 void BLApp::UpdateUserInterface()
 {
-	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
+	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
 	{
 		if (m_pWorldCanva->IsMouseInside())
 		{
@@ -121,21 +122,21 @@ void BLApp::UpdateUserInterface()
 
 	IBGPlanner& oPlanner = (IBGPlanner&)m_pWorld->GetBot().GetPlanner();
 
-	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
+	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
 	{
 		if (m_pWorldCanva->IsMouseInside())
 			m_pWorld->StartDrag();
 		else if (m_pGraphCanva->IsMouseInside())
 			oPlanner.StartDrag();
 	}
-	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
+	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
 	{
 		if (m_pWorld->IsDraging())
 			m_pWorld->UpdateDrag();
 		else if (oPlanner.IsDraging())
 			oPlanner.UpdateDrag();
 	}
-	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
+	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
 	{
 		m_pWorld->StopDrag();
 		oPlanner.StopDrag();

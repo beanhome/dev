@@ -29,8 +29,8 @@ void WDebug::Draw() const
 	Widget::Draw();
 
 	GetParent().DrawRect(GetPosX(), GetPosY(), m_iWidth-1, m_iHeight-1, s_oStateColor[m_eDimState].r, s_oStateColor[m_eDimState].g, s_oStateColor[m_eDimState].b);
-	GetParent().Print(GetPosX()+2, GetPosY()+2, GetPrintFont(), 15, LeftTop, 255, 255, 255, m_sName.c_str());
+	GetParent().Print(GetPosX()+2, GetPosY()+2, GetPrintFont(), 15, LeftTop, 196, 128, 128, m_sName.c_str());
 
 	//DrawRect(0, 0, m_iWidth-1, m_iHeight-1, s_oStateColor[m_eDimState].r, s_oStateColor[m_eDimState].g, s_oStateColor[m_eDimState].b);
-	//Print(2, 2, GetPrintFont(), 15, LeftTop, 255, 255, 255, m_sName.c_str());
+	//Print(2, 2, GetPrintFont(), 15, LeftTop, 0, 0, 0, m_sName.c_str());
 }

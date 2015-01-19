@@ -20,8 +20,7 @@ WImage::WImage(Widget& oParent, WImage::Desc oDesc, sint32 id, const string& sNa
 
 void WImage::Init()
 {
-	string sPath= FormatString("%s%s", DATA_DIR, m_oDesc.sPath);
-	m_pImageResource = GetGEngine()->GetImageResource(sPath.c_str());
+	m_pImageResource = GetGEngine()->GetImageResource(m_oDesc.sPath);
 }
 
 
@@ -32,7 +31,7 @@ WImage::~WImage()
 
 void WImage::Draw() const
 {
-	DrawImage(*m_pImageResource, GetWidth()/2, GetHeight()/2, GetWidth(), GetHeight(), 0, 0, m_pImageResource->GetWidth(), m_pImageResource->GetHeight());
+	DrawImage(*m_pImageResource, 0, 0, GetWidth(), GetHeight(), 0, 0, m_pImageResource->GetWidth(), m_pImageResource->GetHeight());
 
 	Widget::Draw();
 }

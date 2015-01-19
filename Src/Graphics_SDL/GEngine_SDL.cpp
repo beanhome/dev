@@ -145,6 +145,8 @@ uint GEngine_SDL::Init()
 		return 1;
 	}
 
+	SDL_EnableUNICODE(1);
+
 	LOG("SDL Set Video Mode.\n");
 	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, m_iDepth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT | SDL_RESIZABLE);
 	if (m_pScreen == NULL)
@@ -219,8 +221,10 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y) con
 		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
 
 	SDL_Rect oLoc;
-	oLoc.x = (sint16)(x - image->w / 2);
-	oLoc.y = (sint16)(y - image->h / 2);
+	//oLoc.x = (sint16)(x - image->w / 2);
+	//oLoc.y = (sint16)(y - image->h / 2);
+	oLoc.x = (sint16)x;
+	oLoc.y = (sint16)y;
 	oLoc.w = (uint16)image->w;
 	oLoc.h = (uint16)image->h;
 
@@ -245,8 +249,10 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, flo
 		return;
 
 	SDL_Rect oLoc;
-	oLoc.x = (sint16)(x - pOutput->w / 2);
-	oLoc.y = (sint16)(y - pOutput->h / 2);
+	//oLoc.x = (sint16)(x - pOutput->w / 2);
+	//oLoc.y = (sint16)(y - pOutput->h / 2);
+	oLoc.x = (sint16)x;
+	oLoc.y = (sint16)y;
 	oLoc.w = (uint16)pOutput->w;
 	oLoc.h = (uint16)pOutput->h;
 
@@ -277,8 +283,10 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, uin
 			return;
 
 		SDL_Rect oDestRect;
-		oDestRect.x = (sint16)(x - w / 2);
-		oDestRect.y = (sint16)(y - h / 2);
+		//oDestRect.x = (sint16)(x - w / 2);
+		//oDestRect.y = (sint16)(y - h / 2);
+		oDestRect.x = (sint16)x;
+		oDestRect.y = (sint16)y;
 		oDestRect.w = w;
 		oDestRect.h = h;
 
@@ -297,8 +305,10 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, uin
 	else
 	{
 		SDL_Rect oDestRect;
-		oDestRect.x = (sint16)(x - w / 2);
-		oDestRect.y = (sint16)(y - h / 2);
+		//oDestRect.x = (sint16)(x - w / 2);
+		//oDestRect.y = (sint16)(y - h / 2);
+		oDestRect.x = (sint16)x;
+		oDestRect.y = (sint16)y;
 		oDestRect.w = w;
 		oDestRect.h = h;
 
@@ -350,11 +360,17 @@ void GEngine_SDL::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, 
 	lineRGBA(m_pScreen, (sint16)x1, (sint16)y1, (sint16)x2, (sint16)y2, r, g, b, 255);
 }
 
-void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, va_list oArgs) const
+void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, va_list oArgs) const
 {
 	ASSERT(sFontPath != NULL);
 
 	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
+
+	if (pFont->m_pFont == NULL)
+	{
+		w = h = 0;
+		return;
+	}
 
 #ifdef _WIN32
 	int ln = _vscprintf(format, oArgs) + 1;
@@ -374,11 +390,14 @@ void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint
 	delete [] str;
 }
 
-void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
+void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	ASSERT(sFontPath != NULL);
 
 	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
+
+	if (pFont->m_pFont == NULL)
+		return;
 
 #ifdef _WIN32
 	int ln = _vscprintf(format, oArgs) + 1;
@@ -405,8 +424,8 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size
 	if (texte == NULL)
 		return;
 
-	uint16 iWidth = (uint16)texte->w;
-	uint16 iHeight = (uint16)texte->h;
+	uint16 w = (uint16)texte->w;
+	uint16 h = (uint16)texte->h;
 
 	SDL_Rect position;
 	position.x = (sint16)x;
@@ -414,45 +433,22 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint size
 
 	switch (eAlign)
 	{
-		case LeftTop:
-		case LeftCenter:
-		case LeftBottom:
-			position.x = (sint16)x;
-			break;
-
-		case CenterTop:
-		case Center:
-		case CenterBottom:
-			position.x = (sint16)(x - iWidth / 2);	
-			break;
-
-		case RightTop:
-		case RightCenter:
-		case RightBottom:
-			position.x = (sint16)(x - iWidth);		
-			break;
+		case LeftTop:		position.x = (sint16)x;				position.y = (sint16)y;				break;
+		case LeftCenter:	position.x = (sint16)x;				position.y = (sint16)(y - h / 2);	break;
+		case LeftBottom:	position.x = (sint16)x;				position.y = (sint16)(y - h);		break;
+		case CenterTop:		position.x = (sint16)(x - w / 2);	position.y = (sint16)y;				break;
+		case Center:		position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h / 2);	break;
+		case CenterBottom:	position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h);		break;
+		case RightTop:		position.x = (sint16)(x - w);		position.y = (sint16)y;				break;
+		case RightCenter:	position.x = (sint16)(x - w);		position.y = (sint16)(y - h / 2);	break;
+		case RightBottom:	position.x = (sint16)(x - w);		position.y = (sint16)(y - h);		break;
 	}
 
-	switch (eAlign)
-	{
-		case LeftTop:
-		case CenterTop:
-		case RightTop:
-			position.y = (sint16)y;
-			break;
-
-		case LeftCenter:
-		case Center:
-		case RightCenter:
-			position.y = (sint16)(y - iHeight / 2);
-			break;
-
-		case LeftBottom:
-		case CenterBottom:
-		case RightBottom:
-			position.y = (sint16)(y - iHeight);
-			break;
-	}
+	/*
+	position.w = w;
+	position.h = h;
+	SDL_FillRect(m_pScreen, &position, SDL_MapRGB(m_pScreen->format, 255, 0, 255));
+	*/
 
 	SDL_BlitSurface(texte, NULL, m_pScreen, &position); 
 

@@ -24,7 +24,7 @@ CanvasBase::~CanvasBase()
 {
 }
 
-void CanvasBase::TextSize(sint32& w, sint32& h, const char* sFontPath, uint size, const char* format, ...) const
+void CanvasBase::TextSize(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, ...) const
 {
 	va_list oArgs;
 	va_start(oArgs, format);
@@ -35,7 +35,7 @@ void CanvasBase::TextSize(sint32& w, sint32& h, const char* sFontPath, uint size
 }
 
 
-void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const
+void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const
 {
 	va_list oArgs;
 	va_start(oArgs, format);
@@ -45,7 +45,7 @@ void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETe
 	va_end(oArgs);
 }
 
-void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor, const char* format, ... ) const
+void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, const Color& oColor, const char* format, ... ) const
 {
 	va_list oArgs;
 	va_start(oArgs, format);
@@ -55,7 +55,7 @@ void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint size, ETe
 	va_end(oArgs);
 }
 
-void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign, const Color& oColor)
+void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, const Color& oColor)
 {
 	m_oPrintParam.x = x;
 	m_oPrintParam.y = y;
@@ -65,7 +65,7 @@ void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, ui
 	m_oPrintParam.oColor = oColor;
 }
 
-void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint size, ETextAlign eAlign)
+void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign)
 {
 	m_oPrintParam.x = x;
 	m_oPrintParam.y = y;
@@ -86,7 +86,7 @@ void CanvasBase::SetPrintPos(sint32 x, sint32 y)
 	m_oPrintParam.y = y;
 }
 
-void CanvasBase::SetPrintFont(const char* sFontPath, uint size)
+void CanvasBase::SetPrintFont(const char* sFontPath, uint16 size)
 {
 	m_oPrintParam.sFontPath = sFontPath;
 
@@ -99,7 +99,7 @@ const char* CanvasBase::GetPrintFont() const
 	return m_oPrintParam.sFontPath;
 }
 
-void CanvasBase::SetPrintSize(uint size)
+void CanvasBase::SetPrintSize(uint16 size)
 {
 	m_oPrintParam.size = size;
 }

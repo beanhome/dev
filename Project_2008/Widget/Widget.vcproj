@@ -184,6 +184,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Widget\Component\WButton.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WButton.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Widget\Component\WDebug.cpp"
 				>
 			</File>
@@ -192,11 +200,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Src\Widget\Component\WEditBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WEditBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WEditText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WEditText.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Src\Widget\Component\WImage.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\Src\Widget\Component\WImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WSimpleWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\Widget\Component\WSimpleWindow.h"
 				>
 			</File>
 			<File

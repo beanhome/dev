@@ -80,6 +80,23 @@ namespace WidgetSelfReference
 
 }
 
+namespace WidgetFocusState
+{
+	enum Type
+	{
+		Out,
+		In,
+
+		Num
+	};
+
+	static char* ToString[Num] =
+	{
+		"Out",
+		"In",
+	};
+}
+
 #endif
 
 

@@ -2,7 +2,7 @@
 #include "CanvasBase.h"
 #include "Canvas.h"
 #include "BLBot.h"
-#include "InputEvent.h"
+#include "Event.h"
 #include "GEngine.h"
 #include "World/BLProp.h"
 #include "Path.h"

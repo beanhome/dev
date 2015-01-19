@@ -4,8 +4,8 @@
 #include "Map/BLMap.h"
 #include "Canvas.h"
 #include "GEngine.h"
-#include "InputEvent.h"
-#include "Input.h"
+#include "Event.h"
+#include "EventManager.h"
 
 MapViewApp::MapViewApp(int w, int h, const char* rootpath, int sx, int sy, const char* name)
 	: GApp<GEngine_SDL>(w, h, rootpath)
@@ -45,13 +45,13 @@ MapViewApp::~MapViewApp()
 
 int MapViewApp::Update(float dt)
 {
-	if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
+	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
 	{
 		m_iStartDragX = m_pEngine->GetMouseX() + m_pCanvas->GetOrigX();
 		m_iStartDragY = m_pEngine->GetMouseY() + m_pCanvas->GetOrigY();
 		m_bDrag = true;
 	}
-	else if (m_pEngine->GetInput()->GetVirtualKey(MOUSE_LEFT) == KeyDown)
+	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyDown)
 	{
 		sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_pEngine->GetMouseX(), 0, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_pCanvas->GetWidth(), 0));
 		sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_pEngine->GetMouseY(), 0, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_pCanvas->GetHeight(), 0));

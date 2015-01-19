@@ -4,19 +4,19 @@
 #include "GEngine.h"
 
 FontResource_SDL::FontResource_SDL(GEngine* pGEngine, uint32 crc, const char* path, uint16 size)
-	: FontResource(pGEngine, crc, path, size)
+	: FontResource(pGEngine, crc/*, path, size*/)
 	, m_pFont(NULL)
 {
-	string sPath = FormatString("%s%s%s", pGEngine->GetRootPath(), (pGEngine->GetRootPath()[strlen(pGEngine->GetRootPath())-1] == '/' ? "" : "/"), path);
-	m_pFont = TTF_OpenFont(sPath.c_str(), m_iSize);
+	string sPath = FormatString("%s%s", pGEngine->GetRootPath().c_str(), path);
+	m_pFont = TTF_OpenFont(sPath.c_str(), size);
 }
 
 FontResource_SDL::FontResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc)
-	: FontResource(pGEngine, crc, oDesc)
+	: FontResource(pGEngine, crc/*, oDesc*/)
 	, m_pFont(NULL)
 {
-	string sPath = FormatString("%s%s%s", pGEngine->GetRootPath(), (pGEngine->GetRootPath()[strlen(pGEngine->GetRootPath())-1] == '/' ? "" : "/"), oDesc.path);
-	m_pFont = TTF_OpenFont(sPath.c_str(), m_iSize);
+	string sPath = FormatString("%s%s", pGEngine->GetRootPath().c_str(), oDesc.path);
+	m_pFont = TTF_OpenFont(sPath.c_str(), oDesc.size);
 }
 
 
@@ -24,4 +24,15 @@ FontResource_SDL::~FontResource_SDL()
 {
 	TTF_CloseFont(m_pFont);
 }
+
+uint16 FontResource_SDL::GetSize() const
+{
+	return (uint16)TTF_FontHeight(m_pFont);
+}
+
+uint16 FontResource_SDL::GetLineSkip() const
+{
+	return (uint16)TTF_FontLineSkip(m_pFont);
+}
+
 
