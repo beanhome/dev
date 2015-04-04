@@ -13,6 +13,8 @@ SRC= \
 	Canvas.cpp \
 	CanvasBase.cpp \
 	Color.cpp \
+	Event.cpp \
+	EventManager.cpp \
 	FontResource.cpp \
 	GApp.cpp \
 	GEngine.cpp \
@@ -20,8 +22,6 @@ SRC= \
 	ImageFlipBook.cpp \
 	ImageResource.cpp \
 	ImageRotoZoom.cpp \
-	Input.cpp \
-	InputEvent.cpp \
 	Resource.cpp \
 
 

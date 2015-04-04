@@ -14,7 +14,7 @@ namespace SideEnum
 		Num
 	};
 
-	static char* ToString[Num] = 
+	static char const* ToString[Num] = 
 	{
 		"Left",
 		"Right",
@@ -34,7 +34,7 @@ namespace WidgetDimState
 		Num
 	};
 
-	static char* ToString[Num] =
+	static char const* ToString[Num] =
 	{
 		"Unknow",
 		"Process",
@@ -54,7 +54,7 @@ namespace WidgetReference
 		Num
 	};
 
-	static char* ToString[Num] =
+	static char const* ToString[Num] =
 	{
 		"Parent",
 		"Self",
@@ -72,7 +72,7 @@ namespace WidgetSelfReference
 		Num
 	};
 
-	static char* ToString[Num] =
+	static char const* ToString[Num] =
 	{
 		"Auto",
 		"Fix"
@@ -90,7 +90,7 @@ namespace WidgetFocusState
 		Num
 	};
 
-	static char* ToString[Num] =
+	static char const* ToString[Num] =
 	{
 		"Out",
 		"In",

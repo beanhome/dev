@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <iostream>
+#include <typeinfo>
 
 #include "Utils.h"
 #include "Alloc.h"

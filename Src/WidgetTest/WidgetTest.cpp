@@ -3,8 +3,11 @@
 #include "GEngine_SDL.h"
 #include "WidgetEditor.h"
 
-
+#ifdef _WIN32
 extern "C" int SDL_main(int argc, char *argv[])
+#else
+int main(int argc, char *argv[])
+#endif
 {
 	InitLog(argc, argv);
 

@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "WidgetCommon.h"
 
+class Widget;
 
 class WidgetSide
 {

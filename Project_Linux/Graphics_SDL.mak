@@ -4,10 +4,10 @@
 
 # List of source file (SRC_PATH relative)
 SRC= \
+	Event_SDL.cpp \
 	FontResource_SDL.cpp \
 	GEngine_SDL.cpp \
 	ImageResource_SDL.cpp \
-	InputEvent_SDL.cpp \
 
 # List of include dir (ROOT relative)
 INC_DIR = \
@@ -16,7 +16,7 @@ INC_DIR = \
 	/usr/include/SDL \
 
 # Option optionnal for the compilation
-# OPTION = 
+OPTION = -std=c++11
 
 # Additionnal library for the final link
 LIB_DEP= \

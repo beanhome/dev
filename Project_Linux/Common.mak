@@ -18,7 +18,7 @@ SRC= \
 	Vector2.cpp 
 
 # Option optionnal for the compilation
-# OPTION = 
+OPTION = -fpermissive
 
 # List of include dir (ROOT relative)
 INC_DIR =
