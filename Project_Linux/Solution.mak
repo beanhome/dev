@@ -21,6 +21,8 @@
 
 PROJECT += $(MAIN)
 
+ROOTDIR = $(CURDIR)/$(ROOT)
+
 # function reverse
 reverse = $(if $(wordlist 2,2,$(1)),$(call reverse,$(wordlist 2,$(words $(1)),$(1))) $(firstword $(1)),$(1))
 
@@ -54,7 +56,7 @@ endif
 
 
 # define path
-BUILD_PATH = $(ROOT)Build/$(PLATFORM)/
+BUILD_PATH = $(ROOTDIR)Build/$(PLATFORM)/
 EXE_PATH = $(BUILD_PATH)exe/$(VERSION)/
 EXE = $(EXE_PATH)$(MAIN)$(EXE_EXT)
 
@@ -69,7 +71,7 @@ debug: all
 release: all
 
 # Copy the project makefile with specific name
-$(BUILD_PATH)mak/%.mak: $(ROOT)Project_$(PLATFORM)/%.mak
+$(BUILD_PATH)mak/%.mak: $(ROOTDIR)Project_$(PLATFORM)/%.mak
 	@echo 'Generate $*.mak'
 	@mkdir -p $(dir $@)
 	@sed -e 's/\([_A-Za-z]\+\) *=/$*_\1=/' $^ > $@
@@ -84,14 +86,14 @@ $(1)_MAK= $(BUILD_PATH)mak/$(1).mak
 $(1)_LIB= $(BUILD_PATH)lib/$(LIB_PREFIX)$(1)$(LIB_POSTFIX)$(LIB_EXT)
 $(1)_DEP_PATH= $(BUILD_PATH)dep/$(1)/$(VERSION)/
 $(1)_OBJ_PATH= $(BUILD_PATH)obj/$(1)/$(VERSION)/
-$(1)_SRC_PATH= $(if $($(1)_SRC_PATH), $(ROOT)$($(1)_SRC_PATH), $(if $($(1)_EXTERN), $(ROOT)External/$(1)/, $(ROOT)Src/$(1)/))
+$(1)_SRC_PATH= $(if $($(1)_SRC_PATH), $(ROOTDIR)$($(1)_SRC_PATH), $(if $($(1)_EXTERN), $(ROOTDIR)External/$(1)/, $(ROOTDIR)Src/$(1)/))
 $(1)_SRCEXT = $(if $($(1)_C), c, cpp)
 $(1)_CC= $(if $($(1)_C), $(CC), $(CPPC))
 endef
 
 # Generate the other var of each project
 define PROJECT_var2
-$(1)_INC= -I $($(1)_SRC_PATH) $(foreach i,$($(1)_INC_DIR), -I $(if $(realpath $i),$i,$(ROOT)$i)) 
+$(1)_INC= -I $($(1)_SRC_PATH) $(foreach i,$($(1)_INC_DIR), -I $(if $(realpath $i),$i,$(ROOTDIR)$i)) 
 $(1)_OBJS= $(foreach f,$($(1)_SRC),$($(1)_OBJ_PATH)$(basename $f).o)
 ALL_LIB+= $($(1)_LIB)
 OTHER_LIB += $($(1)_LIB_DEP)
@@ -99,7 +101,7 @@ endef
 
 # Some Test to eject the generation
 define PROJECT_test
-$(if $(wildcard $(ROOT)Project_$(PLATFORM)/$(1).mak), , $(error $(ROOT)Project_$(PLATFORM)/$(1).mak no exist))
+$(if $(wildcard $(ROOTDIR)Project_$(PLATFORM)/$(1).mak), , $(error $(ROOTDIR)Project_$(PLATFORM)/$(1).mak no exist))
 endef
 
 # Project rules
@@ -160,6 +162,7 @@ $(EXE): $(ALL_LIB)
 clean:
 	@rm -rf $(BUILD_PATH)
 
-
+test:
+	@echo $(ROOTDIR)
 
 
