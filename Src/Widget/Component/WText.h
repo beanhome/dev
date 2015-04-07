@@ -6,6 +6,7 @@
 #include "Widget.h"
 
 class ImageResource;
+class FontResource;
 
 class WText : public Widget
 {

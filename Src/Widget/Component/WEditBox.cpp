@@ -7,7 +7,8 @@
 #include "WEditText.h"
 
 WEditBox::WEditBox(CanvasBase& oParent, WEditBox::Desc oDesc, sint32 id, const string& sName)
-: WSimpleWindow(oParent, WSimpleWindow::Desc(oDesc.sImgPath, 0), id, sName)
+	: WSimpleWindow(oParent, WSimpleWindow::Desc(oDesc.sImgPath, 0), id, sName)
+	, Widget(oParent, id, sName)
 	, m_oDesc(oDesc)
 {
 	Init();
@@ -15,6 +16,7 @@ WEditBox::WEditBox(CanvasBase& oParent, WEditBox::Desc oDesc, sint32 id, const s
 
 WEditBox::WEditBox(Widget& oParent, WEditBox::Desc oDesc, sint32 id, const string& sName)
 	: WSimpleWindow(oParent, WSimpleWindow::Desc(oDesc.sImgPath, 0), id, sName)
+	, Widget(oParent, id, sName)
 	, m_oDesc(oDesc)
 {
 	Init();

@@ -48,13 +48,23 @@ private:
 	void UpateFocus();
 	void ForwardEvent(Event* pEvent);
 
+	void SelectWidget(Widget* pWidget);
+	void UnselectWidget();
+
 	void OnClick(Widget* pWidget);
 	void OnEnter(Widget* pWidget);
 	void OnExit(Widget* pWidget);
 
 private:
+	Widget* m_pRootWin;
 	Widget* m_pMainWin;
+	Widget* m_pEditWin;
+
+	Widget* m_pHoverWidget;
+	Widget* m_pSelectedWidget;
 	WidgetSide* m_pNearestSide;
+
+	bool m_bEditMode;
 };
 #endif
 

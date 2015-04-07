@@ -84,9 +84,10 @@ void WSimpleWindow::Draw() const
 	DrawImage(*m_pImageResource, rw,	0,		w-rw*2,	rh,		rw,		0,		rw, rh);
 	DrawImage(*m_pImageResource, w-rw,	0,		rw,		rh,		2*rw,	0,		rw, rh);
 
-	DrawImage(*m_pImageResource, 0,		rh,		rw,		h-rh*2, 0,		rh,		rw, rh);
-	DrawImage(*m_pImageResource, rw,	rh,		w-rw*2,	h-rh*2, rw,		rh,		rw, rh);
-	DrawImage(*m_pImageResource, w-rw,	rh,		rw,		h-rh*2, 2*rw,	rh,		rw, rh);
+	// @tofix +1 for linux
+	DrawImage(*m_pImageResource, 0,		rh,		rw,		h-rh*2+1, 0,		rh,		rw, rh);
+	DrawImage(*m_pImageResource, rw,	rh,		w-rw*2,	h-rh*2+1, rw,		rh,		rw, rh);
+	DrawImage(*m_pImageResource, w-rw,	rh,		rw,		h-rh*2+1, 2*rw,	rh,		rw, rh);
 
 	DrawImage(*m_pImageResource, 0,		h-rh,	rw,		rh,		0,		2*rh,	rw, rh);
 	DrawImage(*m_pImageResource, rw,	h-rh,	w-rw*2,	rh,		rw,		2*rh,	rw, rh);

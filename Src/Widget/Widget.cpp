@@ -97,6 +97,25 @@ void Widget::InsertChild(Widget* pChild)
 	m_vChildren.push_back(pChild);
 }
 
+void Widget::ExtractChild(Widget* pChild)
+{
+	m_vChildren.remove(pChild);
+}
+
+void Widget::RemoveChild(Widget* pChild)
+{
+	ExtractChild(pChild);
+	delete pChild;
+}
+
+void Widget::RemoveAllChildren()
+{
+	for (auto it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	{
+		Widget* pChild = *it;
+		RemoveChild(pChild);
+	}
+}
 
 sint32 Widget::GetSideDimension(SideEnum::Type eType, WidgetDimState::Type& eState)
 {
@@ -535,3 +554,4 @@ void Widget::CatchEvent(Event* pEvent)
 			pChild->CatchEvent(pEvent);
 	}
 }
+

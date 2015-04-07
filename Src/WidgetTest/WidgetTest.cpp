@@ -14,7 +14,23 @@ int main(int argc, char *argv[])
 	int w = 1280;
 	int h = 720;
 
-	WidgetEditor oWidgetEditor(w, h, "../../Data/Widget/Black/");
+	const char* path = ".";
+
+	for (int i=1 ; i<argc ; ++i)
+	{
+		if (argv[i][0] == '-')
+		{
+			ASSERT(argc > i+1);
+			switch (argv[i][1])
+			{
+				case 'w':		w = atoi(argv[i+1]);		break;
+				case 'h':		h = atoi(argv[i+1]);		break;
+				case 'p':		path = argv[i+1];			break;
+			}
+		}
+	}
+
+	WidgetEditor oWidgetEditor(w, h, path);
 
 	oWidgetEditor.Init();
 

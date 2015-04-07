@@ -39,6 +39,9 @@ public:
 	template<typename T>
 	Widget* AddNewChild(typename T::Desc oDesc, sint32 id = -1, const string& sName = "unknow");
 
+	void RemoveChild(Widget* pChild);
+	void RemoveAllChildren();
+
 	const string& GetName() const { return m_sName; }
 
 	Widget* GetWidgetParent() { return m_pWidgetParent; }
@@ -98,6 +101,7 @@ public:
 	virtual void OnDimensionChanged(SideEnum::Type eSide) {};
 	virtual Widget* GetParentRef() { return this; }
 	virtual void InsertChild(Widget* pChild);
+	virtual void ExtractChild(Widget* pChild);
 
 	void UpdateFocus();
 	bool HasFocus() const { return m_eFocus == WidgetFocusState::In; }

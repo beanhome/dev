@@ -4,8 +4,11 @@
 
 # List of source file (SRC_PATH relative)
 SRC= \
+	Component/EWWidget.cpp \
+	Component/EWSimpleWindow.cpp \
 	WidgetEditor.cpp \
 	WidgetEditor.h \
+
 
 # Option optionnal for the compilation
 OPTION = -std=c++11

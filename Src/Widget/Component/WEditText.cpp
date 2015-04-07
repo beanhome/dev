@@ -40,6 +40,8 @@ void WEditText::SetLineIndex(sint32 iIndex)
 
 	for (uint32 i=0 ; i<m_aLine.size() ; ++i)
 	{
+		int ln = m_aLine[i].length();
+
 		if (m_iCharIndex > (sint32)m_aLine[i].length())
 		{
 			m_iCharIndex -= m_aLine[i].length();
@@ -204,7 +206,10 @@ void WEditText::CatchEvent(Event* pEvent)
 					OnTextChanged();
 					SetLineIndex(iIndex);
 					if (m_aLine[m_iLineIndex][m_iCharIndex-1] == '\n')
-						m_iCharIndex--;
+					{
+						m_iLineIndex++;
+						m_iCharIndex = 0;
+					}
 				}
 				break;
 
@@ -236,7 +241,7 @@ void WEditText::CatchEvent(Event* pEvent)
 
 			iIndex = GetLineIndex();
 
-			LOG("_%s_%s_\n", str.substr(0, iIndex).c_str(), str.substr(iIndex, str.length() - iIndex).c_str());
+			//LOG("_%s_%s_\t%d [%d %d]\n", str.substr(0, iIndex).c_str(), str.substr(iIndex, str.length() - iIndex).c_str(), iIndex, m_iLineIndex, m_iCharIndex);
 		}
 	}
 }

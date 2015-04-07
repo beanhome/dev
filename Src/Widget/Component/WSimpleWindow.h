@@ -6,7 +6,7 @@
 
 class ImageResource;
 
-class WSimpleWindow : public Widget
+class WSimpleWindow : virtual public Widget
 {
 public:
 	struct Desc

@@ -12,44 +12,57 @@
 #include "Component/WWindow.h"
 #include "Component/WBackground.h"
 #include "Component/WButton.h"
-#include "Component/WSimpleWindow.h"
+#include "Component/EWSimpleWindow.h"
 #include "Component/WEditBox.h"
 #include "Functor.h"
 
 WidgetEditor::WidgetEditor(int w, int h, const char* rootpath)
 	: GApp<GEngine_SDL>(w, h, rootpath)
+	, m_pRootWin(NULL)
+	, m_pMainWin(NULL)
+	, m_pEditWin(NULL)
+	, m_bEditMode(false)
+	, m_pNearestSide(NULL)
+	, m_pHoverWidget(NULL)
+	, m_pSelectedWidget(NULL)
 {
-	m_pMainWin = new WBackground(*m_pEngine, WBackground::Desc("bg.png"), 0, "main");
+	m_pEngine->SetPrintFont("Arial.ttf", 14);
+
+	m_pRootWin = new Widget(*m_pEngine, Widget::Desc(), 0, "root");
+
+	m_pMainWin = new WBackground(*m_pRootWin, WBackground::Desc("bg.png"), 0, "main");
+	m_pRootWin->InsertChild(m_pMainWin);
 	//m_pMainWin = new WDebug(m_oGEngine, WDebug::Desc(), 0, "main");
 	//m_pMainWin->SetOrigX(50);
 	//m_pMainWin->SetOrigY(50);
 
-	m_pEngine->SetPrintFont("Arial.ttf", 14);
 	m_pMainWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 10));
-	m_pMainWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, -10));
+	m_pMainWin->SetSideProp(SideEnum::Right,	WidgetSide::BrotherRef(1, 0.f, 0));
 	m_pMainWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
 	m_pMainWin->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
 
-	/*
-	Widget* pWin = m_pMainWin->AddNewChild<WDebug>(WDebug::Desc(), 0, "sub");
-	pWin->SetSideProp(SideEnum::Left,	WidgetSide::ParentRef(0.f, 100));
-	pWin->SetSideProp(SideEnum::Right,	WidgetSide::SelfRef(500));
-	pWin->SetSideProp(SideEnum::Top,	WidgetSide::ParentRef(0.f, 100));
-	pWin->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(500));
-	*/
+	m_pEditWin = new WBackground(*m_pRootWin, WBackground::Desc("bg.png"), 1, "edit");
+	m_pRootWin->InsertChild(m_pEditWin);
+	m_pEditWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(1.f, -200));
+	m_pEditWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, -10));
+	m_pEditWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
+	m_pEditWin->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
+
+
+	m_pEditWin->AddNewChild<WDebug>(WDebug::Desc(), 0, "dbg");
 
 	InitBase();
 }
 
 WidgetEditor::~WidgetEditor()
 {
-	delete m_pMainWin;
+	delete m_pRootWin;
 }
 
 void WidgetEditor::InitBase()
 {
 	//Widget* pWin1 = m_pMainWin->AddNewChild<WWindow>(WWindow::Desc("win_", "png", 6, 7, 6, 8), 0, "sub1");
-	Widget* pWin1 = m_pMainWin->AddNewChild<WSimpleWindow>(WSimpleWindow::Desc("window.png", 12), 0, "sub1");
+	Widget* pWin1 = m_pMainWin->AddNewChild<EWSimpleWindow>(EWSimpleWindow::Desc("window.png", 12), 0, "sub1");
 	pWin1->SetMinWidth(50);
 	pWin1->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.5f));
 	pWin1->SetSideProp(SideEnum::Right,		WidgetSide::ChildRef(1, 0.f, 55));
@@ -114,28 +127,42 @@ void WidgetEditor::OnExit(Widget* pWidget)
 
 int WidgetEditor::Update(float dt)
 {
-	m_pMainWin->DetermineDimension();
+	m_pRootWin->DetermineDimension();
 
-	sint32 iMargin = 20;
-	vector<Widget*> aWidget;
-	aWidget.clear();
-
-	FindHoverWidget(aWidget, iMargin);
-
-	m_pNearestSide = NULL;
-	sint32 iBestDist = 0x7FFFFFFF;
-	for (uint32 i=0 ; i<aWidget.size() ; ++i)
+	if (m_bEditMode)
 	{
-		WidgetSide* pSide = aWidget[i]->GetSideHover(iMargin);
-		if (pSide == NULL)
-			continue;
+		sint32 iMargin = 20;
 
-		sint32 iDist = pSide->GetMouseDist();
-		if (m_pNearestSide == NULL || iDist < iBestDist)
+		m_pHoverWidget = m_pMainWin->GetWidgetHover(iMargin);
+
+		if (m_pSelectedWidget != NULL)
+			m_pNearestSide = m_pSelectedWidget->GetSideHover(iMargin);
+
+		/*
+		sint32 iMargin = 20;
+		vector<Widget*> aWidget;
+		aWidget.clear();
+
+		FindHoverWidget(aWidget, iMargin);
+
+		m_pNearestSide = NULL;
+		sint32 iBestDist = 0x7FFFFFFF;
+		for (uint32 i=0 ; i<aWidget.size() ; ++i)
 		{
-			m_pNearestSide = pSide;
-			iBestDist = iDist;
+			WidgetSide* pSide = aWidget[i]->GetSideHover(iMargin);
+			if (pSide == NULL)
+				continue;
+
+			sint32 iDist = pSide->GetMouseDist();
+			if (m_pNearestSide == NULL || iDist < iBestDist)
+			{
+				m_pNearestSide = pSide;
+				iBestDist = iDist;
+			}
 		}
+
+		m_pHoverWidget = (m_pNearestSide != NULL ? m_pNearestSide->GetWidgetParent() : NULL);
+		*/
 	}
 
 	return 0;
@@ -143,16 +170,35 @@ int WidgetEditor::Update(float dt)
 
 int WidgetEditor::Draw()
 {
-	m_pMainWin->Draw();
+	m_pRootWin->Draw();
 
-	/*
-	if (m_pNearestSide != NULL)
+	if (m_bEditMode)
 	{
-		DrawWidget(m_pNearestSide->GetWidget(), false, 192, 192, 192);
-		DrawWidget(m_pNearestSide->GetWidget(), true, 96, 96, 96);
-		DrawSide(m_pNearestSide);
+		if (m_pNearestSide != NULL)
+		{
+			DrawWidget(m_pNearestSide->GetWidget(), false, 192, 192, 192);
+			DrawWidget(m_pNearestSide->GetWidget(), true, 96, 96, 96);
+			DrawSide(m_pNearestSide);
+		}
+
+		if (m_pSelectedWidget != NULL)
+			m_pSelectedWidget->DrawRect(0, 0, m_pSelectedWidget->GetWidth()-1, m_pSelectedWidget->GetHeight()-1, 255, 0, 255);
+
+		if (m_pHoverWidget != NULL)
+		{
+			if (m_pHoverWidget->GetWidgetParent() != NULL)
+			{
+				m_pHoverWidget->GetWidgetParent()->DrawRect(m_pHoverWidget->GetPosX()-1, m_pHoverWidget->GetPosY()-1, m_pHoverWidget->GetWidth()+1, m_pHoverWidget->GetHeight()+1, 0, 255, 255);
+			}
+			else
+			{
+				m_pHoverWidget->DrawRect(0, 0, m_pHoverWidget->GetWidth()-1, m_pHoverWidget->GetHeight()-1, 0, 255, 255);
+			}
+		}
+
+		m_pRootWin->DrawRect(0, 0, m_pRootWin->GetWidth()-1, m_pRootWin->GetHeight()-1, 255, 0, 0);
 	}
-	*/
+
 
 	return 0;
 }
@@ -163,45 +209,85 @@ void WidgetEditor::CatchEvent(Event* pEvent)
 
 	if (pEvent->IsResize())
 	{
-		m_pMainWin->SetDirtySide(SideEnum::Right);
-		m_pMainWin->SetDirtySide(SideEnum::Bottom);
+		m_pRootWin->SetDirtySide(SideEnum::Right);
+		m_pRootWin->SetDirtySide(SideEnum::Bottom);
 	}
 
-	if (pEvent->IsMouse())
+	if (m_bEditMode)
 	{
-		if (pEvent->GetMouseEvent() == MouseMove)
-			UpateFocus();
-		else
+		if (pEvent->IsMouse() && pEvent->GetMouseEvent() == LeftDown)
+		{
+			if (m_pSelectedWidget == m_pHoverWidget)
+				UnselectWidget();
+			else
+				SelectWidget(m_pHoverWidget);
+		}
+	}
+	else
+	{
+		if (pEvent->IsMouse())
+		{
+			if (pEvent->GetMouseEvent() == MouseMove)
+				UpateFocus();
+			else
+				ForwardEvent(pEvent);
+		}
+
+		if (pEvent->IsKeyboard())
+		{
 			ForwardEvent(pEvent);
+		}
 	}
 
-	if (pEvent->IsKeyboard())
+	if (pEvent->IsKeyboard() &&pEvent->GetKeyboardEvent() == EKeyboardEvent::KeyDown && pEvent->GetKeyboardKey() == EKeyboardKey::KEY_F1)
 	{
-		ForwardEvent(pEvent);
+		m_bEditMode = !m_bEditMode;
+		LOG("Change Edit Mode : %s\n", (m_bEditMode ? "on" : "off"));
 	}
 }
 
+void WidgetEditor::SelectWidget(Widget* pWidget)
+{
+	if (m_pSelectedWidget != NULL)
+		UnselectWidget();
+
+	m_pSelectedWidget = pWidget;
+
+	EditableWidget* pEditWidget = dynamic_cast<EditableWidget*>(pWidget);
+	if (pEditWidget)
+	{
+		pEditWidget->CreateProperties(m_pEditWin);
+		m_pEditWin->DetermineDimension();
+	}
+}
+
+void WidgetEditor::UnselectWidget()
+{
+	m_pEditWin->RemoveAllChildren();
+
+	m_pSelectedWidget = NULL;
+}
 
 void WidgetEditor::UpateFocus()
 {
-	m_pMainWin->UpdateFocus();
+	m_pRootWin->UpdateFocus();
 }
 
 void WidgetEditor::ForwardEvent(Event* pEvent)
 {
-	if (m_pMainWin->HasFocus())
-		m_pMainWin->CatchEvent(pEvent);
+	if (m_pRootWin->HasFocus())
+		m_pRootWin->CatchEvent(pEvent);
 }
 
 
 Widget* WidgetEditor::FindHoverWidget(sint32 m)
 {
-	return m_pMainWin->GetWidgetHover(m);
+	return m_pRootWin->GetWidgetHover(m);
 }
 
 void WidgetEditor::FindHoverWidget(vector<Widget*>& aWidget, sint32 m)
 {
-	m_pMainWin->GetWidgetHover(aWidget, m);
+	m_pRootWin->GetWidgetHover(aWidget, m);
 
 }
 
