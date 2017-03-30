@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{B78C8561-4181-4456-7503-3CBAA917AC43}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Firefly",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"UMG"
+			]
+		}
+	]
+}
