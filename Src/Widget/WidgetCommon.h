@@ -21,6 +21,23 @@ namespace SideEnum
 		"Top",
 		"Bottom"
 	};
+
+	static Type GetOpposite(Type side)
+	{
+		switch (side)
+		{
+			case Left:		return Right;
+			case Right:		return Left;
+			case Top:		return Bottom;
+			case Bottom:	return Top;
+			default:		return Num;
+		}
+	}
+
+	static bool IsOpposite(Type a, Type b)
+	{
+		return (a == GetOpposite(b));
+	}
 }
 
 namespace WidgetDimState

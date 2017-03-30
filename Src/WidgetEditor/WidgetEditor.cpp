@@ -41,15 +41,18 @@ WidgetEditor::WidgetEditor(int w, int h, const char* rootpath)
 	m_pMainWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
 	m_pMainWin->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
 
-	m_pEditWin = new WBackground(*m_pRootWin, WBackground::Desc("bg.png"), 1, "edit");
-	m_pRootWin->InsertChild(m_pEditWin);
-	m_pEditWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(1.f, -200));
-	m_pEditWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, -10));
-	m_pEditWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
-	m_pEditWin->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
+	WBackground* pEditBack = new WBackground(*m_pRootWin, WBackground::Desc("bg.png"), 1, "editback");
+	m_pRootWin->InsertChild(pEditBack);
+	pEditBack->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(1.f, -200));
+	pEditBack->SetSideProp(SideEnum::Right,		WidgetSide::ParentRef(1.f, -10));
+	pEditBack->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 10));
+	pEditBack->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, -10));
 
-
-	m_pEditWin->AddNewChild<WDebug>(WDebug::Desc(), 0, "dbg");
+	m_pEditWin = pEditBack->AddNewChild<EWSimpleWindow>(EWSimpleWindow::Desc("window.png", 12), 0, "edit");
+	m_pEditWin->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 0));
+	m_pEditWin->SetSideProp(SideEnum::Right,	WidgetSide::ParentRef(1.f, 0));
+	m_pEditWin->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 0));
+	m_pEditWin->SetSideProp(SideEnum::Bottom,	WidgetSide::ParentRef(1.f, 0));
 
 	InitBase();
 }
@@ -74,7 +77,8 @@ void WidgetEditor::InitBase()
 	pWin11->SetSideProp(SideEnum::Left,		WidgetSide::ParentRef(0.f, 5));
 	pWin11->SetSideProp(SideEnum::Right,	WidgetSide::SelfRef(100));
 	pWin11->SetSideProp(SideEnum::Top,		WidgetSide::ParentRef(0.f, 5));
-	pWin11->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
+	//pWin11->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef(100));
+	pWin11->SetSideProp(SideEnum::Bottom,	WidgetSide::SelfRef());
 
 	Widget* pWin12 = pWin1->AddNewChild<WDebug>(WDebug::Desc(), 1, "sub12");
 	pWin12->SetSideProp(SideEnum::Left,		WidgetSide::BrotherRef(0, 1.f, 25));

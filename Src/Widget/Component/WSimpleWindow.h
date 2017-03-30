@@ -32,16 +32,22 @@ public:
 
 	void Draw() const override;
 
+	virtual void RemoveChild(Widget* pChild) override;
+	virtual void RemoveAllChildren() override;
+
 	Widget* GetChild(uint32 id) override;
 	const Widget* GetChild(uint32 id) const override;
 
+	virtual void NotifyChildDirty(Widget* pChild, SideEnum::Type eSide) override;
+
 protected:
-	virtual Widget* GetParentRef() { return (m_pChildArea != NULL ? m_pChildArea : this); }
-	void InsertChild(Widget* pChild) override;
+	virtual Widget* GetParentRef() override;
+	virtual void InsertChild(Widget* pChild) override;
+	virtual void OnDimensionChanged(SideEnum::Type eSide) override;
+
 
 private:
 	void DrawPart(ImageResource* res, sint32 x, sint32 y, uint16 w, uint16 h) const;
-
 protected:
 	Widget* m_pChildArea;
 

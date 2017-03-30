@@ -38,6 +38,8 @@ public:
 	~WText();
 
 public:
+	void SetText(const string& txt);
+
 	sint32 GetAutoWidth() override;
 	sint32 GetAutoHeight() override;
 

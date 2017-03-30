@@ -6,6 +6,7 @@ Build/
 *.suo
 *.vcproj.*
 *.ipch
+*.sdf
 
 # cscope file
 cscope.out
@@ -63,4 +64,16 @@ ehthumbs.db
 Thumbs.db
 
 
+# =============== #
+#  Unreal Engine  #
+# =============== #
 
+Intermediate/*
+Binaries/*
+DerivedDataCache/*
+Saved/*
+
+DerivedDataCache
+Binaries
+Intermediate
+Saved

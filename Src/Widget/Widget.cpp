@@ -110,11 +110,13 @@ void Widget::RemoveChild(Widget* pChild)
 
 void Widget::RemoveAllChildren()
 {
-	for (auto it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
+	for (ChildrenList::iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
 	{
 		Widget* pChild = *it;
-		RemoveChild(pChild);
+		delete pChild;
 	}
+
+	m_vChildren.clear();
 }
 
 sint32 Widget::GetSideDimension(SideEnum::Type eType, WidgetDimState::Type& eState)
@@ -378,14 +380,12 @@ void Widget::SetDirtySide(SideEnum::Type eSide)
 	m_eDimState = WidgetDimState::Unknown;
 	m_oSide[eSide].m_eState = WidgetDimState::Unknown;
 
-	for (uint i=0 ; i<SideEnum::Num ; ++i)
+	SideEnum::Type eOppositeSide = SideEnum::GetOpposite(eSide);
+
+	if (m_oSide[eOppositeSide].m_eState == WidgetDimState::Valid
+	 && m_oSide[eOppositeSide].m_eReference == WidgetReference::Self)
 	{
-		if (i != eSide
-		 && m_oSide[i].m_eState == WidgetDimState::Valid
-		 && m_oSide[i].m_eReference == WidgetReference::Self)
-		{
-			SetDirtySide((SideEnum::Type)i);
-		}
+		SetDirtySide(eOppositeSide);
 	}
 
 	if (m_pWidgetParent != NULL)
@@ -400,18 +400,19 @@ void Widget::SetDirtySide(SideEnum::Type eSide)
 
 void Widget::NotifyChildDirty(Widget* pChild, SideEnum::Type eSide)
 {
-	for (uint i=0 ; i<SideEnum::Num ; ++i)
-	{
-		if (m_oSide[i].m_eState == WidgetDimState::Valid
-		 && m_oSide[i].m_eReference == WidgetReference::Child)
-		{
-			SetDirtySide((SideEnum::Type)i);
-		}
-	}
+	SideEnum::Type eOppositeSide = SideEnum::GetOpposite(eSide);
+
+	if (m_oSide[eSide].IsValid() && m_oSide[eSide].m_eReference == WidgetReference::Child)
+		SetDirtySide(eSide);
+
+	if (m_oSide[eOppositeSide].IsValid() && m_oSide[eOppositeSide].m_eReference == WidgetReference::Child)
+		SetDirtySide(eOppositeSide);
 
 	for (ChildrenList::const_iterator it = m_vChildren.begin() ; it != m_vChildren.end() ; ++it)
 	{
 		Widget* pOtherChild = *it;
+
+		// todo check only side and opposite ?
 
 		for (uint i=0 ; i<SideEnum::Num ; ++i)
 		{
@@ -426,11 +427,13 @@ void Widget::NotifyChildDirty(Widget* pChild, SideEnum::Type eSide)
 
 void Widget::NotifyParentDirty(SideEnum::Type eSide)
 {
-	for (uint i=0 ; i<SideEnum::Num ; ++i)
-	{
-		if (m_oSide[i].m_eState == WidgetDimState::Valid && m_oSide[i].m_eReference == WidgetReference::Parent)
-			SetDirtySide((SideEnum::Type)i);
-	}
+	SideEnum::Type eOppositeSide = SideEnum::GetOpposite(eSide);
+
+	if (m_oSide[eSide].IsValid() && m_oSide[eSide].m_eReference == WidgetReference::Parent)
+		SetDirtySide(eSide);
+
+	if (m_oSide[eOppositeSide].IsValid() && m_oSide[eOppositeSide].m_eReference == WidgetReference::Parent)
+		SetDirtySide(eOppositeSide);
 }
 
 Widget* Widget::GetWidgetHover(sint32 m)

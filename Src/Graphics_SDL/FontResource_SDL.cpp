@@ -27,12 +27,12 @@ FontResource_SDL::~FontResource_SDL()
 
 uint16 FontResource_SDL::GetSize() const
 {
-	return (uint16)TTF_FontHeight(m_pFont);
+	return (m_pFont != NULL ? (uint16)TTF_FontHeight(m_pFont) : 0);
 }
 
 uint16 FontResource_SDL::GetLineSkip() const
 {
-	return (uint16)TTF_FontLineSkip(m_pFont);
+	return (m_pFont != NULL ? (uint16)TTF_FontLineSkip(m_pFont) : 0);
 }
 
 

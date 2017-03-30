@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\Widget;..\..\Src\Graphics;..\..\Src\Graphics_SDL"
+				AdditionalIncludeDirectories="..\..\Src\Common;..\..\Src\Widget;..\..\Src\Graphics;..\..\Src\Graphics_SDL;..\..\Src\WidgetEditor"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -157,6 +157,30 @@
 			>
 			<File
 				RelativePath="..\..\Src\WidgetEditor\WidgetEditor.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Component"
+			>
+			<File
+				RelativePath="..\..\Src\WidgetEditor\Component\EditableWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\WidgetEditor\Component\EWSimpleWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\WidgetEditor\Component\EWSimpleWindow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\WidgetEditor\Component\EWWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Src\WidgetEditor\Component\EWWidget.h"
 				>
 			</File>
 		</Filter>

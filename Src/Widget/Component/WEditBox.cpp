@@ -7,7 +7,7 @@
 #include "WEditText.h"
 
 WEditBox::WEditBox(CanvasBase& oParent, WEditBox::Desc oDesc, sint32 id, const string& sName)
-	: WSimpleWindow(oParent, WSimpleWindow::Desc(oDesc.sImgPath, 0), id, sName)
+	: WSimpleWindow(oParent, oDesc, id, sName)
 	, Widget(oParent, id, sName)
 	, m_oDesc(oDesc)
 {
@@ -15,7 +15,7 @@ WEditBox::WEditBox(CanvasBase& oParent, WEditBox::Desc oDesc, sint32 id, const s
 }
 
 WEditBox::WEditBox(Widget& oParent, WEditBox::Desc oDesc, sint32 id, const string& sName)
-	: WSimpleWindow(oParent, WSimpleWindow::Desc(oDesc.sImgPath, 0), id, sName)
+	: WSimpleWindow(oParent, oDesc, id, sName)
 	, Widget(oParent, id, sName)
 	, m_oDesc(oDesc)
 {
@@ -40,5 +40,23 @@ WEditBox::~WEditBox()
 {
 }
 
+void WEditBox::SetText(const string& text)
+{
+	if (m_pChildArea != NULL)
+		static_cast<WEditText*>(m_pChildArea)->SetText(text);
+}
+
+/*
+sint32 WEditBox::GetAutoWidth()
+{
+	return 
+	m_oDesc.iChildArea_Margin
+}
+
+sint32 WEditBox::GetAutoHeight()
+{
+
+}
+*/
 
 

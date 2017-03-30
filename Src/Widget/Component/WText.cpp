@@ -22,6 +22,7 @@ WText::WText(Widget& oParent, WText::Desc oDesc, sint32 id, const string& sName)
 void WText::Init()
 {
 	m_pFont = GetGEngine()->GetFontResource(FontResource::Desc(m_oDesc.sFontPath, m_oDesc.size));
+	SliceText();
 }
 
 
@@ -68,10 +69,27 @@ void WText::Draw() const
 	Widget::Draw();
 }
 
+void WText::SetText(const string& txt)
+{
+	m_oDesc.sText = txt;
+	OnTextChanged();
+}
+
 void WText::OnDimensionChanged(SideEnum::Type eSide)
 {
 	if (eSide == SideEnum::Left || eSide == SideEnum::Right)
+	{
+		int count = m_aDrawLine.size();
 		SliceText();
+		if (count != m_aDrawLine.size())
+		{
+			//if (m_oSide[SideEnum::Top].GetReference() == WidgetReference::Self && m_oSide[SideEnum::Top].GetSelfRefProp().m_eType == WidgetSelfReference::Auto)
+				SetDirtySide(SideEnum::Top);
+
+			//if (m_oSide[SideEnum::Bottom].GetReference() == WidgetReference::Self && m_oSide[SideEnum::Bottom].GetSelfRefProp().m_eType == WidgetSelfReference::Auto)
+				SetDirtySide(SideEnum::Bottom);
+		}
+	}
 }
 
 
@@ -94,12 +112,13 @@ void WText::SliceText()
 
 	if (m_oSide[SideEnum::Left].IsValid() && m_oSide[SideEnum::Right].IsValid())
 	{
-		ASSERT(m_oSide[SideEnum::Right].GetDimension() - m_oSide[SideEnum::Left].GetDimension() > 0);
+		ASSERT(m_oSide[SideEnum::Right].GetDimension() - m_oSide[SideEnum::Left].GetDimension() >= 0);
 		iWidgetWidth = (uint16)(m_oSide[SideEnum::Right].GetDimension() - m_oSide[SideEnum::Left].GetDimension());
 	}
 	else
 	{
 		m_aLine.push_back(m_oDesc.sText);
+		m_aDrawLine = m_aLine;
 		return;
 	}
 

@@ -22,6 +22,11 @@ WSimpleWindow::WSimpleWindow(Widget& oParent, WSimpleWindow::Desc oDesc, sint32 
 	Init();
 }
 
+Widget* WSimpleWindow::GetParentRef()
+{
+	return (m_pChildArea != NULL ? m_pChildArea : this);
+}
+
 void WSimpleWindow::Init()
 {
 	m_pImageResource = GetGEngine()->GetImageResource(m_oDesc.sPath);
@@ -51,6 +56,22 @@ void WSimpleWindow::InsertChild(Widget* pChild)
 		Widget::InsertChild(pChild);
 }
 
+void WSimpleWindow::RemoveChild(Widget* pChild)
+{
+	if (m_pChildArea != NULL)
+		return m_pChildArea->RemoveChild(pChild);
+	else
+		return Widget::RemoveChild(pChild);
+}
+
+void WSimpleWindow::RemoveAllChildren()
+{
+	if (m_pChildArea != NULL)
+		return m_pChildArea->RemoveAllChildren();
+	else
+		return Widget::RemoveAllChildren();
+}
+
 Widget* WSimpleWindow::GetChild(uint32 id)
 {
 	if (m_pChildArea != NULL)
@@ -65,6 +86,16 @@ const Widget* WSimpleWindow::GetChild(uint32 id) const
 		return m_pChildArea->GetChild(id);
 	else
 		return Widget::GetChild(id);
+}
+
+void WSimpleWindow::OnDimensionChanged(SideEnum::Type eSide)
+{
+	/*
+	if (m_pChildArea != NULL)
+		return m_pChildArea->OnDimensionChanged(eSide);
+	else
+	*/
+		return Widget::OnDimensionChanged(eSide);
 }
 
 void WSimpleWindow::DrawPart(ImageResource* res, sint32 x, sint32 y, uint16 w, uint16 h) const
@@ -98,10 +129,26 @@ void WSimpleWindow::Draw() const
 
 sint32 WSimpleWindow::GetAutoWidth()
 {
-	return m_pImageResource->GetWidth();
+	if (m_pChildArea != NULL)
+		return m_pChildArea->GetAutoWidth() + 2 * m_oDesc.iChildArea_Margin;
+	else
+		return m_pImageResource->GetWidth();
 }
 
 sint32 WSimpleWindow::GetAutoHeight()
 {
-	return m_pImageResource->GetHeight();
+	if (m_pChildArea != NULL)
+		return m_pChildArea->GetAutoHeight() + 2 * m_oDesc.iChildArea_Margin;
+	else
+		return m_pImageResource->GetHeight();
+}
+
+void WSimpleWindow::NotifyChildDirty(Widget* pChild, SideEnum::Type eSide)
+{
+	Widget::NotifyChildDirty(pChild, eSide);
+
+	if (m_oSide[eSide].IsValid() && m_oSide[eSide].GetReference() == WidgetReference::Self)
+	{
+		SetDirtySide(eSide);
+	}
 }

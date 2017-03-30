@@ -37,10 +37,10 @@ public:
 
 public:
 	template<typename T>
-	Widget* AddNewChild(typename T::Desc oDesc, sint32 id = -1, const string& sName = "unknow");
+	T* AddNewChild(typename T::Desc oDesc, sint32 id = -1, const string& sName = "unknow");
 
-	void RemoveChild(Widget* pChild);
-	void RemoveAllChildren();
+	virtual void RemoveChild(Widget* pChild);
+	virtual void RemoveAllChildren();
 
 	const string& GetName() const { return m_sName; }
 
@@ -59,9 +59,9 @@ public:
 	void SetMinHeight(sint32 iMinHeight) { m_iMinHeight = iMinHeight; }
 	void SetMaxHeight(sint32 iMaxHeight) { m_iMaxHeight = iMaxHeight; }
 
-	void SetDirtySide(SideEnum::Type eSide);
-	void NotifyChildDirty(Widget* pChild, SideEnum::Type eSide);
-	void NotifyParentDirty(SideEnum::Type eSide);
+	virtual void SetDirtySide(SideEnum::Type eSide);
+	virtual void NotifyChildDirty(Widget* pChild, SideEnum::Type eSide);
+	virtual void NotifyParentDirty(SideEnum::Type eSide);
 
 	sint32 GetMinWidth() const { return m_iMinWidth; }
 	sint32 GetMaxWidth() const { return m_iMaxWidth; }
@@ -141,9 +141,9 @@ private:
 
 
 template<typename T>
-Widget* Widget::AddNewChild(typename T::Desc oDesc, sint32 id, const string& sName)
+T* Widget::AddNewChild(typename T::Desc oDesc, sint32 id, const string& sName)
 {
-	Widget* pWidget = new T(*GetParentRef(), oDesc, id, sName);
+	T* pWidget = new T(*GetParentRef(), oDesc, id, sName);
 	InsertChild(pWidget);
 	return pWidget;	
 }

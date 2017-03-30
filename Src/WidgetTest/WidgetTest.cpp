@@ -20,12 +20,11 @@ int main(int argc, char *argv[])
 	{
 		if (argv[i][0] == '-')
 		{
-			ASSERT(argc > i+1);
 			switch (argv[i][1])
 			{
-				case 'w':		w = atoi(argv[i+1]);		break;
-				case 'h':		h = atoi(argv[i+1]);		break;
-				case 'p':		path = argv[i+1];			break;
+				case 'w':		ASSERT(argc > i+1);		w = atoi(argv[i+1]);		break;
+				case 'h':		ASSERT(argc > i+1);		h = atoi(argv[i+1]);		break;
+				case 'p':		ASSERT(argc > i+1);		path = argv[i+1];			break;
 			}
 		}
 	}
