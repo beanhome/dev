@@ -41,7 +41,7 @@ void AFFPlayerPawn::BeginPlay()
 }
 
 
-void AFFPlayerPawn::SectorClicked(UPrimitiveComponent* ClickedComp)
+void AFFPlayerPawn::SectorClicked(UPrimitiveComponent* ClickedComp, FKey Key)
 {
 	//UE_LOG(Firefly, Log, TEXT("%s Clicked"), *GetName());
 }

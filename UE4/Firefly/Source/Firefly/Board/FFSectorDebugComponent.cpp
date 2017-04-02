@@ -36,9 +36,9 @@ FBoxSphereBounds UFFSectorDebugComponent::CalcBounds(const FTransform& LocalToWo
 	return NewBounds;
 }
 
-void UFFSectorDebugComponent::OnUpdateTransform(bool bSkipPhysicsMove, ETeleportType Teleport)
+void UFFSectorDebugComponent::OnUpdateTransform(EUpdateTransformFlags UpdateTransformFlags, ETeleportType Teleport)
 {
-	Super::OnUpdateTransform(bSkipPhysicsMove, Teleport);
+	Super::OnUpdateTransform(UpdateTransformFlags, Teleport);
 	RebuildDisplay();
 }
 

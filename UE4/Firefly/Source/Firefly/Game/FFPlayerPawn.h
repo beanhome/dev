@@ -14,7 +14,7 @@ public:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void SectorClicked(UPrimitiveComponent* ClickedComp);
+	void SectorClicked(UPrimitiveComponent* ClickedComp, FKey Key);
 
 	UFUNCTION()
 	void SectorBeginCursorOver(UPrimitiveComponent* ClickedComp);

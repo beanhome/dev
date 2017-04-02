@@ -14,7 +14,7 @@ class UFFSectorDebugComponent : public UPrimitiveComponent
 public:
 	virtual FPrimitiveSceneProxy* CreateSceneProxy() override;
 	virtual FBoxSphereBounds CalcBounds(const FTransform& LocalToWorld) const override;
-	virtual void OnUpdateTransform(bool bSkipPhysicsMove, ETeleportType Teleport);
+	virtual void OnUpdateTransform(EUpdateTransformFlags UpdateTransformFlags, ETeleportType Teleport);
 
 	//void SetNextPoint(AStyx2PatrolPoint* Next);
 	//void OnNextPointMoved();
@@ -38,9 +38,9 @@ public:
 	//virtual uint32 GetMemoryFootprint(void) const override;
 	//uint32 GetAllocatedSize(void) const;
 
-	virtual void RegisterDebugDrawDelgate() override;
-	virtual void UnregisterDebugDrawDelgate() override;
-	virtual void DrawDebugLabels(UCanvas* Canvas, APlayerController*) override;
+	virtual void RegisterDebugDrawDelgate();
+	virtual void UnregisterDebugDrawDelgate();
+	virtual void DrawDebugLabels(UCanvas* Canvas, APlayerController*);
 
 private:
 	class AFFSector* SectorOwner;
