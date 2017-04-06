@@ -53,7 +53,10 @@ public:
 	void StartGame(int32 id);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void SendResponseToServer(int32 res);
+	void SendClientResponseToServer(AFFGameSequence* seq, int32 res);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SendClientStateToServer(AFFGameSequence* seq, EFFClientGameSeqState state);
 
 	//UFUNCTION(Reliable, Server, WithValidation)
 	//void StopCurrentSequence();

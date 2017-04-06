@@ -64,7 +64,8 @@ void AFFGameSequence_Game::ChooseLeaderAndShipFinish(AFFGameSequence* Seq)
 {
 	UE_LOG(Firefly, Log, TEXT("*******  ChooseLeaderAndShipFinish"));
 
-	StopSubSequence();
+	SubSequence = nullptr;
+	//StopSubSequence();
 
 	StartSubSequence<AFFGameSequence_PlaceShip>(GetDefaultGameTuning()->GameSequence_PlaceShip);
 	SubSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Game::PlaceShipFinish);
@@ -74,7 +75,9 @@ void AFFGameSequence_Game::PlaceShipFinish(AFFGameSequence* Seq)
 {
 	UE_LOG(Firefly, Log, TEXT("*******  PlaceShipFinish"));
 
-	StopSubSequence();
+	SubSequence = nullptr;
+	//StopSubSequence();
+
 }
 
 void AFFGameSequence_Game::End()

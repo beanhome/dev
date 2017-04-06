@@ -11,13 +11,26 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFFSequenceFinishDelegate, AFFGameSe
 
 class AFireflyPlayerController;
 
+UENUM()
+enum class EFFClientGameSeqState : uint8
+{
+	None,
+	Spawned,
+	Initialized,
+	Started,
+	Ended,
+};
+
 UCLASS(minimalapi)
 class AFFGameSequence : public AActor
 {
 	GENERATED_BODY()
 
+	friend class AFireflyPlayerController;
+
 public:
 	AFFGameSequence();
+	virtual void PostActorCreated() override;
 
 	virtual bool IsSupportedForNetworking() const override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
@@ -28,13 +41,37 @@ public:
 		return Cast<T>(AActor::GetOwner());
 	}
 
-	AFireflyPlayerController* GetFFPlayerController() const;
+public:
+	void OnMouseEnterSector(AFFSector* Sector);
+	void OnMouseExitSector(AFFSector* Sector);
+	void OnMouseClickSector(AFFSector* Sector);
 
+protected:
+	bool IsServer() const;
+	bool IsClient() const;
+	bool IsLocal() const;
+
+	AFireflyPlayerController* GetFFPlayerController() const;
+	int32 GetPlayerId() const;
+
+	FString GetMultiMode() const;
+
+	virtual void Init(AFFGameSequence* OwnerSequence);
+	virtual void Start();
+	virtual void End();
+	
 	virtual void ServerInit(AFFGameSequence* OwnerSequence);
 	virtual void ServerStart();
 	virtual void ServerEnd();
+	virtual void ServerOnAllClientSynchro(EFFClientGameSeqState NewState);
+
+	void SendResponseToServer(int32 res);
+
+	// from player controller
 	virtual void ServerReceiveResponse(int32 res);
-	virtual void ServerStopCurrentSequence();
+	void ServerReceiveClientState(int32 id, EFFClientGameSeqState NewState);
+
+	void ServerStopCurrentSequence();
 
 	AFFGameSequence* StartSubSequence(UClass* Class);
 	void StopSubSequence();
@@ -57,21 +94,14 @@ public:
 		FActorSpawnParameters Param;
 		Param.Owner = this;
 		T* Seq = CastChecked<T>(GetWorld()->SpawnActor(Class, nullptr, nullptr, Param));
-		Seq->Init(this, Init);
+		Seq->InitWithParam(this, Init);
 		Seq->Start();
 		SubSequence = Seq;
 		return Seq;
 	}
 
-public:
-	void OnMouseEnterSector(AFFSector* Sector);
-	void OnMouseExitSector(AFFSector* Sector);
-	void OnMouseClickSector(AFFSector* Sector);
-
-protected:
-	virtual void Init(AFFGameSequence* OwnerSequence);
-	virtual void Start();
-	virtual void End();
+private:
+	void SetState(EFFClientGameSeqState NewState);
 
 private:
 	UFUNCTION(Reliable, NetMulticast)
@@ -86,6 +116,9 @@ private:
 protected:
 	UPROPERTY(Replicated)
 	AFFGameSequence* SubSequence;
+
+	EFFClientGameSeqState State; // Server : Min Client State // Client : self State
+	TMap<int32, EFFClientGameSeqState> ClientState;
 
 public:
 	UPROPERTY()

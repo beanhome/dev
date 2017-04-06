@@ -16,7 +16,7 @@ const TArray<TSubclassOf<AFFActor>>& AFFGameSequence_ChooseInList::GetList() con
 	return List;
 }
 
-void AFFGameSequence_ChooseInList::Init(AFFGameSequence* OwnerSequence, const FInit& Init)
+void AFFGameSequence_ChooseInList::InitWithParam(AFFGameSequence* OwnerSequence, const FInit& Init)
 {
 	List = Init.List;
 	Super::Init(OwnerSequence);

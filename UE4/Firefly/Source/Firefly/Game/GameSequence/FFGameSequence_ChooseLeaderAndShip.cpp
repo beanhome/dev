@@ -108,7 +108,7 @@ void AFFGameSequence_ChooseLeaderAndShip::StartPlayerChooseShip_Implementation(i
 		if (PlayerController->GetId() == id)
 		{
 			if (GetHud())
-				GetHud()->Title = TEXT("Choose your leader");
+				GetHud()->Title = TEXT("Choose your ship");
 
 			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseShip::StartPlayer %s MY TURN"), *GetFFPlayerController()->GetName());
 
@@ -118,7 +118,7 @@ void AFFGameSequence_ChooseLeaderAndShip::StartPlayerChooseShip_Implementation(i
 		else
 		{
 			if (GetHud())
-				GetHud()->Title = TEXT("An other player choose his leader");
+				GetHud()->Title = TEXT("An other player choose his ship");
 
 			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseShip::StartPlayer %s OTHER TURN"), *GetFFPlayerController()->GetName());
 		}
@@ -139,7 +139,7 @@ void AFFGameSequence_ChooseLeaderAndShip::OnLeaderCardChoosen(int32 id)
 	ChooseInList = nullptr;
 	SubSequence = nullptr;
 
-	GetFFPlayerController()->SendResponseToServer(id);
+	SendResponseToServer(id);
 }
 
 void AFFGameSequence_ChooseLeaderAndShip::OnShipChoosen(int32 id)
@@ -149,7 +149,7 @@ void AFFGameSequence_ChooseLeaderAndShip::OnShipChoosen(int32 id)
 	ChooseInList = nullptr;
 	SubSequence = nullptr;
 
-	GetFFPlayerController()->SendResponseToServer(id);
+	SendResponseToServer(id);
 }
 
 void AFFGameSequence_ChooseLeaderAndShip::ServerReceiveResponse(int32 res)

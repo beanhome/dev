@@ -137,16 +137,32 @@ void AFireflyPlayerController::Message_Implementation(UFFMessage* Msg)
 }
 */
 
-void AFireflyPlayerController::SendResponseToServer_Implementation(int32 res)
+void AFireflyPlayerController::SendClientResponseToServer_Implementation(AFFGameSequence* seq, int32 res)
 {
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	GameState->Game->ServerReceiveResponse(res);
+	ensure(seq != nullptr);
+
+	if (seq != nullptr)
+		seq->ServerReceiveResponse(res);
 }
 
-bool AFireflyPlayerController::SendResponseToServer_Validate(int32 res)
+bool AFireflyPlayerController::SendClientResponseToServer_Validate(AFFGameSequence* seq, int32 res)
 {
 	return true;
 }
+
+void AFireflyPlayerController::SendClientStateToServer_Implementation(AFFGameSequence* seq, EFFClientGameSeqState state)
+{
+	ensure(seq != nullptr);
+
+	if (seq != nullptr)
+		seq->ServerReceiveClientState(GetId(), state);
+}
+
+bool AFireflyPlayerController::SendClientStateToServer_Validate(AFFGameSequence* seq, EFFClientGameSeqState state)
+{
+	return true;
+}
+
 
 void AFireflyPlayerController::PlayerTick(float DeltaTime)
 {
@@ -227,14 +243,17 @@ void AFireflyPlayerController::MoveRightInput(float Val)
 
 bool AFireflyPlayerController::InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad)
 {
-	if (Key == EKeys::RightMouseButton)
+	if (EventType == EInputEvent::IE_Released)
 	{
-		JumpToMainCamera();
-	}
-	else if (Key == EKeys::LeftMouseButton)
-	{
-		if (CurrentHoverActor != nullptr)
-			CurrentHoverActor->OnMouseClick();
+		if (Key == EKeys::RightMouseButton)
+		{
+			JumpToMainCamera();
+		}
+		else if (Key == EKeys::LeftMouseButton)
+		{
+			if (CurrentHoverActor != nullptr)
+				CurrentHoverActor->OnMouseClick();
+		}
 	}
 
 	return Super::InputKey(Key, EventType, AmountDepressed, bGamepad);

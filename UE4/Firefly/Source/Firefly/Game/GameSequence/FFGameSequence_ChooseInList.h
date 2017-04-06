@@ -23,7 +23,7 @@ public:
 
 	AFFGameSequence_ChooseInList();
 	
-	void Init(AFFGameSequence* OwnerSequence, const FInit& _Init);
+	void InitWithParam(AFFGameSequence* OwnerSequence, const FInit& _Init);
 	virtual void Start() override;
 	virtual void End() override;
 

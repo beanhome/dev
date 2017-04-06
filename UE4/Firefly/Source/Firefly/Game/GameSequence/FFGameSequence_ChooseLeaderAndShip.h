@@ -35,7 +35,6 @@ private:
 	UFUNCTION(Reliable, NetMulticast)
 	void FinishPlayerChooseShip(int32 id);
 
-	//UENUM()
 	enum class EFFPhase : uint8
 	{
 		Leader,

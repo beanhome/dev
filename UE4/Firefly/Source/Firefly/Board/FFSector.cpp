@@ -74,7 +74,7 @@ void AFFSector::OnConstruction(const FTransform& Transform)
 	*/
 
 	DebugComponent = NewObject<UFFSectorDebugComponent>(this, TEXT("DebugSector"));
-	DebugComponent->AttachTo(GetStaticMeshComponent());
+	DebugComponent->AttachToComponent(GetStaticMeshComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	DebugComponent->RegisterComponent();
 }
 

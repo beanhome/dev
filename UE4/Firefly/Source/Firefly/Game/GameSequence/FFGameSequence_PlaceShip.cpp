@@ -90,7 +90,7 @@ void AFFGameSequence_PlaceShip::OnSectorClicked(AFFSector* SectorClicked)
 			return;
 	}
 
-	GetFFPlayerController()->SendResponseToServer(SectorClicked->GetId());
+	SendResponseToServer(SectorClicked->GetId());
 }
 
 void AFFGameSequence_PlaceShip::ServerReceiveResponse(int32 res)

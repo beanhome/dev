@@ -14,8 +14,7 @@ void UFFCameraManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const AFFCameraConfig* CameraConfig = GetCameraConfig();
-	CurrentCamera = CameraConfig->GetFirstCamera();
+	CurrentCamera = GetCameraConfig()->GetFirstCamera();
 	
 	Camera = CastChecked<AFFCameraActor>(GetWorld()->SpawnActor(CurrentCamera->GetClass()));
 
@@ -123,15 +122,14 @@ void UFFCameraManager::JumpNextCamera()
 		NextCamera = GetCameraConfig()->GetCamera(CurrentCamera, EFFDirection::Up);
 }
 
-void UFFCameraManager::JumpToCamera(AFFCameraActor* Camera)
+void UFFCameraManager::JumpToCamera(AFFCameraActor* NewCamera)
 {
 	if (NextCamera == nullptr && NextCamera != CurrentCamera)
-		NextCamera = Camera;
+		NextCamera = NewCamera;
 }
 
 
 void UFFCameraManager::JumpToMainCamera()
 {
-	const AFFCameraConfig* CameraConfig = GetCameraConfig();
-	JumpToCamera(CameraConfig->GetFirstCamera());
+	JumpToCamera(GetCameraConfig()->GetFirstCamera());
 }
