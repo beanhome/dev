@@ -6,7 +6,6 @@
 
 #include "FireflyGameMode.h"
 #include "Game/FireflyPlayerController.h"
-#include "Game/FFGameTurn.h"
 #include "Game/FFPlayerInfo.h"
 #include "Game/FFPathFinder.h"
 #include "FFGameState.h"
@@ -121,11 +120,13 @@ void AFFSector::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	/*
 	if (MouseOver)
 	{
 		DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, GetName(), nullptr, FColor::White, 0.f);
 		DrawDebugBox(GetWorld(), Center, Extent, FColor::White, false);
 	}
+	*/
 
 	/*
 	DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, GetName());
@@ -153,31 +154,16 @@ void AFFSector::Tick(float DeltaSeconds)
 void AFFSector::OnMouseEnter()
 {
 	Super::OnMouseEnter();
-
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	//UE_LOG(Firefly, Log, TEXT("GameState %s %x"), (GameState ? *GameState->GetName() : TEXT("")), GameState);
-	if (GameState != nullptr && GameState->Game != nullptr)
-		GameState->Game->OnMouseEnterSector(this);
 }
 
 void AFFSector::OnMouseExit()
 {
 	Super::OnMouseExit();
-
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	//UE_LOG(Firefly, Log, TEXT("GameState %s %x"), (GameState ? *GameState->GetName() : TEXT("")), GameState);
-	if (GameState != nullptr && GameState->Game != nullptr)
-		GameState->Game->OnMouseExitSector(this);
 }
 
 void AFFSector::OnMouseClick()
 {
 	Super::OnMouseClick();
-
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	//UE_LOG(Firefly, Log, TEXT("GameState %s %x"), (GameState ? *GameState->GetName() : TEXT("")), GameState);
-	if (GameState != nullptr && GameState->Game != nullptr)
-		GameState->Game->OnMouseClickSector(this);
 
 	DebugComponent->RebuildDisplay();
 }

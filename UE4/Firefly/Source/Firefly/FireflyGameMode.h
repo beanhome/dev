@@ -4,7 +4,6 @@
 #include "FireflyGameMode.generated.h"
 
 class UFFPlayerInfo;
-class AFFGameTurn;
 class AFFGameSequence;
 class AFireflyPlayerController;
 
@@ -35,6 +34,8 @@ public:
 
 	void StartGame();
 
+	int32 GetPlayerCount();
+
 	const TArray<UFFPlayerInfo*>& GetPlayers() const;
 	TArray<UFFPlayerInfo*>& GetPlayers();
 
@@ -56,7 +57,6 @@ public:
 private:
 	EFFGamePhase GamePhase;
 
-	int32 PlayerCount;
 	int32 TurnNumber;
 	int32 PlayerActive;
 
@@ -67,7 +67,7 @@ private:
 	TArray<UFFPlayerInfo*> Players;
 
 	UPROPERTY()
-	AFFGameTurn* CurrentTurn;
+	int32 PlayerCount;
 };
 
 

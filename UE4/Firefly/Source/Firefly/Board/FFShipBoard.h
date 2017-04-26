@@ -17,6 +17,12 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual bool IsSupportedForNetworking() const override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+
+	UFUNCTION(Reliable, NetMulticast)
+	void ClientInitialize(int32 Id, class AFFLeaderCard* _Leader);
+
 private:
 	void CreateMaterialInstance();
 
@@ -24,9 +30,30 @@ public:
 	UPROPERTY(EditAnywhere)
 	UTexture* FrontTexture;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AFFShip> DefaultShip;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AFFEngineCard> DefaultEngine;
+
 private:
 	static FName FrontTextureName;
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* FrontMaterial;
+
+	UPROPERTY(Replicated)
+	int32 PlayerId;
+
+	UPROPERTY()
+	class AFFLeaderCard* Leader;
+
+	UPROPERTY()
+	class AFFEngineCard* Engine;
+
+	UPROPERTY()
+	TMap<int32, class AFFShipBoardPlace*> ShipBoardPlaces;
+	
+	UPROPERTY()
+	class AFFShipBoardPlace* ShipBoardPlace;
 };

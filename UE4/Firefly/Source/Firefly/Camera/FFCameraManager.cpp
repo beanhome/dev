@@ -2,23 +2,28 @@
 
 #include "Firefly.h"
 #include "FFCameraManager.h"
+#include "FFCameraActor.h"
+#include "Game/FireflyPlayerController.h"
 #include "Game/FFGameTuning.h"
 
 UFFCameraManager::UFFCameraManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	CameraConfig = nullptr;
+	PlayerOwner = nullptr;
 }
 
 void UFFCameraManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerOwner = Cast<AFireflyPlayerController>(GetOwner());
+
 	CurrentCamera = GetCameraConfig()->GetFirstCamera();
 	
 	Camera = CastChecked<AFFCameraActor>(GetWorld()->SpawnActor(CurrentCamera->GetClass()));
 
-	Cast<APlayerController>(GetOwner())->SetViewTarget(Camera);
+	PlayerOwner->SetViewTarget(Camera);
 
 	if (CurrentCamera != nullptr)
 	{
@@ -66,6 +71,8 @@ void UFFCameraManager::TickComponent(float DeltaTime, enum ELevelTick TickType, 
 
 			if (Timer <= 0.f)
 			{
+				Location = NextCamera->GetActorLocation();
+				Rotation = NextCamera->GetActorRotation();
 				NextCamera = nullptr;
 			}
 			else
@@ -97,6 +104,9 @@ void UFFCameraManager::TickComponent(float DeltaTime, enum ELevelTick TickType, 
 
 void UFFCameraManager::ApplyInput(float DeltaTime, UInputComponent* InputComponent)
 {
+	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+		return;
+
 	const FFFCameraParam* CurrentCameraParam = GetCameraConfig()->GetCameraParam(CurrentCamera);
 
 	float Speed = (CurrentCameraParam != nullptr ? CurrentCameraParam->Speed : 0.f);
@@ -112,24 +122,49 @@ void UFFCameraManager::ApplyInput(float DeltaTime, UInputComponent* InputCompone
 
 void UFFCameraManager::JumpPrevCamera()
 {
+	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+		return;
+
 	if (NextCamera == nullptr)
 		NextCamera = GetCameraConfig()->GetCamera(CurrentCamera, EFFDirection::Down);
 }
 
 void UFFCameraManager::JumpNextCamera()
 {
+	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+		return;
+
 	if (NextCamera == nullptr)
 		NextCamera = GetCameraConfig()->GetCamera(CurrentCamera, EFFDirection::Up);
 }
 
 void UFFCameraManager::JumpToCamera(AFFCameraActor* NewCamera)
 {
-	if (NextCamera == nullptr && NextCamera != CurrentCamera)
+	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+		return;
+
+	if (NextCamera == nullptr && NewCamera != CurrentCamera)
 		NextCamera = NewCamera;
+}
+
+void UFFCameraManager::JumpToActorCamera()
+{
+	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+		return;
+
+	if (PlayerOwner != nullptr)
+	{
+		AFFActor* Hover = PlayerOwner->GetHoverActor();
+		if (Hover != nullptr)
+			JumpToCamera(Hover->Camera);
+	}
 }
 
 
 void UFFCameraManager::JumpToMainCamera()
 {
+	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+		return;
+
 	JumpToCamera(GetCameraConfig()->GetFirstCamera());
 }

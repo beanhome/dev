@@ -10,6 +10,7 @@
 #include "Engine/ActorChannel.h"
 
 #include "Camera/FFCameraManager.h"
+#include "FFGameState.h"
 #include "FireflyGameMode.h"
 
 AFireflyPlayerController::AFireflyPlayerController()
@@ -34,6 +35,11 @@ void AFireflyPlayerController::SetId(int32 id)
 	Id = id;
 }
 
+AFFActor* AFireflyPlayerController::GetHoverActor() const
+{
+	return CurrentHoverActor;
+}
+
 void AFireflyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -47,7 +53,17 @@ void AFireflyPlayerController::BeginPlay()
 		InputComponent->BindAxis("MoveRight", this, &AFireflyPlayerController::MoveRightInput);
 		InputComponent->BindAction("NextCamera", IE_Pressed, CameraManager, &UFFCameraManager::JumpNextCamera);
 		InputComponent->BindAction("PrevCamera", IE_Pressed, CameraManager, &UFFCameraManager::JumpPrevCamera);
+		InputComponent->BindAction("SelectActor", IE_Released, CameraManager, &UFFCameraManager::JumpToActorCamera);
+		InputComponent->BindAction("MainCamera", IE_Released, CameraManager, &UFFCameraManager::JumpToMainCamera);
+	
+		InputComponent->BindAction("SelectActor", IE_Released, this, &AFireflyPlayerController::SelectActor);
 	}
+}
+
+bool AFireflyPlayerController::IsCameraFree() const
+{
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	return (GameState != nullptr && GameState->IsCameraFree());
 }
 
 void AFireflyPlayerController::CreateLobbyPage()
@@ -100,7 +116,7 @@ bool AFireflyPlayerController::ServerLaunchGame_Validate()
 
 void AFireflyPlayerController::StartGame_Implementation(int32 id)
 {
-	Id = id;
+	//Id = id;
 
 	UE_LOG(Firefly, Log, TEXT("  **********   AFireflyPlayerController::StartGame_Implementation Controller %s (World %x)"), *GetName(), GetWorld());
 
@@ -117,6 +133,12 @@ void AFireflyPlayerController::StartGame_Implementation(int32 id)
 	}
 }
 
+
+bool AFireflyPlayerController::IsSupportedForNetworking() const
+{
+	return true;
+}
+
 bool AFireflyPlayerController::ReplicateSubobjects(class UActorChannel *Channel, class FOutBunch *Bunch, FReplicationFlags *RepFlags)
 {
 	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
@@ -124,16 +146,16 @@ bool AFireflyPlayerController::ReplicateSubobjects(class UActorChannel *Channel,
 	return WroteSomething;
 }
 
-/*
 void AFireflyPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFireflyPlayerController, Id);
 }
-*/
 
 /*
 void AFireflyPlayerController::Message_Implementation(UFFMessage* Msg)
 {
-
 }
 */
 
@@ -203,6 +225,13 @@ void AFireflyPlayerController::PlayerTick(float DeltaTime)
 	}
 }
 
+void AFireflyPlayerController::SelectActor()
+{
+	if (CurrentHoverActor != nullptr)
+		CurrentHoverActor->OnMouseClick();
+}
+
+
 const UFFCameraManager* AFireflyPlayerController::GetCameraManager() const
 {
 	return CameraManager;
@@ -243,19 +272,6 @@ void AFireflyPlayerController::MoveRightInput(float Val)
 
 bool AFireflyPlayerController::InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad)
 {
-	if (EventType == EInputEvent::IE_Released)
-	{
-		if (Key == EKeys::RightMouseButton)
-		{
-			JumpToMainCamera();
-		}
-		else if (Key == EKeys::LeftMouseButton)
-		{
-			if (CurrentHoverActor != nullptr)
-				CurrentHoverActor->OnMouseClick();
-		}
-	}
-
 	return Super::InputKey(Key, EventType, AmountDepressed, bGamepad);
 }
 

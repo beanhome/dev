@@ -6,7 +6,6 @@
 #include "Game/FFPlayerPawn.h"
 #include "Game/FFGameTuning.h"
 #include "Game/FFUITuning.h"
-#include "Game/FFGameTurn.h"
 #include "Game/GameSequence/FFGameSequence.h"
 #include "Game/GameSequence/FFGameSequence_Game.h"
 #include "Game/FireflyPlayerController.h"
@@ -15,7 +14,7 @@
 
 AFireflyGameMode::AFireflyGameMode()
 : GamePhase(EFFGamePhase::Lobby)
-, PlayerCount(1)
+, PlayerCount(0)
 , TurnNumber(0)
 , PlayerActive(0)
 {
@@ -54,14 +53,19 @@ void AFireflyGameMode::PostLogin(APlayerController* NewPlayer)
 
 	UE_LOG(Firefly, Log, TEXT("----------------  AFireflyGameMode::PostLogin %s"), *NewPlayer->GetName());
 
+	AFireflyPlayerController* Player = Cast<AFireflyPlayerController>(NewPlayer);
+	Player->SetId(PlayerCount);
+
+	PlayerCount++;
+
+	/*
 	UFFPlayerInfo* PlayerInfo = NewObject<UFFPlayerInfo>(GetWorld());
 	PlayerInfo->Init(NewPlayer, *FString::Printf(TEXT("A%1d"), Players.Num() + 1));
 	Players.Add(PlayerInfo);
+	*/
 
 	if (GamePhase == EFFGamePhase::Lobby)
 	{
-		AFireflyPlayerController* Player = Cast<AFireflyPlayerController>(NewPlayer);
-
 		if (HostPlayer == nullptr)
 		{
 			HostPlayer = Player;
@@ -73,6 +77,11 @@ void AFireflyGameMode::PostLogin(APlayerController* NewPlayer)
 			HostPlayer->NotifyNewPlayer(NewPlayer);
 		}
 	}
+}
+
+int32 AFireflyGameMode::GetPlayerCount()
+{
+	return PlayerCount;
 }
 
 const TArray<UFFPlayerInfo*>& AFireflyGameMode::GetPlayers() const
@@ -129,9 +138,12 @@ void AFireflyGameMode::StartGame()
 
 		UE_LOG(Firefly, Log, TEXT("  **********   Server AFireflyGameMode::StartGame Controller %s"), *Controller->GetName());
 
+		/*
 		UFFPlayerInfo* PlayerInfo = GetPlayerInfo(Controller);
 		Controller->SetId(PlayerInfo->GetId());
-		Controller->StartGame(PlayerInfo->GetId());
+		*/
+
+		Controller->StartGame(-1);
 
 		/*
 		UFFMessage_Test* Msg = NewObject<UFFMessage_Test>();
@@ -141,17 +153,4 @@ void AFireflyGameMode::StartGame()
 	}
 
 	GetWorld()->GetGameState<AFFGameState>()->StartGame();
-}
-
-void AFireflyGameMode::StartPlayerTurn()
-{
-	CurrentTurn = NewObject<AFFGameTurn>(this);
-	CurrentTurn->Init(nullptr);
-	CurrentTurn->Start();
-}
-
-void AFireflyGameMode::EndPlayerTurn()
-{
-	CurrentTurn = nullptr;
-
 }

@@ -15,6 +15,8 @@ public:
 
 	void StartGame();
 
+	bool IsCameraFree() const;
+
 public:
 	UPROPERTY(replicated)
 	class AFFGameSequence* Game;

@@ -21,6 +21,9 @@ public:
 	TSubclassOf<AFFPlayerPawn> DefaultPlayerPawn;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AFFShipBoard> DefaultShipBoard;
+
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AFFEngineCard> DefaultEngine;
 
 	UPROPERTY(EditDefaultsOnly)

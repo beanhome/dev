@@ -33,8 +33,6 @@ void AFFGameSequence_ChooseInList::Start()
 	{
 		const TSubclassOf<AFFActor>& Actor = List[i];
 		ChooseList[i] = GetWorld()->SpawnActor<AFFActor>(Actor);
-		ChooseList[i]->ActorMouseClickDelegate.AddDynamic(this, &AFFGameSequence_ChooseInList::OnActorMouseClick);
-		ChooseList[i]->ActorMouseEnterDelegate.AddDynamic(this, &AFFGameSequence_ChooseInList::OnActorMouseEnter);
 	}
 
 	if (ChooseList.Num() > 0)
@@ -51,9 +49,11 @@ void AFFGameSequence_ChooseInList::End()
 		Actor->Destroy();
 }
 
-void AFFGameSequence_ChooseInList::OnActorMouseClick(AFFActor* ActorClicked)
+bool AFFGameSequence_ChooseInList::OnMouseClickActor(AFFActor* ActorClicked)
 {
 	int32 id = ChooseList.Find(ActorClicked);
+	if (id == -1)
+		return false;
 
 	if (id == SelectedItem)
 	{
@@ -67,11 +67,15 @@ void AFFGameSequence_ChooseInList::OnActorMouseClick(AFFActor* ActorClicked)
 		Timer = Delay;
 	}
 	*/
+
+	return true;
 }
 
-void AFFGameSequence_ChooseInList::OnActorMouseEnter(AFFActor* ActorEntered)
+bool AFFGameSequence_ChooseInList::OnMouseEnterActor(AFFActor* ActorEntered)
 {
 	int32 id = ChooseList.Find(ActorEntered);
+	if (id == -1)
+		return false;
 
 	if (/*Timer <= 0.f &&*/ id != DesiredItem)
 	{
@@ -84,6 +88,14 @@ void AFFGameSequence_ChooseInList::OnActorMouseEnter(AFFActor* ActorEntered)
 			Timer = Delay;
 		}
 	}
+
+	return true;
+}
+
+bool AFFGameSequence_ChooseInList::OnMouseExitActor(AFFActor* ActorEntered)
+{
+	int32 id = ChooseList.Find(ActorEntered);
+	return (id != -1);
 }
 
 void AFFGameSequence_ChooseInList::Tick(float DeltaSecond)

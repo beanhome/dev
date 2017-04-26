@@ -8,6 +8,10 @@ FName AFFCard::BackTextureName("BackTexture");
 
 AFFCard::AFFCard()
 {
+	SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
+	bReplicates = true;
+	bNetUseOwnerRelevancy = true;
+	bAlwaysRelevant = true;
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -72,9 +76,11 @@ void AFFCard::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	/*
 	if (MouseOver)
 	{
 		DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, GetName(), nullptr, FColor::White, 0.f);
 		DrawDebugBox(GetWorld(), Center, Extent, FColor::White, false);
 	}
+	*/
 }

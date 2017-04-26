@@ -2,11 +2,6 @@
 #pragma once
 #include "FFGameSequence.generated.h"
 
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseEnterSectorDelegate, AFFSector*, Sector);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseExitSectorDelegate, AFFSector*, Sector);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMouseClickSectorDelegate, AFFSector*, Sector);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFFSequenceFinishDelegate, AFFGameSequence*, Seq);
 
 class AFireflyPlayerController;
@@ -42,9 +37,7 @@ public:
 	}
 
 public:
-	void OnMouseEnterSector(AFFSector* Sector);
-	void OnMouseExitSector(AFFSector* Sector);
-	void OnMouseClickSector(AFFSector* Sector);
+	virtual bool IsCameraFree() const;
 
 protected:
 	bool IsServer() const;
@@ -100,6 +93,18 @@ protected:
 		return Seq;
 	}
 
+public:
+	// return true if capture the event
+	virtual bool PropagateMouseEnterActor(class AFFActor* Actor);
+	virtual bool PropagateMouseExitActor(class AFFActor* Actor);
+	virtual bool PropagateMouseClickActor(class AFFActor* Actor);
+
+protected:
+	// return true if capture the event
+	virtual bool OnMouseEnterActor(class AFFActor* Actor);
+	virtual bool OnMouseExitActor(class AFFActor* Actor);
+	virtual bool OnMouseClickActor(class AFFActor* Actor);
+
 private:
 	void SetState(EFFClientGameSeqState NewState);
 
@@ -121,15 +126,6 @@ protected:
 	TMap<int32, EFFClientGameSeqState> ClientState;
 
 public:
-	UPROPERTY()
-	FMouseEnterSectorDelegate MouseEnterSector;
-
-	UPROPERTY()
-	FMouseExitSectorDelegate MouseExitSector;
-
-	UPROPERTY()
-	FMouseClickSectorDelegate MouseClickSector;
-
 	UPROPERTY()
 	FFFSequenceFinishDelegate EndDelegate;
 };

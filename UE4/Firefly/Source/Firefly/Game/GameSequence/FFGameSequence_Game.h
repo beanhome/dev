@@ -7,6 +7,26 @@
 
 class UFFFreeAction;
 class UFFGameHud;
+class AFFActor;
+class AFFShip;
+class AFFShipBoard;
+class AFFCard;
+class AFFLeaderCard;
+
+USTRUCT()
+struct FFFPlayer
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	AFFLeaderCard* Leader;
+	
+	UPROPERTY()
+	AFFShipBoard* ShipBoard;
+	
+	UPROPERTY()
+	AFFShip* Ship;
+};
 
 UCLASS(minimalapi)
 class AFFGameSequence_Game : public AFFGameSequence
@@ -15,7 +35,12 @@ class AFFGameSequence_Game : public AFFGameSequence
 
 public:
 	AFFGameSequence_Game();
-	
+
+	virtual bool IsSupportedForNetworking() const override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+
+	virtual void ServerInit(AFFGameSequence* OwnerSequence) override;
+
 	virtual void Init(AFFGameSequence* OwnerSequence) override;
 
 	virtual void Start() override;
@@ -23,7 +48,13 @@ public:
 
 	UFFGameHud* GetGameHud();
 
+	virtual bool IsCameraFree() const override;
+
 	const TArray<int32>& GetPlayersOrder() const;
+
+	void PlayerChooseLeader(int32 PlayerId, TSubclassOf<AFFActor>& LeaderCard);
+	void PlayerChooseShip(int32 PlayerId, TSubclassOf<AFFActor>& ShipCard);
+	void PlayerPlaceShip(int32 PlayerId, int32 SectorId);
 
 private:
 	void ShufflePlayerOrder();
@@ -34,13 +65,17 @@ private:
 	UFUNCTION()
 	void PlaceShipFinish(AFFGameSequence* Seq);
 
+	UFUNCTION()
+	void GameOver(AFFGameSequence* Seq);
+
 protected:
 	TArray<int32> PlayersOrder;
 
-	int32 CurrentPlayerIndex;
-
 	UPROPERTY()
 	UFFGameHud* GameHUD;
+
+	UPROPERTY(Replicated)
+	TArray<FFFPlayer> Players;
 };
 
 

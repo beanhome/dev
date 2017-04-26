@@ -35,9 +35,13 @@ void AFFGameState::StartGame()
 	if (Role == ROLE_Authority)
 	{
 		Game = GetWorld()->SpawnActor<AFFGameSequence_Game>();
-		//Game->ServerInit(nullptr);
-		//Game->ServerStart();
 	}
 
 	SetOwner(GetWorld()->GetFirstPlayerController());
 }
+
+bool AFFGameState::IsCameraFree() const
+{
+	return (Game != nullptr && Game->IsCameraFree());
+}
+

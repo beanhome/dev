@@ -26,10 +26,13 @@ public:
 	void JumpPrevCamera();
 	void JumpNextCamera();
 	void JumpToMainCamera();
+	void JumpToActorCamera();
 	void JumpToCamera(AFFCameraActor* Camera);
 
 private:
 	AFFCameraConfig* CameraConfig;
+
+	class AFireflyPlayerController* PlayerOwner;
 
 	UPROPERTY()
 	AFFCameraActor* Camera;

@@ -16,6 +16,8 @@ class AFFGameSequence_PlaceShip : public AFFGameSequence_SubGame
 public:
 	AFFGameSequence_PlaceShip();
 
+	virtual bool IsCameraFree() const;
+
 private:
 	virtual void ServerStart() override;
 
@@ -31,10 +33,12 @@ private:
 	UFUNCTION(Reliable, NetMulticast)
 	void FinishPlayerPlaceShip(int32 id);
 
-private:
-	UFUNCTION()
-	void OnSectorClicked(AFFSector* SectorClicked);
+protected:
+	virtual bool OnMouseEnterActor(class AFFActor* Actor) override;
+	virtual bool OnMouseExitActor(class AFFActor* Actor) override;
+	virtual bool OnMouseClickActor(class AFFActor* Actor) override;
 
+private:
 	int32 CurrentPlayerIndex;
 	TArray<int32> PlayersOrder;
 

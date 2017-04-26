@@ -1,6 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/PlayerController.h"
+#include "Game/GameSequence/FFGameSequence.h"
 #include "FireflyPlayerController.generated.h"
 
 class UFFLobbyPage;
@@ -22,6 +23,10 @@ public:
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 	virtual bool ReplicateSubobjects(class UActorChannel *Channel, class FOutBunch *Bunch, FReplicationFlags *RepFlags) override;
 
+	virtual bool IsSupportedForNetworking() const override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+
+
 	int32 GetId() const;
 	void SetId(int32 id);
 
@@ -31,7 +36,11 @@ public:
 	virtual bool InputKey(FKey Key, EInputEvent EventType, float AmountDepressed, bool bGamepad);
 	virtual bool InputTouch(uint32 Handle, ETouchType::Type Type, const FVector2D& TouchLocation, FDateTime DeviceTimestamp, uint32 TouchpadIndex);
 	virtual bool InputAxis(FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad);
+
+	AFFActor* GetHoverActor() const;
 	
+	bool IsCameraFree() const;
+
 	const UFFCameraManager* GetCameraManager() const;
 	AFFCameraActor* GetCurrentCamera() const;
 	void JumpToCamera(AFFCameraActor*);
@@ -66,9 +75,10 @@ public:
 
 private:
 	void CreateLobbyPage();
+	void SelectActor();
 
 private:
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	int32 Id;
 
 	UPROPERTY()

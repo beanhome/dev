@@ -57,10 +57,12 @@ void AFFDiscardPile::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	/*
 	if (MouseOver)
 	{
 		DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, GetName(), nullptr, FColor::White, 0.f);
 		DrawDebugBox(GetWorld(), Center, Extent, FColor::White, false);
 	}
+	*/
 }
 

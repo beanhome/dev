@@ -23,7 +23,6 @@ void AFFGameSequence::PostActorCreated()
 	{
 		if (IsServer())
 		{
-
 			for (TActorIterator<AFireflyPlayerController> It(GetWorld()); It; ++It)
 			{
 				AFireflyPlayerController* PlayerController = *It;
@@ -38,6 +37,14 @@ void AFFGameSequence::PostActorCreated()
 			SetState(EFFClientGameSeqState::Spawned);
 		}
 	}
+}
+
+bool AFFGameSequence::IsCameraFree() const
+{
+	if (SubSequence != nullptr)
+		return SubSequence->IsCameraFree();
+
+	return false;
 }
 
 bool AFFGameSequence::IsServer() const
@@ -82,6 +89,8 @@ bool AFFGameSequence::IsSupportedForNetworking() const
 
 void AFFGameSequence::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(AFFGameSequence, SubSequence);
 }
 
@@ -219,8 +228,8 @@ void AFFGameSequence::ServerReceiveResponse(int32 res)
 
 	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerReceiveResponse %d"), *GetClass()->GetName(), *GetMultiMode(), res);
 
-	if (SubSequence)
-		SubSequence->ServerReceiveResponse(res);
+	//if (SubSequence)
+	//	SubSequence->ServerReceiveResponse(res);
 }
 
 void AFFGameSequence::ServerStopCurrentSequence()
@@ -261,34 +270,49 @@ void AFFGameSequence::StopSubSequence()
 	SubSequence = nullptr;
 }
 
-void AFFGameSequence::OnMouseEnterSector(AFFSector* Sector)
+bool AFFGameSequence::PropagateMouseEnterActor(class AFFActor* Actor)
 {
 	check(IsClient() || IsLocal());
 
-	MouseEnterSector.Broadcast(Sector);
+	if (SubSequence && SubSequence->PropagateMouseEnterActor(Actor))
+		return true;
 
-	if (SubSequence)
-		SubSequence->OnMouseEnterSector(Sector);
+	return OnMouseEnterActor(Actor);
 }
 
-void AFFGameSequence::OnMouseExitSector(AFFSector* Sector)
+bool AFFGameSequence::PropagateMouseExitActor(class AFFActor* Actor)
 {
 	check(IsClient() || IsLocal());
 
-	MouseExitSector.Broadcast(Sector);
+	if (SubSequence && SubSequence->PropagateMouseExitActor(Actor))
+		return true;
 
-	if (SubSequence)
-		SubSequence->OnMouseExitSector(Sector);
+	return OnMouseExitActor(Actor);
 }
 
-void AFFGameSequence::OnMouseClickSector(AFFSector* Sector)
+bool AFFGameSequence::PropagateMouseClickActor(class AFFActor* Actor)
 {
 	check(IsClient() || IsLocal());
 
-	MouseClickSector.Broadcast(Sector);
+	if (SubSequence && SubSequence->PropagateMouseClickActor(Actor))
+		return true;
 
-	if (SubSequence)
-		SubSequence->OnMouseClickSector(Sector);
+	return OnMouseClickActor(Actor);
+}
+
+bool AFFGameSequence::OnMouseEnterActor(AFFActor* Actor)
+{
+	return false;
+}
+
+bool AFFGameSequence::OnMouseExitActor(AFFActor* Actor)
+{
+	return false;
+}
+
+bool AFFGameSequence::OnMouseClickActor(AFFActor* Actor)
+{
+	return false;
 }
 
 void AFFGameSequence::ClientInit_Implementation(AFFGameSequence* OwnerSequence)

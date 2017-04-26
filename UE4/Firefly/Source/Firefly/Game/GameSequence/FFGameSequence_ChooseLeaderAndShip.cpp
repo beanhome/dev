@@ -159,8 +159,7 @@ void AFFGameSequence_ChooseLeaderAndShip::ServerReceiveResponse(int32 res)
 	switch (ChoosePhase)
 	{
 		case EFFPhase::Leader:
-			// Set Leader to info
-			// ...
+			GetOwner<AFFGameSequence_Game>()->PlayerChooseLeader(PlayersOrder[CurrentPlayerIndex], LeaderCards[res]);
 			LeaderCards.RemoveAt(res);
 			FinishPlayerChooseLeader(PlayersOrder[CurrentPlayerIndex]);
 			ChoosePhase = EFFPhase::Ship;
@@ -168,8 +167,7 @@ void AFFGameSequence_ChooseLeaderAndShip::ServerReceiveResponse(int32 res)
 			break;
 
 		case EFFPhase::Ship:
-			// Set ship to info
-			// ...
+			GetOwner<AFFGameSequence_Game>()->PlayerChooseShip(PlayersOrder[CurrentPlayerIndex], Ships[res]);
 			Ships.RemoveAt(res);
 			FinishPlayerChooseShip(PlayersOrder[CurrentPlayerIndex]);
 			CurrentPlayerIndex++;

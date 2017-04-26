@@ -29,16 +29,22 @@ void AFFActor::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	FBox Box = GetRootComponent()->Bounds.GetBox();
-	Box.GetCenterAndExtents(Center, Extent);
+	if (GetRootComponent() != nullptr)
+	{
+		FBox Box = GetRootComponent()->Bounds.GetBox();
+		Box.GetCenterAndExtents(Center, Extent);
+	}
 }
 
 void AFFActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	FBox Box = GetRootComponent()->Bounds.GetBox();
-	Box.GetCenterAndExtents(Center, Extent);
+	if (GetRootComponent() != nullptr)
+	{
+		FBox Box = GetRootComponent()->Bounds.GetBox();
+		Box.GetCenterAndExtents(Center, Extent);
+	}
 }
 
 void AFFActor::BeginPlay()
@@ -73,19 +79,31 @@ void AFFActor::OnMouseEnter()
 {
 	MouseOver = true;
 	ActorMouseEnterDelegate.Broadcast(this);
+
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+		GameState->Game->PropagateMouseEnterActor(this);
 }
 
 void AFFActor::OnMouseExit()
 {
 	MouseOver = false;
 	ActorMouseExitDelegate.Broadcast(this);
+
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+		GameState->Game->PropagateMouseExitActor(this);
 }
 
 void AFFActor::OnMouseClick()
 {
 	ActorMouseClickDelegate.Broadcast(this);
 
-	GetFFPlayerController()->JumpToCamera(Camera);
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+		GameState->Game->PropagateMouseClickActor(this);
+
+	//GetFFPlayerController()->JumpToCamera(Camera);
 }
 
 

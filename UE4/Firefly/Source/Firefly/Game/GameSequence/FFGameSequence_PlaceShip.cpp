@@ -6,6 +6,7 @@
 #include "Game/FireflyPlayerController.h"
 #include "FFGameSequence_SubGame.h"
 #include "FFGameSequence_ChooseInList.h"
+#include "Board/FFSector.h"
 
 AFFGameSequence_PlaceShip::AFFGameSequence_PlaceShip()
 {
@@ -17,6 +18,11 @@ void AFFGameSequence_PlaceShip::Init(AFFGameSequence* OwnerSequence)
 		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_PlaceShip::Init %s"), *GetFFPlayerController()->GetName());
 
 	Super::Init(OwnerSequence);
+}
+
+bool AFFGameSequence_PlaceShip::IsCameraFree() const
+{
+	return true;
 }
 
 void AFFGameSequence_PlaceShip::ServerStart()
@@ -59,8 +65,6 @@ void AFFGameSequence_PlaceShip::StartPlayerPlaceShip_Implementation(int32 id)
 				GetHud()->Title = TEXT("Place Your Ship");
 
 			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_PlaceShip::StartPlayer %s MY TURN"), *GetFFPlayerController()->GetName());
-
-			MouseClickSector.AddDynamic(this, &AFFGameSequence_PlaceShip::OnSectorClicked);
 		}
 		else
 		{
@@ -76,29 +80,56 @@ void AFFGameSequence_PlaceShip::FinishPlayerPlaceShip_Implementation(int32 id)
 {
 	if (GetHud())
 		GetHud()->Title = TEXT("");
-
-	MouseClickSector.RemoveAll(this);
 }
 
-void AFFGameSequence_PlaceShip::OnSectorClicked(AFFSector* SectorClicked)
+bool AFFGameSequence_PlaceShip::OnMouseClickActor(AFFActor* Actor)
 {
+	AFFSector* Sector = Cast<AFFSector>(Actor);
+	if (Sector == nullptr)
+		return false;
+
 	AFireflyPlayerController* PlayerController = GetFFPlayerController();
 
 	if (PlayerController != nullptr && CameraName.IsEmpty() == false && PlayerController->GetCurrentCamera() != nullptr)
 	{
 		if (PlayerController->GetCurrentCamera()->GetName() != CameraName)
-			return;
+			return false;
 	}
+	
+	Sector->SetActorHiddenInGame(true);
 
-	SendResponseToServer(SectorClicked->GetId());
+	SendResponseToServer(Sector->GetId());
+
+	return true;
+}
+
+bool AFFGameSequence_PlaceShip::OnMouseEnterActor(AFFActor* Actor)
+{
+	AFFSector* Sector = Cast<AFFSector>(Actor);
+	if (Sector == nullptr)
+		return false;
+
+	Sector->SetActorHiddenInGame(false);
+
+	return true;
+}
+
+bool AFFGameSequence_PlaceShip::OnMouseExitActor(AFFActor* Actor)
+{
+	AFFSector* Sector = Cast<AFFSector>(Actor);
+	if (Sector == nullptr)
+		return false;
+
+	Sector->SetActorHiddenInGame(true);
+
+	return true;
 }
 
 void AFFGameSequence_PlaceShip::ServerReceiveResponse(int32 res)
 {
 	UE_LOG(Firefly, Log, TEXT("Receive response %d"), res);
 
-	// Set ship loc to info
-	// ...
+	GetOwner<AFFGameSequence_Game>()->PlayerPlaceShip(PlayersOrder[CurrentPlayerIndex], res);
 
 	FinishPlayerPlaceShip(PlayersOrder[CurrentPlayerIndex]);
 		
