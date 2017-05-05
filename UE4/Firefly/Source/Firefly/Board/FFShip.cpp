@@ -80,6 +80,16 @@ void AFFShip::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 	DOREPLIFETIME(AFFShip, CurrentSector);
 }
 
+const AFFSector* AFFShip::GetCurrentSector() const
+{
+	return CurrentSector;
+}
+
+AFFSector* AFFShip::GetCurrentSector()
+{
+	return CurrentSector;
+}
+
 void AFFShip::SetSector(int32 SectorId)
 {
 	UWorld* World = Cast<UWorld>(GetOuter());
@@ -113,7 +123,6 @@ void AFFShip::SetSector(const FString& SectorName)
 			if (It->GetName() == SectorName)
 			{
 				Sector = *It;
-				//UE_LOG(Firefly, Log, TEXT("Found Sector %x (%x)"), Sector, Sector->GetOuter());
 				break;
 			}
 		}

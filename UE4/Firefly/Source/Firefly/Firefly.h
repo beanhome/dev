@@ -16,5 +16,6 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(Firefly, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(FFSeq, Log, All);
 
 #endif

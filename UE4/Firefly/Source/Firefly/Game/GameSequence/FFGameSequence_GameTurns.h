@@ -20,6 +20,8 @@ public:
 
 	virtual bool IsCameraFree() const;
 
+	bool IsMyTurn() const;
+
 private:
 	virtual void ServerStart() override;
 
@@ -37,20 +39,17 @@ private:
 	void FinishPlayerGameTurns(int32 id);
 	*/
 
+protected:
+	// return true if capture the event
+	virtual bool OnMouseEnterActor(int32 PlayerId, class AFFActor* Actor) override;
+	virtual bool OnMouseLeaveActor(int32 PlayerId, class AFFActor* Actor) override;
+	virtual bool OnMouseClickActor(int32 PlayerId, class AFFActor* Actor) override;
+
 private:
-	UFUNCTION()
-	void OnActorClicked(AFFActor* Actor);
-
-	UFUNCTION()
-	void OnActorEnter(AFFActor* Actor);
-
-	UFUNCTION()
-	void OnActorExit(AFFActor* Actor);
-
 	int32 CurrentPlayerId;
 
-	UPROPERTY(Replicated)
-	TArray<AFFGameSequence*> ParallelSequences;
+	UPROPERTY(EditAnywhere)
+	FString BoardCameraName;
 };
 
 

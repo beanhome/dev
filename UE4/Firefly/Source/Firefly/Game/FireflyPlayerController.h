@@ -46,6 +46,8 @@ public:
 	void JumpToCamera(AFFCameraActor*);
 	void JumpToMainCamera();
 
+	void DrawDebug(class UCanvas* Canvas, float& x, float& y) const;
+
 	UFUNCTION(Reliable, Client)
 	void NotifySetHost();
 
@@ -59,13 +61,20 @@ public:
 	void ServerLaunchGame();
 
 	UFUNCTION(Reliable, Client)
-	void StartGame(int32 id);
+	void StartGame();
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void SendClientResponseToServer(AFFGameSequence* seq, int32 res);
 
 	UFUNCTION(Reliable, Server, WithValidation)
 	void SendClientStateToServer(AFFGameSequence* seq, EFFClientGameSeqState state);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SendClientMouseEnterActor(class AFFActor* Actor);
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SendClientMouseLeaveActor(class AFFActor* Actor);
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SendClientMouseClickActor(class AFFActor* Actor);
 
 	//UFUNCTION(Reliable, Server, WithValidation)
 	//void StopCurrentSequence();

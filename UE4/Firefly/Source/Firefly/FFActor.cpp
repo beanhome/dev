@@ -2,6 +2,7 @@
 
 #include "Firefly.h"
 #include "FFActor.h"
+#include "Game/GameSequence/FFGameSequence_Game.h"
 #include "Game/FireflyPlayerController.h"
 
 AFFActor::AFFActor()
@@ -80,30 +81,61 @@ void AFFActor::OnMouseEnter()
 	MouseOver = true;
 	ActorMouseEnterDelegate.Broadcast(this);
 
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	if (GameState != nullptr && GameState->Game != nullptr)
-		GameState->Game->PropagateMouseEnterActor(this);
+	AFireflyPlayerController* PlayerController = GetFFPlayerController();
+
+	if (Role == ROLE_Authority)
+	{
+		// Local
+		AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+		if (GameState != nullptr && GameState->Game != nullptr)
+			GameState->Game->PropagateMouseEnterActor(PlayerController->GetId(), this);
+	}
+	else
+	{
+		// Replicated
+		PlayerController->SendClientMouseEnterActor(this);
+	}
 }
 
-void AFFActor::OnMouseExit()
+void AFFActor::OnMouseLeave()
 {
 	MouseOver = false;
-	ActorMouseExitDelegate.Broadcast(this);
+	ActorMouseLeaveDelegate.Broadcast(this);
 
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	if (GameState != nullptr && GameState->Game != nullptr)
-		GameState->Game->PropagateMouseExitActor(this);
+	AFireflyPlayerController* PlayerController = GetFFPlayerController();
+
+	if (Role == ROLE_Authority)
+	{
+		// Local
+		AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+		if (GameState != nullptr && GameState->Game != nullptr)
+			GameState->Game->PropagateMouseLeaveActor(PlayerController->GetId(), this);
+	}
+	else
+	{
+		// Replicated
+		PlayerController->SendClientMouseLeaveActor(this);
+	}
 }
 
 void AFFActor::OnMouseClick()
 {
 	ActorMouseClickDelegate.Broadcast(this);
 
-	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
-	if (GameState != nullptr && GameState->Game != nullptr)
-		GameState->Game->PropagateMouseClickActor(this);
+	AFireflyPlayerController* PlayerController = GetFFPlayerController();
 
-	//GetFFPlayerController()->JumpToCamera(Camera);
+	if (Role == ROLE_Authority)
+	{
+		// Local
+		AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+		if (GameState != nullptr && GameState->Game != nullptr)
+			GameState->Game->PropagateMouseClickActor(PlayerController->GetId(), this);
+	}
+	else
+	{
+		// Replicated
+		PlayerController->SendClientMouseClickActor(this);
+	}
 }
 
 

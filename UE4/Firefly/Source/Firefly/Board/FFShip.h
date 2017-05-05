@@ -28,6 +28,9 @@ public:
 	void SetSector(const FString& SectorName);
 	void SetSector(AFFSector* Sector);
 
+	const AFFSector* GetCurrentSector() const;
+	AFFSector* GetCurrentSector();
+
 	UFUNCTION(Reliable, NetMulticast)
 	void ClientInitialize(int32 Id);
 

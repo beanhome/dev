@@ -7,4 +7,5 @@ IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, Firefly, "Firefly");
 
 
 DEFINE_LOG_CATEGORY(Firefly);
+DEFINE_LOG_CATEGORY(FFSeq);
  

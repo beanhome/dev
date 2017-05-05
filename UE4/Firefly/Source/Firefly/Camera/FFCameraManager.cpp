@@ -65,40 +65,44 @@ void UFFCameraManager::TickComponent(float DeltaTime, enum ELevelTick TickType, 
 
 	if (NextCamera != nullptr)
 	{
-		if (CurrentCamera == NextCamera)
-		{
-			Timer -= DeltaTime;
-
-			if (Timer <= 0.f)
-			{
-				Location = NextCamera->GetActorLocation();
-				Rotation = NextCamera->GetActorRotation();
-				NextCamera = nullptr;
-			}
-			else
-			{
-				float alpha = (1.f - Timer / Delay);
-				Location = FMath::Lerp(LastLocation, NextCamera->GetActorLocation(), alpha);
-				Rotation = FQuat::Slerp(LastRotation.Quaternion(), NextCamera->GetActorRotation().Quaternion(), alpha).Rotator();
-			}
-		}
-		else
+		// Start
+		if (CurrentCamera != nullptr)
 		{
 			LastLocation = Location;
 			LastRotation = Rotation;
 
 			PrevCamera = CurrentCamera;
-			CurrentCamera = NextCamera;
+			CurrentCamera = nullptr;
 			Timer = Delay;
+		}
+
+		// Moving
+		else
+		{
+			Timer -= DeltaTime;
+
+			if (Timer > 0.f)
+			{
+				// Move
+				float alpha = (1.f - Timer / Delay);
+				Location = FMath::Lerp(LastLocation, NextCamera->GetActorLocation(), alpha);
+				Rotation = FQuat::Slerp(LastRotation.Quaternion(), NextCamera->GetActorRotation().Quaternion(), alpha).Rotator();
+			}
+			else
+			{
+				// Finish
+				Location = NextCamera->GetActorLocation();
+				Rotation = NextCamera->GetActorRotation();
+				CurrentCamera = NextCamera;
+				NextCamera = nullptr;
+			}
 		}
 	}
 
 	if (Camera != nullptr)
 	{
-		//UE_LOG(Firefly, Log, TEXT("Pre  -- %.3f %.3f"), ViewTarget->GetActorLocation().X, ViewTarget->GetActorLocation().Y);
 		Camera->SetActorLocation(Location);
 		Camera->SetActorRotation(Rotation);
-		//UE_LOG(Firefly, Log, TEXT("Post -- %.3f %.3f"), ViewTarget->GetActorLocation().X, ViewTarget->GetActorLocation().Y);
 	}
 }
 

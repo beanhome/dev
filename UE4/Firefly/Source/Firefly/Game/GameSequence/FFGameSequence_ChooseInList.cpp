@@ -49,8 +49,11 @@ void AFFGameSequence_ChooseInList::End()
 		Actor->Destroy();
 }
 
-bool AFFGameSequence_ChooseInList::OnMouseClickActor(AFFActor* ActorClicked)
+bool AFFGameSequence_ChooseInList::OnMouseClickActor(int32 PlayerId, AFFActor* ActorClicked)
 {
+	if (PlayerId != GetMyPlayerId())
+		return false;
+
 	int32 id = ChooseList.Find(ActorClicked);
 	if (id == -1)
 		return false;
@@ -71,8 +74,11 @@ bool AFFGameSequence_ChooseInList::OnMouseClickActor(AFFActor* ActorClicked)
 	return true;
 }
 
-bool AFFGameSequence_ChooseInList::OnMouseEnterActor(AFFActor* ActorEntered)
+bool AFFGameSequence_ChooseInList::OnMouseEnterActor(int32 PlayerId, AFFActor* ActorEntered)
 {
+	if (PlayerId != GetMyPlayerId())
+		return false;
+
 	int32 id = ChooseList.Find(ActorEntered);
 	if (id == -1)
 		return false;
@@ -92,8 +98,11 @@ bool AFFGameSequence_ChooseInList::OnMouseEnterActor(AFFActor* ActorEntered)
 	return true;
 }
 
-bool AFFGameSequence_ChooseInList::OnMouseExitActor(AFFActor* ActorEntered)
+bool AFFGameSequence_ChooseInList::OnMouseLeaveActor(int32 PlayerId, AFFActor* ActorEntered)
 {
+	if (PlayerId != GetMyPlayerId())
+		return false;
+
 	int32 id = ChooseList.Find(ActorEntered);
 	return (id != -1);
 }

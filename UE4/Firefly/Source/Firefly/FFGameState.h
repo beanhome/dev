@@ -19,7 +19,7 @@ public:
 
 public:
 	UPROPERTY(replicated)
-	class AFFGameSequence* Game;
+	class AFFGameSequence_Game* Game;
 
 	//UPROPERTY()
 	//AFFGameSequence* CurrentSequence;

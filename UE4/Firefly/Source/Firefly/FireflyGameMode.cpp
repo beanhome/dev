@@ -11,6 +11,7 @@
 #include "Game/FireflyPlayerController.h"
 #include "FFGameState.h"
 #include "Game/Message/FFMessage.h"
+#include "UI/FFHud.h"
 
 AFireflyGameMode::AFireflyGameMode()
 : GamePhase(EFFGamePhase::Lobby)
@@ -23,6 +24,7 @@ AFireflyGameMode::AFireflyGameMode()
 	// use our own player controller class
 	PlayerControllerClass = AFireflyPlayerController::StaticClass();
 	GameStateClass = AFFGameState::StaticClass();
+	HUDClass = AFFHud::StaticClass();
 
 	GetDefaultGameTuning();
 	GetDefaultUITuning();
@@ -143,7 +145,7 @@ void AFireflyGameMode::StartGame()
 		Controller->SetId(PlayerInfo->GetId());
 		*/
 
-		Controller->StartGame(-1);
+		Controller->StartGame();
 
 		/*
 		UFFMessage_Test* Msg = NewObject<UFFMessage_Test>();

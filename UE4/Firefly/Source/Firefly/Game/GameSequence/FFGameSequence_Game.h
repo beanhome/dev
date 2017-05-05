@@ -50,6 +50,8 @@ public:
 
 	virtual bool IsCameraFree() const override;
 
+	const FFFPlayer& GetPlayer(int32 Id) const;
+
 	const TArray<int32>& GetPlayersOrder() const;
 
 	void PlayerChooseLeader(int32 PlayerId, TSubclassOf<AFFActor>& LeaderCard);
@@ -67,6 +69,16 @@ private:
 
 	UFUNCTION()
 	void GameOver(AFFGameSequence* Seq);
+
+public:
+	UFUNCTION(Reliable, NetMulticast)
+	void ReceiveMouseEnterActor(int32 PlayerId, class AFFActor* Actor);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void ReceiveMouseLeaveActor(int32 PlayerId, class AFFActor* Actor);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void ReceiveMouseClickActor(int32 PlayerId, class AFFActor* Actor);
 
 protected:
 	TArray<int32> PlayersOrder;

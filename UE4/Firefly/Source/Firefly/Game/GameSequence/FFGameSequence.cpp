@@ -3,10 +3,10 @@
 #include "Firefly.h"
 #include "FFGameSequence.h"
 #include "UnrealNetwork.h"
+#include "VisualLogger.h"
 #include "Game/FireflyPlayerController.h"
 
 AFFGameSequence::AFFGameSequence()
-: SubSequence(nullptr)
 {
 	SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
 	bReplicates = true;
@@ -15,9 +15,26 @@ AFFGameSequence::AFFGameSequence()
 	State = EFFClientGameSeqState::None;
 }
 
+void AFFGameSequence::Log(const FString& str) const
+{
+	FString tab = "";
+	for (int32 i = 0; i < GetMyPlayerId()+1; ++i)
+		tab += "\t\t\t\t";
+	FString mode = GetMultiMode();
+	FString player = (GetMyPlayerId() != -1 ? FString::Printf(TEXT("%d"), GetMyPlayerId()) : TEXT(""));
+
+	FString classname = GetClass()->GetName();
+	int32 i = str.Find("::");
+	FString funcname = (i != -1 ? str.RightChop(i+2) : str);
+
+	UE_LOG(FFSeq, Log, TEXT("%s %s %s %s :: %s"), *tab, *mode, *player, *classname, *funcname);
+
+	UE_VLOG(this, FFSeq, Log, TEXT("%s %s %s :: %s"), *mode, *player, *classname, *funcname);
+}
+
 void AFFGameSequence::PostActorCreated()
 {
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s PostActorCreated %d"), *GetMultiMode(), *GetClass()->GetName(), GetPlayerId());
+	SEQLOG();
 
 	if (GetWorld())
 	{
@@ -39,12 +56,24 @@ void AFFGameSequence::PostActorCreated()
 	}
 }
 
+void AFFGameSequence::Destroyed()
+{
+	SEQLOG();
+
+	Super::Destroyed();
+}
+
 bool AFFGameSequence::IsCameraFree() const
 {
-	if (SubSequence != nullptr)
-		return SubSequence->IsCameraFree();
+	for (AFFGameSequence* Sequence : SubSequences)
+	{
+		ensure(Sequence != nullptr);
 
-	return false;
+		if (Sequence != nullptr && Sequence->IsCameraFree() == false)
+			return false;
+	}
+
+	return true;
 }
 
 bool AFFGameSequence::IsServer() const
@@ -91,7 +120,7 @@ void AFFGameSequence::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AFFGameSequence, SubSequence);
+	DOREPLIFETIME(AFFGameSequence, SubSequences);
 }
 
 AFireflyPlayerController* AFFGameSequence::GetFFPlayerController() const
@@ -100,18 +129,32 @@ AFireflyPlayerController* AFFGameSequence::GetFFPlayerController() const
 	return (GameInstance != nullptr ? Cast<AFireflyPlayerController>(GameInstance->GetFirstLocalPlayerController(GetWorld())) : nullptr);
 }
 
-int32 AFFGameSequence::GetPlayerId() const
+int32 AFFGameSequence::GetMyPlayerId() const
 {
 	AFireflyPlayerController* Player = GetFFPlayerController();
 	return (Player != nullptr ? Player->GetId() : -1);
 }
 
+bool AFFGameSequence::IsUnderCamera(const FString& CameraName) const
+{
+	if (CameraName.IsEmpty())
+		return true;
+
+	AFireflyPlayerController* PlayerController = GetFFPlayerController();
+
+	if (PlayerController == nullptr || PlayerController->GetCurrentCamera() == nullptr)
+		return false;
+
+	FString CurrentCamera = PlayerController->GetCurrentCamera()->GetName();
+
+	return (CurrentCamera == CameraName);
+}
 
 void AFFGameSequence::ServerInit(AFFGameSequence* OwnerSequence)
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerInit"), *GetMultiMode(), *GetClass()->GetName());
+	SEQLOG();
 
 	SetOwner(OwnerSequence);
 	ClientInit(OwnerSequence);
@@ -121,7 +164,7 @@ void AFFGameSequence::ServerStart()
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerStart"), *GetMultiMode(), *GetClass()->GetName());
+	SEQLOG();
 
 	ClientStart();
 }
@@ -130,14 +173,16 @@ void AFFGameSequence::ServerEnd()
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerEnd"), *GetMultiMode(), *GetClass()->GetName());
-
-	ClientEnd();
+	if (State < EFFClientGameSeqState::Ended)
+	{
+		SEQLOG();
+		ClientEnd();
+	}
 }
 
 void AFFGameSequence::Init(AFFGameSequence* OwnerSequence)
 {
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s Init %d"), *GetMultiMode(), *GetClass()->GetName(), GetPlayerId());
+	SEQLOG();
 
 	if (OwnerSequence)
 		SetOwner(OwnerSequence);
@@ -145,12 +190,12 @@ void AFFGameSequence::Init(AFFGameSequence* OwnerSequence)
 
 void AFFGameSequence::Start()
 {
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s Start %d"), *GetMultiMode(), *GetClass()->GetName(), GetPlayerId());
+	SEQLOG();
 }
 
 void AFFGameSequence::End()
 {
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s End %d"), *GetMultiMode(), *GetClass()->GetName(), GetPlayerId());
+	SEQLOG();
 }
 
 void AFFGameSequence::SetState(EFFClientGameSeqState NewState)
@@ -158,7 +203,7 @@ void AFFGameSequence::SetState(EFFClientGameSeqState NewState)
 	check(IsClient());
 	ensure(Role != ROLE_Authority);
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s SetState %d %s"), *GetMultiMode(), *GetClass()->GetName(), GetPlayerId(), *EnumToString(EFFClientGameSeqState, NewState));
+	SEQLOG();
 
 	State = NewState;
 
@@ -170,7 +215,7 @@ void AFFGameSequence::ServerReceiveClientState(int32 id, EFFClientGameSeqState N
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerReceiveClientState %d %s"), *GetMultiMode(), *GetClass()->GetName(), id, *EnumToString(EFFClientGameSeqState, NewState));
+	SEQLOG();
 
 	ClientState[id] = NewState;
 
@@ -184,11 +229,25 @@ void AFFGameSequence::ServerReceiveClientState(int32 id, EFFClientGameSeqState N
 	ServerOnAllClientSynchro(State);
 }
 
+/*
+void AFFGameSequence::ServerReceiveMouseEnterActor(int32 PlayerId, class AFFActor* Actor)
+{
+}
+
+void AFFGameSequence::ServerReceiveMouseExitActor(int32 PlayerId, class AFFActor* Actor)
+{
+}
+
+void AFFGameSequence::ServerReceiveMouseClickActor(int32 PlayerId, class AFFActor* Actor)
+{
+}
+*/
+
 void AFFGameSequence::ServerOnAllClientSynchro(EFFClientGameSeqState NewState)
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerOnAllClientSynchro %s"), *GetMultiMode(), *GetClass()->GetName(), *EnumToString(EFFClientGameSeqState, NewState));
+	SEQLOG();
 
 	switch (NewState)
 	{
@@ -208,6 +267,7 @@ void AFFGameSequence::ServerOnAllClientSynchro(EFFClientGameSeqState NewState)
 
 		case EFFClientGameSeqState::Ended:
 			EndDelegate.Broadcast(this);
+			GetOwner<AFFGameSequence>()->OnSubSequenceEnded(this);
 			Destroy();
 			break;
 	}
@@ -226,91 +286,135 @@ void AFFGameSequence::ServerReceiveResponse(int32 res)
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerReceiveResponse %d"), *GetClass()->GetName(), *GetMultiMode(), res);
-
-	//if (SubSequence)
-	//	SubSequence->ServerReceiveResponse(res);
+	SEQLOG();
 }
 
 void AFFGameSequence::ServerStopCurrentSequence()
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s ServerStopCurrentSequence"), *GetMultiMode(), *GetClass()->GetName());
+	SEQLOG();
 
-	ensure(SubSequence == nullptr);
-	if (SubSequence)
-		SubSequence->ServerStopCurrentSequence();
+	ensure(SubSequences.Num() == 0);
+	for (AFFGameSequence* Sequence : SubSequences)
+	{
+		check(Sequence != nullptr);
+			Sequence->ServerStopCurrentSequence();
+	}
 
 	ServerEnd();
+
+	GetOwner<AFFGameSequence>()->OnSubSequenceStopped(this);
 }
 
 AFFGameSequence* AFFGameSequence::StartSubSequence(UClass* Class)
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s StartSubSequence %s"), *GetMultiMode(), *GetClass()->GetName(), *Class->GetName());
+	SEQLOG();
 
 	FActorSpawnParameters Param;
 	Param.Owner = this;
-	SubSequence = CastChecked<AFFGameSequence>(GetWorld()->SpawnActor(Class, nullptr, nullptr, Param));
-	//SubSequence->ServerInit(this);
-	//SubSequence->ServerStart();
+	AFFGameSequence* SubSequence = CastChecked<AFFGameSequence>(GetWorld()->SpawnActor(Class, nullptr, nullptr, Param));
+	SubSequences.Add(SubSequence);
 
 	return SubSequence;
 }
 
-void AFFGameSequence::StopSubSequence()
+void AFFGameSequence::StopSubSequence(AFFGameSequence* SubSequence)
 {
 	check(IsServer());
 
-	UE_LOG(Firefly, Log, TEXT("AFFGameSequence %s %s StopSubSequence %s"), *GetMultiMode(), *GetClass()->GetName(), *SubSequence->GetClass()->GetName());
+	SEQLOG();
 
 	SubSequence->ServerEnd();
-	SubSequence = nullptr;
+	SubSequences.Remove(SubSequence);
 }
 
-bool AFFGameSequence::PropagateMouseEnterActor(class AFFActor* Actor)
+void AFFGameSequence::StopLocalSubSequence(AFFGameSequence* SubSequence)
 {
 	check(IsClient() || IsLocal());
 
-	if (SubSequence && SubSequence->PropagateMouseEnterActor(Actor))
-		return true;
+	SEQLOG();
 
-	return OnMouseEnterActor(Actor);
+	SubSequence->End();
+	SubSequences.Remove(SubSequence);
+	SubSequence->Destroy();
 }
 
-bool AFFGameSequence::PropagateMouseExitActor(class AFFActor* Actor)
+void AFFGameSequence::OnSubSequenceStopped(AFFGameSequence* SubSequence)
 {
-	check(IsClient() || IsLocal());
+	check(IsServer());
 
-	if (SubSequence && SubSequence->PropagateMouseExitActor(Actor))
-		return true;
-
-	return OnMouseExitActor(Actor);
+	SEQLOG();
 }
 
-bool AFFGameSequence::PropagateMouseClickActor(class AFFActor* Actor)
+void AFFGameSequence::OnSubSequenceEnded(AFFGameSequence* SubSequence)
 {
-	check(IsClient() || IsLocal());
+	check(IsServer());
 
-	if (SubSequence && SubSequence->PropagateMouseClickActor(Actor))
-		return true;
+	SEQLOG();
 
-	return OnMouseClickActor(Actor);
+	SubSequences.Remove(SubSequence);
 }
 
-bool AFFGameSequence::OnMouseEnterActor(AFFActor* Actor)
+
+bool AFFGameSequence::PropagateMouseEnterActor(int32 PlayerId, class AFFActor* Actor)
+{
+	//check(IsClient() || IsLocal());
+
+	for (AFFGameSequence* Sequence : SubSequences)
+	{
+		check(Sequence != nullptr);
+
+		if (Sequence->PropagateMouseEnterActor(PlayerId, Actor))
+			return true;
+	}
+
+	return OnMouseEnterActor(PlayerId, Actor);
+}
+
+bool AFFGameSequence::PropagateMouseLeaveActor(int32 PlayerId, class AFFActor* Actor)
+{
+	//check(IsClient() || IsLocal());
+
+	for (AFFGameSequence* Sequence : SubSequences)
+	{
+		check(Sequence != nullptr);
+
+		if (Sequence->PropagateMouseLeaveActor(PlayerId, Actor))
+			return true;
+	}
+
+	return OnMouseLeaveActor(PlayerId, Actor);
+}
+
+bool AFFGameSequence::PropagateMouseClickActor(int32 PlayerId, class AFFActor* Actor)
+{
+	//check(IsClient() || IsLocal());
+
+	for (AFFGameSequence* Sequence : SubSequences)
+	{
+		check(Sequence != nullptr);
+
+		if (Sequence->PropagateMouseClickActor(PlayerId, Actor))
+			return true;
+	}
+
+	return OnMouseClickActor(PlayerId, Actor);
+}
+
+bool AFFGameSequence::OnMouseEnterActor(int32 PlayerId, AFFActor* Actor)
 {
 	return false;
 }
 
-bool AFFGameSequence::OnMouseExitActor(AFFActor* Actor)
+bool AFFGameSequence::OnMouseLeaveActor(int32 PlayerId, AFFActor* Actor)
 {
 	return false;
 }
 
-bool AFFGameSequence::OnMouseClickActor(AFFActor* Actor)
+bool AFFGameSequence::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 {
 	return false;
 }
@@ -344,3 +448,18 @@ void AFFGameSequence::ClientEnd_Implementation()
 		SetState(EFFClientGameSeqState::Ended);
 	}
 }
+
+void AFFGameSequence::DrawDebug(class UCanvas* Canvas, float& x, float& y) const
+{
+	UFont* Font = GEngine->GetSmallFont();
+	Canvas->SetDrawColor(FColor::White);
+	y += Canvas->DrawText(Font, FString::Printf(TEXT("%s"), *GetClass()->GetName()), x, y);
+
+	x += 15.f;
+
+	for (AFFGameSequence* Sequence : SubSequences)
+		Sequence->DrawDebug(Canvas, x, y);
+
+	x -= 15.f;
+}
+

@@ -7,7 +7,7 @@ class AFFCameraActor;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFFActorMouseClickDelegate, AFFActor*, ClickedActor);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFFActorMouseEnterDelegate, AFFActor*, EnterActor);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFFActorMouseExitDelegate, AFFActor*, ExitActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFFActorMouseLeaveDelegate, AFFActor*, ExitActor);
 
 /** The Ship Board of each player */
 UCLASS(Blueprintable, ClassGroup = "Firefly")
@@ -33,7 +33,7 @@ public:
 	void SetRotation(const FRotator& rot);
 
 	virtual void OnMouseEnter();
-	virtual void OnMouseExit();
+	virtual void OnMouseLeave();
 	virtual void OnMouseClick();
 
 public:
@@ -44,7 +44,7 @@ public:
 	FFFActorMouseEnterDelegate ActorMouseEnterDelegate;
 
 	UPROPERTY()
-	FFFActorMouseExitDelegate ActorMouseExitDelegate;
+	FFFActorMouseLeaveDelegate ActorMouseLeaveDelegate;
 
 	UPROPERTY(EditAnywhere)
 	AFFCameraActor* Camera;

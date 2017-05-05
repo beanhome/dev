@@ -42,12 +42,15 @@ const TArray<int32>& AFFGameSequence_Game::GetPlayersOrder() const
 
 bool AFFGameSequence_Game::IsCameraFree() const
 {
-	if (SubSequence != nullptr)
-		return SubSequence->IsCameraFree();
-
-	return true;
+	return Super::IsCameraFree();
 }
 
+const FFFPlayer& AFFGameSequence_Game::GetPlayer(int32 Id) const
+{
+	check(Id < Players.Num());
+
+	return Players[Id];
+}
 
 void AFFGameSequence_Game::ServerInit(AFFGameSequence* OwnerSequence)
 {
@@ -62,11 +65,23 @@ void AFFGameSequence_Game::ServerInit(AFFGameSequence* OwnerSequence)
 	Super::ServerInit(OwnerSequence);
 }
 
+void AFFGameSequence_Game::ReceiveMouseEnterActor_Implementation(int32 PlayerId, class AFFActor* Actor)
+{
+	PropagateMouseEnterActor(PlayerId, Actor);
+}
+
+void AFFGameSequence_Game::ReceiveMouseLeaveActor_Implementation(int32 PlayerId, class AFFActor* Actor)
+{
+	PropagateMouseLeaveActor(PlayerId, Actor);
+}
+
+void AFFGameSequence_Game::ReceiveMouseClickActor_Implementation(int32 PlayerId, class AFFActor* Actor)
+{
+	PropagateMouseClickActor(PlayerId, Actor);
+}
+
 void AFFGameSequence_Game::Init(AFFGameSequence* OwnerSequence)
 {
-	if (GetFFPlayerController())
-		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_Game::Init %s"), *GetFFPlayerController()->GetName());
-
 	for (TActorIterator<AFFShipBoardPlace> It(GetWorld()); It; ++It)
 	{
 		AFFShipBoardPlace* Place = *It;
@@ -80,9 +95,6 @@ void AFFGameSequence_Game::Init(AFFGameSequence* OwnerSequence)
 void AFFGameSequence_Game::Start()
 {
 	AFireflyPlayerController* PlayerController = GetFFPlayerController();
-
-	if (PlayerController)
-		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_Game::Start %s"), *GetFFPlayerController()->GetName());
 
 	Super::Start();
 
@@ -100,28 +112,28 @@ void AFFGameSequence_Game::Start()
 	{
 		ShufflePlayerOrder();
 
-		StartSubSequence<AFFGameSequence_ChooseLeaderAndShip>();
+		AFFGameSequence* SubSequence = StartSubSequence<AFFGameSequence_ChooseLeaderAndShip>();
 		SubSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Game::ChooseLeaderAndShipFinish);
 	}
 }
 
 void AFFGameSequence_Game::ChooseLeaderAndShipFinish(AFFGameSequence* Seq)
 {
-	UE_LOG(Firefly, Log, TEXT("*******  ChooseLeaderAndShipFinish"));
+	SEQLOG();
 
-	SubSequence = nullptr;
+	StopSubSequence(Seq);
 
-	StartSubSequence<AFFGameSequence_PlaceShip>(GetDefaultGameTuning()->GameSequence_PlaceShip);
+	AFFGameSequence* SubSequence = StartSubSequence<AFFGameSequence_PlaceShip>(GetDefaultGameTuning()->GameSequence_PlaceShip);
 	SubSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Game::PlaceShipFinish);
 }
 
 void AFFGameSequence_Game::PlaceShipFinish(AFFGameSequence* Seq)
 {
-	UE_LOG(Firefly, Log, TEXT("*******  PlaceShipFinish"));
+	SEQLOG();
 
-	SubSequence = nullptr;
+	StopSubSequence(Seq);
 
-	StartSubSequence<AFFGameSequence_GameTurns>();
+	AFFGameSequence* SubSequence = StartSubSequence<AFFGameSequence_GameTurns>();
 	SubSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Game::GameOver);
 }
 
@@ -157,9 +169,6 @@ void AFFGameSequence_Game::PlayerPlaceShip(int32 PlayerId, int32 SectorId)
 
 void AFFGameSequence_Game::End()
 {
-	if (GetFFPlayerController())
-		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_Game::End %s"), *GetFFPlayerController()->GetName());
-
 	if (GameHUD != nullptr)
 	{
 		GameHUD->RemoveFromParent();
@@ -177,7 +186,7 @@ void AFFGameSequence_Game::ShufflePlayerOrder()
 	int32 Size = GameMode->GetPlayerCount();
 	PlayersOrder.SetNum(Size);
 	for (int32 i = 0; i < Size; ++i)
-		PlayersOrder[i] = i;
-	for (int32 i = 0; i < Size; ++i)
-		PlayersOrder.Swap(i, FMath::RandRange(0, Size-1));
+		PlayersOrder[i] = Size-1-i;
+	//for (int32 i = 0; i < Size; ++i)
+	//	PlayersOrder.Swap(i, FMath::RandRange(0, Size-1));
 }

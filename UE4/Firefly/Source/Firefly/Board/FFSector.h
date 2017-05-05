@@ -36,7 +36,7 @@ public:
 	class UStaticMeshComponent* GetStaticMeshComponent() const;
 
 	virtual void OnMouseEnter() override;
-	virtual void OnMouseExit() override;
+	virtual void OnMouseLeave() override;
 	virtual void OnMouseClick() override;
 
 protected:

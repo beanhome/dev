@@ -32,9 +32,9 @@ public:
 	const TArray<TSubclassOf<AFFActor>>& GetList() const;
 
 protected:
-	virtual bool OnMouseEnterActor(class AFFActor* Actor) override;
-	virtual bool OnMouseExitActor(class AFFActor* Actor) override;
-	virtual bool OnMouseClickActor(class AFFActor* Actor) override;
+	virtual bool OnMouseEnterActor(int32 PlayerId, class AFFActor* Actor) override;
+	virtual bool OnMouseLeaveActor(int32 PlayerId, class AFFActor* Actor) override;
+	virtual bool OnMouseClickActor(int32 PlayerId, class AFFActor* Actor) override;
 
 private:
 	FVector GetItemLocation(int32 selected, int32 id) const;

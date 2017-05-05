@@ -13,9 +13,6 @@ AFFGameSequence_ChooseLeaderAndShip::AFFGameSequence_ChooseLeaderAndShip()
 
 void AFFGameSequence_ChooseLeaderAndShip::Init(AFFGameSequence* OwnerSequence)
 {
-	if (GetFFPlayerController())
-		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseLeaderAndShip::Init %s"), *GetFFPlayerController()->GetName());
-
 	Super::Init(OwnerSequence);
 }
 
@@ -49,17 +46,11 @@ void AFFGameSequence_ChooseLeaderAndShip::ServerStart()
 
 void AFFGameSequence_ChooseLeaderAndShip::Start()
 {
-	if (GetFFPlayerController())
-		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseLeaderAndShip::Start %s"), *GetFFPlayerController()->GetName());
-
 	Super::Start();
 }
 
 void AFFGameSequence_ChooseLeaderAndShip::End()
 {
-	if (GetFFPlayerController())
-		UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseLeaderAndShip::End %s"), *GetFFPlayerController()->GetName());
-
 	Super::End();
 }
 
@@ -76,7 +67,7 @@ void AFFGameSequence_ChooseLeaderAndShip::StartPlayerChooseLeader_Implementation
 			if (GetHud())
 				GetHud()->Title = TEXT("Choose your leader");
 
-			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseLeaderAndShip::StartPlayer %s MY TURN"), *GetFFPlayerController()->GetName());
+			Log(TEXT("MY TURN"));
 
 			ChooseInList = StartLocalSubSequence<AFFGameSequence_ChooseInList>(GetDefaultGameTuning()->GameSequence_ChooseLeader, AFFGameSequence_ChooseInList::FInit(LeaderCards));
 			ChooseInList->ChooseInListDelegate.AddDynamic(this, &AFFGameSequence_ChooseLeaderAndShip::OnLeaderCardChoosen);
@@ -86,7 +77,7 @@ void AFFGameSequence_ChooseLeaderAndShip::StartPlayerChooseLeader_Implementation
 			if (GetHud())
 				GetHud()->Title = TEXT("An other player choose his leader");
 
-			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseLeaderAndShip::StartPlayer %s OTHER TURN"), *GetFFPlayerController()->GetName());
+			Log(TEXT("OTHER TURN"));
 		}
 	}
 }
@@ -110,7 +101,7 @@ void AFFGameSequence_ChooseLeaderAndShip::StartPlayerChooseShip_Implementation(i
 			if (GetHud())
 				GetHud()->Title = TEXT("Choose your ship");
 
-			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseShip::StartPlayer %s MY TURN"), *GetFFPlayerController()->GetName());
+			Log(TEXT("MY TURN"));
 
 			ChooseInList = StartLocalSubSequence<AFFGameSequence_ChooseInList>(GetDefaultGameTuning()->GameSequence_ChooseShip, AFFGameSequence_ChooseInList::FInit(Ships));
 			ChooseInList->ChooseInListDelegate.AddDynamic(this, &AFFGameSequence_ChooseLeaderAndShip::OnShipChoosen);
@@ -120,7 +111,7 @@ void AFFGameSequence_ChooseLeaderAndShip::StartPlayerChooseShip_Implementation(i
 			if (GetHud())
 				GetHud()->Title = TEXT("An other player choose his ship");
 
-			UE_LOG(Firefly, Log, TEXT("*******  AFFGameSequence_ChooseShip::StartPlayer %s OTHER TURN"), *GetFFPlayerController()->GetName());
+			Log(TEXT("OTHER TURN"));
 		}
 	}
 }
@@ -134,27 +125,23 @@ void AFFGameSequence_ChooseLeaderAndShip::FinishPlayerChooseShip_Implementation(
 
 void AFFGameSequence_ChooseLeaderAndShip::OnLeaderCardChoosen(int32 id)
 {
-	ChooseInList->End();
-	ChooseInList->Destroy();
+	StopLocalSubSequence(ChooseInList);
 	ChooseInList = nullptr;
-	SubSequence = nullptr;
 
 	SendResponseToServer(id);
 }
 
 void AFFGameSequence_ChooseLeaderAndShip::OnShipChoosen(int32 id)
 {
-	ChooseInList->End();
-	ChooseInList->Destroy();
+	StopLocalSubSequence(ChooseInList);
 	ChooseInList = nullptr;
-	SubSequence = nullptr;
 
 	SendResponseToServer(id);
 }
 
 void AFFGameSequence_ChooseLeaderAndShip::ServerReceiveResponse(int32 res)
 {
-	UE_LOG(Firefly, Log, TEXT("Receive response %d"), res);
+	UE_LOG(FFSeq, Log, TEXT("Receive response %d"), res);
 
 	switch (ChoosePhase)
 	{

@@ -5,7 +5,6 @@
 
 #include "FFGameSequence_SubGame.generated.h"
 
-class UFFGameHud;
 
 UCLASS(minimalapi)
 class AFFGameSequence_SubGame : public AFFGameSequence
@@ -19,7 +18,10 @@ public:
 	virtual void Start() override;
 	virtual void End() override;
 
-	UFFGameHud* GetHud();
+	const class AFFGameSequence_Game* GetGame() const;
+	class AFFGameSequence_Game* GetGame();
+
+	class UFFGameHud* GetHud();
 
 private:
 

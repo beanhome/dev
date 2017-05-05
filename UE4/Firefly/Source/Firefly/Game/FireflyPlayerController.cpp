@@ -114,11 +114,9 @@ bool AFireflyPlayerController::ServerLaunchGame_Validate()
 
 
 
-void AFireflyPlayerController::StartGame_Implementation(int32 id)
+void AFireflyPlayerController::StartGame_Implementation()
 {
-	//Id = id;
-
-	UE_LOG(Firefly, Log, TEXT("  **********   AFireflyPlayerController::StartGame_Implementation Controller %s (World %x)"), *GetName(), GetWorld());
+	UE_LOG(Firefly, Log, TEXT("  **********   AFireflyPlayerController::StartGame_Implementation %d"), Id);
 
 	if (LobbyPage != nullptr)
 	{
@@ -177,13 +175,53 @@ void AFireflyPlayerController::SendClientStateToServer_Implementation(AFFGameSeq
 	ensure(seq != nullptr);
 
 	if (seq != nullptr)
+	{
 		seq->ServerReceiveClientState(GetId(), state);
+	}
 }
 
 bool AFireflyPlayerController::SendClientStateToServer_Validate(AFFGameSequence* seq, EFFClientGameSeqState state)
 {
 	return true;
 }
+
+
+bool AFireflyPlayerController::SendClientMouseEnterActor_Validate(class AFFActor* Actor)
+{
+	return true;
+}
+
+bool AFireflyPlayerController::SendClientMouseLeaveActor_Validate(class AFFActor* Actor)
+{
+	return true;
+}
+
+bool AFireflyPlayerController::SendClientMouseClickActor_Validate(class AFFActor* Actor)
+{
+	return true;
+}
+
+void AFireflyPlayerController::SendClientMouseEnterActor_Implementation(class AFFActor* Actor)
+{
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+		GameState->Game->ReceiveMouseEnterActor(Id, Actor);
+}
+
+void AFireflyPlayerController::SendClientMouseLeaveActor_Implementation(class AFFActor* Actor)
+{
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+		GameState->Game->ReceiveMouseLeaveActor(Id, Actor);
+}
+
+void AFireflyPlayerController::SendClientMouseClickActor_Implementation(class AFFActor* Actor)
+{
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+		GameState->Game->ReceiveMouseClickActor(Id, Actor);
+}
+
 
 
 void AFireflyPlayerController::PlayerTick(float DeltaTime)
@@ -198,32 +236,44 @@ void AFireflyPlayerController::PlayerTick(float DeltaTime)
 	FHitResult Hit;
 
 	FVector MouseLocation, MouseDirection;
-	DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
-
-	FVector Start = MouseLocation;
-	FVector End = MouseLocation + MouseDirection * 5000.f;
-
-	bool res = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
-
-	AFFActor* HoverActor = (res ? Cast<AFFActor>(Hit.Actor.Get()) : nullptr);
-
-	//UE_LOG(Firefly, Log, TEXT("Object : %s"), *Hit.Actor->GetName());
-
-	if (CurrentHoverActor != HoverActor)
+	if (DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
 	{
-		if (CurrentHoverActor != nullptr)
-		{
-			CurrentHoverActor->OnMouseExit();
-			CurrentHoverActor = nullptr;
-		}
+		FVector Start = MouseLocation;
+		FVector End = MouseLocation + MouseDirection * 5000.f;
 
-		if (HoverActor != nullptr)
+		bool res = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
+
+		AFFActor* HoverActor = (res ? Cast<AFFActor>(Hit.Actor.Get()) : nullptr);
+
+		//UE_LOG(Firefly, Log, TEXT("Object : %s"), *Hit.Actor->GetName());
+
+		if (CurrentHoverActor != HoverActor)
 		{
-			CurrentHoverActor = HoverActor;
-			CurrentHoverActor->OnMouseEnter();
+			if (CurrentHoverActor != nullptr)
+			{
+				CurrentHoverActor->OnMouseLeave();
+				CurrentHoverActor = nullptr;
+			}
+
+			if (HoverActor != nullptr)
+			{
+				CurrentHoverActor = HoverActor;
+				CurrentHoverActor->OnMouseEnter();
+			}
 		}
 	}
 }
+
+void AFireflyPlayerController::DrawDebug(class UCanvas* Canvas, float& x, float& y) const
+{
+	y += 10.f;
+
+	UFont* Font = GEngine->GetSmallFont();
+	Canvas->SetDrawColor(FColor::White);
+	y += Canvas->DrawText(Font, FString::Printf(TEXT("Player %d"), Id), x, y);
+	y += Canvas->DrawText(Font, FString::Printf(TEXT("Current HoverActor %s"), (CurrentHoverActor == nullptr ? TEXT("none") : *CurrentHoverActor->GetName())), x, y);
+}
+
 
 void AFireflyPlayerController::SelectActor()
 {

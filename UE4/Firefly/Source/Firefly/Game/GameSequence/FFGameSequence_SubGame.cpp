@@ -23,6 +23,16 @@ void AFFGameSequence_SubGame::End()
 	Super::End();
 }
 
+const AFFGameSequence_Game* AFFGameSequence_SubGame::GetGame() const
+{
+	return GetOwner<AFFGameSequence_Game>();
+}
+
+AFFGameSequence_Game* AFFGameSequence_SubGame::GetGame()
+{
+	return GetOwner<AFFGameSequence_Game>();
+}
+
 UFFGameHud* AFFGameSequence_SubGame::GetHud()
 {
 	AFFGameSequence_Game* SequenceOwner = GetOwner<AFFGameSequence_Game>();

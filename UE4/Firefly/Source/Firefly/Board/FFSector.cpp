@@ -7,7 +7,7 @@
 #include "FireflyGameMode.h"
 #include "Game/FireflyPlayerController.h"
 #include "Game/FFPlayerInfo.h"
-#include "Game/FFPathFinder.h"
+//#include "Game/FFPathFinder.h"
 #include "FFGameState.h"
 
 #include "MessageLog.h"
@@ -55,6 +55,8 @@ void AFFSector::OnConstruction(const FTransform& Transform)
 		Id = 32;
 	else if (Name[0] == 'R')
 		Id = 106;
+	else
+		Id = 0;
 
 	Id += FCString::Atoi(&Name[1]) -1;
 	*/
@@ -156,9 +158,9 @@ void AFFSector::OnMouseEnter()
 	Super::OnMouseEnter();
 }
 
-void AFFSector::OnMouseExit()
+void AFFSector::OnMouseLeave()
 {
-	Super::OnMouseExit();
+	Super::OnMouseLeave();
 }
 
 void AFFSector::OnMouseClick()
