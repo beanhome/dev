@@ -5,7 +5,6 @@
 
 #include "FFGameSequence_ChooseLeaderAndShip.generated.h"
 
-class UFFFreeAction;
 UCLASS(minimalapi)
 class AFFGameSequence_ChooseLeaderAndShip : public AFFGameSequence_SubGame
 {

@@ -38,19 +38,22 @@ public:
 	void Log(const FString& str, const FString& format, ...) const;
 
 	template<class T>
-	T* GetOwner()
+	T* GetOwner() const
 	{
-		return Cast<T>(AActor::GetOwner());
-	}
+		AActor* ActorOwner = AActor::GetOwner();
+		if (ActorOwner == nullptr)
+			return nullptr;
 
-	template<class T>
-	const T* GetOwner() const
-	{
-		return Cast<T>(AActor::GetOwner());
+		check(ActorOwner->IsA(AFFGameSequence::StaticClass()));
+
+		T* TestOwner = Cast<T>(ActorOwner);
+
+		return (TestOwner != nullptr ? TestOwner : Cast<AFFGameSequence>(ActorOwner)->GetOwner<T>());
 	}
 
 public:
 	virtual bool IsCameraFree() const;
+	virtual bool IsActorInteractive() const;
 	bool IsUnderCamera(const FString& CameraName) const;
 
 	void DrawDebug(class UCanvas* Canvas, float& x, float& y) const;
@@ -64,6 +67,8 @@ protected:
 	int32 GetMyPlayerId() const;
 
 	FString GetMultiMode() const;
+
+	virtual void DrawDebugSpecific(class UCanvas* Canvas, float& x, float& y) const;
 
 	virtual void Init(AFFGameSequence* OwnerSequence);
 	virtual void Start();

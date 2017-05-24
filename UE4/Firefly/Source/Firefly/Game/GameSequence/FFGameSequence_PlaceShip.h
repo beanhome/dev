@@ -5,7 +5,6 @@
 
 #include "FFGameSequence_PlaceShip.generated.h"
 
-class UFFFreeAction;
 class AFFCameraActor;
 
 UCLASS(minimalapi)

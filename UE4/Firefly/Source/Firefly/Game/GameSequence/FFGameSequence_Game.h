@@ -5,27 +5,22 @@
 
 #include "FFGameSequence_Game.generated.h"
 
-class UFFFreeAction;
-class UFFGameHud;
-class AFFActor;
-class AFFShip;
-class AFFShipBoard;
-class AFFCard;
-class AFFLeaderCard;
-
 USTRUCT()
 struct FFFPlayer
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	AFFLeaderCard* Leader;
+	class AFFLeaderCard* Leader;
 	
 	UPROPERTY()
-	AFFShipBoard* ShipBoard;
-	
+	class AFFShipBoard* ShipBoard;
+
 	UPROPERTY()
-	AFFShip* Ship;
+	class AFFEngineCard* Engine;
+
+	UPROPERTY()
+	class AFFShip* Ship;
 };
 
 UCLASS(minimalapi)
@@ -46,7 +41,7 @@ public:
 	virtual void Start() override;
 	virtual void End() override;
 
-	UFFGameHud* GetGameHud();
+	class UFFGameHud* GetGameHud();
 
 	virtual bool IsCameraFree() const override;
 
@@ -54,9 +49,11 @@ public:
 
 	const TArray<int32>& GetPlayersOrder() const;
 
-	void PlayerChooseLeader(int32 PlayerId, TSubclassOf<AFFActor>& LeaderCard);
-	void PlayerChooseShip(int32 PlayerId, TSubclassOf<AFFActor>& ShipCard);
+	void PlayerChooseLeader(int32 PlayerId, TSubclassOf<class AFFActor>& LeaderCard);
+	void PlayerChooseShip(int32 PlayerId, TSubclassOf<class AFFActor>& ShipCard);
 	void PlayerPlaceShip(int32 PlayerId, int32 SectorId);
+
+	TSubclassOf<class AFFGameSequence_Card> DrawNavigationCard();
 
 private:
 	void ShufflePlayerOrder();
@@ -84,10 +81,13 @@ protected:
 	TArray<int32> PlayersOrder;
 
 	UPROPERTY()
-	UFFGameHud* GameHUD;
+	class UFFGameHud* GameHUD;
 
 	UPROPERTY(Replicated)
 	TArray<FFFPlayer> Players;
+
+	//UPROPERTY()
+	//class AFFDeck* NavigationAllianceDeck;
 };
 
 

@@ -66,6 +66,13 @@ bool AFireflyPlayerController::IsCameraFree() const
 	return (GameState != nullptr && GameState->IsCameraFree());
 }
 
+bool AFireflyPlayerController::IsActorInteractive() const
+{
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	return (GameState != nullptr && GameState->IsActorInteractive());
+}
+
+
 void AFireflyPlayerController::CreateLobbyPage()
 {
 	const UFFUITuning* UITuning = GetDefaultUITuning();
@@ -230,35 +237,37 @@ void AFireflyPlayerController::PlayerTick(float DeltaTime)
 	
 	//CameraManager->Update(DeltaTime);
 
-
-	FCollisionObjectQueryParams ObjectQueryParams;
-
-	FHitResult Hit;
-
-	FVector MouseLocation, MouseDirection;
-	if (DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+	if (IsActorInteractive())
 	{
-		FVector Start = MouseLocation;
-		FVector End = MouseLocation + MouseDirection * 5000.f;
+		FCollisionObjectQueryParams ObjectQueryParams;
 
-		bool res = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
+		FHitResult Hit;
 
-		AFFActor* HoverActor = (res ? Cast<AFFActor>(Hit.Actor.Get()) : nullptr);
-
-		//UE_LOG(Firefly, Log, TEXT("Object : %s"), *Hit.Actor->GetName());
-
-		if (CurrentHoverActor != HoverActor)
+		FVector MouseLocation, MouseDirection;
+		if (DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
 		{
-			if (CurrentHoverActor != nullptr)
-			{
-				CurrentHoverActor->OnMouseLeave();
-				CurrentHoverActor = nullptr;
-			}
+			FVector Start = MouseLocation;
+			FVector End = MouseLocation + MouseDirection * 5000.f;
 
-			if (HoverActor != nullptr)
+			bool res = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
+
+			AFFActor* HoverActor = (res ? Cast<AFFActor>(Hit.Actor.Get()) : nullptr);
+
+			//UE_LOG(Firefly, Log, TEXT("Object : %s"), *Hit.Actor->GetName());
+
+			if (CurrentHoverActor != HoverActor)
 			{
-				CurrentHoverActor = HoverActor;
-				CurrentHoverActor->OnMouseEnter();
+				if (CurrentHoverActor != nullptr)
+				{
+					CurrentHoverActor->OnMouseLeave();
+					CurrentHoverActor = nullptr;
+				}
+
+				if (HoverActor != nullptr)
+				{
+					CurrentHoverActor = HoverActor;
+					CurrentHoverActor->OnMouseEnter();
+				}
 			}
 		}
 	}
@@ -277,7 +286,7 @@ void AFireflyPlayerController::DrawDebug(class UCanvas* Canvas, float& x, float&
 
 void AFireflyPlayerController::SelectActor()
 {
-	if (CurrentHoverActor != nullptr)
+	if (IsActorInteractive() && CurrentHoverActor != nullptr)
 		CurrentHoverActor->OnMouseClick();
 }
 

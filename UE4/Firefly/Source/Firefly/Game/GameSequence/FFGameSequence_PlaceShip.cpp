@@ -44,7 +44,7 @@ void AFFGameSequence_PlaceShip::End()
 	Super::End();
 
 	if (Hover)
-		Hover->SetActorHiddenInGame(true);
+		Hover->HighLight(false);
 }
 
 void AFFGameSequence_PlaceShip::StartPlayerPlaceShip_Implementation(int32 id)
@@ -78,7 +78,7 @@ void AFFGameSequence_PlaceShip::FinishPlayerPlaceShip_Implementation(int32 id)
 		GetHud()->Title = TEXT("");
 
 	if (Hover)
-		Hover->SetActorHiddenInGame(true);
+		Hover->HighLight(false);
 }
 
 bool AFFGameSequence_PlaceShip::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
@@ -98,7 +98,7 @@ bool AFFGameSequence_PlaceShip::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 		if (IsUnderCamera(CameraName) == false)
 			return false;
 
-		Sector->SetActorHiddenInGame(true);
+		Sector->HighLight(false);
 
 		// useless with function called in server too
 		SendResponseToServer(Sector->GetId());
@@ -121,7 +121,7 @@ bool AFFGameSequence_PlaceShip::OnMouseEnterActor(int32 PlayerId, AFFActor* Acto
 	if (Sector == nullptr)
 		return false;
 
-	Sector->SetActorHiddenInGame(false);
+	Sector->HighLight(true);
 
 	Hover = Sector;
 
@@ -140,7 +140,8 @@ bool AFFGameSequence_PlaceShip::OnMouseLeaveActor(int32 PlayerId, AFFActor* Acto
 	if (Sector == nullptr)
 		return false;
 
-	Sector->SetActorHiddenInGame(true);
+	if (Hover == Sector)
+		Sector->HighLight(false);
 
 	Hover = nullptr;
 

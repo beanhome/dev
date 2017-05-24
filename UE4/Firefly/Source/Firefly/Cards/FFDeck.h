@@ -17,8 +17,11 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	TSubclassOf<class AFFGameSequence_Card> DrawCard();
+
 private:
 	void CreateMaterialInstance();
+	void Init();
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -29,6 +32,12 @@ private:
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* BackMaterial;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class AFFGameSequence_Card>> CardListModel;
+
+	UPROPERTY()
+	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
 };
 
 

@@ -125,6 +125,8 @@ void AFFGameSequence_ChooseLeaderAndShip::FinishPlayerChooseShip_Implementation(
 
 void AFFGameSequence_ChooseLeaderAndShip::OnLeaderCardChoosen(int32 id)
 {
+	check(IsClient());
+
 	StopLocalSubSequence(ChooseInList);
 	ChooseInList = nullptr;
 
@@ -133,6 +135,8 @@ void AFFGameSequence_ChooseLeaderAndShip::OnLeaderCardChoosen(int32 id)
 
 void AFFGameSequence_ChooseLeaderAndShip::OnShipChoosen(int32 id)
 {
+	check(IsClient());
+
 	StopLocalSubSequence(ChooseInList);
 	ChooseInList = nullptr;
 
@@ -141,6 +145,8 @@ void AFFGameSequence_ChooseLeaderAndShip::OnShipChoosen(int32 id)
 
 void AFFGameSequence_ChooseLeaderAndShip::ServerReceiveResponse(int32 res)
 {
+	check(IsServer());
+
 	UE_LOG(FFSeq, Log, TEXT("Receive response %d"), res);
 
 	switch (ChoosePhase)

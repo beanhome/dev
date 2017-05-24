@@ -76,6 +76,21 @@ bool AFFGameSequence::IsCameraFree() const
 	return true;
 }
 
+bool AFFGameSequence::IsActorInteractive() const
+{
+	for (AFFGameSequence* Sequence : SubSequences)
+	{
+		ensure(Sequence != nullptr);
+
+		if (Sequence != nullptr && Sequence->IsActorInteractive() == false)
+			return false;
+	}
+
+	return true;
+}
+
+
+
 bool AFFGameSequence::IsServer() const
 {
 	return (GetWorld() != nullptr && GetWorld()->GetAuthGameMode() != nullptr);
@@ -455,6 +470,8 @@ void AFFGameSequence::DrawDebug(class UCanvas* Canvas, float& x, float& y) const
 	Canvas->SetDrawColor(FColor::White);
 	y += Canvas->DrawText(Font, FString::Printf(TEXT("%s"), *GetClass()->GetName()), x, y);
 
+	DrawDebugSpecific(Canvas, x, y);
+
 	x += 15.f;
 
 	for (AFFGameSequence* Sequence : SubSequences)
@@ -463,3 +480,7 @@ void AFFGameSequence::DrawDebug(class UCanvas* Canvas, float& x, float& y) const
 	x -= 15.f;
 }
 
+void AFFGameSequence::DrawDebugSpecific(class UCanvas* Canvas, float& x, float& y) const
+{
+
+}

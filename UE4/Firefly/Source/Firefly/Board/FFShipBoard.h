@@ -21,10 +21,15 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 	UFUNCTION(Reliable, NetMulticast)
-	void ClientInitialize(int32 Id, class AFFLeaderCard* _Leader);
+	void ClientInitialize(int32 Id, class AFFLeaderCard* _Leader, class AFFEngineCard* _Engine);
+
+	class AFFEngineCard* GetEngine() const;
 
 private:
 	void CreateMaterialInstance();
+
+	UFUNCTION()
+	void OnRep_SetEngine();
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -48,7 +53,7 @@ private:
 	UPROPERTY()
 	class AFFLeaderCard* Leader;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_SetEngine)
 	class AFFEngineCard* Engine;
 
 	UPROPERTY()

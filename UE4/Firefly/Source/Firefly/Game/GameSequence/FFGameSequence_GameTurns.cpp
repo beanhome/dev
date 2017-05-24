@@ -37,11 +37,20 @@ bool AFFGameSequence_GameTurns::IsCameraFree() const
 	return true;
 }
 
+bool AFFGameSequence_GameTurns::IsTurnOf(int32 id) const
+{
+	return (CurrentPlayerId == id);
+}
+
 bool AFFGameSequence_GameTurns::IsMyTurn() const
 {
 	check(IsClient());
-
 	return (CurrentPlayerId == GetMyPlayerId());
+}
+
+const FFFPlayer& AFFGameSequence_GameTurns::GetPlayingPlayer() const
+{
+	return GetGame()->GetPlayer(CurrentPlayerId);
 }
 
 void AFFGameSequence_GameTurns::ServerStart()

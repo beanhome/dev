@@ -20,10 +20,11 @@ AFFShipBoard::AFFShipBoard()
 	bAlwaysRelevant = true;
 }
 
-void AFFShipBoard::ClientInitialize_Implementation(int32 Id, AFFLeaderCard* _Leader)
+void AFFShipBoard::ClientInitialize_Implementation(int32 Id, AFFLeaderCard* _Leader, AFFEngineCard* _Engine)
 {
 	PlayerId = Id;
 	Leader = _Leader;
+	Engine = _Engine;
 
 	if (GetFFPlayerController())
 	{
@@ -39,7 +40,6 @@ void AFFShipBoard::ClientInitialize_Implementation(int32 Id, AFFLeaderCard* _Lea
 			Leader->SetRotation(ShipBoardPlace->GetActorRotation());
 			Leader->SetActorHiddenInGame(false);
 
-			Engine = GetWorld()->SpawnActor<AFFEngineCard>(DefaultEngine);
 			if (Engine != nullptr)
 			{
 				Engine->SetLocation(ShipBoardPlace->GetEngineLocation());
@@ -49,6 +49,23 @@ void AFFShipBoard::ClientInitialize_Implementation(int32 Id, AFFLeaderCard* _Lea
 		}
 	}
 }
+
+void AFFShipBoard::OnRep_SetEngine()
+{
+	if (GetFFPlayerController())
+	{
+		AFFShipBoardPlace** Found = ShipBoardPlaces.Find((PlayerId - GetFFPlayerController()->GetId() + ShipBoardPlaces.Num()) % ShipBoardPlaces.Num());
+		ShipBoardPlace = (Found != nullptr ? *Found : nullptr);
+
+		if (Engine != nullptr)
+		{
+			Engine->SetLocation(ShipBoardPlace->GetEngineLocation());
+			Engine->SetRotation(ShipBoardPlace->GetActorRotation());
+			Engine->SetActorHiddenInGame(false);
+		}
+	}
+}
+
 
 void AFFShipBoard::OnConstruction(const FTransform& Transform)
 {
@@ -117,9 +134,14 @@ void AFFShipBoard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AFFShipBoard, PlayerId);
+	DOREPLIFETIME(AFFShipBoard, Engine);
 }
 
-
+class AFFEngineCard* AFFShipBoard::GetEngine() const
+{
+	check(Engine != nullptr);
+	return Engine;
+}
 
 void AFFShipBoard::Tick(float DeltaSeconds)
 {

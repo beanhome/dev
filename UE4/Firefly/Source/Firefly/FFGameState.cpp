@@ -45,3 +45,10 @@ bool AFFGameState::IsCameraFree() const
 	return (Game != nullptr && Game->IsCameraFree());
 }
 
+bool AFFGameState::IsActorInteractive() const
+{
+	return (Game != nullptr && Game->IsActorInteractive());
+}
+
+
+

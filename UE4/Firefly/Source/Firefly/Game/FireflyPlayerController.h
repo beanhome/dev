@@ -40,6 +40,7 @@ public:
 	AFFActor* GetHoverActor() const;
 	
 	bool IsCameraFree() const;
+	bool IsActorInteractive() const;
 
 	const UFFCameraManager* GetCameraManager() const;
 	AFFCameraActor* GetCurrentCamera() const;

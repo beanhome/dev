@@ -7,6 +7,21 @@ class AFFPlayerPawn;
 class AFFShipBoard;
 class AFFLeaderCard;
 
+/*
+USTRUCT()
+struct FFFNavDeckCard
+{
+	GENERATED_BODY();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AFFGameSequence_Card> Card;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int32 Count;
+
+	// Extension
+};
+*/
 
 UCLASS(Blueprintable, ClassGroup = "Firefly")
 class UFFGameTuning : public UObject
@@ -37,6 +52,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float SwitchCameraDuration;
+
+	//UPROPERTY(EditDefaultsOnly)
+	//TArray<TSubclassOf<class AFFGameSequence_Card>> NavigationAllianceDeck;
+
+	//UPROPERTY(EditDefaultsOnly)
+	//TArray<FFFNavDeckCard> NavigationReaverDeck;
 };
 
 

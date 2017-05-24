@@ -5,7 +5,6 @@
 
 #include "FFGameSequence_GameTurns.generated.h"
 
-class UFFFreeAction;
 class AFFCameraActor;
 
 UCLASS(minimalapi)
@@ -20,7 +19,10 @@ public:
 
 	virtual bool IsCameraFree() const;
 
+	bool IsTurnOf(int32 id) const;
 	bool IsMyTurn() const;
+
+	const FFFPlayer& GetPlayingPlayer() const;
 
 private:
 	virtual void ServerStart() override;

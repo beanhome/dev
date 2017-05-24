@@ -20,6 +20,8 @@ void AFFDeck::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	CreateMaterialInstance();
+
+	Init();
 }
 
 void AFFDeck::CreateMaterialInstance()
@@ -51,6 +53,26 @@ void AFFDeck::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
 			}
 		}
 	}
+}
+
+void AFFDeck::Init()
+{
+	CardList = CardListModel;
+
+	/*
+	int32 Size = CardList.Num();
+	for (int32 i = 0; i < Size; ++i)
+		CardList.Swap(i, FMath::RandRange(0, Size - 1));
+	*/
+}
+
+TSubclassOf<class AFFGameSequence_Card> AFFDeck::DrawCard()
+{
+	int32 i = CardList.Num() - 1;
+	TSubclassOf<class AFFGameSequence_Card> Card = CardList[i];
+	CardList.RemoveAt(i);
+
+	return Card;
 }
 
 void AFFDeck::Tick(float DeltaSeconds)

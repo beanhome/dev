@@ -16,6 +16,7 @@ public:
 	void StartGame();
 
 	bool IsCameraFree() const;
+	bool IsActorInteractive() const;
 
 public:
 	UPROPERTY(replicated)

@@ -44,9 +44,32 @@ const TArray<AFFSector*>& AFFSector::GetLinks() const
 	return Links;
 }
 
+class AFFDeck* AFFSector::GetDeck() const
+{
+	return Deck;
+}
+
+void AFFSector::CreateMaterialInstance()
+{
+	UPrimitiveComponent* PrimitiveComponent = FindComponentByClass<UPrimitiveComponent>();
+
+	if (PrimitiveComponent)
+	{
+		if (!SectorMaterial)
+			SectorMaterial = PrimitiveComponent->CreateAndSetMaterialInstanceDynamic(0);
+	}
+
+	//if (SectorMaterial)
+	//	SectorMaterial->SetTextureParameterValue(ShipTextureName, ShipTexture);
+}
+
+
+
 void AFFSector::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
+	HighLightCount = 0;
 
 	/*
 	const FString& Name = GetName();
@@ -77,6 +100,8 @@ void AFFSector::OnConstruction(const FTransform& Transform)
 	DebugComponent = NewObject<UFFSectorDebugComponent>(this, TEXT("DebugSector"));
 	DebugComponent->AttachToComponent(GetStaticMeshComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	DebugComponent->RegisterComponent();
+
+	CreateMaterialInstance();
 }
 
 void AFFSector::PostInitializeComponents()
@@ -84,6 +109,7 @@ void AFFSector::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	DebugComponent->RebuildDisplay();
+	CreateMaterialInstance();
 }
 
 void AFFSector::BeginPlay()
@@ -93,6 +119,19 @@ void AFFSector::BeginPlay()
 	DebugComponent->RebuildDisplay();
 
 	SetActorHiddenInGame(true);
+}
+
+void AFFSector::HighLight(bool bEnable)
+{
+	HighLightCount += (bEnable ? +1 : -1);
+
+	//ensure(HighLightCount >= 0);
+
+	HighLightCount = FMath::Max(HighLightCount, 0);
+
+	SetActorHiddenInGame(HighLightCount <= 0);
+
+	SectorMaterial->SetScalarParameterValue("Opacity", (float)HighLightCount * 0.1f);
 }
 
 

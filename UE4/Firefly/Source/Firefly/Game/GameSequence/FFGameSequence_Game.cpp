@@ -9,6 +9,7 @@
 #include "Game/FireflyPlayerController.h"
 #include "Game/FFUITuning.h"
 #include "Cards/Cards/FFLeaderCard.h"
+#include "Cards/FFDeck.h"
 #include "Board/FFShipBoard.h"
 #include "Board/FFShipBoardPlace.h"
 #include "UI/Page/FFGameHud.h"
@@ -108,8 +109,10 @@ void AFFGameSequence_Game::Start()
 		GameHUD->Title = GetClass()->GetName();
 	}
 
-	if (Role == ROLE_Authority)
+	if (IsServer())
 	{
+		//NavigationAllianceDeck->Init(GetDefaultGameTuning()->NavigationAllianceDeck);
+
 		ShufflePlayerOrder();
 
 		AFFGameSequence* SubSequence = StartSubSequence<AFFGameSequence_ChooseLeaderAndShip>();
@@ -155,8 +158,10 @@ void AFFGameSequence_Game::PlayerChooseShip(int32 PlayerId, TSubclassOf<class AF
 	ensure(IsServer());
 
 	AFFShipBoard* ShipBoard = GetWorld()->SpawnActor<AFFShipBoard>(ShipCard);
+	AFFEngineCard* Engine = GetWorld()->SpawnActor<AFFEngineCard>(ShipBoard->DefaultEngine);
 	Players[PlayerId].ShipBoard = ShipBoard;
-	ShipBoard->ClientInitialize(PlayerId, Players[PlayerId].Leader);
+	Players[PlayerId].Engine = Engine;
+	ShipBoard->ClientInitialize(PlayerId, Players[PlayerId].Leader, Engine);
 }
 
 void AFFGameSequence_Game::PlayerPlaceShip(int32 PlayerId, int32 SectorId)
@@ -187,6 +192,6 @@ void AFFGameSequence_Game::ShufflePlayerOrder()
 	PlayersOrder.SetNum(Size);
 	for (int32 i = 0; i < Size; ++i)
 		PlayersOrder[i] = Size-1-i;
-	//for (int32 i = 0; i < Size; ++i)
-	//	PlayersOrder.Swap(i, FMath::RandRange(0, Size-1));
+	for (int32 i = 0; i < Size; ++i)
+		PlayersOrder.Swap(i, FMath::RandRange(0, Size-1));
 }

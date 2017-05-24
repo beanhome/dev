@@ -2,10 +2,10 @@
 #pragma once
 
 #include "UI/Page/FFGameHud.h"
+#include "UI/Page/FFQuestionPopup.h"
 
 #include "FFUITuning.generated.h"
 
-//class UFFGameHud;
 
 UCLASS(Blueprintable, ClassGroup = "Firefly")
 class UFFUITuning : public UObject
@@ -24,6 +24,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UFFGameHud> GameHUDClass;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UFFQuestionPopup> QuestionPopupClass;
+		
 };
 
 

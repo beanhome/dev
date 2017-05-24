@@ -38,7 +38,9 @@ void AFFGameSequence_ChooseInList::Start()
 	if (ChooseList.Num() > 0)
 		ItemExtent = ChooseList[0]->GetExtent();
 
-	DesiredItem = SelectedItem = ChooseList.Num() / 2;
+	PreviousItem = DesiredItem = SelectedItem = ChooseList.Num() / 2;
+
+	Timer = Delay;
 }
 
 void AFFGameSequence_ChooseInList::End()

@@ -28,12 +28,16 @@ public:
 	int32 GetId() const;
 
 	const TArray<AFFSector*>& GetLinks() const;
+	class AFFDeck* GetDeck() const;
+
+	void HighLight(bool bEnable);
 
 #if WITH_EDITOR
 	virtual void CheckForErrors() override;
 #endif
 
 	class UStaticMeshComponent* GetStaticMeshComponent() const;
+	void CreateMaterialInstance();
 
 	virtual void OnMouseEnter() override;
 	virtual void OnMouseLeave() override;
@@ -50,11 +54,15 @@ private:
 	UPROPERTY()
 	class UStaticMeshComponent* StaticMeshComponent;
 
+	UPROPERTY()
+	UMaterialInstanceDynamic* SectorMaterial;
+
 	UPROPERTY(EditAnywhere)
 	int32 Id;
 
-	UPROPERTY()
-	class UFFPathFinder* PathFinder;
+	UPROPERTY(EditAnywhere)
+	class AFFDeck* Deck;
 
-	FFFPath Path;
+	int32 HighLightCount;
+
 };
