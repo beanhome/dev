@@ -23,6 +23,11 @@ public:
 	bool IsMyTurn() const;
 
 	const FFFPlayer& GetPlayingPlayer() const;
+	const FFFPlayer& GetMyPlayer() const;
+
+	void ConsumeAction(class AFFGameSequence_SubTurn* Action);
+	
+	void DrawDebugSpecific(class UCanvas* Canvas, float& x, float& y) const;
 
 private:
 	virtual void ServerStart() override;
@@ -36,10 +41,8 @@ private:
 	UFUNCTION(Reliable, NetMulticast)
 	void StartPlayerTurn(int32 id);
 	
-	/*
 	UFUNCTION(Reliable, NetMulticast)
 	void FinishPlayerGameTurns(int32 id);
-	*/
 
 protected:
 	// return true if capture the event
@@ -49,6 +52,9 @@ protected:
 
 private:
 	int32 CurrentPlayerId;
+	
+	UPROPERTY()
+	TArray<class AFFGameSequence_SubTurn*> CurrentActionDones;
 
 	UPROPERTY(EditAnywhere)
 	FString BoardCameraName;

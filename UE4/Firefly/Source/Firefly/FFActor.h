@@ -36,6 +36,9 @@ public:
 	virtual void OnMouseLeave();
 	virtual void OnMouseClick();
 
+	bool IsServer() const;
+	bool IsClient() const;
+
 public:
 	UPROPERTY()
 	FFFActorMouseClickDelegate ActorMouseClickDelegate;

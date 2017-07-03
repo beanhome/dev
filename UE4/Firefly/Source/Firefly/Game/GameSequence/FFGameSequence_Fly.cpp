@@ -4,10 +4,13 @@
 #include "FFGameSequence_Fly.h"
 #include "FFGameSequence_GameTurns.h"
 #include "FFGameSequence_Question.h"
+#include "FFGameSequence_Shuffle.h"
 #include "Game/FireflyPlayerController.h"
 #include "Board/FFSector.h"
+#include "Board/FFShipBoard.h"
 #include "Game/FFPathFinder.h"
 #include "Cards/Cards/FFEngineCard.h"
+#include "UI/Page/FFSpecificHud.h"
 
 char* AFFGameSequence_Fly::s_sOptions[] =
 {
@@ -52,11 +55,16 @@ void AFFGameSequence_Fly::Start()
 	ShipSector = Ship->GetCurrentSector();
 	Engine = Player.ShipBoard->GetEngine();
 
-	MoveStep = Engine->GetMoveCount();
+	bool bHasFuel = GetPlayingPlayer().ShipBoard->HasStuff(FuelBlueprint);
+
+	MoveStep = (bHasFuel ? Engine->GetMoveCount() : 1);
 
 	PathFinder = NewObject<UFFPathFinder>(this);
 
 	ShowZone();
+
+	if (SpecificHud)
+		SpecificHud->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AFFGameSequence_Fly::End()
@@ -92,13 +100,22 @@ bool AFFGameSequence_Fly::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 
 				if (IsClient() && IsMyTurn())
 				{
-					FString Title = "Start Flying ?";
-					FString Desc = "Initiate full burn or mosey";
-					TArray<FString> Options;
-					for (char* option : s_sOptions)
-						Options.Add(option);
+					AFFGameSequence_Question::FInit Init;
+					Init.Title = "Start Flying ?";
+					Init.Desc = "Initiate full burn or mosey";
+					for (int32 i = 0; i < (int32)EFFFlyOptions::Count; ++i)
+					{
+						bool bEnable = true;
 
-					Confirmation = StartLocalSubSequence<AFFGameSequence_Question>(AFFGameSequence_Question::StaticClass(), AFFGameSequence_Question::FInit(Title, Desc, Options));
+						if (i == (int32)EFFFlyOptions::FullBurn)
+						{
+							bEnable = GetPlayingPlayer().ShipBoard->HasStuff(FuelBlueprint);
+						}
+
+						Init.Options.Add(FFFOption(s_sOptions[i], bEnable));
+					}
+
+					Confirmation = StartLocalSubSequence<AFFGameSequence_Question>(AFFGameSequence_Question::StaticClass(), Init);
 					Confirmation->QuestionDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnFlyConfirmationAnswer);
 				}
 			}
@@ -174,7 +191,7 @@ void AFFGameSequence_Fly::ServerReceiveResponse(int32 res)
 
 	case EFFFlyOptions::FullBurn:
 		StartFullBurn(Destination);
-
+		GetPlayingPlayer().ShipBoard->RemStuff(FuelBlueprint);
 		break;
 
 	default:
@@ -287,8 +304,8 @@ void AFFGameSequence_Fly::StartFullBurn_Implementation(AFFSector* Dest)
 
 	MoveStep--;
 
-	// Consume one fuel
-	// ...
+	if (SpecificHud)
+		SpecificHud->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void AFFGameSequence_Fly::ReachDestination()
@@ -304,10 +321,11 @@ void AFFGameSequence_Fly::ReachDestination()
 			break;
 
 		case EFFFlyState::Mosey:
-			// Notify action count
-			// ...
 			if (IsServer())
+			{
+				ConsumeAction();
 				ServerStopCurrentSequence();
+			}
 			break;
 
 		case EFFFlyState::FullBurn:
@@ -316,25 +334,6 @@ void AFFGameSequence_Fly::ReachDestination()
 			if (IsServer())
 			{
 				DrawNavigationCard();
-
-			}
-
-			if (MoveStep > 0)
-			{
-				if (IsClient() && IsMyTurn())
-				{
-					ShowZone();
-					ShowPaths(Hover);
-					Hover->HighLight(true);
-				}
-			}
-			else
-			{
-				// Notify action count
-				// ...
-
-				if (IsServer())
-					ServerStopCurrentSequence();
 			}
 
 			break;
@@ -343,18 +342,94 @@ void AFFGameSequence_Fly::ReachDestination()
 
 void AFFGameSequence_Fly::DrawNavigationCard()
 {
+	check(IsServer());
+
 	if (ShipSector->GetDeck())
 	{
 		TSubclassOf<class AFFGameSequence_Card> DrawnCard = ShipSector->GetDeck()->DrawCard();
 
-		AFFGameSequence_Card* DrawCardSequence = StartSubSequence<AFFGameSequence_Card>(DrawnCard);
-		DrawCardSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnDrawNavigationCardFinished);
+		if (DrawnCard == nullptr)
+		{
+			AFFGameSequence_Shuffle* ShuffleSequence = StartSubSequence<AFFGameSequence_Shuffle>();
+			ShuffleSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnShuffleDeckFinished);
+			ShuffleSequence->ShuffleDeck(ShipSector->GetDeck());
+		}
+		else
+		{
+			AFFGameSequence_Card* DrawCardSequence = StartSubSequence<AFFGameSequence_Card>(DrawnCard);
+			DrawCardSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnDrawNavigationCardFinished);
+		}
 	}
+}
+
+void AFFGameSequence_Fly::OnShuffleDeckFinished(AFFGameSequence * Seq)
+{
+	check(IsServer());
+
+	DrawNavigationCard();
 }
 
 void AFFGameSequence_Fly::OnDrawNavigationCardFinished(AFFGameSequence * Seq)
 {
+	check(IsServer());
 
+	AFFGameSequence_Card* DrawCardSequence = Cast<AFFGameSequence_Card>(Seq);
+
+	ShipSector->GetDeck()->Discard(DrawCardSequence->GetClass());
+
+	if (MoveStep > 0)
+	{
+		FinishMove();
+	}
+	else
+	{
+		if (IsServer())
+		{
+			ConsumeAction();
+			ServerStopCurrentSequence();
+		}
+	}
+
+}
+
+void AFFGameSequence_Fly::FinishMove_Implementation()
+{
+	if (IsClient() && IsMyTurn())
+	{
+		if (SpecificHud)
+			SpecificHud->SetVisibility(ESlateVisibility::Visible);
+
+		ShowZone();
+		if (Hover)
+		{
+			ShowPaths(Hover);
+			Hover->HighLight(true);
+		}
+	}
+}
+
+
+void AFFGameSequence_Fly::FullStop()
+{
+	check(IsServer());
+
+	MoveStep = 0;
+}
+
+void AFFGameSequence_Fly::OnValidate()
+{
+	Super::OnValidate();
+
+	if (IsServer())
+		ServerStopCurrentSequence();
+}
+
+void AFFGameSequence_Fly::OnCancel()
+{
+	Super::OnCancel();
+
+	if (IsServer())
+		ServerStopCurrentSequence();
 }
 
 
@@ -363,10 +438,6 @@ void AFFGameSequence_Fly::DrawDebugSpecific(class UCanvas* Canvas, float& x, flo
 	UFont* Font = GEngine->GetSmallFont();
 	Canvas->SetDrawColor(FColorList::Grey);
 
-	x += 5.f;
-
 	y += Canvas->DrawText(Font, FString::Printf(TEXT("State %s"), *EnumToString(EFFFlyState, State)), x, y);
 	y += Canvas->DrawText(Font, FString::Printf(TEXT("Move Step %d"), MoveStep), x, y);
-
-	x -= 5.f;
 }

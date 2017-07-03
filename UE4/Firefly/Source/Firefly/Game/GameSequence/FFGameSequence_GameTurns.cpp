@@ -5,8 +5,10 @@
 #include "FFGameSequence_Game.h"
 #include "Game/FireflyPlayerController.h"
 #include "Board/FFSector.h"
+#include "Cards/FFDeck.h"
+#include "Cards/FFDiscardPile.h"
 #include "FFGameSequence_SubGame.h"
-#include "FFGameSequence_ChooseInList.h"
+#include "FFGameSequence_MultiChooseInList.h"
 
 AFFGameSequence_GameTurns::AFFGameSequence_GameTurns()
 {
@@ -44,13 +46,17 @@ bool AFFGameSequence_GameTurns::IsTurnOf(int32 id) const
 
 bool AFFGameSequence_GameTurns::IsMyTurn() const
 {
-	check(IsClient());
-	return (CurrentPlayerId == GetMyPlayerId());
+	return (IsClient() && CurrentPlayerId == GetMyPlayerId());
 }
 
 const FFFPlayer& AFFGameSequence_GameTurns::GetPlayingPlayer() const
 {
 	return GetGame()->GetPlayer(CurrentPlayerId);
+}
+
+const FFFPlayer& AFFGameSequence_GameTurns::GetMyPlayer() const
+{
+	return GetGame()->GetPlayer(GetMyPlayerId());
 }
 
 void AFFGameSequence_GameTurns::ServerStart()
@@ -96,21 +102,54 @@ void AFFGameSequence_GameTurns::StartPlayerTurn_Implementation(int32 id)
 	}
 }
 
-/*
+void AFFGameSequence_GameTurns::ConsumeAction(class AFFGameSequence_SubTurn* Action)
+{
+	check(IsServer());
+
+	CurrentActionDones.Add(Action);
+
+	if (CurrentActionDones.Num() == 2)
+	{
+		FinishPlayerGameTurns(CurrentPlayerId);
+
+		AFFGameSequence_Game* GameOwner = GetOwner<AFFGameSequence_Game>();
+		CurrentPlayerId = (CurrentPlayerId + 1) % GameOwner->GetPlayersOrder().Num();
+		StartPlayerTurn(CurrentPlayerId);
+		CurrentActionDones.Empty();
+	}
+}
+
 void AFFGameSequence_GameTurns::FinishPlayerGameTurns_Implementation(int32 id)
 {
 	if (GetHud())
 		GetHud()->Title = TEXT("");
-
-	MouseClickSector.RemoveAll(this);
 }
-*/
 
 
 bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 {
 	// Deck or Discard Clicked
 	// -> Sequence Choose in List
+
+	AFFDiscardPile* DiscardPile = Cast<AFFDiscardPile>(Actor);
+	AFFDeck* Deck = Cast<AFFDeck>(Actor);
+
+	if (DiscardPile == nullptr && Deck != nullptr)
+		DiscardPile = Deck->GetDiscardPile();
+
+	// TEST
+	if (IsServer() && Deck != nullptr)
+	{
+		AFFGameSequence_MultiChooseInList* ChooseSeq = StartSubSequence<AFFGameSequence_MultiChooseInList>(DiscardPile->MultiChooseInListTemplate);
+		ChooseSeq->SetCardList(Deck->GetCardList());
+		return true;
+	}
+
+	if (IsServer() && DiscardPile != nullptr)
+	{
+		AFFGameSequence_MultiChooseInList* ChooseSeq = StartSubSequence<AFFGameSequence_MultiChooseInList>(DiscardPile->MultiChooseInListTemplate);
+		ChooseSeq->SetCardList(DiscardPile->GetCardList());
+	}
 
 
 	// Own Ship Sector
@@ -130,7 +169,7 @@ bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 
 			if (ClickedSector == ShipSector)
 			{
-				StartSubSequence<AFFGameSequence_Fly>();
+				StartSubSequence<AFFGameSequence_Fly>(GetDefaultGameTuning()->GameSequence_Fly);
 			}
 		}
 	}
@@ -140,11 +179,33 @@ bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 
 bool AFFGameSequence_GameTurns::OnMouseEnterActor(int32 PlayerId, AFFActor* Actor)
 {
+	if (GetMyPlayerId() == PlayerId)
+	{
+		const FFFPlayer& Player = GetMyPlayer();
+		AFFSector* ShipSector = Player.Ship->GetCurrentSector();
+
+		if (Actor == ShipSector)
+		{
+			ShipSector->HighLight(true);
+		}
+	}
+
 	return false;
 }
 
 bool AFFGameSequence_GameTurns::OnMouseLeaveActor(int32 PlayerId, AFFActor* Actor)
 {
+	if (GetMyPlayerId() == PlayerId)
+	{
+		const FFFPlayer& Player = GetMyPlayer();
+		AFFSector* ShipSector = Player.Ship->GetCurrentSector();
+
+		if (Actor == ShipSector)
+		{
+			ShipSector->HighLight(false);
+		}
+	}
+
 	return false;
 }
 
@@ -165,6 +226,14 @@ void AFFGameSequence_GameTurns::ServerReceiveResponse(int32 res)
 	else
 		ServerStopCurrentSequence();
 	*/
+}
+
+void AFFGameSequence_GameTurns::DrawDebugSpecific(class UCanvas* Canvas, float& x, float& y) const
+{
+	UFont* Font = GEngine->GetSmallFont();
+	Canvas->SetDrawColor(FColorList::Grey);
+
+	y += Canvas->DrawText(Font, FString::Printf(TEXT("Current Player Turn %d"), CurrentPlayerId), x, y);
 }
 
 

@@ -18,10 +18,19 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	TSubclassOf<class AFFGameSequence_Card> DrawCard();
+	void Discard(TSubclassOf<class AFFGameSequence_Card> CardClass);
+
+	void Shuffle();
+
+	const TArray<TSubclassOf<class AFFGameSequence_Card>>& GetCardList() const;
+	class AFFDiscardPile* GetDiscardPile();
 
 private:
 	void CreateMaterialInstance();
 	void Init();
+
+	UFUNCTION()
+	void OnRep_CardListChange();
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -36,8 +45,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AFFGameSequence_Card>> CardListModel;
 
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_CardListChange)
 	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
+
+	UPROPERTY(EditAnywhere)
+	class AFFDiscardPile* DiscardPile;
+
 };
 
 

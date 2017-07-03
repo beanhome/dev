@@ -65,6 +65,9 @@ void AFFGameSequence::Destroyed()
 
 bool AFFGameSequence::IsCameraFree() const
 {
+	if (State == EFFClientGameSeqState::Ended)
+		return true;
+
 	for (AFFGameSequence* Sequence : SubSequences)
 	{
 		ensure(Sequence != nullptr);
@@ -80,7 +83,7 @@ bool AFFGameSequence::IsActorInteractive() const
 {
 	for (AFFGameSequence* Sequence : SubSequences)
 	{
-		ensure(Sequence != nullptr);
+		//ensure(Sequence != nullptr);
 
 		if (Sequence != nullptr && Sequence->IsActorInteractive() == false)
 			return false;
@@ -310,10 +313,12 @@ void AFFGameSequence::ServerStopCurrentSequence()
 
 	SEQLOG();
 
-	ensure(SubSequences.Num() == 0);
+	//ensure(SubSequences.Num() == 0);
 	for (AFFGameSequence* Sequence : SubSequences)
 	{
 		check(Sequence != nullptr);
+		ensure(Sequence->State == EFFClientGameSeqState::Ended);
+		if (Sequence->State != EFFClientGameSeqState::Ended)
 			Sequence->ServerStopCurrentSequence();
 	}
 
@@ -321,6 +326,28 @@ void AFFGameSequence::ServerStopCurrentSequence()
 
 	GetOwner<AFFGameSequence>()->OnSubSequenceStopped(this);
 }
+
+AFFGameSequence* AFFGameSequence::FindSubSequence(UClass* Class) const
+{
+	for (AFFGameSequence* Sub : SubSequences)
+	{
+		if (Sub != nullptr && Sub->IsA(Class))
+			return Sub;
+	}
+
+	for (const AFFGameSequence* Sub : SubSequences)
+	{
+		if (Sub != nullptr)
+		{
+			AFFGameSequence* Found = Sub->FindSubSequence(Class);
+			if (Found != nullptr)
+				return Found;
+		}
+	}
+
+	return nullptr;
+}
+
 
 AFFGameSequence* AFFGameSequence::StartSubSequence(UClass* Class)
 {
@@ -470,13 +497,16 @@ void AFFGameSequence::DrawDebug(class UCanvas* Canvas, float& x, float& y) const
 	Canvas->SetDrawColor(FColor::White);
 	y += Canvas->DrawText(Font, FString::Printf(TEXT("%s"), *GetClass()->GetName()), x, y);
 
+	x += 5.f;
 	DrawDebugSpecific(Canvas, x, y);
+	x -= 5.f;
 
 	x += 15.f;
-
 	for (AFFGameSequence* Sequence : SubSequences)
-		Sequence->DrawDebug(Canvas, x, y);
-
+	{
+		if (Sequence)
+			Sequence->DrawDebug(Canvas, x, y);
+	}
 	x -= 15.f;
 }
 

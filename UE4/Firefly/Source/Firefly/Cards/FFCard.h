@@ -17,7 +17,6 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
-private:
 	void CreateMaterialInstance();
 
 public:

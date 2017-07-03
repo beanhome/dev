@@ -16,7 +16,7 @@ void UFFQuestionPopup::SetDesc(const FString& desc)
 	Desc = desc;
 }
 
-void UFFQuestionPopup::SetOptions(const TArray<FString>& options)
+void UFFQuestionPopup::SetOptions(const TArray<FFFOption>& options)
 {
 	Options = options;
 	BPSetOptions(options);
@@ -24,7 +24,7 @@ void UFFQuestionPopup::SetOptions(const TArray<FString>& options)
 
 void UFFQuestionPopup::AddOption(const FString& option)
 {
-	Options.Add(option);
+	Options.Add(FFFOption(option, true));
 }
 
 

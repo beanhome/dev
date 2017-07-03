@@ -19,11 +19,11 @@ class UFFQuestionPopup : public UUserWidget
 public:
 	void SetTitle(const FString& title);
 	void SetDesc(const FString& desc);
-	void SetOptions(const TArray<FString>& options);
+	void SetOptions(const TArray<FFFOption>& options);
 	void AddOption(const FString& option);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Firefly)
-	void BPSetOptions(const TArray<FString>& options);
+	void BPSetOptions(const TArray<FFFOption>& options);
 
 	UFUNCTION(BlueprintCallable, Category = Firefly)
 	void OnButton_Select(int32 id);
@@ -36,7 +36,7 @@ public:
 	FString Desc;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FString> Options;
+	TArray<FFFOption> Options;
 
 	UPROPERTY()
 	FQuestionPopupDelegate SelectAnswerDelegate;

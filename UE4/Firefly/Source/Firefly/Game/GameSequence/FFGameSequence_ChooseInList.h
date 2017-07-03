@@ -17,19 +17,29 @@ class AFFGameSequence_ChooseInList : public AFFGameSequence
 public:
 	struct FInit
 	{
-		FInit(const TArray<TSubclassOf<AFFActor>>& _List) : List(_List) {}
-		TArray<TSubclassOf<AFFActor>> List;
+		FInit(const TArray<TSubclassOf<AFFActor>>& _List) : ClassList(_List) {}
+		TArray<TSubclassOf<AFFActor>> ClassList;
 	};
 
 	AFFGameSequence_ChooseInList();
 	
 	void InitWithParam(AFFGameSequence* OwnerSequence, const FInit& _Init);
+	virtual void Init(AFFGameSequence* OwnerSequence) override;
 	virtual void Start() override;
 	virtual void End() override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	void SetClassList(const TArray<TSubclassOf<class AFFActor>>& List);
+	void SetCardList(const TArray<TSubclassOf<class AFFGameSequence_Card>>& List);
+
 	const TArray<TSubclassOf<AFFActor>>& GetList() const;
+
+	int32 GetListCount() const;
+
+	void AddCard(AFFActor* Card);
+	void RemCard(AFFActor* Card);
+	AFFActor* RemCard(int32 id);
 
 protected:
 	virtual bool OnMouseEnterActor(int32 PlayerId, class AFFActor* Actor) override;
@@ -39,11 +49,17 @@ protected:
 private:
 	FVector GetItemLocation(int32 selected, int32 id) const;
 
+	UFUNCTION()
+	void OnRep_SetChooseList();
+
 private:
 	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<AFFActor>> List;
+	TArray<TSubclassOf<class AFFActor>> ClassList;
 
-	UPROPERTY()
+	UPROPERTY(Replicated, EditAnywhere)
+	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SetChooseList)
 	TArray<AFFActor*> ChooseList;
 
 public:
@@ -52,6 +68,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float DeepZ;
+
+	UPROPERTY(EditAnywhere)
+	float OffsetX;
 
 	FVector ItemExtent;
 

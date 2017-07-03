@@ -38,7 +38,8 @@ public:
 	virtual bool InputAxis(FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad);
 
 	AFFActor* GetHoverActor() const;
-	
+	UActorComponent* GetHoverComponent() const;
+
 	bool IsCameraFree() const;
 	bool IsActorInteractive() const;
 
@@ -77,6 +78,14 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void SendClientMouseClickActor(class AFFActor* Actor);
 
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SendClientValidateToServer(class AFFGameSequence_SubTurn* Seq);
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SendClientCancelToServer(class AFFGameSequence_SubTurn* Seq);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ConsumeAction(class AFFGameSequence_SubTurn* Action);
+
 	//UFUNCTION(Reliable, Server, WithValidation)
 	//void StopCurrentSequence();
 
@@ -102,6 +111,9 @@ private:
 
 	UPROPERTY()
 	AFFActor* CurrentHoverActor;
+
+	UPROPERTY()
+	UActorComponent* CurrentHoverComponent;
 };
 
 

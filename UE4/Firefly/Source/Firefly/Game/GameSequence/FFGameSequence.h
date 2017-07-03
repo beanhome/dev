@@ -51,6 +51,14 @@ public:
 		return (TestOwner != nullptr ? TestOwner : Cast<AFFGameSequence>(ActorOwner)->GetOwner<T>());
 	}
 
+	AFFGameSequence* FindSubSequence(UClass* Class) const;
+
+	template<class T>
+	T* FindSubSequence() const
+	{
+		return Cast<T>(FindSubSequence(T::StaticClass()));
+	}
+
 public:
 	virtual bool IsCameraFree() const;
 	virtual bool IsActorInteractive() const;

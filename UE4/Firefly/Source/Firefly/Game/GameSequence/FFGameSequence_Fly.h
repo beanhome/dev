@@ -36,6 +36,8 @@ public:
 	AFFGameSequence_Fly();
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+	
+	void FullStop();
 
 private:
 	virtual void ServerStart() override;
@@ -48,6 +50,9 @@ protected:
 	virtual bool OnMouseEnterActor(int32 PlayerId, class AFFActor* Actor) override;
 	virtual bool OnMouseLeaveActor(int32 PlayerId, class AFFActor* Actor) override;
 	virtual bool OnMouseClickActor(int32 PlayerId, class AFFActor* Actor) override;
+
+	virtual void OnValidate() override;
+	virtual void OnCancel() override;
 
 	UFUNCTION()
 	void OnFlyConfirmationAnswer(int32 id);
@@ -68,14 +73,19 @@ protected:
 	UFUNCTION(Reliable, NetMulticast)
 	void StartFullBurn(AFFSector* Dest);
 
+	UFUNCTION(Reliable, NetMulticast)
+	void FinishMove();
+
 	void ReachDestination();
 
 	void DrawNavigationCard();
 	UFUNCTION()
 	void OnDrawNavigationCardFinished(AFFGameSequence * Seq);
+	UFUNCTION()
+	void OnShuffleDeckFinished(AFFGameSequence * Seq);
+
 
 	virtual void DrawDebugSpecific(class UCanvas* Canvas, float& x, float& y) const override;
-
 
 private:
 
@@ -111,6 +121,9 @@ private:
 	
 	UPROPERTY()
 	class AFFGameSequence_Question* Confirmation;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AFFStuff> FuelBlueprint;
 
 	static char* s_sOptions[EFFFlyOptions::Count];
 };

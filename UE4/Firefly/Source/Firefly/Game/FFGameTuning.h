@@ -51,6 +51,10 @@ public:
 	TSubclassOf<class AFFGameSequence_PlaceShip> GameSequence_PlaceShip;
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AFFGameSequence_Fly> GameSequence_Fly;
+
+
+	UPROPERTY(EditDefaultsOnly)
 	float SwitchCameraDuration;
 
 	//UPROPERTY(EditDefaultsOnly)

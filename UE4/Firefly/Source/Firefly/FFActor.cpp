@@ -16,6 +16,16 @@ AFireflyPlayerController* AFFActor::GetFFPlayerController() const
 	return (GameInstance != nullptr ? Cast<AFireflyPlayerController>(GameInstance->GetFirstLocalPlayerController(GetWorld())) : nullptr);
 }
 
+bool AFFActor::IsServer() const
+{
+	return GetWorld()->GetAuthGameMode() != nullptr;
+}
+
+bool AFFActor::IsClient() const
+{
+	return GetWorld()->GetAuthGameMode() == nullptr;
+}
+
 FVector AFFActor::GetCenter() const
 {
 	return Center;

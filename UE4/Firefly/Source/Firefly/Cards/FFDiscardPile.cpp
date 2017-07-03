@@ -2,12 +2,18 @@
 
 #include "Firefly.h"
 #include "FFDiscardPile.h"
+#include "Game/GameSequence/FFGameSequence_Card.h"
 
 FName AFFDiscardPile::FrontTextureName("FrontTexture");
 
 AFFDiscardPile::AFFDiscardPile()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
+	bReplicates = true;
+	bNetUseOwnerRelevancy = true;
+	bAlwaysRelevant = true;
 }
 
 void AFFDiscardPile::OnConstruction(const FTransform& Transform)
@@ -53,16 +59,61 @@ void AFFDiscardPile::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 	}
 }
 
+
+void AFFDiscardPile::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFFDiscardPile, CardList);
+}
+
+const TArray<TSubclassOf<class AFFGameSequence_Card>>& AFFDiscardPile::GetCardList() const
+{
+	return CardList;
+}
+
+void AFFDiscardPile::AddCard(TSubclassOf<class AFFGameSequence_Card> CardClass)
+{
+	CardList.Add(CardClass);
+
+
+	if (DiscardMaterial)
+	{
+		AFFGameSequence_Card* LastCard = CardClass.GetDefaultObject();
+		if (LastCard)
+			DiscardMaterial->SetTextureParameterValue(FrontTextureName, LastCard->GetFrontTexture());
+	}
+}
+
+void AFFDiscardPile::Empty()
+{
+	CardList.Empty();
+
+	if (DiscardMaterial)
+		DiscardMaterial->SetTextureParameterValue(FrontTextureName, DiscardTexture);
+}
+
+void AFFDiscardPile::OnRep_CardListChange()
+{
+
+}
+
+
 void AFFDiscardPile::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	/*
-	if (MouseOver)
+	if (IsClient())
 	{
-		DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, GetName(), nullptr, FColor::White, 0.f);
-		DrawDebugBox(GetWorld(), Center, Extent, FColor::White, false);
+		DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, FString::FormatAsNumber(CardList.Num()), nullptr, FColor::White, 0.f);
+
+		/*
+		if (MouseOver)
+		{
+			DrawDebugString(GetWorld(), Center + FVector::UpVector * 20.f, GetName(), nullptr, FColor::White, 0.f);
+			DrawDebugBox(GetWorld(), Center, Extent, FColor::White, false);
+		}
+		*/
 	}
-	*/
 }
 

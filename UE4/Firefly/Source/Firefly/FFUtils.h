@@ -1,6 +1,9 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 
+#include "FFUtils.generated.h"
+
+
 const class UFFGameTuning* GetDefaultGameTuning();
 const class UFFUITuning* GetDefaultUITuning();
 
@@ -14,3 +17,18 @@ FString EnumValueAsString(E EnumValue, const TCHAR* EnumName)
 }
 
 #define EnumToString(type, val) EnumValueAsString<type>(val, TEXT(#type))
+
+USTRUCT(BlueprintType)
+struct FFFOption
+{
+	GENERATED_USTRUCT_BODY();
+
+	FFFOption() : Option(""), bEnable(true) {}
+	FFFOption(const FString& _Option, bool _bEnable) : Option(_Option), bEnable(_bEnable) {}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Option;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnable;
+};

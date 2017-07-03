@@ -162,6 +162,7 @@ void AFFGameSequence_Game::PlayerChooseShip(int32 PlayerId, TSubclassOf<class AF
 	Players[PlayerId].ShipBoard = ShipBoard;
 	Players[PlayerId].Engine = Engine;
 	ShipBoard->ClientInitialize(PlayerId, Players[PlayerId].Leader, Engine);
+	ShipBoard->InitCargo();
 }
 
 void AFFGameSequence_Game::PlayerPlaceShip(int32 PlayerId, int32 SectorId)

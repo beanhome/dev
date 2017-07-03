@@ -17,10 +17,11 @@ class AFFGameSequence_Question : public AFFGameSequence
 public:
 	struct FInit
 	{
-		FInit(const FString& _Title, const FString& _Desc, const TArray<FString>& _Answers) : Title(_Title), Desc(_Desc), Answers(_Answers) {}
+		FInit() {}
+		FInit(const FString& _Title, const FString& _Desc, const TArray<FFFOption>& _Options) : Title(_Title), Desc(_Desc), Options(_Options) {}
 		FString Title;
 		FString Desc;
-		TArray<FString> Answers;
+		TArray<FFFOption> Options;
 	};
 
 	AFFGameSequence_Question();
@@ -38,7 +39,7 @@ public:
 private:
 	FString Title;
 	FString Desc;
-	TArray<FString> Answers;
+	TArray<FFFOption> Options;
 
 public:
 	UPROPERTY()

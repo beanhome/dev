@@ -17,18 +17,33 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	void AddCard(TSubclassOf<class AFFGameSequence_Card> CardClass);
+
+	const TArray<TSubclassOf<class AFFGameSequence_Card>>& GetCardList() const;
+
+	void Empty();
+
 private:
 	void CreateMaterialInstance();
+
+	UFUNCTION()
+	void OnRep_CardListChange();
 
 public:
 	UPROPERTY(EditAnywhere)
 	UTexture* DiscardTexture;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AFFGameSequence_MultiChooseInList> MultiChooseInListTemplate;
 
 private:
 	static FName FrontTextureName;
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* DiscardMaterial;
+
+	UPROPERTY(ReplicatedUsing = OnRep_CardListChange)
+	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
 };
 
 

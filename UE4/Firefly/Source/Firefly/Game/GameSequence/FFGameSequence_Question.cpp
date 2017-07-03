@@ -14,7 +14,7 @@ void AFFGameSequence_Question::InitWithParam(AFFGameSequence* OwnerSequence, con
 {
 	Title = Init.Title;
 	Desc = Init.Desc;
-	Answers = Init.Answers;
+	Options = Init.Options;
 
 	Super::Init(OwnerSequence);
 }
@@ -43,7 +43,7 @@ void AFFGameSequence_Question::Start()
 		Popup->AddToViewport();
 		Popup->SetTitle(Title);
 		Popup->SetDesc(Desc);
-		Popup->SetOptions(Answers);
+		Popup->SetOptions(Options);
 		Popup->SetVisibility(ESlateVisibility::Visible);
 
 		Popup->SelectAnswerDelegate.AddDynamic(this, &AFFGameSequence_Question::OnSelectAnswer);

@@ -13,6 +13,8 @@
 #include "FFGameState.h"
 #include "FireflyGameMode.h"
 
+#include "Game/GameSequence/FFGameSequence_GameTurns.h"
+
 AFireflyPlayerController::AFireflyPlayerController()
 {
 	bShowMouseCursor = true;
@@ -38,6 +40,11 @@ void AFireflyPlayerController::SetId(int32 id)
 AFFActor* AFireflyPlayerController::GetHoverActor() const
 {
 	return CurrentHoverActor;
+}
+
+UActorComponent* AFireflyPlayerController::GetHoverComponent() const
+{
+	return CurrentHoverComponent;
 }
 
 void AFireflyPlayerController::BeginPlay()
@@ -229,7 +236,45 @@ void AFireflyPlayerController::SendClientMouseClickActor_Implementation(class AF
 		GameState->Game->ReceiveMouseClickActor(Id, Actor);
 }
 
+bool AFireflyPlayerController::ConsumeAction_Validate(class AFFGameSequence_SubTurn* Action)
+{
+	return true;
+}
 
+void AFireflyPlayerController::ConsumeAction_Implementation(class AFFGameSequence_SubTurn* Action)
+{
+	AFFGameState* GameState = GetWorld()->GetGameState<AFFGameState>();
+	if (GameState != nullptr && GameState->Game != nullptr)
+	{
+		AFFGameSequence_GameTurns* GameTurns = GameState->Game->FindSubSequence<AFFGameSequence_GameTurns>();
+	}
+}
+
+bool AFireflyPlayerController::SendClientValidateToServer_Validate(class AFFGameSequence_SubTurn* Seq)
+{
+	return true;
+}
+
+void AFireflyPlayerController::SendClientValidateToServer_Implementation(class AFFGameSequence_SubTurn* Seq)
+{
+	ensure(Seq != nullptr);
+
+	if (Seq != nullptr)
+		Seq->ClientValidate();
+}
+
+bool AFireflyPlayerController::SendClientCancelToServer_Validate(class AFFGameSequence_SubTurn* Seq)
+{
+	return true;
+}
+
+void AFireflyPlayerController::SendClientCancelToServer_Implementation(class AFFGameSequence_SubTurn* Seq)
+{
+	ensure(Seq != nullptr);
+
+	if (Seq != nullptr)
+		Seq->ClientCancel();
+}
 
 void AFireflyPlayerController::PlayerTick(float DeltaTime)
 {
@@ -252,7 +297,7 @@ void AFireflyPlayerController::PlayerTick(float DeltaTime)
 			bool res = GetWorld()->LineTraceSingleByObjectType(Hit, Start, End, ObjectQueryParams);
 
 			AFFActor* HoverActor = (res ? Cast<AFFActor>(Hit.Actor.Get()) : nullptr);
-
+			CurrentHoverComponent = (res ? Hit.Component.Get() : nullptr);
 			//UE_LOG(Firefly, Log, TEXT("Object : %s"), *Hit.Actor->GetName());
 
 			if (CurrentHoverActor != HoverActor)

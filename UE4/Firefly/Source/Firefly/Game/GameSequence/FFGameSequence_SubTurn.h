@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Game/GameSequence/FFGameSequence.h"
+#include "Game/GameSequence/FFGameSequence_Game.h"
 
 #include "FFGameSequence_SubTurn.generated.h"
 
@@ -23,8 +24,32 @@ public:
 	bool IsTurnOf(int32 id) const;
 	bool IsMyTurn() const;
 
-private:
+	void ConsumeAction();
 
+	//virtual void Init(AFFGameSequence* OwnerSequence) override;
+	virtual void Start() override;
+	virtual void End() override;
+
+	UFUNCTION(Reliable, NetMulticast)
+	void ClientValidate();
+	UFUNCTION(Reliable, NetMulticast)
+	void ClientCancel();
+
+	virtual void OnValidate();
+	virtual void OnCancel();
+
+private:
+	UFUNCTION()
+	void SendValidateToServer();
+	UFUNCTION()
+	void SendCancelToServer();
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UFFSpecificHud> SpecificHudClass;
+
+	UPROPERTY()
+	class UFFSpecificHud* SpecificHud;
 };
 
 
