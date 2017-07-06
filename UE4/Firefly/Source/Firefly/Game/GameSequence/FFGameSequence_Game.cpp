@@ -6,6 +6,7 @@
 #include "FFGameSequence_ChooseLeaderAndShip.h"
 #include "FFGameSequence_PlaceShip.h"
 #include "FFGameSequence_GameTurns.h"
+#include "FFGameSequence_PrepareDecks.h"
 #include "Game/FireflyPlayerController.h"
 #include "Game/FFUITuning.h"
 #include "Cards/Cards/FFLeaderCard.h"
@@ -136,6 +137,22 @@ void AFFGameSequence_Game::PlaceShipFinish(AFFGameSequence* Seq)
 
 	StopSubSequence(Seq);
 
+	// Choose Goal
+	// ...
+
+	// Starting Supplies
+	// ...
+
+	// Starting Job
+	// ...
+
+	AFFGameSequence* SubSequence = StartSubSequence<AFFGameSequence_PrepareDecks>();
+	SubSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Game::PrepareDecksFinish);
+}
+
+
+void AFFGameSequence_Game::PrepareDecksFinish(AFFGameSequence* Seq)
+{
 	AFFGameSequence* SubSequence = StartSubSequence<AFFGameSequence_GameTurns>();
 	SubSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Game::GameOver);
 }

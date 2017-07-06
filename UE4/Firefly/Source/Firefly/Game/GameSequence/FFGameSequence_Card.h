@@ -14,21 +14,6 @@ enum class EFFGSCardState : uint8
 	Execute,
 };
 
-USTRUCT()
-struct FFFGSCardChoice
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class AFFGameSequence_Effect> > Sequences;
-	
-	//UPROPERTY(EditAnywhere)
-	//TArray<TSubclassOf<AFFCondition> > Conditions;
-
-	UPROPERTY()
-	class USceneComponent* Selector;
-};
-
 UCLASS(minimalapi)
 class AFFGameSequence_Card : public AFFGameSequence_SubTurn
 {
@@ -39,10 +24,8 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 	
-	AFFCard* SpawnCardActor(UWorld* World);
-
-	UTexture* GetFrontTexture();
-
+	const AFFNavCard* GetCard() const;
+	void SetCard(AFFNavCard* _Card);
 
 private:
 	virtual void ServerStart() override;
@@ -71,21 +54,8 @@ protected:
 	void OnSelectorClicked(AActor* TouchedActor, FKey ButtonPressed);
 
 private:
-
-	UPROPERTY(EditAnywhere)
-	TArray<FFFGSCardChoice> Choices;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AFFCard> CardTemplate;
-
-	UPROPERTY(EditAnywhere)
-	UTexture* FrontTexture;
-
-	UPROPERTY(EditAnywhere)
-	UTexture* BackTexture;
-
-	UPROPERTY()
-	class AFFCard* Card;
+	UPROPERTY(Replicated)
+	class AFFNavCard* Card;
 
 	UPROPERTY()
 	EFFGSCardState CardState;

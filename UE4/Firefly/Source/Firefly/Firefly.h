@@ -7,6 +7,7 @@
 #include "EngineMinimal.h"
 #include "DrawDebugHelpers.h"
 #include "EngineUtils.h"
+#include "FFTypes.h"
 #include "FFUtils.h"
 
 #include "Runtime/UMG/Public/UMG.h"

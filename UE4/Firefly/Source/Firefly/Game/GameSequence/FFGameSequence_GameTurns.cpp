@@ -138,17 +138,17 @@ bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 		DiscardPile = Deck->GetDiscardPile();
 
 	// TEST
-	if (IsServer() && Deck != nullptr)
+	if (IsServer() && Deck != nullptr && DiscardPile->MultiChooseInListTemplate)
 	{
 		AFFGameSequence_MultiChooseInList* ChooseSeq = StartSubSequence<AFFGameSequence_MultiChooseInList>(DiscardPile->MultiChooseInListTemplate);
-		ChooseSeq->SetCardList(Deck->GetCardList());
+		ChooseSeq->SetClassList(Deck->GetCardListAsActor());
 		return true;
 	}
 
-	if (IsServer() && DiscardPile != nullptr)
+	if (IsServer() && DiscardPile != nullptr && DiscardPile->MultiChooseInListTemplate)
 	{
 		AFFGameSequence_MultiChooseInList* ChooseSeq = StartSubSequence<AFFGameSequence_MultiChooseInList>(DiscardPile->MultiChooseInListTemplate);
-		ChooseSeq->SetCardList(DiscardPile->GetCardList());
+		ChooseSeq->SetClassList(DiscardPile->GetCardListAsActor());
 	}
 
 

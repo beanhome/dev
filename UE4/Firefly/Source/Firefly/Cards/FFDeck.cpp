@@ -69,10 +69,21 @@ void AFFDeck::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 	DOREPLIFETIME(AFFDeck, CardList);
 }
 
-const TArray<TSubclassOf<class AFFGameSequence_Card>>& AFFDeck::GetCardList() const
+const TArray<TSubclassOf<class AFFCard>>& AFFDeck::GetCardList() const
 {
 	return CardList;
 }
+
+TArray<TSubclassOf<class AFFActor>> AFFDeck::GetCardListAsActor() const
+{
+	TArray<TSubclassOf<class AFFActor>> List;
+
+	for (TSubclassOf<class AFFCard> Card : CardList)
+		List.Add(Card);
+
+	return List;
+}
+
 
 class AFFDiscardPile* AFFDeck::GetDiscardPile()
 {
@@ -108,19 +119,19 @@ void AFFDeck::Shuffle()
 		CardList.Swap(i, FMath::RandRange(0, Size - 1));
 }
 
-TSubclassOf<class AFFGameSequence_Card> AFFDeck::DrawCard()
+TSubclassOf<class AFFCard> AFFDeck::DrawCard()
 {
 	if (CardList.Num() == 0)
 		return nullptr;
 
 	int32 i = CardList.Num() - 1;
-	TSubclassOf<class AFFGameSequence_Card> Card = CardList[i];
+	TSubclassOf<class AFFCard> Card = CardList[i];
 	CardList.RemoveAt(i);
 
 	return Card;
 }
 
-void AFFDeck::Discard(TSubclassOf<class AFFGameSequence_Card> CardClass)
+void AFFDeck::Discard(TSubclassOf<class AFFCard> CardClass)
 {
 	if (DiscardPile)
 		DiscardPile->AddCard(CardClass);

@@ -17,9 +17,10 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	void AddCard(TSubclassOf<class AFFGameSequence_Card> CardClass);
+	void AddCard(TSubclassOf<class AFFCard> CardClass);
 
-	const TArray<TSubclassOf<class AFFGameSequence_Card>>& GetCardList() const;
+	const TArray<TSubclassOf<class AFFCard>>& GetCardList() const;
+	TArray<TSubclassOf<class AFFActor>> GetCardListAsActor() const;
 
 	void Empty();
 
@@ -43,7 +44,7 @@ private:
 	UMaterialInstanceDynamic* DiscardMaterial;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CardListChange)
-	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
+	TArray<TSubclassOf<class AFFCard>> CardList;
 };
 
 

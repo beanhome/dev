@@ -1,11 +1,11 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
-#include "Cards/FFCard.h"
+#include "Cards/Cards/FFShipUpgradeCard.h"
 #include "FFEngineCard.generated.h"
 
 /** A card that can be clicked */
 UCLASS(minimalapi)
-class AFFEngineCard : public AFFCard
+class AFFEngineCard : public AFFShipUpgradeCard
 {
 	GENERATED_BODY()
 

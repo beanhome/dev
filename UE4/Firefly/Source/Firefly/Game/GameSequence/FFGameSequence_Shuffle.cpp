@@ -37,7 +37,7 @@ void AFFGameSequence_Shuffle::End()
 	Super::End();
 }
 
-void AFFGameSequence_Shuffle::ShuffleDeck(class AFFDeck* _Deck)
+void AFFGameSequence_Shuffle::SetDeck(class AFFDeck* _Deck)
 {
 	check(IsServer());
 

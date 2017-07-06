@@ -18,7 +18,7 @@ public:
 	virtual void Start() override;
 	virtual void End() override;
 
-	void ShuffleDeck(class AFFDeck* _Deck);
+	void SetDeck(class AFFDeck* _Deck);
 	
 private:
 	UPROPERTY(Replicated)

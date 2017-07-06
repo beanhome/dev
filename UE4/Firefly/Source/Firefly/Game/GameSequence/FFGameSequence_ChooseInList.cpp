@@ -7,7 +7,9 @@
 
 AFFGameSequence_ChooseInList::AFFGameSequence_ChooseInList()
 : DeepZ(500.f)
+, OffsetZ(30.f)
 , Delay(0.3f)
+, PowX(0.75f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -15,11 +17,6 @@ AFFGameSequence_ChooseInList::AFFGameSequence_ChooseInList()
 void AFFGameSequence_ChooseInList::SetClassList(const TArray<TSubclassOf<class AFFActor>>& List)
 {
 	ClassList = List;
-}
-
-void AFFGameSequence_ChooseInList::SetCardList(const TArray<TSubclassOf<class AFFGameSequence_Card>>& List)
-{
-	CardList = List;
 }
 
 const TArray<TSubclassOf<AFFActor>>& AFFGameSequence_ChooseInList::GetList() const
@@ -37,7 +34,6 @@ void AFFGameSequence_ChooseInList::GetLifetimeReplicatedProps(TArray< FLifetimeP
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AFFGameSequence_ChooseInList, CardList);
 	DOREPLIFETIME(AFFGameSequence_ChooseInList, ChooseList);
 }
 
@@ -63,13 +59,10 @@ void AFFGameSequence_ChooseInList::Init(AFFGameSequence* OwnerSequence)
 	if (IsServer() || IsLocal())
 	{
 		ChooseList.Empty();
-		ChooseList.Reserve(ClassList.Num() + CardList.Num());
+		ChooseList.Reserve(ClassList.Num());
 
 		for (const TSubclassOf<class AFFActor>& Actor : ClassList)
 			ChooseList.Add(GetWorld()->SpawnActor<AFFActor>(Actor));
-
-		for (const TSubclassOf<class AFFGameSequence_Card>& Card : CardList)
-			ChooseList.Add(Card.GetDefaultObject()->SpawnCardActor(GetWorld()));
 	}
 }
 
@@ -249,7 +242,7 @@ FVector AFFGameSequence_ChooseInList::GetItemLocation(int32 selected, int32 id) 
 	float absdiff = FMath::Abs(diff);
 	float s = FMath::Sign(diff);
 
-	return FVector(OffsetX + s * ItemExtent.X *0.5f * FMath::Pow(absdiff, 0.75f), 0.f, -DeepZ - absdiff * 30.f);
+	return FVector(OffsetX + s * ItemExtent.X *0.5f * FMath::Pow(absdiff, PowX), 0.f, -DeepZ - absdiff * OffsetZ);
 }
 
 

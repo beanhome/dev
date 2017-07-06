@@ -48,7 +48,6 @@ void AFFGameSequence_MultiChooseInList::Start()
 	{
 		ChoiceList = StartSubSequence<AFFGameSequence_ChooseInList>(ChooseListTemplate);
 		ChoiceList->SetClassList(ClassList);
-		ChoiceList->SetCardList(CardList);
 		ChoiceList->ChooseInListDelegate.AddDynamic(this, &AFFGameSequence_MultiChooseInList::OnChoiceListSelect);
 
 		ChoosenList = StartSubSequence<AFFGameSequence_ChooseInList>(ChoosenListTemplate);

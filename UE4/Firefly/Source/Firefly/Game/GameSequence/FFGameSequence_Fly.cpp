@@ -5,6 +5,7 @@
 #include "FFGameSequence_GameTurns.h"
 #include "FFGameSequence_Question.h"
 #include "FFGameSequence_Shuffle.h"
+#include "FFGameSequence_Card.h"
 #include "Game/FireflyPlayerController.h"
 #include "Board/FFSector.h"
 #include "Board/FFShipBoard.h"
@@ -346,18 +347,27 @@ void AFFGameSequence_Fly::DrawNavigationCard()
 
 	if (ShipSector->GetDeck())
 	{
-		TSubclassOf<class AFFGameSequence_Card> DrawnCard = ShipSector->GetDeck()->DrawCard();
+		class AFFCard* DrawnCard = ShipSector->GetDeck()->DrawCard().GetDefaultObject();
 
 		if (DrawnCard == nullptr)
 		{
 			AFFGameSequence_Shuffle* ShuffleSequence = StartSubSequence<AFFGameSequence_Shuffle>();
 			ShuffleSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnShuffleDeckFinished);
-			ShuffleSequence->ShuffleDeck(ShipSector->GetDeck());
+			ShuffleSequence->SetDeck(ShipSector->GetDeck());
 		}
 		else
 		{
-			AFFGameSequence_Card* DrawCardSequence = StartSubSequence<AFFGameSequence_Card>(DrawnCard);
-			DrawCardSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnDrawNavigationCardFinished);
+			AFFNavCard* DrawnNavCard = Cast<AFFNavCard>(DrawnCard);
+
+			ensure(DrawnNavCard != nullptr);
+
+			if (DrawnNavCard != nullptr)
+			{
+				AFFGameSequence_Card* DrawCardSequence = StartSubSequence<AFFGameSequence_Card>(DrawnNavCard->GetSequenceTemplate());
+				AFFNavCard* ShowNavCard = GetWorld()->SpawnActor<AFFNavCard>(DrawnNavCard->GetClass());
+				DrawCardSequence->SetCard(ShowNavCard);
+				DrawCardSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_Fly::OnDrawNavigationCardFinished);
+			}
 		}
 	}
 }
@@ -375,7 +385,7 @@ void AFFGameSequence_Fly::OnDrawNavigationCardFinished(AFFGameSequence * Seq)
 
 	AFFGameSequence_Card* DrawCardSequence = Cast<AFFGameSequence_Card>(Seq);
 
-	ShipSector->GetDeck()->Discard(DrawCardSequence->GetClass());
+	ShipSector->GetDeck()->Discard(DrawCardSequence->GetCard()->GetClass());
 
 	if (MoveStep > 0)
 	{

@@ -32,6 +32,9 @@ const FFFPlayer& AFFGameSequence_SubTurn::GetPlayingPlayer() const
 
 bool AFFGameSequence_SubTurn::IsTurnOf(int32 id) const
 {
+	if (State == EFFClientGameSeqState::Ended)
+		return false;
+
 	return GetOwner<AFFGameSequence_GameTurns>()->IsTurnOf(id);
 }
 

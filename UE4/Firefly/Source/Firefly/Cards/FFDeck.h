@@ -17,12 +17,13 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
-	TSubclassOf<class AFFGameSequence_Card> DrawCard();
-	void Discard(TSubclassOf<class AFFGameSequence_Card> CardClass);
+	TSubclassOf<class AFFCard> DrawCard();
+	void Discard(TSubclassOf<class AFFCard> CardClass);
 
 	void Shuffle();
 
-	const TArray<TSubclassOf<class AFFGameSequence_Card>>& GetCardList() const;
+	const TArray<TSubclassOf<class AFFCard>>& GetCardList() const;
+	TArray<TSubclassOf<class AFFActor>> GetCardListAsActor() const;
 	class AFFDiscardPile* GetDiscardPile();
 
 private:
@@ -43,14 +44,16 @@ private:
 	UMaterialInstanceDynamic* BackMaterial;
 
 	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<class AFFGameSequence_Card>> CardListModel;
+	TArray<TSubclassOf<class AFFCard>> CardListModel;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CardListChange)
-	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
+	TArray<TSubclassOf<class AFFCard>> CardList;
 
 	UPROPERTY(EditAnywhere)
 	class AFFDiscardPile* DiscardPile;
 
+	UPROPERTY(EditAnywhere)
+	bool bShuffle;
 };
 
 

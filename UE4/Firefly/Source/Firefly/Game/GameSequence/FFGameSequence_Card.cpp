@@ -14,19 +14,11 @@ AFFGameSequence_Card::AFFGameSequence_Card()
 	CurrentSequence = -1;
 }
 
-UTexture* AFFGameSequence_Card::GetFrontTexture()
-{
-	return FrontTexture;
-}
-
 void AFFGameSequence_Card::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	/*
-	DOREPLIFETIME(AFFGameSequence_Card, State);
-	DOREPLIFETIME(AFFGameSequence_Card, MoveStep);
-	*/
+	DOREPLIFETIME(AFFGameSequence_Card, Card);
 }
 
 bool AFFGameSequence_Card::IsCameraFree() const
@@ -37,19 +29,19 @@ bool AFFGameSequence_Card::IsCameraFree() const
 	return (CardState == EFFGSCardState::Fold || IsMyTurn() == false);
 }
 
-AFFCard* AFFGameSequence_Card::SpawnCardActor(UWorld* World)
-{
-	AFFCard* _Card = World->SpawnActor<AFFCard>(CardTemplate);
-	_Card->FrontTexture = FrontTexture;
-	_Card->BackTexture = BackTexture;
-	_Card->CreateMaterialInstance();
-
-	return _Card;
-}
-
 void AFFGameSequence_Card::Init(AFFGameSequence* OwnerSequence)
 {
 	Super::Init(OwnerSequence);
+}
+
+const AFFNavCard* AFFGameSequence_Card::GetCard() const
+{
+	return Card;
+}
+
+void AFFGameSequence_Card::SetCard(AFFNavCard* _Card)
+{
+	Card = _Card;
 }
 
 void AFFGameSequence_Card::ServerStart()
@@ -64,7 +56,7 @@ void AFFGameSequence_Card::Start()
 	
 	if (IsClient())
 	{
-		Card = SpawnCardActor(GetWorld());
+		check(Card);
 
 		if (IsMyTurn())
 		{
@@ -80,9 +72,9 @@ void AFFGameSequence_Card::Start()
 			UStaticMeshComponent* CardComp = Card->FindComponentByClass<UStaticMeshComponent>();
 			if (CardComp)
 			{
-				for (int32 i = 0; i < Choices.Num(); ++i)
+				for (int32 i = 0; i < Card->Choices.Num(); ++i)
 				{
-					Choices[i].Selector = CardComp->GetChildComponent(i);
+					Card->Choices[i].Selector = CardComp->GetChildComponent(i);
 				}
 			}
 		}
@@ -123,10 +115,13 @@ bool AFFGameSequence_Card::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 				if (IsClient())
 				{
 					UActorComponent* HoverComponent = GetFFPlayerController()->GetHoverComponent();
-					int32 id = Choices.IndexOfByPredicate([&](const FFFGSCardChoice& elem) { return (elem.Selector == HoverComponent); });
-					SendResponseToServer(id);
+					int32 id = Card->Choices.IndexOfByPredicate([&](const FFFGSCardChoice& elem) { return (elem.Selector == HoverComponent); });
+					if (id != -1)
+					{
+						SendResponseToServer(id);
+						CardState = EFFGSCardState::Execute;
+					}
 				}
-				CardState = EFFGSCardState::Execute;
 			}
 			break;
 
@@ -178,10 +173,10 @@ void AFFGameSequence_Card::ServerReceiveResponse(int32 res)
 	switch (CardState)
 	{
 		case EFFGSCardState::Interact:
-			check(res >= 0 && res < Choices.Num());
+			check(res >= 0 && res < Card->Choices.Num());
 			CurrentChoice = res;
 			CurrentSequence = 0;
-			Effect = StartSubSequence(Choices[CurrentChoice].Sequences[CurrentSequence]);
+			Effect = StartSubSequence(Card->Choices[CurrentChoice].Sequences[CurrentSequence]);
 			Effect->EndDelegate.AddDynamic(this, &AFFGameSequence_Card::CurrentEffectFinish);
 			CardState = EFFGSCardState::Execute;
 			break;
@@ -201,9 +196,9 @@ void AFFGameSequence_Card::CurrentEffectFinish(AFFGameSequence* Seq)
 {
 	CurrentSequence++;
 
-	if (CurrentSequence < Choices[CurrentChoice].Sequences.Num())
+	if (CurrentSequence < Card->Choices[CurrentChoice].Sequences.Num())
 	{
-		AFFGameSequence* Effect = StartSubSequence(Choices[CurrentChoice].Sequences[CurrentSequence]);
+		AFFGameSequence* Effect = StartSubSequence(Card->Choices[CurrentChoice].Sequences[CurrentSequence]);
 		Effect->EndDelegate.AddDynamic(this, &AFFGameSequence_Card::CurrentEffectFinish);
 	}
 	else
@@ -222,22 +217,22 @@ void AFFGameSequence_Card::Tick(float DeltaSeconds)
 	{
 		UActorComponent* HoverComponent = PlayerController->GetHoverComponent();
 
-		switch (State)
+		switch (CardState)
 		{
 			case EFFGSCardState::Interact:
 
-				for (int32 i = 0; i < Choices.Num(); ++i)
+				for (int32 i = 0; i < Card->Choices.Num(); ++i)
 				{
-					if (Choices[i].Selector != nullptr)
-						Choices[i].Selector->SetVisibility(HoverComponent == Choices[i].Selector);
+					if (Card->Choices[i].Selector != nullptr)
+						Card->Choices[i].Selector->SetVisibility(HoverComponent == Card->Choices[i].Selector);
 				}
 				break;
 
 			case EFFGSCardState::Fold:
-				for (int32 i = 0; i < Choices.Num(); ++i)
+				for (int32 i = 0; i < Card->Choices.Num(); ++i)
 				{
-					if (Choices[i].Selector != nullptr)
-						Choices[i].Selector->SetVisibility(false);
+					if (Card->Choices[i].Selector != nullptr)
+						Card->Choices[i].Selector->SetVisibility(false);
 				}
 				break;
 

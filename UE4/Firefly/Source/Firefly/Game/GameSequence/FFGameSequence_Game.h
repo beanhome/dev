@@ -65,6 +65,9 @@ private:
 	void PlaceShipFinish(AFFGameSequence* Seq);
 
 	UFUNCTION()
+	void PrepareDecksFinish(AFFGameSequence* Seq);
+
+	UFUNCTION()
 	void GameOver(AFFGameSequence* Seq);
 
 public:

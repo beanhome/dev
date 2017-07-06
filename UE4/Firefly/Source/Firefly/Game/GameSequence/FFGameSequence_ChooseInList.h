@@ -31,7 +31,6 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	void SetClassList(const TArray<TSubclassOf<class AFFActor>>& List);
-	void SetCardList(const TArray<TSubclassOf<class AFFGameSequence_Card>>& List);
 
 	const TArray<TSubclassOf<AFFActor>>& GetList() const;
 
@@ -56,9 +55,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AFFActor>> ClassList;
 
-	UPROPERTY(Replicated, EditAnywhere)
-	TArray<TSubclassOf<class AFFGameSequence_Card>> CardList;
-
 	UPROPERTY(ReplicatedUsing = OnRep_SetChooseList)
 	TArray<AFFActor*> ChooseList;
 
@@ -70,7 +66,13 @@ public:
 	float DeepZ;
 
 	UPROPERTY(EditAnywhere)
+	float OffsetZ;
+
+	UPROPERTY(EditAnywhere)
 	float OffsetX;
+
+	UPROPERTY(EditAnywhere)
+	float PowX;
 
 	FVector ItemExtent;
 
