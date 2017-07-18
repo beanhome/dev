@@ -33,6 +33,17 @@ void AFFGameSequence_MultiChooseInList::SetCardList(const TArray<TSubclassOf<cla
 	CardList = List;
 }
 
+const AFFGameSequence_ChooseInList* AFFGameSequence_MultiChooseInList::GetChoiceList() const
+{
+	return ChoiceList;
+}
+
+
+const AFFGameSequence_ChooseInList* AFFGameSequence_MultiChooseInList::GetChoosenList() const
+{
+	return ChoosenList;
+}
+
 void AFFGameSequence_MultiChooseInList::Init(AFFGameSequence* OwnerSequence)
 {
 	Super::Init(OwnerSequence);
@@ -57,6 +68,12 @@ void AFFGameSequence_MultiChooseInList::Start()
 
 void AFFGameSequence_MultiChooseInList::End()
 {
+	if (IsServer())
+	{
+		StopSubSequence(ChoiceList);
+		StopSubSequence(ChoosenList);
+	}
+
 	Super::End();
 }
 
@@ -82,7 +99,7 @@ void AFFGameSequence_MultiChooseInList::OnValidate()
 	// Do something
 	// ...
 
-	if (IsServer())
+	if (false && IsServer())
 	{
 		StopSubSequence(ChoiceList);
 		StopSubSequence(ChoosenList);
@@ -94,7 +111,7 @@ void AFFGameSequence_MultiChooseInList::OnCancel()
 {
 	Super::OnCancel();
 
-	if (IsServer())
+	if (false && IsServer())
 	{
 		StopSubSequence(ChoiceList);
 		StopSubSequence(ChoosenList);

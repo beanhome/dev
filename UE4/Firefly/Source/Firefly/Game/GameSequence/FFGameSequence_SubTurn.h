@@ -6,6 +6,9 @@
 
 #include "FFGameSequence_SubTurn.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFFSequenceSubTurnValidateDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFFSequenceSubTurnCancelDelegate);
+
 
 UCLASS(minimalapi)
 class AFFGameSequence_SubTurn : public AFFGameSequence
@@ -37,6 +40,13 @@ public:
 
 	virtual void OnValidate();
 	virtual void OnCancel();
+
+public:
+	UPROPERTY()
+	FFFSequenceSubTurnValidateDelegate	ValidateDelegate;
+
+	UPROPERTY()
+	FFFSequenceSubTurnCancelDelegate	CancelDelegate;
 
 private:
 	UFUNCTION()

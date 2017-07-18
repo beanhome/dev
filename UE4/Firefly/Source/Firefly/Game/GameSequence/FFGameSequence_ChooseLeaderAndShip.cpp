@@ -25,13 +25,13 @@ void AFFGameSequence_ChooseLeaderAndShip::ServerStart()
 
 	if (ChooseLeaderDefault)
 	{
-		for (const TSubclassOf<AFFActor>& Card : ChooseLeaderDefault->GetList())
+		for (const TSubclassOf<AFFActor>& Card : ChooseLeaderDefault->GetClassList())
 			LeaderCards.Add(Card);
 	}
 
 	if (ChooseShipDefault)
 	{
-		for (const TSubclassOf<AFFActor>& Card : ChooseShipDefault->GetList())
+		for (const TSubclassOf<AFFActor>& Card : ChooseShipDefault->GetClassList())
 			Ships.Add(Card);
 	}
 

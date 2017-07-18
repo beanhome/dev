@@ -233,7 +233,10 @@ void AFFShipBoard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutL
 
 	DOREPLIFETIME(AFFShipBoard, PlayerId);
 	DOREPLIFETIME(AFFShipBoard, Engine);
+	DOREPLIFETIME(AFFShipBoard, Crew);
+	DOREPLIFETIME(AFFShipBoard, Hand);
 	DOREPLIFETIME(AFFShipBoard, Stuffs);
+	
 }
 
 class AFFEngineCard* AFFShipBoard::GetEngine() const
@@ -314,6 +317,39 @@ bool AFFShipBoard::HasStuff(TSubclassOf<class AFFStuff> StuffClass, int32 nb)
 	nb = FMath::Max(nb, 1);
 
 	return count >= nb;
+}
+
+void AFFShipBoard::AddCardToHand(TSubclassOf<class AFFSupplyCard> CardClass)
+{
+	AFFSupplyCard* Card = GetWorld()->SpawnActor<AFFSupplyCard>(CardClass);
+	Hand.Add(Card);
+}
+
+void AFFShipBoard::AddCrew(TSubclassOf<class AFFCrewCard> CardClass)
+{
+	AFFCrewCard* Card = GetWorld()->SpawnActor<AFFCrewCard>(CardClass);
+	Crew.Add(Card);
+}
+
+void AFFShipBoard::OnRep_SetCrew()
+{
+	if (IsClient() && GetFFPlayerController())
+	{
+		AFFShipBoardPlace** Found = ShipBoardPlaces.Find((PlayerId - GetFFPlayerController()->GetId() + ShipBoardPlaces.Num()) % ShipBoardPlaces.Num());
+		ShipBoardPlace = (Found != nullptr ? *Found : nullptr);
+
+		for (int32 i = 0; i<Crew.Num(); ++i)
+		{
+			AFFCrewCard* OneCrew = Crew[i];
+
+			if (OneCrew != nullptr)
+			{
+				OneCrew->SetLocation(ShipBoardPlace->GetCrewLocation(i+1));
+				OneCrew->SetRotation(ShipBoardPlace->GetActorRotation());
+				OneCrew->SetActorHiddenInGame(false);
+			}
+		}
+	}
 }
 
 void AFFShipBoard::RefreshCargo_Implementation()

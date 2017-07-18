@@ -28,13 +28,28 @@ void AFFGameSequence_Shuffle::Start()
 	if (IsServer())
 	{
 		Deck->Shuffle();
-		ServerStopCurrentSequence();
+
+		FTimerHandle DummyHandle;
+		GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &AFFGameSequence_Shuffle::OnEndTimer, 0.25f, false);
 	}
+	else
+	{
+		if (GetHud())
+			GetHud()->Title = TEXT("Shuffle Deck ") + Deck->GetName();
+	}
+}
+
+void AFFGameSequence_Shuffle::OnEndTimer()
+{
+	ServerStopCurrentSequence();
 }
 
 void AFFGameSequence_Shuffle::End()
 {
 	Super::End();
+
+	if (GetHud())
+		GetHud()->Title = TEXT("");
 }
 
 void AFFGameSequence_Shuffle::SetDeck(class AFFDeck* _Deck)

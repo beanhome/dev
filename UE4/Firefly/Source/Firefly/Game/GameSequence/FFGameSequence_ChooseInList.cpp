@@ -19,9 +19,14 @@ void AFFGameSequence_ChooseInList::SetClassList(const TArray<TSubclassOf<class A
 	ClassList = List;
 }
 
-const TArray<TSubclassOf<AFFActor>>& AFFGameSequence_ChooseInList::GetList() const
+const TArray<TSubclassOf<AFFActor>>& AFFGameSequence_ChooseInList::GetClassList() const
 {
 	return ClassList;
+}
+
+const TArray<AFFActor*>& AFFGameSequence_ChooseInList::GetChooseList() const
+{
+	return ChooseList;
 }
 
 int32 AFFGameSequence_ChooseInList::GetListCount() const

@@ -21,6 +21,9 @@ public:
 	void SetCardList(const TArray<TSubclassOf<class AFFGameSequence_Card>>& List);
 	void SetMax(int32 iMax);
 
+	const class AFFGameSequence_ChooseInList* GetChoiceList() const;
+	const class AFFGameSequence_ChooseInList* GetChoosenList() const;
+
 	UFUNCTION()
 	void OnChoiceListSelect(int32 id);
 	

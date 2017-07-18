@@ -55,6 +55,9 @@ public:
 	bool RemStuff(class AFFStuff* stuff);
 	bool HasStuff(TSubclassOf<class AFFStuff> stuff, int32 nb = 1);
 
+	void AddCrew(TSubclassOf<class AFFCrewCard> CardClass);
+	void AddCardToHand(TSubclassOf<class AFFSupplyCard> CardClass);
+
 	void InitCargo();
 
 private:
@@ -70,6 +73,9 @@ private:
 
 	UFUNCTION()
 	void OnRep_SetEngine();
+
+	UFUNCTION()
+	void OnRep_SetCrew();
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -95,6 +101,12 @@ private:
 
 	UPROPERTY()
 	class AFFLeaderCard* Leader;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SetCrew)
+	TArray<class AFFCrewCard*> Crew;
+
+	UPROPERTY(Replicated)
+	TArray<class AFFSupplyCard*> Hand;
 
 	UPROPERTY(ReplicatedUsing = OnRep_SetEngine)
 	class AFFEngineCard* Engine;

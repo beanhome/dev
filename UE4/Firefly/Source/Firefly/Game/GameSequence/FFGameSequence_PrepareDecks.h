@@ -14,22 +14,25 @@ class AFFGameSequence_PrepareDecks : public AFFGameSequence_SubGame
 
 public:
 	AFFGameSequence_PrepareDecks();
-	
+
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 	virtual bool IsCameraFree() const;
-
-
 
 private:
 	virtual void Init(AFFGameSequence* OwnerSequence) override;
 	virtual void Start() override;
 	virtual void End() override;
 
-	bool ShuffleDeckStart();
+	class AFFDeck* GetFirstDeckToShuffle();
+	class AFFDeck* GetFirstDeckToPrimeDiscard();
+	class AFFDeck* GetNextDeckToShuffle();
+	class AFFDeck* GetNextDeckToPrimeDiscard();
+
+	void ShuffleDeckStart(class AFFDeck*);
 	UFUNCTION()
 	void ShuffleDeckFinish(AFFGameSequence* Seq);
 	
-	bool PrimeDiscardStart();
+	void PrimeDiscardStart(class AFFDeck*);
 	UFUNCTION()
 	void PrimeDiscardFinish(AFFGameSequence* Seq);
 

@@ -11,6 +11,7 @@ class AFFDeck : public AFFActor
 
 public:
 	AFFDeck();
+	friend class AFFGameSequence_PrepareDecks;
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PostInitializeComponents() override;
@@ -54,6 +55,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	bool bShuffle;
+
+	UPROPERTY(EditAnywhere)
+	bool bPrimeDiscard;
 };
 
 

@@ -346,16 +346,16 @@ AFFCameraActor* AFireflyPlayerController::GetCurrentCamera() const
 	return CameraManager->GetCurrentCamera();
 }
 
-void AFireflyPlayerController::JumpToCamera(AFFCameraActor* Camera)
+void AFireflyPlayerController::JumpToCamera(AFFCameraActor* Camera, bool bForce)
 {
 	if (CameraManager != nullptr)
-		CameraManager->JumpToCamera(Camera);
+		CameraManager->JumpToCamera(Camera, bForce);
 }
 
-void AFireflyPlayerController::JumpToMainCamera()
+void AFireflyPlayerController::JumpToMainCamera(bool bForce)
 {
 	if (CameraManager != nullptr)
-		CameraManager->JumpToMainCamera();
+		CameraManager->JumpToMainCamera(bForce);
 }
 
 void AFireflyPlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)

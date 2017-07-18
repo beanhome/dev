@@ -11,18 +11,22 @@ class AFFDiscardPile : public AFFActor
 
 public:
 	AFFDiscardPile();
-	
+
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PostInitializeComponents() override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	virtual void Tick(float DeltaSeconds) override;
 
 	void AddCard(TSubclassOf<class AFFCard> CardClass);
+	void RemCard(TSubclassOf<class AFFCard> CardClass);
 
 	const TArray<TSubclassOf<class AFFCard>>& GetCardList() const;
 	TArray<TSubclassOf<class AFFActor>> GetCardListAsActor() const;
 
 	void Empty();
+
+	class AFFDeck* GetDeck() const;
+	void SetDeck(class AFFDeck*);
 
 private:
 	void CreateMaterialInstance();
@@ -35,10 +39,12 @@ public:
 	UTexture* DiscardTexture;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AFFGameSequence_MultiChooseInList> MultiChooseInListTemplate;
+	TSubclassOf<class AFFGameSequence_DrawMultiCards> DrawMultiCardTemplate;
 
 private:
 	static FName FrontTextureName;
+
+	class AFFDeck* Deck;
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* DiscardMaterial;

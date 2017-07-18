@@ -32,16 +32,31 @@ void AFFGameSequence_PrimeDiscard::Start()
 		for (int32 i = 0; i < 3; ++i)
 		{
 			Card = Deck->DrawCard();
-			Deck->GetDiscardPile()->AddCard(Card);
+			if (Card)
+				Deck->GetDiscardPile()->AddCard(Card);
 		}
 
-		ServerStopCurrentSequence();
+		FTimerHandle DummyHandle;
+		GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &AFFGameSequence_PrimeDiscard::OnEndTimer, 0.25f, false);
 	}
+	else
+	{
+		if (GetHud())
+			GetHud()->Title = TEXT("Priming the Pump Deck ") + Deck->GetName();
+	}
+}
+
+void AFFGameSequence_PrimeDiscard::OnEndTimer()
+{
+	ServerStopCurrentSequence();
 }
 
 void AFFGameSequence_PrimeDiscard::End()
 {
 	Super::End();
+
+	if (GetHud())
+		GetHud()->Title = TEXT("");
 }
 
 void AFFGameSequence_PrimeDiscard::SetDeck(class AFFDeck* _Deck)

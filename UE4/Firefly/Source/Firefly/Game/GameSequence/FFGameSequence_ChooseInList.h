@@ -32,7 +32,8 @@ public:
 
 	void SetClassList(const TArray<TSubclassOf<class AFFActor>>& List);
 
-	const TArray<TSubclassOf<AFFActor>>& GetList() const;
+	const TArray<TSubclassOf<AFFActor>>& GetClassList() const;
+	const TArray<AFFActor*>& GetChooseList() const;
 
 	int32 GetListCount() const;
 

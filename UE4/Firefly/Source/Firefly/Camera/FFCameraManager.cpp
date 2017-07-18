@@ -142,9 +142,9 @@ void UFFCameraManager::JumpNextCamera()
 		NextCamera = GetCameraConfig()->GetCamera(CurrentCamera, EFFDirection::Up);
 }
 
-void UFFCameraManager::JumpToCamera(AFFCameraActor* NewCamera)
+void UFFCameraManager::JumpToCamera(AFFCameraActor* NewCamera, bool bForce)
 {
-	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+	if (PlayerOwner == nullptr || (!bForce && PlayerOwner->IsCameraFree() == false))
 		return;
 
 	if (NextCamera == nullptr && NewCamera != CurrentCamera)
@@ -153,7 +153,12 @@ void UFFCameraManager::JumpToCamera(AFFCameraActor* NewCamera)
 
 void UFFCameraManager::JumpToActorCamera()
 {
-	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+	JumpToActorCamera(false);
+}
+
+void UFFCameraManager::JumpToActorCamera(bool bForce)
+{
+	if (PlayerOwner == nullptr || (!bForce && PlayerOwner->IsCameraFree() == false))
 		return;
 
 	if (PlayerOwner != nullptr)
@@ -164,11 +169,15 @@ void UFFCameraManager::JumpToActorCamera()
 	}
 }
 
-
 void UFFCameraManager::JumpToMainCamera()
 {
-	if (PlayerOwner == nullptr || PlayerOwner->IsCameraFree() == false)
+	JumpToMainCamera(false);
+}
+
+void UFFCameraManager::JumpToMainCamera(bool bForce)
+{
+	if (PlayerOwner == nullptr || (!bForce && PlayerOwner->IsCameraFree() == false))
 		return;
 
-	JumpToCamera(GetCameraConfig()->GetFirstCamera());
+	JumpToCamera(GetCameraConfig()->GetFirstCamera(), bForce);
 }

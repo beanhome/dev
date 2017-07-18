@@ -67,6 +67,16 @@ void AFFDiscardPile::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & Ou
 	DOREPLIFETIME(AFFDiscardPile, CardList);
 }
 
+class AFFDeck* AFFDiscardPile::GetDeck() const
+{
+	return Deck;
+}
+
+void AFFDiscardPile::SetDeck(class AFFDeck* _Deck)
+{
+	Deck = _Deck;
+}
+
 const TArray<TSubclassOf<class AFFCard>>& AFFDiscardPile::GetCardList() const
 {
 	return CardList;
@@ -86,7 +96,6 @@ void AFFDiscardPile::AddCard(TSubclassOf<class AFFCard> CardClass)
 {
 	CardList.Add(CardClass);
 
-
 	if (DiscardMaterial)
 	{
 		AFFCard* LastCard = CardClass.GetDefaultObject();
@@ -94,6 +103,18 @@ void AFFDiscardPile::AddCard(TSubclassOf<class AFFCard> CardClass)
 			DiscardMaterial->SetTextureParameterValue(FrontTextureName, LastCard->FrontTexture);
 	}
 }
+
+void AFFDiscardPile::RemCard(TSubclassOf<class AFFCard> CardClass)
+{
+	CardList.Remove(CardClass);
+
+	if (DiscardMaterial)
+	{
+		AFFCard* LastCard = (CardList.Num() > 0 ? CardList[CardList.Num()-1].GetDefaultObject() : nullptr);
+		DiscardMaterial->SetTextureParameterValue(FrontTextureName, (LastCard != nullptr ? LastCard->FrontTexture : nullptr));
+	}
+}
+
 
 void AFFDiscardPile::Empty()
 {

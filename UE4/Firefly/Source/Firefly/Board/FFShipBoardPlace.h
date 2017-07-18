@@ -13,13 +13,16 @@ public:
 	AFFShipBoardPlace();
 	virtual void PostInitializeComponents() override;
 
-	FVector GetCrewLocation() const;
+	FVector GetCrewLocation(int32 id = 0) const;
 	FVector GetEngineLocation() const;
 
 private:
 	UPROPERTY()
-	UStaticMeshComponent* Crew;
+	TArray<UStaticMeshComponent*> Crew;
 
 	UPROPERTY()
 	UStaticMeshComponent* Engine;
+
+	UPROPERTY()
+	TArray<UStaticMeshComponent*> Upgrade;
 };

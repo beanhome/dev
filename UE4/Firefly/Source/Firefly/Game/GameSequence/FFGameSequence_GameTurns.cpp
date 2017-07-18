@@ -8,7 +8,7 @@
 #include "Cards/FFDeck.h"
 #include "Cards/FFDiscardPile.h"
 #include "FFGameSequence_SubGame.h"
-#include "FFGameSequence_MultiChooseInList.h"
+#include "FFGameSequence_DrawMultiCards.h"
 
 AFFGameSequence_GameTurns::AFFGameSequence_GameTurns()
 {
@@ -137,18 +137,13 @@ bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 	if (DiscardPile == nullptr && Deck != nullptr)
 		DiscardPile = Deck->GetDiscardPile();
 
-	// TEST
-	if (IsServer() && Deck != nullptr && DiscardPile->MultiChooseInListTemplate)
-	{
-		AFFGameSequence_MultiChooseInList* ChooseSeq = StartSubSequence<AFFGameSequence_MultiChooseInList>(DiscardPile->MultiChooseInListTemplate);
-		ChooseSeq->SetClassList(Deck->GetCardListAsActor());
-		return true;
-	}
+	if (DiscardPile != nullptr && Deck == nullptr)
+		Deck = DiscardPile->GetDeck();
 
-	if (IsServer() && DiscardPile != nullptr && DiscardPile->MultiChooseInListTemplate)
+	if (IsServer() && DiscardPile != nullptr && Deck != nullptr && DiscardPile->DrawMultiCardTemplate)
 	{
-		AFFGameSequence_MultiChooseInList* ChooseSeq = StartSubSequence<AFFGameSequence_MultiChooseInList>(DiscardPile->MultiChooseInListTemplate);
-		ChooseSeq->SetClassList(DiscardPile->GetCardListAsActor());
+		AFFGameSequence_DrawMultiCards* ChooseSeq = StartSubSequence<AFFGameSequence_DrawMultiCards>(DiscardPile->DrawMultiCardTemplate);
+		ChooseSeq->SetDeck(Deck);
 	}
 
 

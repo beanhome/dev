@@ -7,6 +7,10 @@
 FName AFFDeck::BackTextureName("BackTexture");
 
 AFFDeck::AFFDeck()
+	: BackMaterial(nullptr)
+	, DiscardPile(nullptr)
+	, bShuffle(true)
+	, bPrimeDiscard(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -93,6 +97,8 @@ class AFFDiscardPile* AFFDeck::GetDiscardPile()
 void AFFDeck::Init()
 {
 	CardList = CardListModel;
+
+	DiscardPile->SetDeck(this);
 
 	/*
 	int32 Size = CardList.Num();

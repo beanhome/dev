@@ -109,8 +109,10 @@ void AFFGameSequence_SubTurn::ClientCancel_Implementation()
 
 void AFFGameSequence_SubTurn::OnValidate()
 {
+	ValidateDelegate.Broadcast();
 }
 
 void AFFGameSequence_SubTurn::OnCancel()
 {
+	CancelDelegate.Broadcast();
 }

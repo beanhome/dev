@@ -45,8 +45,8 @@ public:
 
 	const UFFCameraManager* GetCameraManager() const;
 	AFFCameraActor* GetCurrentCamera() const;
-	void JumpToCamera(AFFCameraActor*);
-	void JumpToMainCamera();
+	void JumpToCamera(AFFCameraActor*, bool bForce = false);
+	void JumpToMainCamera(bool bForce = false);
 
 	void DrawDebug(class UCanvas* Canvas, float& x, float& y) const;
 

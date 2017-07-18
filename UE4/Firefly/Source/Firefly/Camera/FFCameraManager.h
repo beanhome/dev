@@ -26,8 +26,10 @@ public:
 	void JumpPrevCamera();
 	void JumpNextCamera();
 	void JumpToMainCamera();
+	void JumpToMainCamera(bool bForce);
 	void JumpToActorCamera();
-	void JumpToCamera(AFFCameraActor* Camera);
+	void JumpToActorCamera(bool bForce);
+	void JumpToCamera(AFFCameraActor* Camera, bool bForce = false);
 
 private:
 	AFFCameraConfig* CameraConfig;
