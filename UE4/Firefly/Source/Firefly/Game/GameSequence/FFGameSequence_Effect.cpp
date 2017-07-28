@@ -22,4 +22,9 @@ void AFFGameSequence_Effect::End()
 	Super::End();
 }
 
+bool AFFGameSequence_Effect::IsValidFor(const struct FFFPlayer& Player) const
+{
+	return true;
+}
+
 

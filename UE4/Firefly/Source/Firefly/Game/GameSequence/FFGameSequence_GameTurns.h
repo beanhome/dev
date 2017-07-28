@@ -22,7 +22,7 @@ public:
 	bool IsTurnOf(int32 id) const;
 	bool IsMyTurn() const;
 
-	const FFFPlayer& GetPlayingPlayer() const;
+	FFFPlayer& GetPlayingPlayer();
 	const FFFPlayer& GetMyPlayer() const;
 
 	void ConsumeAction(class AFFGameSequence_SubTurn* Action);
@@ -39,7 +39,7 @@ private:
 	virtual void ServerReceiveResponse(int32 res) override;
 
 	UFUNCTION(Reliable, NetMulticast)
-	void StartPlayerTurn(int32 id);
+	void StartPlayerTurn(int32 turn, int32 id);
 	
 	UFUNCTION(Reliable, NetMulticast)
 	void FinishPlayerGameTurns(int32 id);
@@ -52,6 +52,7 @@ protected:
 
 private:
 	int32 CurrentPlayerId;
+	int32 CurrentTurn;
 	
 	UPROPERTY()
 	TArray<class AFFGameSequence_SubTurn*> CurrentActionDones;

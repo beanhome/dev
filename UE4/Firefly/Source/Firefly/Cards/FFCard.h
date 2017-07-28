@@ -11,6 +11,7 @@ class AFFCard : public AFFActor
 
 public:
 	AFFCard();
+	virtual ~AFFCard();
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PostInitializeComponents() override;

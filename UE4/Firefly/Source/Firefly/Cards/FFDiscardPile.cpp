@@ -115,6 +115,11 @@ void AFFDiscardPile::RemCard(TSubclassOf<class AFFCard> CardClass)
 	}
 }
 
+bool AFFDiscardPile::IsEmpty() const
+{
+	return (CardList.Num() == 0);
+}
+
 
 void AFFDiscardPile::Empty()
 {

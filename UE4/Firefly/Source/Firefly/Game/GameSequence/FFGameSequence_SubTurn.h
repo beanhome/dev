@@ -22,7 +22,7 @@ public:
 	class UFFGameHud* GetHud() const;
 
 	const FFFPlayer& GetPlayer(int32) const;
-	const FFFPlayer& GetPlayingPlayer() const;
+	FFFPlayer& GetPlayingPlayer() const;
 
 	bool IsTurnOf(int32 id) const;
 	bool IsMyTurn() const;

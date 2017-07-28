@@ -15,6 +15,12 @@ AFFCard::AFFCard()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+AFFCard::~AFFCard()
+{
+
+}
+
+
 void AFFCard::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);

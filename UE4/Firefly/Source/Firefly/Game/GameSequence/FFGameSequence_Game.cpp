@@ -8,6 +8,7 @@
 #include "FFGameSequence_GameTurns.h"
 #include "FFGameSequence_PrepareDecks.h"
 #include "Game/FireflyPlayerController.h"
+#include "Game/FFGameTuning.h"
 #include "Game/FFUITuning.h"
 #include "Cards/Cards/FFLeaderCard.h"
 #include "Cards/FFDeck.h"
@@ -47,10 +48,15 @@ bool AFFGameSequence_Game::IsCameraFree() const
 	return Super::IsCameraFree();
 }
 
+FFFPlayer& AFFGameSequence_Game::GetPlayer(int32 Id)
+{
+	check(Id >= 0 && Id < Players.Num());
+	return Players[Id];
+}
+
 const FFFPlayer& AFFGameSequence_Game::GetPlayer(int32 Id) const
 {
-	check(Id < Players.Num());
-
+	check(Id >= 0 && Id < Players.Num());
 	return Players[Id];
 }
 
@@ -178,7 +184,8 @@ void AFFGameSequence_Game::PlayerChooseShip(int32 PlayerId, TSubclassOf<class AF
 	AFFEngineCard* Engine = GetWorld()->SpawnActor<AFFEngineCard>(ShipBoard->DefaultEngine);
 	Players[PlayerId].ShipBoard = ShipBoard;
 	Players[PlayerId].Engine = Engine;
-	ShipBoard->ClientInitialize(PlayerId, Players[PlayerId].Leader, Engine);
+	Players[PlayerId].Credits = GetDefaultGameTuning()->StartingCredits;
+	ShipBoard->ClientInitialize(PlayerId, Players[PlayerId]);
 	ShipBoard->InitCargo();
 }
 

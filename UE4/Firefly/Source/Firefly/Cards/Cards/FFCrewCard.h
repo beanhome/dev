@@ -15,7 +15,12 @@ public:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
+	bool IsDisgruntled() const;
+	void SetDisgruntled(bool bSet);
+
 private:
+	UPROPERTY(Replicated)
+	bool bDisgruntled;
 };
 
 

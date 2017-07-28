@@ -24,6 +24,7 @@ public:
 	TArray<TSubclassOf<class AFFActor>> GetCardListAsActor() const;
 
 	void Empty();
+	bool IsEmpty() const;
 
 	class AFFDeck* GetDeck() const;
 	void SetDeck(class AFFDeck*);
@@ -40,6 +41,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AFFGameSequence_DrawMultiCards> DrawMultiCardTemplate;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AFFGameSequence_VisitDiscard> VisitDiscardTemplate;
 
 private:
 	static FName FrontTextureName;

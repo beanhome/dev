@@ -118,8 +118,15 @@ bool AFFGameSequence_Card::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 					int32 id = Card->Choices.IndexOfByPredicate([&](const FFFGSCardChoice& elem) { return (elem.Selector == HoverComponent); });
 					if (id != -1)
 					{
-						SendResponseToServer(id);
-						CardState = EFFGSCardState::Execute;
+						if (IsChoiceValidFor(Card->Choices[id], GetPlayer(PlayerId)))
+						{
+							SendResponseToServer(id);
+							CardState = EFFGSCardState::Execute;
+						}
+						else
+						{
+							// Show Message
+						}
 					}
 				}
 			}
@@ -133,6 +140,17 @@ bool AFFGameSequence_Card::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 				CardState = EFFGSCardState::Interact;
 			}
 			break;
+	}
+
+	return true;
+}
+
+bool AFFGameSequence_Card::IsChoiceValidFor(const FFFGSCardChoice& Choise, const FFFPlayer& Player) const
+{
+	for (const TSubclassOf<class AFFGameSequence_Effect>& Effect : Choise.Sequences)
+	{
+		if (Effect.GetDefaultObject() && Effect.GetDefaultObject()->IsValidFor(Player) == false)
+			return false;
 	}
 
 	return true;
@@ -175,10 +193,10 @@ void AFFGameSequence_Card::ServerReceiveResponse(int32 res)
 		case EFFGSCardState::Interact:
 			check(res >= 0 && res < Card->Choices.Num());
 			CurrentChoice = res;
-			CurrentSequence = 0;
-			Effect = StartSubSequence(Card->Choices[CurrentChoice].Sequences[CurrentSequence]);
-			Effect->EndDelegate.AddDynamic(this, &AFFGameSequence_Card::CurrentEffectFinish);
-			CardState = EFFGSCardState::Execute;
+			if (StartNextEffect())
+				CardState = EFFGSCardState::Execute;
+			else
+				ServerStopCurrentSequence();
 			break;
 
 		case EFFGSCardState::Fold:
@@ -194,18 +212,33 @@ void AFFGameSequence_Card::ServerReceiveResponse(int32 res)
 
 void AFFGameSequence_Card::CurrentEffectFinish(AFFGameSequence* Seq)
 {
-	CurrentSequence++;
-
-	if (CurrentSequence < Card->Choices[CurrentChoice].Sequences.Num())
-	{
-		AFFGameSequence* Effect = StartSubSequence(Card->Choices[CurrentChoice].Sequences[CurrentSequence]);
-		Effect->EndDelegate.AddDynamic(this, &AFFGameSequence_Card::CurrentEffectFinish);
-	}
-	else
+	if (StartNextEffect() == false)
 	{
 		ServerStopCurrentSequence();
 	}
 }
+
+bool AFFGameSequence_Card::StartNextEffect()
+{
+	TSubclassOf<class AFFGameSequence_Effect> SeqClass;
+
+	while (++CurrentSequence < Card->Choices[CurrentChoice].Sequences.Num())
+	{
+		SeqClass = Card->Choices[CurrentChoice].Sequences[CurrentSequence];
+
+		if (SeqClass)
+			break;
+	}
+
+	if (SeqClass)
+	{
+		AFFGameSequence* Effect = StartSubSequence(SeqClass);
+		Effect->EndDelegate.AddDynamic(this, &AFFGameSequence_Card::CurrentEffectFinish);
+	}
+
+	return SeqClass != nullptr;
+}
+
 
 void AFFGameSequence_Card::Tick(float DeltaSeconds)
 {

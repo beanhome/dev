@@ -15,6 +15,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
+	UPROPERTY(EditDefaultsOnly)
+	int32 Cost;
+
 private:
 };
 

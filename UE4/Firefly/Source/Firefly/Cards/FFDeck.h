@@ -21,11 +21,15 @@ public:
 	TSubclassOf<class AFFCard> DrawCard();
 	void Discard(TSubclassOf<class AFFCard> CardClass);
 
+	bool IsEmpty() const;
+
 	void Shuffle();
 
 	const TArray<TSubclassOf<class AFFCard>>& GetCardList() const;
 	TArray<TSubclassOf<class AFFActor>> GetCardListAsActor() const;
 	class AFFDiscardPile* GetDiscardPile();
+
+	const class AFFSector* GetSector() const;
 
 private:
 	void CreateMaterialInstance();
@@ -52,6 +56,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class AFFDiscardPile* DiscardPile;
+
+	UPROPERTY(EditAnywhere)
+	class AFFSector* Sector;
 
 	UPROPERTY(EditAnywhere)
 	bool bShuffle;

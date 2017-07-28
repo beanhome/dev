@@ -44,6 +44,8 @@ protected:
 	UFUNCTION()
 	void CurrentEffectFinish(AFFGameSequence* Seq);
 
+	bool StartNextEffect();
+
 	virtual void ServerReceiveResponse(int32 res) override;
 
 	virtual void Tick(float DeltaSeconds) override;
@@ -52,6 +54,8 @@ protected:
 
 	UFUNCTION()
 	void OnSelectorClicked(AActor* TouchedActor, FKey ButtonPressed);
+
+	bool IsChoiceValidFor(const FFFGSCardChoice& Choise, const FFFPlayer& Player) const;
 
 private:
 	UPROPERTY(Replicated)

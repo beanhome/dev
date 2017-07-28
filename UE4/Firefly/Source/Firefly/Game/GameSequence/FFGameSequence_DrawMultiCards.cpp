@@ -6,6 +6,7 @@
 #include "FFGameSequence_MultiChooseInList.h"
 #include "FFGameSequence_Game.h"
 #include "FFGameSequence_Card.h"
+#include "FFGameSequence_Shuffle.h"
 
 AFFGameSequence_DrawMultiCards::AFFGameSequence_DrawMultiCards()
 {
@@ -62,8 +63,6 @@ void AFFGameSequence_DrawMultiCards::OnChooseInDiscardValidate()
 {
 	const TArray<AFFActor*>& ChooseList = DiscardList->GetChoosenList()->GetChooseList();
 
-	TArray<TSubclassOf<AFFActor> > SelectListClass;
-
 	for (const AFFActor* FFActor : ChooseList)
 	{
 		const AFFCard* Card = Cast<AFFCard>(FFActor);
@@ -73,20 +72,47 @@ void AFFGameSequence_DrawMultiCards::OnChooseInDiscardValidate()
 		SelectListClass.Add(Card->GetClass());
 	}
 
+	StopSubSequence(DiscardList);
+
+	DrawAndPickCard();
+}
+
+void AFFGameSequence_DrawMultiCards::DrawAndPickCard()
+{
 	while (SelectListClass.Num() < ChoosenCount)
 	{
-		SelectListClass.Add(Deck->DrawCard());
-	}
+		TSubclassOf<class AFFCard> CardClass = Deck->DrawCard();
 
-	StopSubSequence(DiscardList);
+		if (CardClass != nullptr)
+		{
+			SelectListClass.Add(CardClass);
+		}
+		else if (Deck->GetDiscardPile()->IsEmpty() == false)
+		{
+			// shuffle
+			AFFGameSequence_Shuffle* ShuffleSequence = StartSubSequence<AFFGameSequence_Shuffle>();
+			ShuffleSequence->EndDelegate.AddDynamic(this, &AFFGameSequence_DrawMultiCards::OnFinishShuffleDeck);
+			ShuffleSequence->SetDeck(Deck);
+			return;
+		}
+		else if (Deck->IsEmpty())
+		{
+			break;
+		}
+	}
 
 	SelectList = StartSubSequence<AFFGameSequence_MultiChooseInList>(ChooseInSelectListTemplate);
 	SelectList->SetClassList(SelectListClass);
 	SelectList->SetMax(PickCount);
 	SelectList->ValidateDelegate.AddDynamic(this, &AFFGameSequence_DrawMultiCards::OnChooseInSelectListValidate);
 	SelectList->CancelDelegate.AddDynamic(this, &AFFGameSequence_DrawMultiCards::OnChooseInSelectListCancel);
-
 }
+
+void AFFGameSequence_DrawMultiCards::OnFinishShuffleDeck(AFFGameSequence* Seq)
+{
+	DrawAndPickCard();
+}
+
 
 void AFFGameSequence_DrawMultiCards::OnChooseInDiscardCancel()
 {
@@ -96,19 +122,50 @@ void AFFGameSequence_DrawMultiCards::OnChooseInDiscardCancel()
 
 void AFFGameSequence_DrawMultiCards::OnChooseInSelectListValidate()
 {
-	if (SelectList->GetChoosenList()->GetListCount() == PickCount)
+	if (SelectList->GetChoosenList()->GetListCount() <= PickCount)
 	{
 		const TArray<AFFActor*>& DropList = SelectList->GetChoiceList()->GetChooseList();
+		const TArray<AFFActor*>& PickList = SelectList->GetChoosenList()->GetChooseList();
+		FFFPlayer& Player = GetPlayingPlayer();
+			
+		// check cost & creww count
+		int32 Cost = 0;
+		int32 CrewCount = 0;
+		for (const AFFActor* Picked : PickList)
+		{
+			const AFFSupplyCard* SupplyCard = Cast<AFFSupplyCard>(Picked);
+			const AFFCrewCard* CrewCard = Cast<AFFCrewCard>(Picked);
+
+			if (SupplyCard != nullptr)
+				Cost += SupplyCard->Cost;
+
+			if (CrewCard != nullptr)
+				CrewCount++;
+		}
+
+		if (Cost > Player.Credits)
+		{
+			// Send Error Message
+			// ...
+			return;
+		}
+
+		if (1 + Player.ShipBoard->GetCrew().Num() + CrewCount > Player.ShipBoard->GetMaxCrew())
+		{
+			// Send Error Message
+			// ...
+			return;
+		}
+
+		ConsumeAction();
+
 		for (const AFFActor* Dropped : DropList)
 		{
 			Deck->GetDiscardPile()->AddCard(Dropped->GetClass());
 		}
 
-		const TArray<AFFActor*>& PickList = SelectList->GetChoosenList()->GetChooseList();
 		for (const AFFActor* Picked : PickList)
 		{
-			const FFFPlayer& Player = GetPlayingPlayer();
-			
 			const AFFSupplyCard* SupplyCard = Cast<AFFSupplyCard>(Picked);
 			const AFFCrewCard* CrewCard = Cast<AFFCrewCard>(Picked);
 
@@ -118,6 +175,9 @@ void AFFGameSequence_DrawMultiCards::OnChooseInSelectListValidate()
 			else if (SupplyCard)
 				Player.ShipBoard->AddCardToHand(SupplyCard->GetClass());
 		}
+
+		Player.Credits -= Cost;
+		Player.ShipBoard->RefreshCredits(Player.Credits);
 
 		StopSubSequence(SelectList);
 		ServerStopCurrentSequence();

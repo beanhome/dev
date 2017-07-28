@@ -59,13 +59,16 @@ AFFShipBoard::AFFShipBoard()
 	bReplicates = true;
 	bNetUseOwnerRelevancy = true;
 	bAlwaysRelevant = true;
+
+	MaxCrew = 6;
+	MaxShipUpgrade = 2;
 }
 
-void AFFShipBoard::ClientInitialize_Implementation(int32 Id, AFFLeaderCard* _Leader, AFFEngineCard* _Engine)
+void AFFShipBoard::ClientInitialize_Implementation(int32 Id, const FFFPlayer& Player)
 {
 	PlayerId = Id;
-	Leader = _Leader;
-	Engine = _Engine;
+	Leader = Player.Leader;
+	Engine = Player.Engine;
 
 	if (GetFFPlayerController())
 	{
@@ -88,6 +91,9 @@ void AFFShipBoard::ClientInitialize_Implementation(int32 Id, AFFLeaderCard* _Lea
 				Engine->SetActorHiddenInGame(false);
 			}
 		}
+
+		RefreshCredits(Player.Credits);
+
 	}
 }
 
@@ -187,6 +193,8 @@ void AFFShipBoard::PostInitializeComponents()
 			if (Slot.HalfLoc1 != nullptr)
 				Slot.HalfLoc1->SetHiddenInGame(true);
 		}
+
+		CreditsText = FindComponentByClass<UTextRenderComponent>();
 	}
 }
 
@@ -254,6 +262,26 @@ void AFFShipBoard::InitCargo()
 		AddStuff(StuffClass);
 	}
 }
+
+const TArray<class AFFCrewCard*>& AFFShipBoard::GetCrew() const
+{
+	return Crew;
+}
+
+int32 AFFShipBoard::GetMaxCrew() const
+{
+	return MaxCrew;
+}
+
+void AFFShipBoard::RefreshCredits_Implementation(int32 Credits)
+{
+	if (IsClient())
+	{
+		//CreditsText->SetText(FText::AsNumber(Player.Credits));
+		CreditsText->SetText(FString::FormatAsNumber(Credits) + TEXT(" $"));
+	}
+}
+
 
 bool AFFShipBoard::AddStuff(TSubclassOf<AFFStuff> StuffClass)
 {
@@ -431,3 +459,22 @@ void AFFShipBoard::Tick(float DeltaSeconds)
 	}
 	*/
 }
+
+void AFFShipBoard::MakeAllCrewDisgruntled()
+{
+	for (AFFCrewCard* OneCrew : Crew)
+	{
+		if (OneCrew)
+			OneCrew->SetDisgruntled(true);
+	}
+}
+
+void AFFShipBoard::RemoveAllDisgruntled()
+{
+	for (AFFCrewCard* OneCrew : Crew)
+	{
+		if (OneCrew)
+			OneCrew->SetDisgruntled(false);
+	}
+}
+

@@ -8,6 +8,7 @@
 #include "Cards/FFDeck.h"
 #include "Cards/FFDiscardPile.h"
 #include "FFGameSequence_SubGame.h"
+#include "FFGameSequence_VisitDiscard.h"
 #include "FFGameSequence_DrawMultiCards.h"
 
 AFFGameSequence_GameTurns::AFFGameSequence_GameTurns()
@@ -49,7 +50,7 @@ bool AFFGameSequence_GameTurns::IsMyTurn() const
 	return (IsClient() && CurrentPlayerId == GetMyPlayerId());
 }
 
-const FFFPlayer& AFFGameSequence_GameTurns::GetPlayingPlayer() const
+FFFPlayer& AFFGameSequence_GameTurns::GetPlayingPlayer()
 {
 	return GetGame()->GetPlayer(CurrentPlayerId);
 }
@@ -65,8 +66,9 @@ void AFFGameSequence_GameTurns::ServerStart()
 
 	AFFGameSequence_Game* GameOwner = GetOwner<AFFGameSequence_Game>();
 	CurrentPlayerId = GameOwner->GetPlayersOrder()[0];
+	CurrentTurn = 0;
 
-	StartPlayerTurn(CurrentPlayerId);
+	StartPlayerTurn(CurrentTurn, CurrentPlayerId);
 }
 
 
@@ -80,7 +82,7 @@ void AFFGameSequence_GameTurns::End()
 	Super::End();
 }
 
-void AFFGameSequence_GameTurns::StartPlayerTurn_Implementation(int32 id)
+void AFFGameSequence_GameTurns::StartPlayerTurn_Implementation(int32 turn, int32 id)
 {
 	if (IsClient())
 	{
@@ -88,6 +90,7 @@ void AFFGameSequence_GameTurns::StartPlayerTurn_Implementation(int32 id)
 
 		AFFGameSequence_Game* GameOwner = GetOwner<AFFGameSequence_Game>();
 		CurrentPlayerId = id;
+		CurrentTurn = turn;
 
 		if (CurrentPlayerId == GetMyPlayerId())
 		{
@@ -114,7 +117,11 @@ void AFFGameSequence_GameTurns::ConsumeAction(class AFFGameSequence_SubTurn* Act
 
 		AFFGameSequence_Game* GameOwner = GetOwner<AFFGameSequence_Game>();
 		CurrentPlayerId = (CurrentPlayerId + 1) % GameOwner->GetPlayersOrder().Num();
-		StartPlayerTurn(CurrentPlayerId);
+
+		if (CurrentPlayerId == GameOwner->GetPlayersOrder()[0])
+			CurrentTurn++;
+
+		StartPlayerTurn(CurrentTurn, CurrentPlayerId);
 		CurrentActionDones.Empty();
 	}
 }
@@ -128,6 +135,9 @@ void AFFGameSequence_GameTurns::FinishPlayerGameTurns_Implementation(int32 id)
 
 bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 {
+	const FFFPlayer& Player = GetGame()->GetPlayer(PlayerId);
+	const AFFSector* ShipSector = Player.Ship->GetCurrentSector();
+
 	// Deck or Discard Clicked
 	// -> Sequence Choose in List
 
@@ -140,10 +150,18 @@ bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 	if (DiscardPile != nullptr && Deck == nullptr)
 		Deck = DiscardPile->GetDeck();
 
-	if (IsServer() && DiscardPile != nullptr && Deck != nullptr && DiscardPile->DrawMultiCardTemplate)
+	if (IsServer() && DiscardPile != nullptr && Deck != nullptr)
 	{
-		AFFGameSequence_DrawMultiCards* ChooseSeq = StartSubSequence<AFFGameSequence_DrawMultiCards>(DiscardPile->DrawMultiCardTemplate);
-		ChooseSeq->SetDeck(Deck);
+		if (IsTurnOf(PlayerId) && DiscardPile->DrawMultiCardTemplate && Deck->GetSector() == ShipSector)
+		{
+			AFFGameSequence_DrawMultiCards* ChooseSeq = StartSubSequence<AFFGameSequence_DrawMultiCards>(DiscardPile->DrawMultiCardTemplate);
+			ChooseSeq->SetDeck(Deck);
+		}
+		else if (DiscardPile->VisitDiscardTemplate)
+		{
+			AFFGameSequence_VisitDiscard* ChooseSeq = StartSubSequence<AFFGameSequence_VisitDiscard>(DiscardPile->VisitDiscardTemplate);
+			ChooseSeq->SetDiscard(DiscardPile);
+		}
 	}
 
 
@@ -159,9 +177,6 @@ bool AFFGameSequence_GameTurns::OnMouseClickActor(int32 PlayerId, AFFActor* Acto
 
 		if (IsServer() && PlayerId == CurrentPlayerId)
 		{
-			const FFFPlayer& Player = GetGame()->GetPlayer(PlayerId);
-			const AFFSector* ShipSector = Player.Ship->GetCurrentSector();
-
 			if (ClickedSector == ShipSector)
 			{
 				StartSubSequence<AFFGameSequence_Fly>(GetDefaultGameTuning()->GameSequence_Fly);
@@ -228,7 +243,7 @@ void AFFGameSequence_GameTurns::DrawDebugSpecific(class UCanvas* Canvas, float& 
 	UFont* Font = GEngine->GetSmallFont();
 	Canvas->SetDrawColor(FColorList::Grey);
 
-	y += Canvas->DrawText(Font, FString::Printf(TEXT("Current Player Turn %d"), CurrentPlayerId), x, y);
+	y += Canvas->DrawText(Font, FString::Printf(TEXT("Turn %d Current Player %d"), CurrentTurn, CurrentPlayerId), x, y);
 }
 
 

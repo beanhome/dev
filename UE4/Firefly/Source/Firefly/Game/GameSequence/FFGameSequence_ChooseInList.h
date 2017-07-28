@@ -49,6 +49,8 @@ protected:
 private:
 	FVector GetItemLocation(int32 selected, int32 id) const;
 
+	bool IsTurnOf(int32 PlayerId) const;
+
 	UFUNCTION()
 	void OnRep_SetChooseList();
 

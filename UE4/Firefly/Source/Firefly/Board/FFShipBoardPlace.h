@@ -11,6 +11,9 @@ class AFFShipBoardPlace : public AFFActor
 
 public:
 	AFFShipBoardPlace();
+
+	friend class AFFShipBoard;
+
 	virtual void PostInitializeComponents() override;
 
 	FVector GetCrewLocation(int32 id = 0) const;

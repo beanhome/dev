@@ -73,6 +73,11 @@ void AFFDeck::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 	DOREPLIFETIME(AFFDeck, CardList);
 }
 
+const AFFSector* AFFDeck::GetSector() const
+{
+	return Sector;
+}
+
 const TArray<TSubclassOf<class AFFCard>>& AFFDeck::GetCardList() const
 {
 	return CardList;
@@ -111,6 +116,12 @@ void AFFDeck::OnRep_CardListChange()
 {
 
 }
+
+bool AFFDeck::IsEmpty() const
+{
+	return (CardList.Num() == 0);
+}
+
 
 void AFFDeck::Shuffle()
 {

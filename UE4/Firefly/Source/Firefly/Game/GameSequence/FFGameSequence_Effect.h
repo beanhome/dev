@@ -17,6 +17,8 @@ public:
 	virtual void Init(AFFGameSequence* OwnerSequence) override;
 	virtual void Start() override;
 	virtual void End() override;
+
+	virtual bool IsValidFor(const struct FFFPlayer& Player) const;
 	
 private:
 

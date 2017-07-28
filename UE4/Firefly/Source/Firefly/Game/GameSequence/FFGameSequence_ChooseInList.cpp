@@ -4,6 +4,7 @@
 #include "FFGameSequence_ChooseInList.h"
 #include "FFGameSequence_Game.h"
 #include "FFGameSequence_Card.h"
+#include "FFGameSequence_GameTurns.h"
 
 AFFGameSequence_ChooseInList::AFFGameSequence_ChooseInList()
 : DeepZ(500.f)
@@ -32,6 +33,12 @@ const TArray<AFFActor*>& AFFGameSequence_ChooseInList::GetChooseList() const
 int32 AFFGameSequence_ChooseInList::GetListCount() const
 {
 	return ChooseList.Num();
+}
+
+bool AFFGameSequence_ChooseInList::IsTurnOf(int32 PlayerId) const
+{
+	AFFGameSequence_GameTurns* GameTurnsOwner = GetOwner<AFFGameSequence_GameTurns>();
+	return (GameTurnsOwner && GameTurnsOwner->IsTurnOf(PlayerId));
 }
 
 
@@ -124,7 +131,7 @@ bool AFFGameSequence_ChooseInList::OnMouseClickActor(int32 PlayerId, AFFActor* A
 	if (IsLocal() && PlayerId != GetMyPlayerId())
 		return false;
 
-	if (IsServer() && GetOwner<AFFGameSequence_SubTurn>()->IsTurnOf(PlayerId) == false)
+	if (IsServer() && IsTurnOf(PlayerId) == false)
 		return false;
 
 	int32 id = ChooseList.Find(ActorClicked);
@@ -152,7 +159,7 @@ bool AFFGameSequence_ChooseInList::OnMouseEnterActor(int32 PlayerId, AFFActor* A
 	if (IsLocal() && PlayerId != GetMyPlayerId())
 		return false;
 
-	if (IsServer() && GetOwner<AFFGameSequence_SubTurn>()->IsTurnOf(PlayerId) == false)
+	if (IsServer() && IsTurnOf(PlayerId) == false)
 		return false;
 
 	int32 id = ChooseList.Find(ActorEntered);
@@ -179,7 +186,7 @@ bool AFFGameSequence_ChooseInList::OnMouseLeaveActor(int32 PlayerId, AFFActor* A
 	if (IsLocal() && PlayerId != GetMyPlayerId())
 		return false;
 
-	if (IsServer() && GetOwner<AFFGameSequence_SubTurn>()->IsTurnOf(PlayerId) == false)
+	if (IsServer() && IsTurnOf(PlayerId) == false)
 		return false;
 
 	int32 id = ChooseList.Find(ActorEntered);
@@ -226,8 +233,11 @@ void AFFGameSequence_ChooseInList::Tick(float DeltaSecond)
 		loc = CameraTransform.TransformPosition(loc);
 		FRotator rot = CameraTransform.Rotator();
 
-		ChooseList[i]->SetLocation(loc);
-		ChooseList[i]->SetRotation(rot);
+		if (ChooseList[i] != nullptr)
+		{
+			ChooseList[i]->SetLocation(loc);
+			ChooseList[i]->SetRotation(rot);
+		}
 	}
 
 	if (Timer == 0.f && PreviousItem != SelectedItem)

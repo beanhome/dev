@@ -5,24 +5,6 @@
 
 #include "FFGameSequence_Game.generated.h"
 
-USTRUCT()
-struct FFFPlayer
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	class AFFLeaderCard* Leader;
-	
-	UPROPERTY()
-	class AFFShipBoard* ShipBoard;
-
-	UPROPERTY()
-	class AFFEngineCard* Engine;
-
-	UPROPERTY()
-	class AFFShip* Ship;
-};
-
 UCLASS(minimalapi)
 class AFFGameSequence_Game : public AFFGameSequence
 {
@@ -45,6 +27,7 @@ public:
 
 	virtual bool IsCameraFree() const override;
 
+	FFFPlayer& GetPlayer(int32 Id);
 	const FFFPlayer& GetPlayer(int32 Id) const;
 
 	const TArray<int32>& GetPlayersOrder() const;

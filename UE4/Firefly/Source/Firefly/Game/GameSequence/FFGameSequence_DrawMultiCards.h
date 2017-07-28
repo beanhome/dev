@@ -32,6 +32,10 @@ private:
 	UFUNCTION()
 	void OnChooseInSelectListCancel();
 
+	UFUNCTION()
+	void OnFinishShuffleDeck(AFFGameSequence* Seq);
+
+	void DrawAndPickCard();
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -54,6 +58,8 @@ private:
 
 	UPROPERTY()
 	class AFFGameSequence_MultiChooseInList* SelectList;
+
+	TArray<TSubclassOf<AFFActor> > SelectListClass;
 };
 
 

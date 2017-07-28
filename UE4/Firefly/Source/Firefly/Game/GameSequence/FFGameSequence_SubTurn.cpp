@@ -25,7 +25,7 @@ const FFFPlayer& AFFGameSequence_SubTurn::GetPlayer(int32 id) const
 	return GetGame()->GetPlayer(id);
 }
 
-const FFFPlayer& AFFGameSequence_SubTurn::GetPlayingPlayer() const
+FFFPlayer& AFFGameSequence_SubTurn::GetPlayingPlayer() const
 {
 	return GetOwner<AFFGameSequence_GameTurns>()->GetPlayingPlayer();
 }
@@ -40,6 +40,9 @@ bool AFFGameSequence_SubTurn::IsTurnOf(int32 id) const
 
 bool AFFGameSequence_SubTurn::IsMyTurn() const
 {
+	if (State == EFFClientGameSeqState::Ended)
+		return false;
+
 	return GetOwner<AFFGameSequence_GameTurns>()->IsMyTurn();
 }
 

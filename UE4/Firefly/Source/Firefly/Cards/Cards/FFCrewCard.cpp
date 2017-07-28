@@ -7,6 +7,14 @@ AFFCrewCard::AFFCrewCard()
 {
 }
 
+
+void AFFCrewCard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFFCrewCard, bDisgruntled);
+}
+
 void AFFCrewCard::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -17,3 +25,14 @@ void AFFCrewCard::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+bool AFFCrewCard::IsDisgruntled() const
+{
+	return bDisgruntled;
+}
+
+void AFFCrewCard::SetDisgruntled(bool bSet)
+{
+	bDisgruntled = bSet;
+}
+

@@ -5,5 +5,6 @@
 
 UFFGameTuning::UFFGameTuning()
 : SwitchCameraDuration(0.5f)
+, StartingCredits(3000)
 {
 }

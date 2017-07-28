@@ -1,6 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "FFActor.h"
+#include "FFTypes.h"
 #include "FFShipBoard.generated.h"
 
 USTRUCT()
@@ -45,7 +46,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 	UFUNCTION(Reliable, NetMulticast)
-	void ClientInitialize(int32 Id, class AFFLeaderCard* _Leader, class AFFEngineCard* _Engine);
+	void ClientInitialize(int32 Id, const struct FFFPlayer& Player);
 
 	class AFFEngineCard* GetEngine() const;
 
@@ -58,7 +59,16 @@ public:
 	void AddCrew(TSubclassOf<class AFFCrewCard> CardClass);
 	void AddCardToHand(TSubclassOf<class AFFSupplyCard> CardClass);
 
+	const TArray<class AFFCrewCard*>& GetCrew() const;
+	int32 GetMaxCrew() const;
+
 	void InitCargo();
+
+	UFUNCTION(Reliable, NetMulticast)
+	void RefreshCredits(int32 Credits);
+
+	void MakeAllCrewDisgruntled();
+	void RemoveAllDisgruntled();
 
 private:
 	void CreateMaterialInstance();
@@ -89,6 +99,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AFFStuff> > DefaultStuffs;
+
+	UPROPERTY(EditAnywhere)
+	int32 MaxCrew;
+
+	UPROPERTY(EditAnywhere)
+	int32 MaxShipUpgrade;
 
 private:
 	static FName FrontTextureName;
@@ -122,6 +138,9 @@ private:
 
 	UPROPERTY()
 	TArray<FFFCargo> Stash;
+
+	UPROPERTY()
+	UTextRenderComponent* CreditsText;
 
 	UPROPERTY(ReplicatedUsing = OnRep_RefreshCargo)
 	TArray<class AFFStuff*> Stuffs;

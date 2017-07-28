@@ -3,6 +3,27 @@
 
 #include "FFTypes.generated.h"
 
+USTRUCT()
+struct FFFPlayer
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	class AFFLeaderCard* Leader;
+
+	UPROPERTY()
+	class AFFShipBoard* ShipBoard;
+
+	UPROPERTY()
+	class AFFEngineCard* Engine;
+
+	UPROPERTY()
+	class AFFShip* Ship;
+
+	UPROPERTY()
+	int32 Credits;
+};
+
 USTRUCT(BlueprintType)
 struct FFFOption
 {
@@ -31,4 +52,17 @@ struct FFFGSCardChoice
 
 	UPROPERTY()
 	class USceneComponent* Selector;
+
+	/*
+	bool IsValid(const FFFPlayer& Player) const
+	{
+		for (const TSubclassOf<class AFFGameSequence_Effect>& Effect : Sequences)
+		{
+			if (Effect.GetDefaultObject() && Effect.GetDefaultObject()->IsValid(Player) == false)
+				return false;
+		}
+
+		return true;
+	}
+	*/
 };

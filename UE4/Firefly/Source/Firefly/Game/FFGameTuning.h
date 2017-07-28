@@ -53,7 +53,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AFFGameSequence_Fly> GameSequence_Fly;
 
-
+	UPROPERTY(EditDefaultsOnly)
+	int32 StartingCredits;
+	
 	UPROPERTY(EditDefaultsOnly)
 	float SwitchCameraDuration;
 
