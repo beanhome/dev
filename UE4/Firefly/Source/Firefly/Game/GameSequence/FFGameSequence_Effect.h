@@ -1,13 +1,13 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 
-#include "Game/GameSequence/FFGameSequence.h"
+#include "Game/GameSequence/FFGameSequence_SubTurn.h"
 
 #include "FFGameSequence_Effect.generated.h"
 
 
 UCLASS(minimalapi)
-class AFFGameSequence_Effect : public AFFGameSequence
+class AFFGameSequence_Effect : public AFFGameSequence_SubTurn
 {
 	GENERATED_BODY()
 

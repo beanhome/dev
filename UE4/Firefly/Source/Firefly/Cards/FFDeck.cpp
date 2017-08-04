@@ -103,7 +103,8 @@ void AFFDeck::Init()
 {
 	CardList = CardListModel;
 
-	DiscardPile->SetDeck(this);
+	if (DiscardPile)
+		DiscardPile->SetDeck(this);
 
 	/*
 	int32 Size = CardList.Num();

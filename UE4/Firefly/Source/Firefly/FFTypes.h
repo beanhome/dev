@@ -66,3 +66,18 @@ struct FFFGSCardChoice
 	}
 	*/
 };
+
+USTRUCT(BlueprintType)
+struct FFFPurchaseStuff
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TSubclassOf<class AFFStuff> Stuff;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Count;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Price;
+};
