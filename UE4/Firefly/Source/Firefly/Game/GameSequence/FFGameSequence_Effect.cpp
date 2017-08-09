@@ -14,11 +14,15 @@ void AFFGameSequence_Effect::Init(AFFGameSequence* OwnerSequence)
 
 void AFFGameSequence_Effect::Start()
 {
+	GetOwner<AFFGameSequence_Card>()->Fold();
+
 	Super::Start();
 }
 
 void AFFGameSequence_Effect::End()
 {
+	GetOwner<AFFGameSequence_Card>()->UnFold();
+
 	Super::End();
 }
 

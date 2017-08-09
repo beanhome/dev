@@ -106,9 +106,7 @@ bool AFFGameSequence_Card::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 		case EFFGSCardState::Interact:
 			if (Actor != Card)
 			{
-				if (IsClient())
-					Card->SetActorRelativeLocation(FVector::ForwardVector * 400.f - FVector::RightVector * 400.f);
-				CardState = EFFGSCardState::Fold;
+				Fold();
 			}
 			else
 			{
@@ -134,16 +132,27 @@ bool AFFGameSequence_Card::OnMouseClickActor(int32 PlayerId, AFFActor* Actor)
 
 		case EFFGSCardState::Fold:
 			if (Actor == Card)
-			{
-				if (IsClient() && IsMyTurn())
-					Card->SetActorRelativeLocation(FVector::ForwardVector * 400.f);
-				CardState = EFFGSCardState::Interact;
-			}
+				UnFold();
 			break;
 	}
 
 	return true;
 }
+
+void AFFGameSequence_Card::Fold()
+{
+	if (IsClient() && IsMyTurn())
+		Card->SetActorRelativeLocation(FVector::ForwardVector * 400.f - FVector::RightVector * 400.f);
+	CardState = EFFGSCardState::Fold;
+}
+
+void AFFGameSequence_Card::UnFold()
+{
+	if (IsClient() && IsMyTurn())
+		Card->SetActorRelativeLocation(FVector::ForwardVector * 400.f);
+	CardState = EFFGSCardState::Interact;
+}
+
 
 bool AFFGameSequence_Card::IsChoiceValidFor(const FFFGSCardChoice& Choise, const FFFPlayer& Player) const
 {

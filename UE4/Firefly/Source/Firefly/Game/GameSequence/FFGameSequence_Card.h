@@ -27,6 +27,9 @@ public:
 	const AFFNavCard* GetCard() const;
 	void SetCard(AFFNavCard* _Card);
 
+	void Fold();
+	void UnFold();
+
 private:
 	virtual void ServerStart() override;
 

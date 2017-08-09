@@ -17,10 +17,10 @@ class UFFPurchasePopup : public UFFSpecificHud
 public:
 	void SetTitle(const FString& title);
 	void SetDesc(const FString& desc);
-	void SetPurchaseStuff(const TArray<struct FFFPurchaseStuff>& Stuffs);
+	void SetPurchaseStuff(const TArray<struct FFFPurchaseStuff>& _Stuffs);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Firefly)
-	void BPSetPurchaseStuff(const TArray<struct FFFPurchaseStuff>& Stuffs);
+	void BPSetPurchaseStuff(const TArray<struct FFFPurchaseStuff>& _Stuffs);
 
 	UFUNCTION(BlueprintCallable, Category = Firefly)
 	void OnItemChange();
