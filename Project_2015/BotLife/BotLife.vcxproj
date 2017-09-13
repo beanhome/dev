@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A0BAA257-EFC2-443C-9ED6-D920DDC66FFC}</ProjectGuid>
+    <RootNamespace>BotLife</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Build\$(Platform)\exe\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Build\$(Platform)\lib\$(ProjectName)\$(Configuration)\obj\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\Build\$(Platform)\exe\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\Build\$(Platform)\lib\$(ProjectName)\$(Configuration)\obj\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\Src\IBot;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL;..\..\Src\Navigation;..\..\Src\BotLife;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>..\..\Build\Win32\lib\SDL_gfx\Debug\SDL_gfx.lib;..\..\Build\Win32\lib\SDL_Draw\Debug\SDL_Draw.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\Src\IBot;..\..\Src\Common;..\..\Src\Graphics;..\..\Src\Graphics_SDL;..\..\Src\Navigation;..\..\Src\BotLife;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) ..\..\WorkingDir\$(ProjectName)\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Src\BotLife\BLApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLBot.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLGoalMenu.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\IBPlanner_BL.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Main.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\MapViewApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\SpriteViewApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\TilesViewApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_DropObject.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_FindPath.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_FollowPath.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_PickObject.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_PushProp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotNearPos.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_ObjectAtPos.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsMovable.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsPickable.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsUnblock.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLDoor.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLHeavyProp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLLightProp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLObject.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLProp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLProp_FB.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\BLProp_SI.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLWorld.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\World\IBPath.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Map\BLMap.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Map\BLSquare.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Map\BLTiles.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Src\BotLife\BLApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLBot.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLGoalMenu.h" />
+    <ClInclude Include="..\..\Src\BotLife\IBPlanner_BL.h" />
+    <ClInclude Include="..\..\Src\BotLife\MapViewApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\SpriteViewApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\TilesViewApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_DropObject.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_FindPath.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_FollowPath.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_PickObject.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_PushProp.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotNearPos.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_ObjectAtPos.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsMovable.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsPickable.h" />
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsUnblock.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLDoor.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLHeavyProp.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLLightProp.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLObject.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLProp.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLProp_FB.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\BLProp_SI.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLWorld.h" />
+    <ClInclude Include="..\..\Src\BotLife\World\IBPath.h" />
+    <ClInclude Include="..\..\Src\BotLife\Map\BLMap.h" />
+    <ClInclude Include="..\..\Src\BotLife\Map\BLSquare.h" />
+    <ClInclude Include="..\..\Src\BotLife\Map\BLTiles.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{c98974eb-8599-4e1a-87ee-2135aa7c48c1}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Graphics\Graphics.vcxproj">
+      <Project>{f73af5fc-b015-4890-9050-fcd817da4278}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Graphics_SDL\Graphics_SDL.vcxproj">
+      <Project>{7342f58f-fd29-4218-8a57-a373780269af}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\IBot\IBot.vcxproj">
+      <Project>{fec0e7df-3bd9-4e49-ae3c-8b7650727065}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\IBot\IBot_Graph.vcxproj">
+      <Project>{8977ddc7-5ae5-48c9-ab19-0ff410be0b17}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\Navigation\Navigation.vcxproj">
+      <Project>{d13a292d-7a5e-4f54-9507-4d90e0b25c76}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

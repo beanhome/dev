@@ -108,7 +108,7 @@ sint32 Canvas::GetMouseX() const
 
 sint32 Canvas::GetMouseY() const
 {
-	return GetGEngine()->GetMouseY() - GetScreenPosY() + m_iOrigX;
+	return GetGEngine()->GetMouseY() - GetScreenPosY() + m_iOrigY;
 }
 
 const char* Canvas::GetPrintFont() const

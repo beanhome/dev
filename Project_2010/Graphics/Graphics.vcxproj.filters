@@ -41,13 +41,13 @@
     <ClCompile Include="..\..\Src\Graphics\ImageRotoZoom.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Src\Graphics\EventManager.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Src\Graphics\Event.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Src\Graphics\Resource.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Graphics\Input.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Graphics\InputEvent.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,13 +85,13 @@
     <ClInclude Include="..\..\Src\Graphics\ImageRotoZoom.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Src\Graphics\EventManager.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Src\Graphics\Event.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Src\Graphics\Resource.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Graphics\Input.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Graphics\InputEvent.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

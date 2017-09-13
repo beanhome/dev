@@ -21,7 +21,7 @@ BLTiles::BLTiles(const GEngine& ge, const char* name)
 	string path = FormatString("%sBotLife/%s.png", DATA_DIR, name);
 	m_pTiles = ge.GetImageResource(path.c_str());
 
-	string sRoot = FormatString("%s%s%s", ge.GetRootPath(), (ge.GetRootPath()[strlen(ge.GetRootPath())-1] == '/' ? "" : "/"), DATA_DIR);
+	string sRoot = FormatString("%s%s%s", ge.GetRootPath().c_str(), (ge.GetRootPath()[strlen(ge.GetRootPath().c_str())-1] == '/' ? "" : "/"), DATA_DIR);
 	m_sPath = FormatString("%sBotLife/%s.blt", sRoot.c_str(), name);
 
 	ReadFile();
@@ -168,5 +168,5 @@ void BLTiles::DrawTile(const CanvasBase& canvas, int id, int x, int y, int w, in
 {
 	int i = id%m_iTileCountX;
 	int j = id/m_iTileCountX;
-	canvas.DrawImage(*m_pTiles, x+w/2, y+h/2, w, h, i * m_iTileOffsetX, j * m_iTileOffsetY, m_iTileSizeX, m_iTileSizeY);
+	canvas.DrawImage(*m_pTiles, x/*+w/2*/, y/*+h/2*/, w, h, i * m_iTileOffsetX, j * m_iTileOffsetY, m_iTileSizeX, m_iTileSizeY);
 }

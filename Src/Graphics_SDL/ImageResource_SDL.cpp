@@ -2,48 +2,57 @@
 #include "SDL_video.h"
 //#include "SDL_draw.h"
 #include "SDL_ttf.h"
-#include "SDL_rotozoom.h"
+#include "SDL2_rotozoom.h"
 #include "SDL_image.h"
 
 #include "ImageResource_SDL.h"
 #include "GEngine.h"
+#include "GEngine_SDL.h"
 
 ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const char* pPath)
 	: ImageResource(pGEngine, crc, pPath)
-	, m_pSurface(NULL)
+	, m_pTexture(NULL)
 {
 	string path = FormatString("%s%s", pGEngine->GetRootPath().c_str(), pPath);
-	m_pSurface = IMG_Load(path.c_str());
-	if (m_pSurface == NULL)
+	SDL_Surface* pSurface = IMG_Load(path.c_str());
+	if (pSurface == NULL)
 	{
 		LOG("Couldn't load %s: %s\n", pPath, SDL_GetError());
+		return;
 	}
-	else
-	{
-		m_iWidth = m_pSurface->w;
-		m_iHeight = m_pSurface->h;
-	}
+
+	m_iWidth = pSurface->w;
+	m_iHeight = pSurface->h;
+
+	GEngine_SDL* pGEngineSDL = (GEngine_SDL*)pGEngine;
+	m_pTexture = SDL_CreateTextureFromSurface(pGEngineSDL->GetRenderer(), pSurface);
+
+	SDL_FreeSurface(pSurface);
 }
 
 ImageResource_SDL::ImageResource_SDL(GEngine* pGEngine, uint32 crc, const Desc& oDesc)
 	: ImageResource(pGEngine, crc, oDesc)
-	, m_pSurface(NULL)
+	, m_pTexture(NULL)
 {
 	string path = FormatString("%s%s", pGEngine->GetRootPath().c_str(), oDesc.path);
-	m_pSurface = IMG_Load(path.c_str());
-	if (m_pSurface == NULL)
+	SDL_Surface* pSurface = IMG_Load(path.c_str());
+	if (pSurface == NULL)
 	{
 		LOG("Couldn't load %s: %s\n", oDesc.path, SDL_GetError());
+		return;
 	}
-	else
-	{
-		m_iWidth = m_pSurface->w;
-		m_iHeight = m_pSurface->h;
-	}
+	
+	m_iWidth = pSurface->w;
+	m_iHeight = pSurface->h;
+
+	GEngine_SDL* pGEngineSDL = (GEngine_SDL*)pGEngine;
+	m_pTexture = SDL_CreateTextureFromSurface(pGEngineSDL->GetRenderer(), pSurface);
+
+	SDL_FreeSurface(pSurface);
 }
 
 
 ImageResource_SDL::~ImageResource_SDL()
 {
-	SDL_FreeSurface(m_pSurface);
+	SDL_DestroyTexture(m_pTexture);
 }

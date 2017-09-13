@@ -142,6 +142,10 @@ void BLApp::UpdateUserInterface()
 		oPlanner.StopDrag();
 	}
 
+	if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyPressed)
+		SetPause(!IsPaused());
+
+
 	if (m_pGoalMenu->IsVisible())
 	{
 		m_pGoalMenu->Update();

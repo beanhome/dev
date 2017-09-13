@@ -98,7 +98,7 @@ void BLBot::SetLoc(float x, float y)
 
 void BLBot::FixLoc()
 {
-	SetLoc((float)m_vPos.x * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2, (float)m_vPos.y * m_oWorld.GetGridSize() + m_oWorld.GetGridSize()/2);
+	SetLoc((float)m_vPos.x * m_oWorld.GetGridSize()/* + m_oWorld.GetGridSize()/2*/, (float)m_vPos.y * m_oWorld.GetGridSize()/* + m_oWorld.GetGridSize()/2*/);
 }
 
 
@@ -210,7 +210,7 @@ void BLBot::Update(float dt)
 
 			case Walk:
 				m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
-				SetLoc(s/2 + s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), s/2 + s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
+				SetLoc(/*s/2 +*/ s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), /*s/2 + */s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
 				break;
 
 			case Action:
@@ -220,7 +220,7 @@ void BLBot::Update(float dt)
 
 			case Push:
 				m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
-				SetLoc(s/2 + s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), s/2 + s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
+				SetLoc(/*s/2 +*/ s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), /*s/2 +*/ s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
 				tgt = st + s_vDirArray[GetDir()];
 				m_pPushObject->SetLoc((s/2 + s*Lerp((float)st.x, (float)tgt.x, t)), (s/2 + s*Lerp((float)st.y, (float)tgt.y, t)));
 				//LOG("Push : %f\n", t);

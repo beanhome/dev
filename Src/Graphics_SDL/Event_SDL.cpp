@@ -3,12 +3,12 @@
 #include "Utils.h"
 #include "Event_SDL.h"
 
-const EKeyboardKey Event_SDL::s_eSDLKeyToKeyboardKey[SDLK_LAST] = 
+const EKeyboardKey Event_SDL::s_eSDLKeyToKeyboardKey[/*SDLK_LAST*/] = 
 {
 #include "Event_SDLKeyToKeyboardKey.h"
 };
 
-const SDLKey Event_SDL::s_eKeyboardKeyToSDLKey[EKeyboardKey_Max] =
+const int Event_SDL::s_eKeyboardKeyToSDLKey[EKeyboardKey_Max] =
 {
 #include "Event_KeyboardKeyToSDLKey.h"
 };
@@ -67,13 +67,13 @@ bool Event_SDL::IsResize() const
 {
 	switch (m_pSDLEvent->type)
 	{
-		case SDL_VIDEORESIZE:
-			return true;
+		case SDL_WINDOWEVENT:
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
+			return m_pSDLEvent->window.event == SDL_WINDOWEVENT_RESIZED;
 
 		default:
 			return false;
 	}
-
 }
 
 
@@ -91,8 +91,7 @@ EMouseEvent Event_SDL::GetMouseEvent() const
 				case SDL_BUTTON_LEFT:		return LeftDown;
 				case SDL_BUTTON_MIDDLE:		return MiddleDown;
 				case SDL_BUTTON_RIGHT:		return RightDown;
-				case SDL_BUTTON_WHEELUP:	return WheelUpDown;
-				case SDL_BUTTON_WHEELDOWN:	return WheelDownDown;
+				case SDL_MOUSEWHEEL:		return m_pSDLEvent->wheel.y > 0 ? WheelUpDown : WheelDownDown;
 				default: return EMouseEvent_Error;
 			}
 		}
@@ -104,8 +103,7 @@ EMouseEvent Event_SDL::GetMouseEvent() const
 				case SDL_BUTTON_LEFT:		return LeftUp;
 				case SDL_BUTTON_MIDDLE:		return MiddleUp;
 				case SDL_BUTTON_RIGHT:		return RightUp;
-				case SDL_BUTTON_WHEELUP:	return WheelUpUp;
-				case SDL_BUTTON_WHEELDOWN:	return WheelDownUp;
+				case SDL_MOUSEWHEEL:		return m_pSDLEvent->wheel.y > 0 ? WheelUpUp : WheelDownUp;
 				default: return EMouseEvent_Error;
 			}
 		}
@@ -153,12 +151,12 @@ EKeyboardKey Event_SDL::GetKeyboardKey() const
 
 void Event_SDL::GetResizeEvent(sint32& w, sint32& h) const
 {
-	w = m_pSDLEvent->resize.w;
-	h = m_pSDLEvent->resize.h;
+	w = m_pSDLEvent->window.data1;
+	h = m_pSDLEvent->window.data2;
 }
 
 uint16 Event_SDL::GetKeyboardChar() const
 {
-	return m_pSDLEvent->key.keysym.unicode;
+	return m_pSDLEvent->key.keysym.sym;
 }
 

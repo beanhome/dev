@@ -2,17 +2,18 @@
 #include "SDL_video.h"
 //#include "SDL_draw.h"
 #include "SDL_ttf.h"
-#include "SDL_rotozoom.h"
+#include "SDL2_rotozoom.h"
 #include "FontResource_SDL.h"
 #include "ImageResource_SDL.h"
-#include "SDL_gfxPrimitives.h"
-#include "SDL_gfxBlitFunc.h"
+#include "SDL2_gfxPrimitives.h"
 
 #include "GEngine_SDL.h"
 #include "Event_SDL.h"
 
 GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: GEngine(width, height, depth, rootpath)
+	, m_pWindow(NULL)
+	, m_pScreen(NULL)
 	, m_pCursor(NULL)
 {
 	Init();
@@ -20,6 +21,8 @@ GEngine_SDL::GEngine_SDL(uint16 width, uint16 height, uint16 depth, const char* 
 
 GEngine_SDL::GEngine_SDL(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, const char* rootpath)
 	: GEngine(pApp, width, height, depth, rootpath)
+	, m_pWindow(NULL)
+	, m_pScreen(NULL)
 	, m_pCursor(NULL)
 {
 	Init();
@@ -135,25 +138,38 @@ uint8 mask[] = {
 	0xFF,
 };
 
+SDL_Renderer* GEngine_SDL::GetRenderer()
+{
+	return m_pRenderer;
+}
 
 uint GEngine_SDL::Init()
 {
 	LOG("Initializing SDL.\n");
-	if(SDL_Init(SDL_INIT_VIDEO) < 0)
+	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{ 
 		LOG("Could not initialize SDL: %s.\n", SDL_GetError());
 		return 1;
 	}
 
-	SDL_EnableUNICODE(1);
-
-	LOG("SDL Set Video Mode.\n");
-	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, m_iDepth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT | SDL_RESIZABLE);
-	if (m_pScreen == NULL)
+	LOG("SDL Create Window.\n");
+	m_pWindow = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_iWidth, m_iHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	if (m_pWindow == NULL)
 	{
-		LOG("Couldn't set %dx%dx%d video mode: %s\n", m_iWidth, m_iHeight, m_iDepth, SDL_GetError());
+		LOG("Couldn't create window %dx%d: %s\n", m_iWidth, m_iHeight, SDL_GetError());
 		return 1;
 	}
+
+	m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED);
+	if (m_pRenderer == NULL)
+	{
+		LOG("Couldn't create renderer : %s\n", SDL_GetError());
+		return 1;
+	}
+
+
+
+	m_pScreen = SDL_GetWindowSurface(m_pWindow);
 
 	SDL_SetClipRect(m_pScreen, NULL);
 
@@ -181,6 +197,8 @@ uint GEngine_SDL::Close()
 
 	TTF_Quit();
 
+	SDL_DestroyWindow(m_pWindow);
+
 	SDL_Quit();
 
 	return 0;
@@ -188,13 +206,14 @@ uint GEngine_SDL::Close()
 
 void GEngine_SDL::Clear()
 {
-	SDL_SetClipRect(m_pScreen, NULL);
-	SDL_FillRect(m_pScreen, NULL, SDL_MapRGB(m_pScreen->format, 128, 128, 128));
 }
 
 void GEngine_SDL::Flip()
 {
-	SDL_Flip(m_pScreen);
+	SDL_RenderPresent(m_pRenderer);
+
+	SDL_SetRenderDrawColor(m_pRenderer, 128, 128, 128, 255);
+	SDL_RenderClear(m_pRenderer);
 }
 
 void GEngine_SDL::Resize(uint16 w, uint16 h)
@@ -204,124 +223,76 @@ void GEngine_SDL::Resize(uint16 w, uint16 h)
 
 	//LOG("SDL Resize Screen.\n");
 
-	m_pScreen = SDL_SetVideoMode(m_iWidth, m_iHeight, m_iDepth, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_ANYFORMAT | SDL_RESIZABLE);
-	
-	if (m_pScreen == NULL)
-		LOG("Couldn't set %dx%dx%d video mode: %s\n", m_iWidth, m_iHeight, m_iDepth, SDL_GetError());
+	SDL_SetWindowSize(m_pWindow, m_iWidth, m_iHeight);
 }
 
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y) const
 {
-	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
+	SDL_Texture* pTexture = ((const ImageResource_SDL&)_image).m_pTexture;
 
-	if (image == NULL)
+	if (pTexture == NULL)
 		return;
 
-	if (image->format->palette && m_pScreen->format->palette)
-		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
-
 	SDL_Rect oLoc;
-	//oLoc.x = (sint16)(x - image->w / 2);
-	//oLoc.y = (sint16)(y - image->h / 2);
 	oLoc.x = (sint16)x;
 	oLoc.y = (sint16)y;
-	oLoc.w = (uint16)image->w;
-	oLoc.h = (uint16)image->h;
+	oLoc.w = (uint16)_image.GetWidth();
+	oLoc.h = (uint16)_image.GetHeight();
 
-	/* Blit onto the screen surface */
-	if(SDL_BlitSurface(image, NULL, m_pScreen, &oLoc) < 0)
-		LOG("BlitSurface error: %s\n", SDL_GetError());
+	/* copy the screen surface */
+	if(SDL_RenderCopy(m_pRenderer, pTexture, NULL, &oLoc) < 0)
+		LOG("SDL_RenderCopy error: %s\n", SDL_GetError());
 }
 
 
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, float fAngle, float fZoom) const
 {
-	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
+	SDL_Texture* pTexture = ((const ImageResource_SDL&)_image).m_pTexture;
 
-	if (image == NULL)
+	if (pTexture == NULL)
 		return;
 
-    if (image->format->palette && m_pScreen->format->palette)
-		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
+	/*
+	SDL_Rect oSrc;
+	oSrc.x = (sint16)0;
+	oSrc.y = (sint16)0;
+	oSrc.w = (uint16)_image.GetWidth();
+	oSrc.h = (uint16)_image.GetHeight();
+	*/
 
-	SDL_Surface* pOutput = rotozoomSurface(image, fAngle, fZoom, 1);
-	if (pOutput == NULL)
-		return;
+	SDL_Rect oDest;
+	oDest.x = (sint16)x;
+	oDest.y = (sint16)y;
+	oDest.w = (uint16)(_image.GetWidth()*fZoom);
+	oDest.h = (uint16)(_image.GetHeight()*fZoom);
 
-	SDL_Rect oLoc;
-	//oLoc.x = (sint16)(x - pOutput->w / 2);
-	//oLoc.y = (sint16)(y - pOutput->h / 2);
-	oLoc.x = (sint16)x;
-	oLoc.y = (sint16)y;
-	oLoc.w = (uint16)pOutput->w;
-	oLoc.h = (uint16)pOutput->h;
-
-    /* Blit onto the screen surface */
-    if(SDL_BlitSurface(pOutput, NULL, m_pScreen, &oLoc) < 0)
-        LOG("BlitSurface error: %s\n", SDL_GetError());
-
-	SDL_FreeSurface(pOutput);
+	/* copy the screen surface */
+	if (SDL_RenderCopyEx(m_pRenderer, pTexture, nullptr, &oDest, fAngle, nullptr, SDL_FLIP_NONE) < 0)
+		LOG("SDL_RenderCopy error: %s\n", SDL_GetError());
 }
 
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, uint16 w, uint16 h, sint32 sx, sint32 sy, uint16 sw, uint16 sh) const
 {
-	SDL_Surface* image = ((const ImageResource_SDL&)_image).m_pSurface;
+	SDL_Texture* pTexture = ((const ImageResource_SDL&)_image).m_pTexture;
 
-	if (image == NULL)
+	if (pTexture == NULL)
 		return;
 
-	if (image->format->palette && m_pScreen->format->palette)
-		SDL_SetColors(m_pScreen, image->format->palette->colors, 0, image->format->palette->ncolors);
+	SDL_Rect oSrc;
+	oSrc.x = (sint16)sx;
+	oSrc.y = (sint16)sy;
+	oSrc.w = (uint16)sw;
+	oSrc.h = (uint16)sh;
 
-	SDL_Surface* pOutput = image;
-	if (sw != w || sh != h)
-	{
-		double zx = (double)w/(double)sw;
-		double zy = (double)h/(double)sh;
-		pOutput = rotozoomSurfaceXY(image, 0.f, zx, zy, 0);
-		if (pOutput == NULL)
-			return;
+	SDL_Rect oDest;
+	oDest.x = (sint16)x;
+	oDest.y = (sint16)y;
+	oDest.w = (uint16)w;
+	oDest.h = (uint16)h;
 
-		SDL_Rect oDestRect;
-		//oDestRect.x = (sint16)(x - w / 2);
-		//oDestRect.y = (sint16)(y - h / 2);
-		oDestRect.x = (sint16)x;
-		oDestRect.y = (sint16)y;
-		oDestRect.w = w;
-		oDestRect.h = h;
-
-		SDL_Rect oSrcRect;
-		oSrcRect.x = (sint16)(sx * zx);
-		oSrcRect.y = (sint16)(sy * zy);
-		oSrcRect.w = (sint16)(sw * zx);
-		oSrcRect.h = (sint16)(sh * zy);
-
-		/* Blit onto the screen surface */
-		if(SDL_BlitSurface(pOutput, &oSrcRect, m_pScreen, &oDestRect) < 0)
-			LOG("BlitSurface error: %s\n", SDL_GetError());
-	
-		SDL_FreeSurface(pOutput);
-	}
-	else
-	{
-		SDL_Rect oDestRect;
-		//oDestRect.x = (sint16)(x - w / 2);
-		//oDestRect.y = (sint16)(y - h / 2);
-		oDestRect.x = (sint16)x;
-		oDestRect.y = (sint16)y;
-		oDestRect.w = w;
-		oDestRect.h = h;
-
-		SDL_Rect oSrcRect;
-		oSrcRect.x = (sint16)sx;
-		oSrcRect.y = (sint16)sy;
-		oSrcRect.w = (sint16)sw;
-		oSrcRect.h = (sint16)sh;
-
-		/* Blit onto the screen surface */
-		if(SDL_BlitSurface(image, &oSrcRect, m_pScreen, &oDestRect) < 0)
-			LOG("BlitSurface error: %s\n", SDL_GetError());
-	}
+	/* copy the screen surface */
+	if (SDL_RenderCopy(m_pRenderer, pTexture, &oSrc, &oDest) < 0)
+		LOG("SDL_RenderCopy error: %s\n", SDL_GetError());
 }
 
 void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, sint32 sx, sint32 sy, uint16 sw, uint16 sh) const
@@ -332,32 +303,32 @@ void GEngine_SDL::DrawImage(const ImageResource& _image, sint32 x, sint32 y, sin
 
 void GEngine_SDL::SetPixel(sint32 x, sint32 y, uint8 r, uint8 g, uint8 b) const
 {
-	pixelRGBA(m_pScreen, (sint16)x, (sint16)y, r, g, b, 255);
+	pixelRGBA(m_pRenderer, (sint16)x, (sint16)y, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
-	rectangleRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
+	rectangleRGBA(m_pRenderer, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
 }
 
 void GEngine_SDL::DrawFillRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
-	boxRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
+	boxRGBA(m_pRenderer, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
 }
 
 void GEngine_SDL::DrawCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const
 {
-	circleRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)radius, r, g, b, 255);
+	circleRGBA(m_pRenderer, (sint16)x, (sint16)y, (sint16)radius, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawFillCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const
 {
-	filledCircleRGBA(m_pScreen, (sint16)x, (sint16)y, (sint16)radius, r, g, b, 255);
+	filledCircleRGBA(m_pRenderer, (sint16)x, (sint16)y, (sint16)radius, r, g, b, 255);
 }
 
 void GEngine_SDL::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const
 {
-	lineRGBA(m_pScreen, (sint16)x1, (sint16)y1, (sint16)x2, (sint16)y2, r, g, b, 255);
+	lineRGBA(m_pRenderer, (sint16)x1, (sint16)y1, (sint16)x2, (sint16)y2, r, g, b, 255);
 }
 
 void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, va_list oArgs) const
@@ -414,7 +385,7 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 #endif
 
 	SDL_Surface* texte = NULL;
-	SDL_Color color = { 0, 0, 0 };
+	SDL_Color color = { 0, 0, 0, 255 };
 	color.r = r;
 	color.g = g;
 	color.b = b;
@@ -444,20 +415,24 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 		case RightBottom:	position.x = (sint16)(x - w);		position.y = (sint16)(y - h);		break;
 	}
 
-	/*
 	position.w = w;
 	position.h = h;
+	/*
 	SDL_FillRect(m_pScreen, &position, SDL_MapRGB(m_pScreen->format, 255, 0, 255));
 	*/
 
-	SDL_BlitSurface(texte, NULL, m_pScreen, &position); 
+	SDL_Texture * texture = SDL_CreateTextureFromSurface(m_pRenderer, texte);
+	SDL_RenderCopy(m_pRenderer, texture, NULL, &position);
 
+	//SDL_BlitSurface(texte, NULL, m_pScreen, &position); 
+
+	SDL_DestroyTexture(texture);
 	SDL_FreeSurface(texte);
 }
 
 void GEngine_SDL::ClampClear() const
 {
-	SDL_SetClipRect(m_pScreen, NULL);
+	SDL_RenderSetClipRect(m_pRenderer, nullptr);
 }
 
 
@@ -468,7 +443,7 @@ void GEngine_SDL::ClampRect(sint32 x, sint32 y, uint16 w, uint16 h) const
 	rect.y = (sint16)y;
 	rect.w = (sint16)w;
 	rect.h = (sint16)h;
-	SDL_SetClipRect(m_pScreen, &rect);
+	SDL_RenderSetClipRect(m_pRenderer, &rect);
 }
 
 

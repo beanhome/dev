@@ -33,6 +33,7 @@ int SpriteViewApp::Update(float dt)
 	int col = m_pImage->GetCurrent() % m_pImage->GetColCount();
 	int row = m_pImage->GetCurrent() / m_pImage->GetColCount();
 
+	/*
 	if (m_pEngine->GetInputEvent().IsKeyboard() && m_pEngine->GetInputEvent().GetKeyboardEvent() == KeyDown)
 	{
 		if      (!m_bLeft && m_pEngine->GetInputEvent().GetKeyboardKey() == KEY_LEFT)
@@ -76,6 +77,7 @@ int SpriteViewApp::Update(float dt)
 			m_bEnter = false;
 		}
 	}
+	*/
 
 	if (m_bPlay)
 	{

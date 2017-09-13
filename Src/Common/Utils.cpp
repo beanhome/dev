@@ -9,6 +9,25 @@ bool g_bVisualOutput = false;
 FILE* myfopen(const char *p, const char *m) { FILE* f; fopen_s(&f, p, m); return f; }
 #endif
 
+#if _MSC_VER >= 1400
+FILE _iob[] = { *stdin, *stdout, *stderr };
+
+extern "C" FILE * __cdecl __iob_func(void)
+{
+	return _iob;
+}
+
+/*
+extern "C" int __cdecl fprintf(FILE *const _Stream, const char *const format, ...)
+{
+	va_list arglist;
+	va_start(arglist, format);
+
+	return vfprintf(_Stream, format, arglist);
+}
+*/
+#endif
+
 void InitLog(int argc, char *argv[])
 {
 	for (int i=1 ; i<argc ; ++i)

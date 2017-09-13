@@ -32,8 +32,8 @@ class Event_SDL : public Event
 	private:
 		SDL_Event* m_pSDLEvent;
 
-		static const EKeyboardKey s_eSDLKeyToKeyboardKey[SDLK_LAST];
-		static const SDLKey s_eKeyboardKeyToSDLKey[EKeyboardKey_Max];
+		static const EKeyboardKey s_eSDLKeyToKeyboardKey[];
+		static const int s_eKeyboardKeyToSDLKey[EKeyboardKey_Max];
 };
 
 

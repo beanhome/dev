@@ -13,6 +13,7 @@
 #include <winbase.h>
 #endif
 
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <deque>

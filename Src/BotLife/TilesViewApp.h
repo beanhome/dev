@@ -18,8 +18,6 @@ class TilesViewApp : public GApp<GEngine_SDL>
 		virtual int Update(float dt);
 		virtual int Draw();
 
-		virtual int Loop();
-
 
 	private:
 		enum Mode

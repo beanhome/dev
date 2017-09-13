@@ -55,5 +55,5 @@ uint16 Image::GetHeight() const
 
 void Image::Draw() const
 {
-	m_oCanvas.DrawImage(*m_pImageResource, m_iPosX - (m_iCenterX - m_pImageResource->GetWidth()/2), m_iPosY - m_pImageResource->GetHeight()/2 + (m_pImageResource->GetHeight() - m_iCenterY));
+	m_oCanvas.DrawImage(*m_pImageResource, m_iPosX - m_iCenterX, m_iPosY - m_iCenterY);
 }

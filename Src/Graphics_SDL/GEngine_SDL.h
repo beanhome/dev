@@ -6,9 +6,6 @@
 #include "ImageResource_SDL.h"
 #include "FontResource_SDL.h"
 
-struct SDL_Surface;
-struct SDL_Cursor;
-
 class ImageResource;
 class FontResource;
 class ImageResource_SDL;
@@ -49,15 +46,17 @@ class GEngine_SDL : public GEngine
 		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) const { return GetResource<ImageResource_SDL>(ImageResource_SDL::Desc(oDesc)); }
 		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) const { return GetResource<FontResource_SDL>(FontResource_SDL::Desc(oDesc)); }
 
-
+		struct SDL_Renderer*			GetRenderer();
 
 	protected:
 		uint 							Init();
 		uint 							Close();
 
 	private:
-		SDL_Surface*					m_pScreen;
-		SDL_Cursor*						m_pCursor;
+		struct SDL_Window*				m_pWindow;
+		struct SDL_Renderer*			m_pRenderer;
+		struct SDL_Surface*				m_pScreen;
+		struct SDL_Cursor*				m_pCursor;
 };
 
 #endif // __GENGINE_SDL_H__

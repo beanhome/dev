@@ -16,5 +16,7 @@ enum ETextAlign
 	RightBottom
 };
 
+#define DATA_DIR "../../Data/"
+#define FONT_PATH "../../Data/Fonts/Arial.ttf"
 
 #endif // __GUTILS_H__

@@ -2,7 +2,7 @@
 #include "Timer.h"
 #include "Map/BLTiles.h"
 #include "Map/BLMap.h"
-#include "InputEvent.h"
+//#include "InputEvent.h"
 
 TilesViewApp::TilesViewApp(int w, int h, const char* rootpath, const char* name)
 	: GApp<GEngine_SDL>(w, h, rootpath)
@@ -32,6 +32,7 @@ int TilesViewApp::Update(float dt)
 	bool bLeft = false;
 	bool bRight = false;
 
+	/*
 	if (m_pEngine->GetInputEvent().IsKeyboard() && m_pEngine->GetInputEvent().GetKeyboardEvent() == KeyDown)
 	{
 		switch (mode)
@@ -69,6 +70,7 @@ int TilesViewApp::Update(float dt)
 				break;
 		}
 	}
+	*/
 
 	switch (mode)
 	{
@@ -167,42 +169,6 @@ int TilesViewApp::Draw()
 			break;
 	}
 
-	return 0;
-}
-
-int TilesViewApp::Loop()
-{
-	int res;
-	bool bQuit = false;
-	double fTime = Timer::Get();
-	double fLastTime = fTime;
-
-	while (!bQuit)
-	{
-		fLastTime = fTime;
-		fTime = Timer::Get();
-		float dt = (float)(fTime - fLastTime);
-		dt = std::min<float>(dt, 0.1f);
-
-		m_pEngine->Clear();
-
-		res = Draw();
-		if (res != 0)
-			return res;
-
-		m_pEngine->Flip();
-
-		res = 0;
-		while (res == 0)
-		{
-			m_pEngine->SaveEvent();
-			if (m_pEngine->PollEvent())
-			{
-				res = Update(dt);
-				bQuit = (res == -1);
-			}
-		}
-	}
 	return 0;
 }
 

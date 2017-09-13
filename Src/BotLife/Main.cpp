@@ -6,6 +6,8 @@
 #include "Timer.h"
 #include "Alloc.h"
 
+// -a MapViewApp -t summertiles -w 1400 -h 1000 -x 64 -y 48
+
 #if 0
 
 

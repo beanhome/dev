@@ -4,8 +4,6 @@
 #include "Utils.h"
 #include "ImageResource.h"
 
-struct SDL_Surface;
-
 class ImageResource_SDL : public ImageResource
 {
 	public:
@@ -14,7 +12,7 @@ class ImageResource_SDL : public ImageResource
 		~ImageResource_SDL();
 
 	public:
-		SDL_Surface*	m_pSurface;
+		struct SDL_Texture*	m_pTexture;
 };
 
 

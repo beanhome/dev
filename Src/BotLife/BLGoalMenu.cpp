@@ -79,8 +79,8 @@ void BLGoalMenu::UpdatePos()
 {
 	sint32 x, y;
 	int s = m_oBot.GetWorld().GetGridSize();
-	int _x = m_oBot.GetWorld().GetCanvas().GetScreenPosX()+m_iI*s;
-	int _y = m_oBot.GetWorld().GetCanvas().GetScreenPosY()+m_iJ*s;
+	int _x = m_oBot.GetWorld().GetCanvas().GetScreenPosX() - m_oBot.GetWorld().GetCanvas().GetOrigX() + m_iI*s;
+	int _y = m_oBot.GetWorld().GetCanvas().GetScreenPosY() - m_oBot.GetWorld().GetCanvas().GetOrigY() + m_iJ*s;
 
 	int width = 0;
 	int height = 0;

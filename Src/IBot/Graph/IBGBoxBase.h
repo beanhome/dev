@@ -16,10 +16,10 @@ class IBGBoxBase
 	public:
 		IBGBoxBase(CanvasBase& parent);
 
-		sint16 GetX() const { return m_oCanvas.GetPosX(); }
-		sint16 GetY() const { return m_oCanvas.GetPosY(); }
-		sint16 GetW() const { return m_oCanvas.GetWidth(); }
-		sint16 GetH() const { return m_oCanvas.GetHeight(); }
+		sint16 GetX() const { return (sint16)m_oCanvas.GetPosX(); }
+		sint16 GetY() const { return (sint16)m_oCanvas.GetPosY(); }
+		sint16 GetW() const { return (sint16)m_oCanvas.GetWidth(); }
+		sint16 GetH() const { return (sint16)m_oCanvas.GetHeight(); }
 
 		void SetX(sint16 _x) { m_oCanvas.SetPosX(_x); }
 		void SetY(sint16 _y) { m_oCanvas.SetPosY(_y); }
@@ -33,8 +33,8 @@ class IBGBoxBase
 		sint16 GetMidW() const { return GetX() + GetW()/2; }
 		sint16 GetMidH() const { return GetY() + GetH()/2; }
 
-		sint16 GetScreenX() const { return m_oCanvas.GetScreenPosX(); }
-		sint16 GetScreenY() const { return m_oCanvas.GetScreenPosY(); }
+		sint16 GetScreenX() const { return (sint16)m_oCanvas.GetScreenPosX(); }
+		sint16 GetScreenY() const { return (sint16)m_oCanvas.GetScreenPosY(); }
 
 		const CanvasBase& GetCanvas() const { return m_oCanvas; }
 		CanvasBase& GetCanvas() { return m_oCanvas; }
