@@ -76,19 +76,19 @@ class Allocator
 		void RemBlock(byte* pBlock);
 
 	public:
-		static void *Malloc(size_t size, const char* file_name, unsigned int line_num) { return s_oAllocator._Malloc(size, file_name, line_num); }
-		static void *Realloc(void *block, size_t size, const char* file_name, unsigned int line_num) { return s_oAllocator._Realloc(block, size, file_name, line_num); }
-		static void *Calloc(size_t nitems, size_t size, const char* file_name, unsigned int line_num) { return s_oAllocator._Calloc(nitems, size, file_name, line_num); }
-		static void Free(void *block, const char* file_name, unsigned int line_num) { s_oAllocator._Free(block, file_name, line_num); }
+		static void *Malloc(size_t size, const char* file_name, unsigned int line_num) { return GetAllocator()._Malloc(size, file_name, line_num); }
+		static void *Realloc(void *block, size_t size, const char* file_name, unsigned int line_num) { return GetAllocator()._Realloc(block, size, file_name, line_num); }
+		static void *Calloc(size_t nitems, size_t size, const char* file_name, unsigned int line_num) { return GetAllocator()._Calloc(nitems, size, file_name, line_num); }
+		static void Free(void *block, const char* file_name, unsigned int line_num) { GetAllocator()._Free(block, file_name, line_num); }
 		
-		static bool Check() { return s_oAllocator._Check(); }
-		static bool IsEmpty() { return (s_oAllocator.m_pBlocks == NULL); }
-		static void Print() { s_oAllocator._Print(); }
+		static bool Check() { return GetAllocator()._Check(); }
+		static bool IsEmpty() { return (GetAllocator().m_pBlocks == NULL); }
+		static void Print() { GetAllocator()._Print(); }
 
 	private:
 		BlockNode* m_pBlocks;
 
-		static Allocator s_oAllocator;
+		static Allocator& GetAllocator();
 };
 
 

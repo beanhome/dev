@@ -11,9 +11,10 @@ class IBFactDef_IsOnTable : public IBFactDef
 		IBFactDef_IsOnTable(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsOnTable();
 
-		IBF_Result			Test(const vector<IBObject*>& aUserData);
+		virtual IBF_Result			Test(const class IBFact* pFact) const override;
 
-		virtual void		ResolveVariable(vector<IBObject*>& aUserData);
+		//virtual void		ResolveVariable(vector<IBObject*>& aUserData);
+
 
 	private:
 };

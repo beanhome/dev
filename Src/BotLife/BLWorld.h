@@ -52,10 +52,10 @@ class BLWorld
 		void Update(float dt);
 		void Draw() const;
 		void DrawDebug() const;
-		void DrawDebugObject(IBObject* pObj) const;
-		void DrawDebugPath(const IBPath& oPath) const;
-		void DrawDebugObj(const BLObject& oObj) const;
-		void DrawDebugPos(const IBVector2& oPos) const;
+		void DrawDebugObject(class BLObject* pObj) const;
+		void DrawDebugPath(const class BLPath& oPath) const;
+		void DrawDebugObj(const class BLObject& oObj) const;
+		void DrawDebugPos(const class BLVector2& oPos) const;
 
 		bool IsDraging() const { return m_bDraging; }
 		void StartDrag();

@@ -2,54 +2,38 @@
 #define __IBFACTDEF_H__
 
 #include "Utils.h"
-
-class IBFact;
-class IBPlanner;
-class IBObject;
-class IBAction;
-
-enum IBF_Result
-{
-	IBF_OK,
-	IBF_FAIL,
-	IBF_UNKNOW,
-	IBF_IMPOSSIBLE,
-	IBF_RESOLVED,
-	IBF_DELETE,
-
-	IBF_Result_MAX
-};
-
-extern const char* IBF_ResultString[IBF_Result_MAX];
+#include "Types.h"
 
 class IBFactDef
 {
 	public:
-		IBFactDef(const string& name, uint iDegree, IBPlanner* pPlanner);
+		IBFactDef(const string& name, uint iDegree, class IBPlanner* pPlanner);
 		virtual ~IBFactDef();
 
-		const string&				GetName() const { return m_sName; }
-		string						GetData(const vector<IBObject*>& aUserData) const;
-		void						GetData(const vector<IBObject*>& aUserData, string& sData) const;
-		uint						GetDegree() const { return m_iDegree; }
+		const string&				GetName() const;
+		uint							GetDegree() const;
 
-		IBFact*						Instanciate() { return Instanciate(NULL); }
-		IBFact*						Instanciate(IBAction* pEffectAction) { vector<IBObject*> aUserData; return Instanciate(pEffectAction, aUserData); }
-		IBFact*						Instanciate(IBAction* pEffectAction, const vector<IBObject*> aUserData);
+		const string&				GetVariableName(uint i) const;
+		//virtual string				GetVariableData(uint i) const = 0;
+
+		class IBFact*				Instanciate(bool bInverted) const;
+		class IBFact*				Instanciate(bool bInverted, class IBWorldChange* pWorldChange) const;
+		class IBFact*				Instanciate(bool bInverted, class IBWorldChange* pWorldChange, const vector<IBObject>& aUserData) const;
 
 		// Must return state of the fact: true or false
-		IBF_Result					Test() { vector<IBObject*> aUserData; return Test(aUserData); }
-		virtual IBF_Result			Test(const vector<IBObject*>& aUserData) = 0;
-		
-		// Find adequate object to match with the fact for the variables unfilled
-		virtual void				ResolveVariable(vector<IBObject*>& aUserData) {}
+		virtual IBF_Result			Test(const class IBFact* pFact) const = 0;
+
+	protected:
+		void							AddVariable(const string& name);
+
 
 	private:
 		string						m_sName;
-		uint						m_iDegree;
+		uint							m_iDegree;
+		vector<string>				m_aVarNames;
 	
 	protected:
-		IBPlanner*					m_pPlanner;
+		class IBPlanner*				m_pPlanner;
 };
 
 #endif

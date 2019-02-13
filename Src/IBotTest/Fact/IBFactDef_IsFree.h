@@ -11,11 +11,7 @@ class IBFactDef_IsFree : public IBFactDef
 		IBFactDef_IsFree(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsFree();
 
-		virtual void			ResolveVariable(vector<IBObject*>& aUserData);
-
-		IBF_Result				Test(const vector<IBObject*>& aUserData);
-
-	private:
+		virtual IBF_Result				Test(const class IBFact* pFact) const override;
 };
 
 #endif

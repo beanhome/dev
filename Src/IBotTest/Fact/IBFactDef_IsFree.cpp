@@ -12,38 +12,12 @@ IBFactDef_IsFree::~IBFactDef_IsFree()
 {
 }
 
-IBF_Result IBFactDef_IsFree::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_IsFree::Test(const class IBFact* pFact) const
 {
-	assert(aUserData.size() == 1);
-
-	IBCube* pCube = (IBCube*)aUserData[0];
+	IBCube* pCube = pFact->GetVariable<IBCube>();
 
 	if (pCube == NULL)
 		return IBF_UNKNOW;
 
 	return (pCube->IsFree() ? IBF_OK : IBF_FAIL);
-
-
-}
-
-void IBFactDef_IsFree::ResolveVariable(vector<IBObject*>& aUserData)
-{
-	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
-	assert(aUserData.size() == 1);
-
-	if (aUserData[0] == NULL)
-	{
-		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
-		{
-			IBCube* pCube = pWorld->GetCubes()[i];
-
-			if (pCube->IsFree())
-			{
-				aUserData[0] = pCube;
-				break;
-			}
-		}
-	}
-
-	assert(aUserData[0] != NULL);
 }

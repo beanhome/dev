@@ -12,19 +12,9 @@ IBFactDef_BotIsEmpty::~IBFactDef_BotIsEmpty()
 {
 }
 
-IBF_Result IBFactDef_BotIsEmpty::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_BotIsEmpty::Test(const class IBFact* pFact) const
 {
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 0);
+	BLBot* pBot = static_cast<BLBot*>(m_pPlanner->GetOwner());
 
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-
-	return ((pBot->GetFirstObject() == NULL) ? IBF_OK : IBF_FAIL);
+	return ((pBot->GetFirstObject() == nullptr) ? IBF_OK : IBF_FAIL);
 }
-
-void IBFactDef_BotIsEmpty::ResolveVariable(vector<IBObject*>& aUserData)
-{
-}
-
-

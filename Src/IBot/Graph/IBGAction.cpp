@@ -50,20 +50,6 @@ void IBGAction::Resize()
 	if (m_aPreCond.size() > 0)
 		m_iPreCondWidth += IBGPlanner::s_iLinkWidth;
 
-	// Counter
-	m_iCounterHeight = 0;
-	m_iCounterWidth = 0;
-	if (m_eState == IBAction::IBA_Counter)
-	{
-		for (uint i=0 ; i<GetCounterPostCond().size() ; ++i)
-		{
-			IBGFact* pFact = static_cast<IBGFact*>(GetCounterPostCond()[i]);
-			pFact->GetFactBox()->Resize();
-			m_iCounterWidth = std::max<int>(m_iCounterWidth, pFact->GetFactBox()->GetW());
-			m_iCounterHeight += pFact->GetFactBox()->GetH();
-		}
-	}
-
 	int w = m_iPreCondWidth + std::max<int>(m_pActionBox->GetW(), m_iCounterWidth);
 	int h = std::max<int>(m_iPreCondHeight, m_pActionBox->GetH() + m_iCounterHeight);
 	

@@ -3,12 +3,9 @@
 
 #include "Utils.h"
 
-class IBActionDef;
-class IBAction;
-class IBFact;
-
-typedef map<string, IBActionDef*>  ActionDefMap;
-typedef pair<string, IBActionDef*>  ActionDefPair;
+typedef map<string, class IBActionDef*>  ActionDefMap;
+typedef pair<string, class IBActionDef*>  ActionDefPair;
+typedef set<class IBActionDef*>  ActionDefSet;
 
 class IBActionLibrary
 {
@@ -16,16 +13,19 @@ class IBActionLibrary
 		IBActionLibrary();
 		virtual ~IBActionLibrary();
 
-		void					RegisterActionDef(const string& name, IBActionDef* pActionDef);
+		void						RegisterActionDef(const string& name, class IBActionDef* pActionDef);
 
-		IBActionDef*			GetActionDef(const string& name);
-		IBActionDef*			FindActionDef(const string& factname);
-		IBAction*				FindActionDef(IBFact* pFact);
+		class IBActionDef*		GetActionDef(const string& name) const;
+		class IBActionDef*		FindActionDef(const string& factname) const;
+		//class IBAction*			FindActionDef(class IBFact* pFact) const;
+
+		const ActionDefSet&		GetAllActionDef() const;
 
 	protected:
 
 	private:
 		ActionDefMap			m_oMap;
+		ActionDefSet			m_oSet;
 };
 
 #endif

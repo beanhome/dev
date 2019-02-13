@@ -3,10 +3,8 @@
 
 #include "Utils.h"
 
-class IBFactDef;
-
-typedef map<string, IBFactDef*>  FactDefMap;
-typedef pair<string, IBFactDef*>  FactDefPair;
+typedef map<string, class IBFactDef*>  FactDefMap;
+typedef pair<string, class IBFactDef*>  FactDefPair;
 
 class IBFactLibrary
 {
@@ -14,9 +12,9 @@ class IBFactLibrary
 		IBFactLibrary();
 		virtual ~IBFactLibrary();
 
-		void				RegisterFactDef(const string& name, IBFactDef* pFactDef);
+		void					RegisterFactDef(const string& name, class IBFactDef* pFactDef);
 
-		IBFactDef*			GetFactDef(const string& name);
+		class IBFactDef*		GetFactDef(const string& name) const;
 
 	protected:
 

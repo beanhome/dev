@@ -9,8 +9,8 @@
 
 bool EvalSort::operator()(const IBAction* a1, const IBAction* a2) const
 {
-	float e1 = a1->Evaluate();
-	float e2 = a2->Evaluate();
+	float e1 = a1->GetCost();
+	float e2 = a2->GetCost();
 
 	return (e1 == e2 ? a1->GetState() < a2->GetState() : e1 < e2);
 }

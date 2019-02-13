@@ -1,5 +1,5 @@
-#ifndef __IBFactDef_BotAtPos_H__
-#define __IBFactDef_BotAtPos_H__
+#ifndef __IBFACTDEF_BOTATPOS_H__
+#define __IBFACTDEF_BOTATPOS_H__
 
 #include "Utils.h"
 
@@ -11,11 +11,7 @@ class IBFactDef_BotAtPos : public IBFactDef
 		IBFactDef_BotAtPos(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_BotAtPos();
 
-		virtual void			ResolveVariable(vector<IBObject*>& aUserData);
-
-		virtual IBF_Result		Test(const vector<IBObject*>& aUserData);
-
-	private:
+		virtual IBF_Result		Test(const class IBFact* pFact) const override;
 };
 
 #endif

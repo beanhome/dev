@@ -82,6 +82,20 @@ Path Path::GetInverse() const
 }
 */
 
+bool Path::InOnPath(const Vector2& pos) const
+{
+	if (GetStart() == pos)
+		return true;
+
+	for (uint i = 0; i < m_aPath.size(); ++i)
+	{
+		if (m_aPath[i] == pos)
+			return true;
+	}
+
+	return false;
+}
+
 void Path::Print() const
 {
 	if (!m_bInitialized)

@@ -11,7 +11,9 @@ class IBFactDef_Bool : public IBFactDef
 		IBFactDef_Bool(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_Bool();
 
-		IBF_Result			Test(const vector<IBObject*>& aUserData) { assert(aUserData.size() == 1); return (*((bool*)aUserData[0]) ? IBF_OK : IBF_FAIL); } 
+		//virtual string				GetVariableData(uint i) const override;
+		virtual IBF_Result			Test(const class IBFact* pFact) const override;
+
 
 	private:
 };

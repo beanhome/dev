@@ -4,26 +4,24 @@
 #include "IBGBoxBase.h"
 #include "IBGFactBox.h"
 
-class IBFact;
-class IBAction;
-class IBGFactBox;
-class IBGBox;
-
-class CanvasBase;
-
 class IBGActionBox : public IBGBoxBase
 {
 public:
-	IBGActionBox(Canvas& parent, IBAction* pAction);
+	IBGActionBox(class Canvas& parent, const class IBAction* pAction);
+	virtual ~IBGActionBox();
 
-	IBAction*		GetAction() { return m_pAction; }
-	void			SetAction(IBAction* pAction) { m_pAction = pAction; }
+	const class IBAction*		GetAction() const { return m_pAction; }
+	//void					SetAction(class IBAction* pAction) { m_pAction = pAction; }
 
-	virtual void	Resize();
-	virtual void	Draw() const;
+	virtual void			Resize();
+	virtual void			Draw() const;
+
+	sint16 GetActionMidHeight() const;
 
 private:
-	IBAction* m_pAction;
+	const class IBAction*		m_pAction;
+
+	vector<class IBGFactBox*>   m_aAdditionalPostCondBox;
 };
 
 #endif

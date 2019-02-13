@@ -12,13 +12,13 @@ class IBActionDef_DropObject : public IBActionDef
 
 		virtual void			Define();
 
-		virtual float			Evaluate(const IBAction* pAction) const;
-		
-		virtual bool			Init(IBAction* pAction);
-		virtual bool			Start(IBAction* pAction);
-		virtual bool			Execute(IBAction* pAction);
-		virtual bool			Finish(IBAction* pAction);
-		virtual void			Destroy(IBAction* pAction);
+		virtual float		GetCost(const IBAction* pAction) const override;
+		virtual void			CreateOwnedVariables(IBAction* pAction) const override;
+		virtual bool			Init(IBAction* pAction) const override;
+		virtual bool			Start(IBAction* pAction) const override;
+		virtual bool			Execute(IBAction* pAction) const override;
+		virtual bool			Finish(IBAction* pAction) const override;
+		virtual void			Destroy(IBAction* pAction) const override;
 
 	private:
 };

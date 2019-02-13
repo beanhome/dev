@@ -1,60 +1,162 @@
 #include "IBFact.h"
+#include "Fact/IBFactDef.h"
 #include "Action/IBActionDef.h"
 #include "IBPlanner.h"
 
 #include "Utils.h"
 #include "World/IBObject.h"
 
-IBFact::IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData)
-	: m_pDef(pDef)
-	, m_aUserData(aUserData)
-	, m_pEffectAction(NULL)
-	, m_bToDelete(false)
+IBFact::IBFact(const IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, class IBWorldChange* pWorldChangeOwner, IBPlanner* pPlanner)
+	: m_pPlanner(pPlanner)
+	, m_pDef(pDef)
+	, m_bInverted(bInverted)
+	, m_pWorldChangeOwner(pWorldChangeOwner)
 {
-	for (uint i=0 ; i<m_aUserData.size() ; ++i)
-	{
-		if (m_aUserData[i] != NULL && m_aUserData[i]->IsInstance() && m_aUserData[i]->GetOwner() == NULL)
-			m_aUserData[i]->SetOwner(this);
-	}
+	ASSERT(aVariables.size() == pDef->GetDegree());
+
+	for (uint i=0 ; i<aVariables.size() ; ++i)
+		m_aVariables.insert(VarPair(pDef->GetVariableName(i), aVariables[i]));
 }
 
 IBFact::~IBFact()
 {
 }
 
+IBFact* IBFact::Clone() const
+{
+	IBFact* pFact = new IBFact(*this);
+	return pFact;
+}
+
 void IBFact::Destroy()
 {
-	while (m_aCauseAction.begin() != m_aCauseAction.end())
+	for (ActionSet::const_iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); ++it)
 	{
-		IBAction* pAction = *m_aCauseAction.begin();
+		IBAction* pAction = *it;
 		pAction->Destroy();
 		delete pAction;
 	}
-
-	for (uint i=0 ; i<m_aUserData.size() ; ++i)
-	{
-		if (m_aUserData[i] != NULL && m_aUserData[i]->IsInstance() && m_aUserData[i]->GetOwner() == this)
-		{
-			delete m_aUserData[i];
-		}
-	}
+	
+	m_aCauseAction.clear();
 }
 
-bool IBFact::operator==(const IBFact& other) const
+const IBFactDef* IBFact::GetFactDef() const
 {
-	if (m_pDef != other.m_pDef)
+	return m_pDef;
+}
+
+bool	 IBFact::HasCauseAction() const
+{
+	return (m_aCauseAction.size() > 0);
+}
+
+void	 IBFact::RemoveCauseAction(class IBAction* pAction)
+{
+	m_aCauseAction.erase(pAction);
+}
+
+void	 IBFact::AddCauseAction(class IBAction* pAction)
+{
+	if (m_aCauseAction.find(pAction) == m_aCauseAction.end())
+		m_aCauseAction.insert(pAction);
+}
+
+const ActionSet& IBFact::GetCauseAction() const
+{
+	return m_aCauseAction;
+}
+
+const VarMap& IBFact::GetVariables() const
+{
+	return m_aVariables;
+}
+
+const IBObject* IBFact::GetVariable(const char* varname) const
+{
+	ASSERT(varname != nullptr || m_pDef->GetDegree() == 1);
+
+	VarMap::const_iterator it = (varname != nullptr ? m_aVariables.find(varname) : m_aVariables.begin());
+	ASSERT(it != m_aVariables.end());
+	return (it == m_aVariables.end() ? nullptr : &it->second);
+}
+
+void	 IBFact::SetVariable(const string& varname, const IBObject& obj)
+{
+	VarMap::iterator it = m_aVariables.find(varname);
+	ASSERT(it != m_aVariables.end());
+	if (it != m_aVariables.end())
+		it->second = obj;
+}
+
+void	 IBFact::SetVariable(const IBObject& obj)
+{
+	ASSERT(m_pDef->GetDegree() == 1);
+	ASSERT(m_aVariables.size() == 1);
+
+	m_aVariables.begin()->second = obj;
+}
+
+
+void	 IBFact::ResolveVariableFromCond(const class IBAction* pAction, const IBFactCondDef& oCondDef)
+{
+	for (uint i = 0; i < oCondDef.m_aLinkNames.size(); ++i)
+	{
+		const IBObject* pObj = pAction->GetVariable(oCondDef.m_aLinkNames[i].m_sActionVarName);
+		if (pObj)
+			SetVariable(oCondDef.m_aLinkNames[i].m_sCondVarName, *pObj);
+	}
+
+}
+
+bool IBFact::IsEqual(const IBFact* other) const
+{
+	ASSERT(other != nullptr);
+
+	if (m_pDef != other->m_pDef)
 		return false;
 
-	ASSERT(m_aUserData.size() == other.m_aUserData.size());			
+	if (m_bInverted != other->m_bInverted)
+		return false;
 
-	for (uint i=0 ; i<m_aUserData.size() ; ++i)
+	ASSERT(m_aVariables.size() == other->m_aVariables.size());
+
+	for (VarMap::const_iterator itA = m_aVariables.begin(), itB = other->m_aVariables.begin(); itA != m_aVariables.end() && itB != other->m_aVariables.end(); ++itA, ++itB)
 	{
-		if (m_aUserData[i] != other.m_aUserData[i])
+		if (itA->second != itB->second)
 			return false;
 	}
 
 	return true;
 }
+
+bool IBFact::IsOpposite(const IBFact* other) const
+{
+	ASSERT(other != nullptr);
+
+	if (m_pDef != other->m_pDef)
+		return false;
+
+	ASSERT(m_aVariables.size() == other->m_aVariables.size());
+
+	for (VarMap::const_iterator itA = m_aVariables.begin(), itB = other->m_aVariables.begin(); itA != m_aVariables.end() && itB != other->m_aVariables.end(); ++itA, ++itB)
+	{
+		if (itA->second != itB->second)
+			return false;
+	}
+
+	return (m_bInverted != other->m_bInverted);
+}
+
+bool IBFact::operator==(const IBFact& other) const
+{
+	return IsEqual(&other);
+}
+
+bool IBFact::operator!=(const IBFact& other) const
+{
+	return !IsEqual(&other);
+}
+
 
 SortedActionSet IBFact::GetActionOrdered() const
 {
@@ -66,65 +168,117 @@ SortedActionSet IBFact::GetActionOrdered() const
 	return pActionOrdered;
 }
 
-
-void IBFact::SetVariable(uint i, IBObject* pVar)
+void	 IBFact::Resolve(const IBPlanner* pPlanner)
 {
-	ASSERT(i<m_aUserData.size());
-	m_aUserData[i] = pVar;
-	if (pVar != NULL && pVar->IsInstance() && pVar->GetOwner() == NULL)
-		pVar->SetOwner(this);
+	const ActionDefSet& AllActionDef = pPlanner->GetActionLibrary().GetAllActionDef();
 
-	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
-		(*it)->UpdateVariableFromPostCond();
+	// For each Action in lib
+	for (ActionDefSet::const_iterator it = AllActionDef.begin(); it != AllActionDef.end(); ++it)
+	{
+		IBActionDef* pActionDef = *it;
+
+		if (IsResolvableBy(pActionDef))
+		{
+			IBAction* pAction = pActionDef->Instanciate(this);
+			AddCauseAction(pAction);
+		}
+	}
 }
 
-bool IBFact::IsReadyToDestroy() const
+bool IBFact::IsResolvableBy(const class IBActionDef* pActionDef) const
 {
-	if (!m_bToDelete)
-		return false;
-
-	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+	// Action propose to resolve pFact
+	bool found = false;
+	for (uint i = 0; i < pActionDef->GetPostCondDef().size(); ++i)
 	{
-		if (!(*it)->IsReadyToDestroy())
-			return false;
+		const IBFactCondDef& oDef = pActionDef->GetPostCondDef()[i];
+		if (m_pDef->GetName() == oDef.m_pFactDef->GetName()
+			&& m_bInverted == oDef.m_bInverted)
+		{
+			found = true;
+			break;
+		}
 	}
 
-	return true;
+	return found;
 }
 
-bool IBFact::IsReadyToDelete() const
-{
-	if (!m_bToDelete)
-		return false;
 
-	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
+void IBFact::Update()
+{
+	if (IsTrue())
 	{
-		if (!(*it)->IsReadyToDelete())
-			return false;
+		IBAction* pCurrentAction = m_pPlanner->GetCurrentAction();
+		if (pCurrentAction != nullptr && pCurrentAction->IsChildOf(this))
+		{
+			pCurrentAction->Stop(true);
+			m_pPlanner->SetCurrentAction(nullptr);
+		}
+		else
+		{
+			for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); ++it)
+			{
+				IBAction* pAction = *it;
+				pAction->Destroy();
+				delete pAction;
+			}
+
+			m_aCauseAction.clear();
+		}
 	}
 
-	return true;
+	if (IsTrue() == false && m_aCauseAction.size() == 0)
+	{
+
+	}
+
+	for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); /* blank */)
+	{
+		IBAction* pAction = *it;
+
+		if (pAction->GetState() == IBA_State::IBA_Destroyed)
+		{
+			RemoveCauseAction(*it++);
+			delete pAction;
+		}
+		else
+		{
+			pAction->Update();
+			++it;
+		}
+	}
 }
 
-
-void IBFact::PrepareToDelete()
+bool IBFact::IsImpossible() const
 {
-	m_bToDelete = true;
+	if (IsTrue())
+		return false;
 
-	for (ActionSet::iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
-		(*it)->PrepareToDelete();
+	bool bImpossible = (m_aCauseAction.size() > 0);
+
+	for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); ++it)
+	{
+		IBAction* pAction = *it;
+
+		if (pAction->GetState() != IBA_State::IBA_Impossible)
+			bImpossible = false;
+	}
+
+	return bImpossible;
 }
 
+
+/*
 IBAction* IBFact::GetBestCauseAction(float& fMinEval) const
 {
-	IBAction* pBestAction = NULL;
+	IBAction* pBestAction = nullptr;
 	fMinEval = 0.f;
 	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
 	{
 		IBAction* pAction = *it;
 
-		float fEval = pAction->Evaluate();
-		if (pBestAction == NULL || fMinEval > fEval)
+		float fEval = pAction->GetCost();
+		if (pBestAction == nullptr || fMinEval > fEval)
 		{
 			pBestAction = pAction;
 			fMinEval = fEval;
@@ -134,136 +288,27 @@ IBAction* IBFact::GetBestCauseAction(float& fMinEval) const
 	return pBestAction;
 }
 
-
-float IBFact::Evaluate() const
+class IBAction* IBFact::GetBestCauseAction() const
 {
-	if (Test() == IBF_OK)
-		return 0.f;
-
 	float fEval;
-	GetBestCauseAction(fEval);
-
-	return fEval;
+	return GetBestCauseAction(fEval);
 }
+*/
 
-IBF_Result IBFact::Resolve(IBPlanner* pPlanner, bool bExecute)
+IBF_Result IBFact::Test() const
 {
-	for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); /* blank */)
-	{
-		if ((*it)->IsReadyToDelete())
-		{
-			delete *it++; // the delete do the erase
-			//m_aCauseAction.erase(it++);
-		}
-		else
-		{
-			++it;
-		}
-	}
-
-	//if (m_pEffectAction != NULL && m_pEffectAction->GetState() == IBAction::IBA_Impossible)
-	//	return IBF_IMPOSSIBLE;
-
-	IBF_Result res = Test();
-
-	SortedActionSet pActionOrdered = GetActionOrdered();
-
-	bool bResolved = false;
-
-	switch (res)
-	{
-		case IBF_OK:
-			for (SortedActionSet::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
-			{
-				IBAction* pAction = *it;
-				pAction->PrepareToDelete();
-				pAction->Resolve(pPlanner, bExecute);
-			}
-			break;
-
-		case IBF_FAIL:
-			// TODO Find Equal Fact BottomTop
-			// -> Impossible
-			if (FindEqualFact_BottomTop(this) != NULL)
-			{
-				res = IBF_IMPOSSIBLE;
-			}
-			else if (!m_bToDelete && m_aCauseAction.size() == 0)
-			{
-				pPlanner->FindActionToResolve(this);
-				if (m_aCauseAction.size() == 0)
-					res = IBF_IMPOSSIBLE;
-			}
-			else
-			{
-				bool imp = true;
-				bool resolved = false;
-				for (SortedActionSet::iterator it = pActionOrdered.begin() ; it != pActionOrdered.end() ; ++it)
-				{
-					IBAction* pAction = *it;
-
-					if (m_bToDelete)
-						pAction->PrepareToDelete();
-
-					if (bResolved)
-						pAction->PrepareToDelete();
-
-					IBAction::State st = pAction->Resolve(pPlanner, bExecute);
-					bResolved = pAction->IsResolved();
-
-					//if (st != IBAction::IBA_Destroyed)
-					//	bExecute = false;
-
-					if (st != IBAction::IBA_Impossible)
-						imp = false;
-
-					if (!m_bToDelete && st == IBAction::IBA_Destroyed)
-						pAction->PrepareToDelete();
-				}
-
-				if (imp)
-					res = IBF_IMPOSSIBLE;
-				else if (bResolved)
-					res = IBF_RESOLVED;
-			}
-			break;
-
-		case IBF_UNKNOW:
-			// Find variable object
-			/*
-			ResolveVariable();
-			if (GetEffectAction() != NULL)
-				GetEffectAction()->SpreadPreCondVariable(this);
-			*/
-			break;
-	}
-
-	res = (m_bToDelete ? IBF_DELETE : res);
-
-	return res;
+	return m_pDef->Test(this);
 }
 
-bool IBFact::IsResolved() const
+bool IBFact::IsTrue() const
 {
-	if (IsTrue())
-		return true;
-
-	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
-	{
-		IBAction* pAction = *it;
-
-		if (pAction->IsResolved())
-			return true;
-	}
-
-	return false;
+	return (Test() == IBF_Result::IBF_OK) != m_bInverted;
 }
 
-const IBFact* IBFact::FindEqualFact_BottomTop(IBFact* pModelFact) const
+int IBFact::GetCost() const
 {
-	if (this != pModelFact && *this == *pModelFact)
-		return this;
+	if (IsImpossible())
+		return INT32_MAX;
 
-	return (m_pEffectAction != NULL ? m_pEffectAction->FindEqualFact_BottomTop(pModelFact) : NULL);
+	return (IsTrue() ? 0 : 1);
 }
-

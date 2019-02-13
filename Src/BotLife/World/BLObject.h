@@ -2,26 +2,23 @@
 #define __BLOBJECT_H__
 
 #include "Utils.h"
-#include "World/IBObject.h"
-#include "World/IBVector2.h"
+#include "Vector2.h"
 
-class BLObject : public IBObject
+class BLObject
 {
 	public:
-		//BLObject();
 		BLObject(const string& name);
-		//BLObject(const Vector2& pos);
-		BLObject(const string& name, const Vector2& pos);
 		virtual ~BLObject();
 
-		virtual const IBVector2& GetPos() const { return m_vPos; }
-		virtual IBVector2& GetPos() { return m_vPos; }
-		virtual void SetPos(const Vector2& p) { m_vPos = p; }
+		virtual BLObject* Clone() const { return new BLObject(*this); }
+
+		const string& GetName() const { return m_sName; }
+		void SetName(const string& name) { m_sName = name; }
 
 		void  Print() const;
 
 	protected:
-		IBVector2 m_vPos;
+		string m_sName;
 };
 
 #endif

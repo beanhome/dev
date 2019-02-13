@@ -2,19 +2,13 @@
 #define __IBGBOXBASE_H__
 
 #include "Utils.h"
-//#include "Color.h"
 #include "Canvas.h"
 #include "Vector2.h"
-
-class CanvasBase;
-
-class IBGBox;
-class Color;
 
 class IBGBoxBase
 {
 	public:
-		IBGBoxBase(CanvasBase& parent);
+		IBGBoxBase(class CanvasBase& parent);
 
 		sint16 GetX() const { return (sint16)m_oCanvas.GetPosX(); }
 		sint16 GetY() const { return (sint16)m_oCanvas.GetPosY(); }
@@ -36,8 +30,8 @@ class IBGBoxBase
 		sint16 GetScreenX() const { return (sint16)m_oCanvas.GetScreenPosX(); }
 		sint16 GetScreenY() const { return (sint16)m_oCanvas.GetScreenPosY(); }
 
-		const CanvasBase& GetCanvas() const { return m_oCanvas; }
-		CanvasBase& GetCanvas() { return m_oCanvas; }
+		const class CanvasBase& GetCanvas() const { return m_oCanvas; }
+		class CanvasBase& GetCanvas() { return m_oCanvas; }
 		
 		/*
 		Vector2 GetTopLeft() const { return Vector2(GetX(), GetY()); }
@@ -54,7 +48,7 @@ class IBGBoxBase
 		virtual void	Resize() = 0;
 		virtual void	Draw() const = 0;
 		
-		void			DrawFrame(const Color& color) const;
+		void			DrawFrame(const class Color& color) const;
 
 	protected:
 		Canvas		m_oCanvas;

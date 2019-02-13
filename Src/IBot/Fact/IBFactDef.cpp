@@ -3,17 +3,6 @@
 #include "IBPlanner.h"
 #include "World/IBObject.h"
 
-const char* IBF_ResultString[IBF_Result_MAX] =
-{
-	"Ok",
-	"Fail",
-	"Unknow",
-	"Impossible",
-	"Resolved",
-	"Delete",
-};
-
-
 IBFactDef::IBFactDef(const string& name, uint iDegree, IBPlanner* pPlanner)
 	: m_sName(name)
 	, m_iDegree(iDegree)
@@ -24,6 +13,9 @@ IBFactDef::IBFactDef(const string& name, uint iDegree, IBPlanner* pPlanner)
 	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
 
 	m_sName = name.c_str() + offset;
+
+	if (m_iDegree == 1)
+		AddVariable("Var");
 }
 
 IBFactDef::~IBFactDef()
@@ -31,29 +23,49 @@ IBFactDef::~IBFactDef()
 
 }
 
-IBFact* IBFactDef::Instanciate(IBAction* pEffectAction, const vector<IBObject*> aUserData)
+const string& IBFactDef::GetName() const
 {
-	assert(aUserData.size() == m_iDegree);
-	return m_pPlanner->InstanciateFact(this, aUserData, pEffectAction);
+	return m_sName;
 }
 
-void IBFactDef::GetData(const vector<IBObject*>& aUserData, string& sData) const
+uint	 IBFactDef::GetDegree() const
 {
-	sData.clear();
-	for (uint i=0 ; i<aUserData.size() ; ++i)
-	{
-		sData += aUserData[i]->GetData();
-
-		if (i<aUserData.size()-1)
-			LOG(", ");
-	}
+	return m_iDegree;
 }
 
-string IBFactDef::GetData(const vector<IBObject*>& aUserData) const
+const string& IBFactDef::GetVariableName(uint i) const
 {
-	string sData;
-	GetData(aUserData, sData);	
-	return sData;
+	static string empty_string;
+
+	ASSERT(i < m_iDegree);
+
+	if (i < m_iDegree)
+		return m_aVarNames[i];
+
+	return empty_string;
 }
 
 
+void IBFactDef::AddVariable(const string& name)
+{
+	ASSERT(m_iDegree > 0 && m_aVarNames.size() < m_iDegree);
+
+	m_aVarNames.push_back(name);
+}
+
+class IBFact* IBFactDef::Instanciate(bool bInverted) const
+{
+	return Instanciate(bInverted, nullptr);
+}
+
+class IBFact* IBFactDef::Instanciate(bool bInverted, class IBWorldChange* pWorldChange) const
+{
+	vector<IBObject> aVariables(m_iDegree, IBObject());
+	return Instanciate(bInverted, pWorldChange, aVariables);
+}
+
+IBFact* IBFactDef::Instanciate(bool bInverted, IBWorldChange* pWorldChange, const vector<IBObject>& aVariables) const
+{
+	assert(aVariables.size() == m_iDegree);
+	return m_pPlanner->InstanciateFact(this, bInverted, aVariables, pWorldChange);
+}

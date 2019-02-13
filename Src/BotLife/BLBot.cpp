@@ -4,8 +4,11 @@
 #include "GEngine.h"
 #include "ImageResource.h"
 #include "BLWorld.h"
+#include "IBPlanner.h"
 #include "IBPlanner_BL.h"
-#include "World/IBVector2.h"
+#include "BLGoal.h"
+#include "BLApp.h"
+#include "Vector2.h"
 #include "World/BLProp.h"
 #include "Canvas.h"
 
@@ -47,18 +50,17 @@ Vector2 BLBot::s_vDirArray[8] = { Vector2(0,1), Vector2(1,1), Vector2(1,0), Vect
 
 
 BLBot::BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas)
-	: IBObject("Bot")
+	: BLActor("Bot")
 	, m_oWorld(oWorld)
-	, m_pWalkImage(NULL)
-	, m_pWorkImage(NULL)
-	, m_vPos("Current")
+	, m_pWalkImage(nullptr)
+	, m_pWorkImage(nullptr)
 	, m_eState(Idle)
 	, m_fStateTime(0.f)
 	, m_fStateDelay(0.2f)
 	, m_fStepTime(0.f)
 	, m_fStepDelay(0.1f)
-	, m_pCarryObject(NULL)
-	, m_pPushObject(NULL)
+	, m_pCarryObject(nullptr)
+	, m_pPushObject(nullptr)
 {
 	m_pIdleImage = new ImageFlipBook(oWorld.GetCanvas(), ge.GetImageResource(DATA_DIR "/BotLife/peasant_idle.png"), 8, 1);
 	m_pIdleImage->SetCenter(16, 25);
@@ -72,12 +74,12 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas)
 	m_pWorkImage->SetCenter(24, 35);
 	m_pWorkImage->SetCurrent(0);
 
-	m_pPlanner = new IBPlanner_BL(this, oPlannerCanvas);
+	m_pPlanner = new IBPlanner_BL(this);
 }
 
 BLBot::~BLBot()
 {
-	if (m_pCarryObject != NULL)
+	if (m_pCarryObject != nullptr)
 		delete m_pCarryObject;
 
 	delete m_pIdleImage;
@@ -113,34 +115,43 @@ void BLBot::SetPos(const Vector2& p)
 	m_vPos = p;
 }
 
-void BLBot::AddGoal(const IBGoal& goal) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(goal); }
-void BLBot::AddGoal(const string& name) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name); }
-void BLBot::AddGoal(const string& name, IBObject* pUserData) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData); }
-void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData1, pUserData2); }
-void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3) { ASSERT(m_pPlanner != NULL); m_pPlanner->AddGoal(name, pUserData1, pUserData2, pUserData3); }
+void BLBot::AddGoal(const BLGoal& oGoal)
+{
+	m_aGoals.push_back(oGoal);
+	BLGoal& oOwnedGoal = m_aGoals.back();
+
+	ASSERT(m_pPlanner != nullptr);
+	
+	m_pPlanner->AddGoal(oOwnedGoal.GetFact()->Clone());
+}
+
+void BLBot::AddGoal(const string& name) { ASSERT(m_pPlanner != nullptr); m_pPlanner->AddGoal(name, true); }
+void BLBot::AddGoal(const string& name, IBObject* pUserData) { ASSERT(m_pPlanner != nullptr); m_pPlanner->AddGoal(name, true, pUserData); }
+void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2) { ASSERT(m_pPlanner != nullptr); m_pPlanner->AddGoal(name, true, pUserData1, pUserData2); }
+void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3) { ASSERT(m_pPlanner != nullptr); m_pPlanner->AddGoal(name, true, pUserData1, pUserData2, pUserData3); }
 
 void BLBot::PickProp(BLProp* pProp)
 {
-	ASSERT(m_pCarryObject == NULL);
+	ASSERT(m_pCarryObject == nullptr);
 
 	BLSquare& sq = GetWorld().GetGrid().GetCase(pProp->GetPos());
 	ASSERT(sq.GetProp() == pProp);
-	sq.SetProp(NULL);
+	sq.SetProp(nullptr);
 
 	m_pCarryObject = pProp;
 	pProp->SetVisible(false);
 }
 
-void BLBot::DropObject(BLProp* pProp, const IBVector2& pos)
+void BLBot::DropObject(BLProp* pProp, const Vector2& pos)
 {
 	ASSERT(m_pCarryObject == pProp);
 
 	BLSquare& sq = GetWorld().GetGrid().GetCase(pos);
-	ASSERT(sq.GetProp() == NULL);
+	ASSERT(sq.GetProp() == nullptr);
 	ASSERT(GetWorld().GetGrid().Distance(pos, GetPos()) <= 1);
 
 	sq.SetProp(pProp);
-	m_pCarryObject = NULL;
+	m_pCarryObject = nullptr;
 	pProp->SetVisible(true);
 	pProp->SetPos(pos);
 }
@@ -150,7 +161,11 @@ void BLBot::SetState(BotState state, BotDir dir, float delay, BLProp* pObj)
 {
 	if (m_eState == state)
 	{
-		m_fStateTime -= m_fStateDelay;
+		if (m_fStateDelay > 0.f)
+			m_fStateTime -= m_fStateDelay;
+		else
+			m_fStateTime = 0.f;
+		m_fStateDelay = delay;
 	}
 	else
 	{
@@ -185,12 +200,13 @@ void BLBot::Update(float dt)
 
 	if (m_fStateTime > m_fStateDelay)
 	{
-		//m_eState = Idle;
 		m_pPlanner->Step();
 		m_fStepTime = 0.f;
-		//m_fStateTime = 0.f;
-		//m_fStateDelay = -1.f;
-		//m_oWorld.GetApp().SetPause(true);
+
+		//if (m_pPlanner->GetBestNode() != nullptr && m_pPlanner->GetBestNode()->IsTrue() && m_pPlanner->GetCurrentAction() == nullptr)
+		{
+			GetWorld().GetApp().SetPause(true);
+		}
 	}
 	else
 	{
@@ -264,7 +280,7 @@ void BLBot::Draw() const
 			ASSERT(false);
 	}
 
-	if (m_pCarryObject != NULL)
+	if (m_pCarryObject != nullptr)
 		m_oWorld.GetCanvas().DrawImage(*m_pCarryObject->GetImageResource(), (sint16)m_fLocX, (sint16)m_fLocY, 0, 0.8f);
 
 	//m_oWorld.GetCanvas().DrawRect(m_vPos.x * m_oWorld.GetGridSize(), m_vPos.y * m_oWorld.GetGridSize(), m_oWorld.GetGridSize()-1, m_oWorld.GetGridSize()-1, 255, 255, 255);

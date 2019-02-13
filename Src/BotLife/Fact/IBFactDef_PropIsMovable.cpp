@@ -1,7 +1,6 @@
 #include "IBFactDef_PropIsMovable.h"
 #include "Utils.h"
-#include "BLBot.h"
-#include "IBPlanner.h"
+#include "Fact/IBFact.h"
 #include "World/BLProp.h"
 
 IBFactDef_PropIsMovable::IBFactDef_PropIsMovable(const string& name, IBPlanner* pPlanner)
@@ -13,18 +12,12 @@ IBFactDef_PropIsMovable::~IBFactDef_PropIsMovable()
 {
 }
 
-IBF_Result IBFactDef_PropIsMovable::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_PropIsMovable::Test(const class IBFact* pFact) const
 {
-	ASSERT(aUserData.size() == GetDegree());
-
-	BLProp* pProp = reinterpret_cast<BLProp*>(aUserData[0]);
+	BLProp* pProp = pFact->GetVariable<BLProp>();
 	
-	if (pProp == NULL)
+	if (pProp == nullptr)
 		return IBF_UNKNOW;
 
 	return (pProp->IsMovable() ? IBF_OK : IBF_FAIL);
-}
-
-void IBFactDef_PropIsMovable::ResolveVariable(vector<IBObject*>& aUserData)
-{
 }

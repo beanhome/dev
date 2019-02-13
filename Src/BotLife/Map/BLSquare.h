@@ -3,7 +3,9 @@
 
 #include "Utils.h"
 #include "GridBase.h"
-#include "World/IBVector2.h"
+#include "World/BLVector2.h"
+
+#undef GetProp
 
 class Canvas;
 class CanvasBase;
@@ -36,12 +38,12 @@ class BLSquare
 {
 	public:
 		BLSquare();
-		BLSquare(const Vector2& pos);
+		BLSquare(const BLVector2& pos);
 		virtual ~BLSquare();
 
-		const IBVector2& GetPos() const { return m_vPos; }
-		void SetPos(const Vector2& pos) { m_vPos = pos; }
-		void SetPos(int i, int j) { m_vPos.x = i; m_vPos.y = j; }
+		const BLVector2& GetPos() const { return m_vPos; }
+		void SetPos(const BLVector2& pos);
+		void SetPos(int i, int j);
 
 		TilesType GetTilesType() const { return m_eTilesType; }
 		void SetTilesType(TilesType type) { m_eTilesType = type;}
@@ -51,6 +53,7 @@ class BLSquare
 
 		void SetProp(BLProp* pProp);
 		const BLProp* GetProp() const { return m_pProp; }
+		BLProp* GetProp() { return m_pProp; }
 
 		bool IsFree(BLProp* ignore = NULL) const { return (!IsBlock(ignore) && (m_pProp == NULL || m_pProp == ignore)); }
 		virtual bool IsBlock(BLProp* ignore = NULL) const;
@@ -58,7 +61,7 @@ class BLSquare
 		virtual bool IsTempBlock(BLProp* ignore = NULL) const;
 
 	private:
-		IBVector2	m_vPos;
+		BLVector2	m_vPos;
 		TilesType	m_eTilesType;
 		int			m_TilesId;
 		BLProp*		m_pProp;

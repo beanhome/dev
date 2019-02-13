@@ -27,12 +27,12 @@ void IBFactLibrary::RegisterFactDef(const string& name, IBFactDef* pFactDef)
 	m_oMap.insert(FactDefPair(name.c_str()+offset, pFactDef));
 }
 
-IBFactDef* IBFactLibrary::GetFactDef(const string& name)
+IBFactDef* IBFactLibrary::GetFactDef(const string& name) const
 {
 	const char* prefix = "IBFactDef_";
 	const uint len = strlen(prefix);
 	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
 
-	FactDefMap::iterator it = m_oMap.find(name.c_str()+offset);
+	FactDefMap::const_iterator it = m_oMap.find(name.c_str()+offset);
 	return (it != m_oMap.end() ? it->second : NULL);
 }

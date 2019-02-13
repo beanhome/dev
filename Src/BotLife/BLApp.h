@@ -5,13 +5,6 @@
 #include "GApp.h"
 #include "GEngine_SDL.h"
 
-class GEngine;
-class Canvas;
-class BLWorld;
-class IBPlannerDisplay;
-class BLGoalMenu;
-class BLSquare;
-
 class BLApp : public GApp<GEngine_SDL>
 {
 	public:
@@ -24,16 +17,18 @@ class BLApp : public GApp<GEngine_SDL>
 
 		void UpdateUserInterface();
 
-		Canvas& GetPlannerCanvas() { return *m_pGraphCanva; }
+		class Canvas& GetPlannerCanvas() { return *m_pGraphCanva; }
 
 	private:
-		Canvas* m_pWorldCanva;
-		Canvas* m_pGraphCanva;
+		class Canvas* m_pWorldCanva;
+		class Canvas* m_pGraphCanva;
 
-		BLWorld* m_pWorld;
+		class BLWorld* m_pWorld;
 
-		BLGoalMenu* m_pGoalMenu;
-		const BLSquare* m_pSelectSquare;
+		class IBGraphPlannerDisplay* m_pPlannerDisplay;
+
+		class BLGoalMenu* m_pGoalMenu;
+		const class BLSquare* m_pSelectSquare;
 };
 
 #endif // __GAPP_H__

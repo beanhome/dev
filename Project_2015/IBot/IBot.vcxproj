@@ -74,12 +74,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Src\IBot\IBGoal.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Fact\IBWorldChange.cpp" />
+    <ClCompile Include="..\..\Src\IBot\IBCost.cpp" />
     <ClCompile Include="..\..\Src\IBot\IBPlanner.cpp" />
     <ClCompile Include="..\..\Src\IBot\Fact\IBFact.cpp" />
     <ClCompile Include="..\..\Src\IBot\Fact\IBFactDef.cpp" />
     <ClCompile Include="..\..\Src\IBot\Fact\IBFactLibrary.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Fact\IBFactVisitor.cpp" />
     <ClCompile Include="..\..\Src\IBot\Fact\Def\IBFactDef_Bool.cpp" />
     <ClCompile Include="..\..\Src\IBot\Fact\Def\IBFactDef_False.cpp" />
     <ClCompile Include="..\..\Src\IBot\Fact\Def\IBFactDef_True.cpp" />
@@ -87,19 +87,18 @@
     <ClCompile Include="..\..\Src\IBot\Action\IBActionDef.cpp" />
     <ClCompile Include="..\..\Src\IBot\Action\IBActionLibrary.cpp" />
     <ClCompile Include="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.cpp" />
-    <ClCompile Include="..\..\Src\IBot\World\IBInt.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Types.cpp" />
     <ClCompile Include="..\..\Src\IBot\World\IBObject.cpp" />
-    <ClCompile Include="..\..\Src\IBot\World\IBVector2.cpp" />
     <ClCompile Include="..\..\Src\IBot\Display\IBPlannerDebug.cpp" />
     <ClCompile Include="..\..\Src\IBot\Display\IBPlannerDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Src\IBot\IBGoal.h" />
+    <ClInclude Include="..\..\Src\IBot\Fact\IBWorldChange.h" />
+    <ClInclude Include="..\..\Src\IBot\IBCost.h" />
     <ClInclude Include="..\..\Src\IBot\IBPlanner.h" />
     <ClInclude Include="..\..\Src\IBot\Fact\IBFact.h" />
     <ClInclude Include="..\..\Src\IBot\Fact\IBFactDef.h" />
     <ClInclude Include="..\..\Src\IBot\Fact\IBFactLibrary.h" />
-    <ClInclude Include="..\..\Src\IBot\Fact\IBFactVisitor.h" />
     <ClInclude Include="..\..\Src\IBot\Fact\Def\IBFactDef_Bool.h" />
     <ClInclude Include="..\..\Src\IBot\Fact\Def\IBFactDef_False.h" />
     <ClInclude Include="..\..\Src\IBot\Fact\Def\IBFactDef_True.h" />
@@ -107,9 +106,8 @@
     <ClInclude Include="..\..\Src\IBot\Action\IBActionDef.h" />
     <ClInclude Include="..\..\Src\IBot\Action\IBActionLibrary.h" />
     <ClInclude Include="..\..\Src\IBot\Action\Def\IBActionDef_BoolToBool.h" />
-    <ClInclude Include="..\..\Src\IBot\World\IBInt.h" />
+    <ClInclude Include="..\..\Src\IBot\Types.h" />
     <ClInclude Include="..\..\Src\IBot\World\IBObject.h" />
-    <ClInclude Include="..\..\Src\IBot\World\IBVector2.h" />
     <ClInclude Include="..\..\Src\IBot\Display\IBPlannerDebug.h" />
     <ClInclude Include="..\..\Src\IBot\Display\IBPlannerDisplay.h" />
   </ItemGroup>

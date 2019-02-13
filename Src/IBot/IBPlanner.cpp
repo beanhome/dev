@@ -7,13 +7,16 @@
 
 #include "Action/IBAction.h"
 #include "Action/Def/IBActionDef_BoolToBool.h"
-#include "IBGoal.h"
 
-float IBPlanner::s_fMaxActionDelay = 10000000.f;
+float IBPlanner::s_fMaxActionDelay = 10.f;
+
 
 IBPlanner::IBPlanner(void* pOwner)
 	: m_pOwner(pOwner)
-	, m_pCurrentAction(NULL)
+	, m_oGoals(this)
+	, m_pCurrentAction(nullptr)
+	, m_pBestNode(nullptr)
+	, m_iStepCount(0)
 {
 	REGISTER_FACT(IBFactDef_True);
 	REGISTER_FACT(IBFactDef_False);
@@ -24,198 +27,152 @@ IBPlanner::IBPlanner(void* pOwner)
 
 IBPlanner::~IBPlanner()
 {
-	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
-	{
-		(*it)->Destroy();
-		delete (*it);
-	}
+	m_oGoals.Destroy();
 }
 
-
-
-IBAction* IBPlanner::InstanciateAction(IBActionDef* pDef, IBFact* pPostCond1)
+IBAction* IBPlanner::InstanciateAction(const string& sActionName, IBFact* pPostCond)
 {
-	return new IBAction(pDef, pPostCond1);
+	IBActionDef* pActionDef = m_oActionLibrary.FindActionDef(sActionName);
+	return (pActionDef != nullptr ? InstanciateAction(pActionDef, pPostCond) : nullptr);
 }
 
-IBFact* IBPlanner::InstanciateFact(IBFactDef* pDef, const vector<IBObject*>& aUserData, IBAction* pEffectAction)
+IBAction* IBPlanner::InstanciateAction(const IBActionDef* pDef, IBFact* pPostCond)
 {
-	return new IBFact(pDef, aUserData);
+	return new IBAction(pDef, pPostCond, this);
 }
 
-
-
-void IBPlanner::AddGoal(const IBGoal& goal)
+IBFact* IBPlanner::InstanciateFact(const string& sFactName, bool bInverted, const vector<IBObject>& aVariables, IBWorldChange* pWorldChange)
 {
-	IBFactDef* pDef = GetFactDef(goal.GetName());
-	assert(pDef != NULL);
-
-	m_aGoals.insert(pDef->Instanciate(NULL, goal.GetUserData()));
+	IBFactDef* pFactDef = m_oFactLibrary.GetFactDef(sFactName);
+	return (pFactDef != nullptr ? InstanciateFact(pFactDef, bInverted, aVariables, pWorldChange) : nullptr);
 }
 
+IBFact* IBPlanner::InstanciateFact(const IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, IBWorldChange* pWorldChange)
+{
+	return new IBFact(pDef, bInverted, aVariables, pWorldChange, this);
+}
 
-void IBPlanner::AddGoal(const string& name)
+void IBPlanner::AddGoal(const string& name, bool bTrue)
 {
 	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
+	assert(pDef != nullptr);
 
-	m_aGoals.insert(pDef->Instanciate());
+	m_oGoals.AddFact(pDef->Instanciate(!bTrue));
 }
 
-void IBPlanner::AddGoal(const string& name, IBObject* pUserData)
+void IBPlanner::AddGoal(const string& name, bool bTrue, const vector<IBObject>& aObjects)
 {
 	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
+	assert(pDef != nullptr);
 
-	vector<IBObject*> aUserData;
-	aUserData.push_back(pUserData);
-	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
+	m_oGoals.AddFact(pDef->Instanciate(!bTrue, &m_oGoals, aObjects));
 }
 
-void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2)
+void IBPlanner::AddGoal(const string& fact_name, bool bTrue, const string& var_name, void* pUserData)
 {
-	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
+	IBFactDef* pDef = GetFactDef(fact_name);
+	assert(pDef != nullptr);
 
-	vector<IBObject*> aUserData;
-	aUserData.push_back(pUserData1);
-	aUserData.push_back(pUserData2);
-	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
+	vector<IBObject> aVariables;
+	aVariables.push_back(IBObject(var_name, pUserData));
+	m_oGoals.AddFact(pDef->Instanciate(!bTrue, &m_oGoals, aVariables));
 }
 
-void IBPlanner::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3)
+void IBPlanner::AddGoal(const string& fact_name, bool bTrue, const string& sVarName1, void* pUserData1, const string& sVarName2, void* pUserData2)
 {
-	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
+	IBFactDef* pDef = GetFactDef(fact_name);
+	assert(pDef != nullptr);
 
-	vector<IBObject*> aUserData;
-	aUserData.push_back(pUserData1);
-	aUserData.push_back(pUserData2);
-	aUserData.push_back(pUserData3);
-	m_aGoals.insert(pDef->Instanciate(NULL, aUserData));
+	vector<IBObject> aVariables;
+	aVariables.push_back(IBObject(sVarName1, pUserData1));
+	aVariables.push_back(IBObject(sVarName2, pUserData2));
+	m_oGoals.AddFact(pDef->Instanciate(!bTrue, &m_oGoals, aVariables));
+}
+
+void IBPlanner::AddGoal(const string& fact_name, bool bTrue, const string& sVarName1, void* pUserData1, const string& sVarName2, void* pUserData2, const string& sVarName3, void* pUserData3)
+{
+	IBFactDef* pDef = GetFactDef(fact_name);
+	assert(pDef != nullptr);
+
+	vector<IBObject> aVariables;
+	aVariables.push_back(IBObject(sVarName1, pUserData1));
+	aVariables.push_back(IBObject(sVarName2, pUserData2));
+	aVariables.push_back(IBObject(sVarName3, pUserData3));
+	m_oGoals.AddFact(pDef->Instanciate(!bTrue, &m_oGoals, aVariables));
+}
+
+void IBPlanner::AddGoal(IBFact* goal)
+{
+	m_oGoals.AddFact(goal);
 }
 
 void IBPlanner::RemGoal(IBFact* goal)
 {
-	m_aGoals.erase(goal);
+	m_oGoals.RemFact(goal);
 	delete goal;
 }
 
-
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name)
-{
-	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
-
-	pAction->AddPreCond(pDef->Instanciate());
-}
-
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData)
-{
-	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
-
-	vector<IBObject*> aUserData;
-	aUserData.push_back(pUserData);
-	pAction->AddPreCond(pDef->Instanciate(NULL, aUserData));
-}
-
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2)
-{
-	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
-
-	vector<IBObject*> aUserData;
-	aUserData.push_back(pUserData1);
-	aUserData.push_back(pUserData2);
-	pAction->AddPreCond(pDef->Instanciate(NULL, aUserData));
-}
-
-void IBPlanner::AddPreCond(IBAction* pAction, const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3)
-{
-	IBFactDef* pDef = GetFactDef(name);
-	assert(pDef != NULL);
-
-	vector<IBObject*> aUserData;
-	aUserData.push_back(pUserData1);
-	aUserData.push_back(pUserData2);
-	aUserData.push_back(pUserData3);
-	pAction->AddPreCond(pDef->Instanciate(NULL, aUserData));
-}
-
-
 int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 {
-	//m_aGoals.erase(std::remove_if(m_aGoals.begin(), m_aGoals.end(), IBFact::RemoveAndDelete), m_aGoals.end());
-
 	if (bCleanGoal)
+		CleanGoal();
+
+	m_oGoals.Update();
+	m_pBestNode = m_oGoals.GetBestWorldChange();
+	m_pBestNode->Step(this);
+	m_pBestNode = m_oGoals.GetBestWorldChange();
+
+	// no current action -> take best node action
+	if (m_pCurrentAction == nullptr && m_pBestNode != nullptr && m_pBestNode->IsTrue())
 	{
-		for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; /* blank */)
+		m_pCurrentAction = m_pBestNode->GetAction();
+		if (m_pCurrentAction != nullptr)
+			m_pCurrentAction->Start();
+	}
+
+	// current action pre condition all false
+	else if (m_pCurrentAction != nullptr && m_pCurrentAction->GetPreWorldChange()->IsTrue() == false)
+	{
+		m_pCurrentAction->Stop(true);
+		m_pCurrentAction = nullptr;
+	}
+
+	// best node action is not current action -> Cancel
+	else if (m_pCurrentAction != nullptr && m_pBestNode != nullptr && m_pBestNode->GetAction() != nullptr && m_pCurrentAction != m_pBestNode->GetAction())
+	{
+		m_pCurrentAction->Stop(true);
+		m_pCurrentAction = nullptr;
+	}
+
+	// best node action is current action -> update
+	else if (m_pCurrentAction != nullptr)
+	{
+		if (m_pCurrentAction->Execute())
 		{
-			if (IBFact::RemoveAndDelete(*it))
-				m_aGoals.erase(it++);
-			else
-				++it;
+			m_pCurrentAction->Stop(false);
+			m_pCurrentAction = nullptr;
 		}
 	}
 
-	bool finish = true;
-	for (FactSet::iterator it = m_aGoals.begin() ; it != m_aGoals.end() ; ++it)
-	{
-		IBFact* pFact = *it;
-		IBF_Result res = pFact->Resolve(this, bExecute);
-		if (res == IBF_OK)
-			if (bCleanGoal)
-				pFact->PrepareToDelete();
-		else
-			finish = false;
-	}
-
-	return finish;
-}
-
-int IBPlanner::FindActionToResolve(IBFact* pFact)
-{
-	m_oActionLibrary.FindActionDef(pFact);
+	m_iStepCount++;
 
 	return 0;
 }
 
-IBFact* IBPlanner::FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pInstigator) const
+void IBPlanner::CleanGoal()
 {
-	IBFact* pFound = NULL;
-
-	for (FactSet::const_iterator it_goal = m_aGoals.begin() ; it_goal != m_aGoals.end() ; ++it_goal)
+	for (FactSet::iterator it = m_oGoals.GetFacts().begin(); it != m_oGoals.GetFacts().end(); /* blank */)
 	{
-		IBFact* pFact = *it_goal;
-
-		if (pFact == pInstigator)
-			continue;
-
-		if (pFact != pModelFact && *pFact == *pModelFact)
+		IBFact* pFact = *it;
+		if (pFact->IsTrue() && pFact->GetCauseAction().size() == 0)
 		{
-			pFound = pFact;
-			break;
+			m_oGoals.RemFact(*it++);
+			pFact->Destroy();
+			delete pFact;
 		}
-		
-		const ActionSet& CauseAction = pFact->GetCauseAction();
-
-		for (ActionSet::const_iterator it = CauseAction.begin() ; it != CauseAction.end() ; ++it)
+		else
 		{
-			IBAction* pAction = *it;
-
-			pFact = pAction->FindEqualFact_TopBottom(pModelFact, pInstigator);
-			if (pFact != NULL)
-			{
-				pFound = pFact;
-				break;
-			}
+			++it;
 		}
 	}
-
-	//LOG("Found : 0x%x From 0x%x\n", pFound, pInstigator);
-
-	return pFound;
 }
-
-

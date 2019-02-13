@@ -2,15 +2,14 @@
 #define __IBCUBE_H__
 
 #include "Utils.h"
-#include "World\IBObject.h"
 
-class IBCube : public IBObject
+class IBCube
 {
 	public:
 		IBCube(const string& name);
 		virtual ~IBCube();
 
-		virtual IBObject* Clone() const { return new IBCube(*this); }
+		const string& GetName() const { return m_sName; }
 
 		void PutCube(IBCube* pCube);
 		void TakeCube();
@@ -19,13 +18,11 @@ class IBCube : public IBObject
 		bool HasCube(IBCube* pCube) const { return (m_pTopCube == pCube); }
 		const IBCube* GetTopCube() const { return m_pTopCube; }
 
-		void  Print() const;
-
-	protected:
-		virtual void		FormatData() const;
-
+		void Print() const;
+		void Draw(class CanvasBase& canva, int i, int j) const;
 
 	private:
+		string m_sName;
 		IBCube* m_pTopCube;
 };
 

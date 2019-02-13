@@ -2,85 +2,78 @@
 #define __IBFACT_H__
 
 #include "Utils.h"
+#include "World/IBObject.h"
+#include "IBCost.h"
+#include "Types.h"
 
-#include "IBFactDef.h"
-
-class IBAction;
-class IBPlanner;
-class IBObject;
-
-struct EvalSort
-{
-  bool operator()(const IBAction* a1, const IBAction* a2) const;
-};
-
-typedef set<IBFact*>	FactSet;
-typedef set<IBAction*>	ActionSet;
-typedef multiset<IBAction*, EvalSort>	SortedActionSet;
 
 class IBFact
 {
 	public:
 		friend class IBPlanner;
 		friend class IBAction;
+		friend class IBWorldChange;
 
 	protected:
-		IBFact(IBFactDef* pDef, const vector<IBObject*>& aUserData);
+		IBFact(const class IBFactDef* pDef, bool bInverted, const vector<class IBObject>& aVariables, class IBWorldChange* pWorldChangeOwner, IBPlanner* pPlanner);
+
+	public:
 		virtual ~IBFact();
 
 	public:
 		bool operator==(const IBFact& other) const;
+		bool operator!=(const IBFact& other) const;
+		bool IsEqual(const IBFact* other) const;
+		bool IsOpposite(const IBFact* other) const;
+		//bool IsCompatible(const IBFact* other) const;
 
-		void						Destroy();
+		IBFact*							Clone() const;
+		void								Destroy();
 
-		IBFactDef*					GetFactDef() const { return m_pDef; }
+		const IBFactDef*					GetFactDef() const;
 
-		bool						HasCauseAction() const { return (m_aCauseAction.size() > 0); }
-		void						RemoveCauseAction(IBAction* pAction) { m_aCauseAction.erase(pAction); }
-		void						AddCauseAction(IBAction* pAction) { m_aCauseAction.insert(pAction); }
-		const ActionSet&			GetCauseAction() const { return m_aCauseAction; }
-		SortedActionSet				GetActionOrdered() const;
+		bool								HasCauseAction() const;
+		void								RemoveCauseAction(class IBAction* pAction);
+		void								AddCauseAction(class IBAction* pAction);
+		const ActionSet&					GetCauseAction() const;
+		SortedActionSet					GetActionOrdered() const;
 
-		void						SetEffectAction(IBAction* pAction) { m_pEffectAction = pAction; }
-		IBAction*					GetEffectAction() const { return m_pEffectAction; }
-		bool						HasEffectAction() const { return (m_pEffectAction != NULL); }
+		const VarMap&					GetVariables() const;
+		const IBObject*					GetVariable(const string& str) const { return GetVariable(str.c_str()); }
+		const IBObject*					GetVariable(const char* varname = nullptr) const;
+		void								SetVariable(const IBObject& obj);
+		void								SetVariable(const string& varname, const IBObject& obj);
+		template<class T>
+		T*								GetVariable(const char* varname = nullptr) const;
 
-		const vector<IBObject*>&	GetUserData() const { return m_aUserData; }
-		const vector<IBObject*>&	GetVariables() const { return m_aUserData; }
-		IBObject*					GetVariable(uint i) const { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
-		//IBObject*					GetVariable(uint i) { ASSERT(i<m_aUserData.size()); return m_aUserData[i]; }
-		void						SetVariable(uint i, IBObject* pVar);
+		bool								IsInverted() const { return m_bInverted;  }
+		bool								IsTrue() const;
+		int								GetCost() const;
+		bool								IsImpossible() const;
 
-		bool						IsReadyToDelete() const;
-		bool						IsReadyToDestroy() const;
-		void						PrepareToDelete();
-		bool						IsMarkToDelete() const { return m_bToDelete; }
-
-		bool						IsTrue() const { return Test() == IBF_OK; }
-		bool						IsResolved() const;
-		float						Evaluate() const;
-
-		IBAction*					GetBestCauseAction(float& fMinEval) const;
-		IBAction*					GetBestCauseAction() const { float fEval; return GetBestCauseAction(fEval); }
-
-		IBF_Result 					Resolve(IBPlanner* pPlanner, bool bExecute);
-		void						ResolveVariable() { return m_pDef->ResolveVariable(m_aUserData); }
-
-		const IBFact*				FindEqualFact_BottomTop(IBFact* pModelFact) const;
+		bool								IsResolvableBy(const class IBActionDef* pActionDef) const;
+		void								Resolve(const IBPlanner* pPlanner);
+		void								Update();
+		void								ResolveVariableFromCond(const class IBAction* pAction, const struct IBFactCondDef& oCondDef);
 
 	public:
-		static bool	RemoveAndDelete(IBFact* pFact) { if (pFact->IsReadyToDelete()) { pFact->Destroy(); delete pFact; return true; } else { return false; } }
-
-	public:
-		IBF_Result					Test() const { return m_pDef->Test(m_aUserData); }
+		enum IBF_Result					Test() const;
 
 	protected:
-		IBFactDef*					m_pDef;
-		vector<IBObject*>			m_aUserData;
-		ActionSet					m_aCauseAction;
-		IBAction*					m_pEffectAction;
-		bool						m_bToDelete;
-
+		class IBPlanner*					m_pPlanner;
+		const class IBFactDef*			m_pDef;
+		bool								m_bInverted;
+		VarMap							m_aVariables;
+		ActionSet						m_aCauseAction;
+		class IBWorldChange*				m_pWorldChangeOwner;
 };
+
+
+template<class T>
+T* IBFact::GetVariable(const char* varname) const
+{
+	const IBObject* var = GetVariable(varname);
+	return static_cast<T*>(var != nullptr ? var->GetUserData() : nullptr);
+}
 
 #endif

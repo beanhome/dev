@@ -23,50 +23,33 @@ void IBActionDef_UnblockProp::Define()
 	AddVariable("ObjPos"); // IBVector2
 	AddVariable("Dist");   // IBInt = 1
 
-	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
-	AddPreCondition("IBFactDef_PropIsBlock", "Obj");
+	AddPreCondition("IBFactDef_BotNearPos", true, "Pos", "ObjPos", "Dist", "Dist");
+	AddPreCondition("IBFactDef_PropIsBlock", true, "Obj");
 
-	AddPostCondition("IBFactDef_PropIsUnblock", "Obj");
+	AddPostCondition("IBFactDef_PropIsBlock", false, "Obj");
 }
 
-float IBActionDef_UnblockProp::Evaluate(const IBAction* pAction) const
+float IBActionDef_UnblockProp::GetCost(const IBAction* pAction) const
 {
 	return 1.f;
 }
 
-bool IBActionDef_UnblockProp::Init(IBAction* pAction)
+bool IBActionDef_UnblockProp::Init(IBAction* pAction) const
 {
-	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
-	ASSERT(pObj != NULL);
-	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
-	ASSERT(pObjPos == NULL || pObjPos == &pObj->GetPos());
-	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
-	ASSERT(pDist == NULL);
-
-	if (pObjPos == NULL)
-	{
-		pObjPos = (IBVector2*)&pObj->GetPos();
-		pObjPos->SetName(pObj->GetName() + "Pos");
-		pAction->SetVariable("ObjPos", pObjPos);
-	}
-
-	pDist = new IBInt("Dist = 1", 1);
-	pAction->SetVariable("Dist", pDist);
-
 	return true;
 }
 
-bool IBActionDef_UnblockProp::Start(IBAction* pAction)
+bool IBActionDef_UnblockProp::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
 
-	BLDoor* pObj = static_cast<BLDoor*>(pAction->FindVariables("Obj"));
-	ASSERT(pObj != NULL);
+	BLDoor* pObj = pAction->GetVariable<BLDoor>("Obj");
+	ASSERT(pObj != nullptr);
 
 	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), pObj->GetPos());
 
@@ -74,17 +57,17 @@ bool IBActionDef_UnblockProp::Start(IBAction* pAction)
 	return true;
 }
 
-bool IBActionDef_UnblockProp::Execute(IBAction* pAction)
+bool IBActionDef_UnblockProp::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
+	ASSERT(pBot != nullptr);
 
 	if (pBot->HasFinishState())
 	{
-		BLDoor* pObj = static_cast<BLDoor*>(pAction->FindVariables("Obj"));
-		ASSERT(pObj != NULL);
+		BLDoor* pObj = pAction->GetVariable<BLDoor>("Obj");
+		ASSERT(pObj != nullptr);
 
 		pObj->Open();
 
@@ -96,23 +79,17 @@ bool IBActionDef_UnblockProp::Execute(IBAction* pAction)
 	}
 }
 
-bool IBActionDef_UnblockProp::Finish(IBAction* pAction)
+bool IBActionDef_UnblockProp::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
+	ASSERT(pBot != nullptr);
 	pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
 	return true;
 }
 
 
-void IBActionDef_UnblockProp::Destroy(IBAction* pAction)
+void IBActionDef_UnblockProp::Destroy(IBAction* pAction) const
 {
-	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
-	if (pDist != NULL)
-	{
-		delete pDist;
-		pAction->SetVariable("Dist", NULL);
-	}
 }

@@ -18,6 +18,19 @@ Vector2::Vector2(const Vector2& v)
 {
 }
 
+void Vector2::Set(int _x, int _y)
+{
+	x = _x;
+	y = _y;
+}
+
+void Vector2::Set(const Vector2& pos)
+{
+	x = pos.x;
+	y = pos.y;
+}
+
+
 Vector2& Vector2::operator=(const Vector2& v)
 {
 	x = v.x;

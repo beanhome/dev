@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 #include "Canvas.h"
-#include "IBGoal.h"
+#include "BLGoal.h"
 
 class CanvasBase;
 class BLSquare;
@@ -19,7 +19,7 @@ class BLGoalMenu
 		void SetVisible(bool bVisible) { m_bVisible = bVisible; }
 		bool IsVisible() const { return m_bVisible; }
 
-		const vector<IBGoal>& GetGoals() const { return m_aGoals; }
+		const vector<BLGoal>& GetGoals() const { return m_aGoals; }
 
 		void ConstructFromCase(const BLSquare* pSquare, const BLSquare* pSelectSquare);
 
@@ -36,7 +36,7 @@ class BLGoalMenu
 		int m_iI;
 		int m_iJ;
 		bool m_bVisible;
-		vector<IBGoal> m_aGoals;
+		vector<BLGoal> m_aGoals;
 
 	private:
 		static int s_iYL;

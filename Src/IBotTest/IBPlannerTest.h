@@ -1,12 +1,12 @@
 #ifndef __IBPLANNERTEST_H__
 #define __IBPLANNERTEST_H__
 
-#include "Graph/IBGPlanner.h"
+#include "IBPlanner.h"
 
-class IBPlannerTest : public IBGPlanner
+class IBPlannerTest : public IBPlanner
 {
 	public:
-		IBPlannerTest(void* pOwner, CanvasBase& oGraphCanva);
+		IBPlannerTest(void* pOwne);
 		virtual ~IBPlannerTest();
 
 	public:

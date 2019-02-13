@@ -67,20 +67,22 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Src\IBot\Graph\IBGAction.cpp" />
     <ClCompile Include="..\..\Src\IBot\Graph\IBGActionBox.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Graph\IBGActionPlanBox.cpp" />
     <ClCompile Include="..\..\Src\IBot\Graph\IBGBoxBase.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Graph\IBGFact.cpp" />
     <ClCompile Include="..\..\Src\IBot\Graph\IBGFactBox.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Graph\IBGPlanner.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Graph\IBGPlanBox.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Graph\IBGraphPlannerDisplay.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Graph\IBGWorldChangeBox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Src\IBot\Graph\IBGAction.h" />
     <ClInclude Include="..\..\Src\IBot\Graph\IBGActionBox.h" />
+    <ClInclude Include="..\..\Src\IBot\Graph\IBGActionPlanBox.h" />
     <ClInclude Include="..\..\Src\IBot\Graph\IBGBoxBase.h" />
-    <ClInclude Include="..\..\Src\IBot\Graph\IBGFact.h" />
     <ClInclude Include="..\..\Src\IBot\Graph\IBGFactBox.h" />
-    <ClInclude Include="..\..\Src\IBot\Graph\IBGPlanner.h" />
+    <ClInclude Include="..\..\Src\IBot\Graph\IBGPlanBox.h" />
+    <ClInclude Include="..\..\Src\IBot\Graph\IBGraphPlannerDisplay.h" />
+    <ClInclude Include="..\..\Src\IBot\Graph\IBGWorldChangeBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

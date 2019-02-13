@@ -1,4 +1,5 @@
 #include "IBActionDef.h"
+#include "World/IBObject.h"
 #include "IBPlanner.h"
 #include "IBAction.h"
 
@@ -6,8 +7,8 @@ IBActionDef::IBActionDef(const string& name, IBPlanner* pPlanner)
 	: m_sName(name)
 	, m_pPlanner(pPlanner)
 {
-	const char* prefix = "IBActionDef_";
-	const uint len = strlen(prefix);
+	static const char* prefix = "IBActionDef_";
+	static const uint len = strlen(prefix);
 	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
 
 	m_sName = name.c_str() + offset;
@@ -15,33 +16,41 @@ IBActionDef::IBActionDef(const string& name, IBPlanner* pPlanner)
 
 IBActionDef::~IBActionDef()
 {
-
 }
 
 void IBActionDef::AddVariable(const char* name)
 {
-	m_aVariable.push_back(name);
+	m_aVarNames.push_back(name);
 }
 
-void IBActionDef::AddPreCondition(const char* name, ...)
+void IBActionDef::AddPreCondition(const char* name, bool bTrue, ...)
 {
 	IBFactDef* pFact = m_pPlanner->GetFactDef(name);
 
-	assert(pFact != NULL);
+	assert(pFact != nullptr);
 
-	if (pFact != NULL)
+	if (pFact != nullptr)
 	{
 		uint n = pFact->GetDegree();
 
 		va_list vl;
-		va_start(vl, name);
+		va_start(vl, bTrue);
 
-		FactCondDef oCond(pFact);
+		IBFactCondDef oCond(pFact, !bTrue);
 
-		for (uint i=0 ; i<n ; ++i)
+		if (n == 1)
 		{
 			char* arg = va_arg(vl, char*);
 			oCond.AddVariable(arg);
+		}
+		else
+		{
+			for (uint i = 0; i < n; ++i)
+			{
+				char* fact_var_name = va_arg(vl, char*);
+				char* action_var_name = va_arg(vl, char*);
+				oCond.AddVariable(fact_var_name, action_var_name);
+			}
 		}
 
 		m_aPreCondDef.push_back(oCond);
@@ -50,25 +59,34 @@ void IBActionDef::AddPreCondition(const char* name, ...)
 	}
 }
 
-void IBActionDef::AddPostCondition(const char* name, ...)
+void IBActionDef::AddPostCondition(const char* name, bool bTrue, ...)
 {
 	IBFactDef* pFact = m_pPlanner->GetFactDef(name);
 
-	assert(pFact != NULL);
+	assert(pFact != nullptr);
 
-	if (pFact != NULL)
+	if (pFact != nullptr)
 	{
 		uint n = pFact->GetDegree();
 
 		va_list vl;
-		va_start(vl, name);
+		va_start(vl, bTrue);
 
-		FactCondDef oCond(pFact);
+		IBFactCondDef oCond(pFact, !bTrue);
 
-		for (uint i=0 ; i<n ; ++i)
+		if (n == 1)
 		{
 			char* arg = va_arg(vl, char*);
 			oCond.AddVariable(arg);
+		}
+		else
+		{
+			for (uint i = 0; i < n; ++i)
+			{
+				char* fact_var_name = va_arg(vl, char*);
+				char* action_var_name = va_arg(vl, char*);
+				oCond.AddVariable(fact_var_name, action_var_name);
+			}
 		}
 
 		m_aPostCondDef.push_back(oCond);
@@ -77,66 +95,33 @@ void IBActionDef::AddPostCondition(const char* name, ...)
 	}
 }
 
-void IBActionDef::AddCounterPostCondition(const char* name, ...)
-{
-	IBFactDef* pFact = m_pPlanner->GetFactDef(name);
-
-	assert(pFact != NULL);
-
-	if (pFact != NULL)
-	{
-		uint n = pFact->GetDegree();
-
-		va_list vl;
-		va_start(vl, name);
-
-		FactCondDef oCond(pFact);
-
-		for (uint i=0 ; i<n ; ++i)
-		{
-			char* arg = va_arg(vl, char*);
-			oCond.AddVariable(arg);
-		}
-
-		m_aCounterPostCondDef.push_back(oCond);
-
-		va_end(vl);
-	}
-}
-
-
-IBAction* IBActionDef::Instanciate(IBFact* pPostCond1)
+IBAction* IBActionDef::Instanciate(IBFact* pPostCond)
 {
 	// Instantiation
-	IBAction* pAction = m_pPlanner->InstanciateAction(this, pPostCond1);
-
-	// Insert of the post condition
-	for (uint i=0 ; i<m_aPostCondDef.size() ; ++i)
-	{
-		const FactCondDef& oPostCondDef = m_aPostCondDef[i];
-
-		if (oPostCondDef.m_pFactDef == pPostCond1->GetFactDef())
-		{
-			pAction->AddPostCond(i, pPostCond1);
-			break;
-		}
-	}
-
-	// Resolve unfilled pre cond variable
-	pAction->SpreadPreCondVariable();
+	IBAction* pAction = m_pPlanner->InstanciateAction(this, pPostCond);
+	pAction->Create();
 
 	return pAction;
 }
 
-bool IBActionDef::Init(IBAction* pAction)
+const IBFactCondDef*	 IBActionDef::FindPostCond(const string& sPostCondName) const
 {
-	for (IBAction::VarMap::const_iterator it =  pAction->GetVariables().begin() ; it != pAction->GetVariables().end() ; ++it)
+	for (uint i = 0; i < m_aPostCondDef.size(); ++i)
 	{
-		if (it->second == NULL)
+		if (m_aPostCondDef[i].GetName() == sPostCondName)
+			return &m_aPostCondDef[i];
+	}
+
+	return nullptr;
+}
+
+bool IBActionDef::Init(IBAction* pAction) const
+{
+	for (VarMap::const_iterator it = pAction->GetVariables().begin(); it != pAction->GetVariables().end(); ++it)
+	{
+		if (it->second.GetUserData() == nullptr)
 			return false;
 	}
 
 	return true;
 };
-
-

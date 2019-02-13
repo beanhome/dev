@@ -2,23 +2,19 @@
 #define __IBINT_H__
 
 #include "Utils.h"
-#include "IBObject.h"
 
-class IBInt : public IBObject
+class IBInt
 {
 	public:
-		IBInt(const string& name, int i=0, bool bInstance = false);
+		IBInt(const string& name, int i=0);
 
 		IBInt& operator=(int v);
 
-		IBObject* Clone() const { return new IBInt(*this); }
-
+		const string& GetName() const { return m_sName; }
 		int GetValue() const { return m_iValue; }
 
-		virtual void FormatData() const;
-		virtual void Print() const;
-
 	private:
+		string m_sName;
 		int m_iValue;
 };
 

@@ -2,7 +2,6 @@
 #include "IBActionDef.h"
 #include "Fact/IBFactDef.h"
 
-
 IBActionLibrary::IBActionLibrary()
 {
 }
@@ -13,7 +12,7 @@ IBActionLibrary::~IBActionLibrary()
 	ActionDefMap::iterator end = m_oMap.end();
 	ActionDefMap::iterator it;
 
-	for (it=begin ; it!=end ; ++it)
+	for (it = begin; it != end; ++it)
 	{
 		delete it->second;
 	}
@@ -21,35 +20,43 @@ IBActionLibrary::~IBActionLibrary()
 
 void IBActionLibrary::RegisterActionDef(const string& name, IBActionDef* pActionDef)
 {
-	const char* prefix = "IBActionDef_";
-	const uint len = strlen(prefix);
+	static const char* prefix = "IBActionDef_";
+	static const uint len = strlen(prefix);
 	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
 
 	pActionDef->Define();
-	m_oMap.insert(ActionDefPair(name.c_str()+offset, pActionDef));
+	m_oMap.insert(ActionDefPair(name.c_str() + offset, pActionDef));
+	m_oSet.insert(pActionDef);
 }
 
-IBActionDef* IBActionLibrary::GetActionDef(const string& name)
+const ActionDefSet& IBActionLibrary::GetAllActionDef() const
 {
-	const char* prefix = "IBActionDef_";
-	const uint len = strlen(prefix);
+	return m_oSet;
+}
+
+IBActionDef* IBActionLibrary::GetActionDef(const string& name) const
+{
+	static const char* prefix = "IBActionDef_";
+	static const uint len = strlen(prefix);
 	uint offset = (strncmp(name.c_str(), prefix, len) == 0 ? len : 0);
 
-	ActionDefMap::iterator it = m_oMap.find(name.c_str()+offset);
-	return (it != m_oMap.end() ? it->second : NULL);
+	ActionDefMap::const_iterator it = m_oMap.find(name.c_str() + offset);
+	return (it != m_oMap.end() ? it->second : nullptr);
 }
 
-IBActionDef* IBActionLibrary::FindActionDef(const string& factname)
+IBActionDef* IBActionLibrary::FindActionDef(const string& factname) const
 {
-	ActionDefMap::iterator begin = m_oMap.begin();
-	ActionDefMap::iterator end = m_oMap.end();
-	ActionDefMap::iterator it;
+	assert(false);
 
-	for (it=begin ; it!=end ; ++it)
+	ActionDefMap::const_iterator begin = m_oMap.begin();
+	ActionDefMap::const_iterator end = m_oMap.end();
+	ActionDefMap::const_iterator it;
+
+	for (it = begin; it != end; ++it)
 	{
 		IBActionDef* pActionDef = it->second;
 
-		for (uint i=0 ; i< pActionDef->GetPostCondDef().size() ; ++i)
+		for (uint i = 0; i < pActionDef->GetPostCondDef().size(); ++i)
 		{
 			IBFactDef* pFactDef = pActionDef->GetPostCondDef()[i].m_pFactDef;
 			if (pFactDef->GetName() == factname)
@@ -59,55 +66,32 @@ IBActionDef* IBActionLibrary::FindActionDef(const string& factname)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-IBAction* IBActionLibrary::FindActionDef(IBFact* pFact)
+/*
+IBAction* IBActionLibrary::FindActionDef(IBFact* pFact) const
 {
-	ActionDefMap::iterator begin = m_oMap.begin();
-	ActionDefMap::iterator end = m_oMap.end();
-	ActionDefMap::iterator it;
+	assert(false);
 
-	//IBAction* pBestAction = NULL;
-	//float fBestValuate;
+	ActionDefMap::const_iterator begin = m_oMap.begin();
+	ActionDefMap::const_iterator end = m_oMap.end();
+	ActionDefMap::const_iterator it;
 
-	for (it=begin ; it!=end ; ++it)
+	for (it = begin; it != end; ++it)
 	{
 		IBActionDef* pActionDef = it->second;
 
-		for (uint i=0 ; i< pActionDef->GetPostCondDef().size() ; ++i)
+		for (uint i = 0; i < pActionDef->GetPostCondDef().size(); ++i)
 		{
 			IBFactDef* pFactDef = pActionDef->GetPostCondDef()[i].m_pFactDef;
 			if (pFactDef->GetName() == pFact->GetFactDef()->GetName())
 			{
 				IBAction* pAction = pActionDef->Instanciate(pFact);
-
-				/*
-				float fValue = pAction->Evaluate();
-
-				if (pBestAction == NULL)
-				{
-					pBestAction = pAction;
-					fBestValuate = fValue;
-				}
-				else if (fValue > fBestValuate)
-				{
-					delete pBestAction;
-					pBestAction = pAction;
-					fBestValuate = fValue;
-				}
-				else
-				{
-					delete pBestAction;
-				}
-
-				break;
-				*/
 			}
 		}
 	}
 
-	//return pBestAction;
-	return NULL;
+	return nullptr;
 }
-
+*/

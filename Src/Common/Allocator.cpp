@@ -2,9 +2,6 @@
 #include "Utils.h"
 
 
-Allocator Allocator::s_oAllocator;
-
-
 Header::Header()
 {
 
@@ -94,6 +91,13 @@ Allocator::~Allocator()
 	{
 		RemBlock(m_pBlocks->pBlock);
 	}
+}
+
+//static
+Allocator& Allocator::GetAllocator()
+{
+	static Allocator oAllocator;
+	return oAllocator;
 }
 
 
@@ -224,6 +228,8 @@ void Allocator::AddBlock(byte* pBlock)
 
 void Allocator::RemBlock(byte* pBlock)
 {
+	ASSERT(Check());
+	
 	Header* pHeader = reinterpret_cast<Header*>(pBlock);
 	Footer* pFooter = reinterpret_cast<Footer*>(pBlock+sizeof(Header)+pHeader->m_iSize);
 
@@ -242,6 +248,7 @@ void Allocator::RemBlock(byte* pBlock)
 	if (pNode->pNext != NULL)
 		pNode->pNext->pPrev = pNode->pPrev;
 
+	pFooter->m_iMagicNumber = 0xDEADBEAF;
 	free(pNode);
 }
 

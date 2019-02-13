@@ -2,18 +2,19 @@
 #include "Canvas.h"
 #include "BLWorld.h"
 #include "BLBot.h"
+#include "Map/BLSquare.h"
 #include "BLGoalMenu.h"
-#include "Event.h"
-#include "Graph/IBGPlanner.h"
-#include "Graph/IBGFact.h"
-#include "Graph/IBGFactBox.h"
+
+#include "Graph/IBGraphPlannerDisplay.h"
+
 #include "GEngine.h"
+#include "Event.h"
 #include "EventManager.h"
 
 BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
 	: GApp<GEngine_SDL>(w, h, rootpath)
-	, m_pGoalMenu(NULL)
-	, m_pSelectSquare(NULL)
+	, m_pGoalMenu(nullptr)
+	, m_pSelectSquare(nullptr)
 {
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
@@ -24,8 +25,7 @@ BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const 
 
 	m_pGoalMenu = new BLGoalMenu(*m_pEngine, m_pWorld->GetBot());
 
-	//m_bPause = true;
-	//m_fSlomo = 0.333f;
+	m_pPlannerDisplay = new IBGraphPlannerDisplay(*m_pGraphCanva, m_pWorld->GetBot().GetPlanner());
 }
 
 BLApp::~BLApp()
@@ -35,6 +35,8 @@ BLApp::~BLApp()
 
 	delete m_pGoalMenu;
 	delete m_pWorld;
+
+	delete m_pPlannerDisplay;
 }
 
 
@@ -63,10 +65,10 @@ void BLApp::UpdateUserInterface()
 			if (!m_pGoalMenu->IsVisible())
 			{
 				const BLSquare* pSquare = m_pWorld->GetMouseCase();
-				if (pSquare != NULL)
+				if (pSquare != nullptr)
 				{
 					/*
-					if (m_pSelectSquare != NULL && pSquare != m_pSelectSquare && pSquare->GetPos() == m_pWorld->GetBot().GetPos())
+					if (m_pSelectSquare != nullptr && pSquare != m_pSelectSquare && pSquare->GetPos() == m_pWorld->GetBot().GetPos())
 					{
 						const BLSquare* pTmp = pSquare;
 						pSquare = m_pSelectSquare;
@@ -83,13 +85,13 @@ void BLApp::UpdateUserInterface()
 					}
 					else
 					{
-						if (pSquare->GetProp() != NULL || m_pWorld->GetBot().GetPos() == pSquare->GetPos())
+						if (pSquare->GetProp() != nullptr || m_pWorld->GetBot().GetPos() == pSquare->GetPos())
 						{
-							m_pSelectSquare = (m_pSelectSquare == pSquare ? NULL : pSquare);
+							m_pSelectSquare = (m_pSelectSquare == pSquare ? nullptr : pSquare);
 						}
 						else
 						{
-							m_pSelectSquare = NULL;
+							m_pSelectSquare = nullptr;
 						}
 					}
 				}
@@ -98,9 +100,10 @@ void BLApp::UpdateUserInterface()
 			{
 				m_pGoalMenu->Click();				
 				m_pGoalMenu->SetVisible(false);
-				m_pSelectSquare = NULL;
+				m_pSelectSquare = nullptr;
 			}
 		}
+		/*
 		else if (m_pGraphCanva->IsMouseInside())
 		{
 			m_pGoalMenu->SetVisible(false);
@@ -111,51 +114,46 @@ void BLApp::UpdateUserInterface()
 				IBGFact* pFact = static_cast<IBGFact*>(*it);
 				if (pFact->GetFactBox()->GetCanvas().IsMouseInside())
 				{
-					pFact->PrepareToDelete();
+					pFact->PrepareToDestroy();
 					break;
 				}
 			}
 		}
+		*/
 
 		//SetPause(m_pGoalMenu->IsVisible());
 	}
-
-	IBGPlanner& oPlanner = (IBGPlanner&)m_pWorld->GetBot().GetPlanner();
 
 	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
 	{
 		if (m_pWorldCanva->IsMouseInside())
 			m_pWorld->StartDrag();
 		else if (m_pGraphCanva->IsMouseInside())
-			oPlanner.StartDrag();
+			m_pPlannerDisplay->StartDrag();
 	}
-	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
+	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyDown
+		|| m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyRepeat)
 	{
-		if (m_pWorld->IsDraging())
-			m_pWorld->UpdateDrag();
-		else if (oPlanner.IsDraging())
-			oPlanner.UpdateDrag();
+		m_pWorld->UpdateDrag();
+		m_pPlannerDisplay->UpdateDrag();
 	}
 	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
 	{
 		m_pWorld->StopDrag();
-		oPlanner.StopDrag();
+		m_pPlannerDisplay->StopDrag();
 	}
 
 	if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyPressed)
 		SetPause(!IsPaused());
 
-
 	if (m_pGoalMenu->IsVisible())
-	{
 		m_pGoalMenu->Update();
-	}
-
 }
 
 int BLApp::Draw()
 {
 	m_pWorld->Draw();
+	
 
 	int x = (m_pWorld->GetCanvas().GetMouseX() / m_pWorld->GetGridSize()) * m_pWorld->GetGridSize();
 	int y = (m_pWorld->GetCanvas().GetMouseY() / m_pWorld->GetGridSize()) * m_pWorld->GetGridSize();
@@ -163,12 +161,16 @@ int BLApp::Draw()
 	if (!m_pWorld->IsDraging())
 		m_pWorld->GetCanvas().DrawRect(x, y, m_pWorld->GetGridSize()-1, m_pWorld->GetGridSize()-1, 255, 255, 255);
 
-	if (m_pSelectSquare != NULL)
+	if (m_pSelectSquare != nullptr)
 	{
 		m_pWorld->GetCanvas().DrawRect(m_pSelectSquare->GetPos().x*m_pWorld->GetGridSize()-1, m_pSelectSquare->GetPos().y*m_pWorld->GetGridSize()-1, m_pWorld->GetGridSize(), m_pWorld->GetGridSize(), 0, 255, 0);
 	}
 
-	((IBGPlanner&)m_pWorld->GetBot().GetPlanner()).Draw();
+	const BLSquare* pSquare = m_pWorld->GetMouseCase();
+	if (pSquare != nullptr)
+		m_pWorldCanva->GetGEngine()->Print(5, m_pWorldCanva->GetHeight()-5, m_pWorld->GetCanvas().GetPrintFont(), 12, LeftBottom, Color(255, 255, 255), "%d %d", pSquare->GetPos().x, pSquare->GetPos().y);
+
+	m_pPlannerDisplay->DrawGraph();
 
 	if (m_pGoalMenu->IsVisible())
 	{

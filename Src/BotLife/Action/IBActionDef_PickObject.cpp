@@ -2,7 +2,10 @@
 #include "BLBot.h"
 #include "IBPlanner.h"
 #include "World/BLObject.h"
-#include "World/IBInt.h"
+#include "World/BLProp.h"
+#include "World/BLInt.h"
+#include "World/BLVector2.h"
+#include "Action/BLAction.h"
 
 
 IBActionDef_PickObject::IBActionDef_PickObject(const string& name, IBPlanner* pPlanner)
@@ -19,56 +22,78 @@ IBActionDef_PickObject::~IBActionDef_PickObject()
 
 void IBActionDef_PickObject::Define()
 {
-	AddVariable("Obj");    // BLObject
-	AddVariable("ObjPos"); // IBVector2
-	AddVariable("Dist");   // IBInt = 1
+	AddVariable("Obj");
+	AddVariable("ObjPos");
+	AddVariable("Dist");
 
-	AddPreCondition("IBFactDef_ObjectAtPos", "Obj", "ObjPos");
-	AddPreCondition("IBFactDef_PropIsPickable", "Obj");
-	AddPreCondition("IBFactDef_BotIsEmpty");
-	AddPreCondition("IBFactDef_BotNearPos", "ObjPos", "Dist");
+	AddPreCondition("IBFactDef_ObjectAtPos", true, "Obj", "Obj", "Pos", "ObjPos");
+	AddPreCondition("IBFactDef_PropIsPickable", true, "Obj");
+	AddPreCondition("IBFactDef_BotIsEmpty", true);
+	AddPreCondition("IBFactDef_BotNearPos", true, "Pos", "ObjPos", "Dist", "Dist");
 
-	AddPostCondition("IBFactDef_BotHasObject", "Obj");
-	AddPostCondition("IBFactDef_PosIsFree", "ObjPos");
-
-	AddCounterPostCondition("IBFactDef_BotIsEmpty");
-
+	AddPostCondition("IBFactDef_BotHasObject", true, "Obj");
+	AddPostCondition("IBFactDef_PosIsFree", true, "ObjPos");
+	AddPostCondition("IBFactDef_BotIsEmpty", false);
 }
 
-float IBActionDef_PickObject::Evaluate(const IBAction* pAction) const
+float IBActionDef_PickObject::GetCost(const IBAction* pAction) const
 {
 	return 1.f;
 }
 
-bool IBActionDef_PickObject::Init(IBAction* pAction)
+void	 IBActionDef_PickObject::CreateOwnedVariables(IBAction* pAction) const
 {
-	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
-	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
-	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
+	BLAction* pBLAction = dynamic_cast<BLAction*>(pAction);
+	ASSERT(pBLAction != nullptr);
 
-	if (pObjPos == NULL)
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+
+	BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
+
+	BLVector2* pObjPos = pAction->GetVariable<BLVector2>("ObjPos");
+
+	if (pObj != nullptr && pObjPos == nullptr)
 	{
-		pObjPos = (IBVector2*)&pObj->GetPos();
-		pObjPos->SetName(pObj->GetName() + "Pos");
-		pAction->SetVariable("ObjPos", pObjPos);
+		BLVector2* pObjPos = new BLVector2("ObjPos");
+		pObjPos->Set(pObj->GetPos());
+		pBLAction->AddOwnedObject(pObjPos);
+		pAction->SetVariable("ObjPos", pObjPos->GetName(), (void*)pObjPos);
 	}
 
-	if (pDist == NULL)
+	if (pObj == nullptr && pObjPos != nullptr)
 	{
-		pDist = new IBInt("NearDist", 1, true);
-		pAction->SetVariable("Dist", pDist);
+		pObj = pBot->GetWorld().GetGrid().GetCase(*pObjPos).GetProp();
+		pAction->SetVariable("Obj", pObj->GetName(), (void*)pObj);
 	}
 
-	return (pObj != NULL && pObjPos != NULL && pDist != NULL);
+	if (pAction->GetVariable("Dist")->GetUserData() == nullptr)
+	{
+		BLInt* pDist = new BLInt(0);
+		pBLAction->AddOwnedObject(pDist);
+		pAction->SetVariable("Dist", pDist->GetName(), (void*)pDist);
+	}
 }
 
-bool IBActionDef_PickObject::Start(IBAction* pAction)
+bool IBActionDef_PickObject::Init(IBAction* pAction) const
+{
+	/*
+	BLObject* pObj = pAction->GetVariable<BLObject>("Obj");
+	BLVector2* pObjPos = pAction->GetVariable<BLVector2>("ObjPos");
+	BLInt* pDist = pAction->GetVariable<BLInt>("Dist");
+	*/
+
+	return true;
+}
+
+bool IBActionDef_PickObject::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	IBVector2* pObjPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("ObjPos"));
-	ASSERT(pObjPos != NULL);
+
+	BLVector2* pObjPos = pAction->GetVariable<BLVector2>("ObjPos");
 
 	if (pBot->GetState() != BLBot::Idle)
 		return false;
@@ -79,7 +104,7 @@ bool IBActionDef_PickObject::Start(IBAction* pAction)
 	return true;
 }
 
-bool IBActionDef_PickObject::Execute(IBAction* pAction)
+bool IBActionDef_PickObject::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -88,7 +113,7 @@ bool IBActionDef_PickObject::Execute(IBAction* pAction)
 
 	if (pBot->HasFinishState())
 	{
-		BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
+		BLObject* pObj = pAction->GetVariable<BLObject>("Obj");
 		ASSERT(pObj != NULL);
 
 		pBot->PickProp(reinterpret_cast<BLProp*>(pObj));
@@ -100,7 +125,7 @@ bool IBActionDef_PickObject::Execute(IBAction* pAction)
 	}
 }
 
-bool IBActionDef_PickObject::Finish(IBAction* pAction)
+bool IBActionDef_PickObject::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -110,12 +135,6 @@ bool IBActionDef_PickObject::Finish(IBAction* pAction)
 	return true;
 }
 
-void IBActionDef_PickObject::Destroy(IBAction* pAction)
+void IBActionDef_PickObject::Destroy(IBAction* pAction) const
 {
-	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
-	if (pDist != NULL)
-	{
-		delete pDist;
-		pAction->SetVariable("Dist", NULL);
-	}
 }

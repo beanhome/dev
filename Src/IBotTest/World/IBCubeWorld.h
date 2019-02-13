@@ -38,6 +38,7 @@ class IBCubeWorld
 		bool IsCubeOnCube(IBCube* pCube1, IBCube* pCube2);
 
 		void Print() const;
+		void Draw(class CanvasBase& oWorldCanva) const;
 
 	private:
 		IBTable			m_oTable;

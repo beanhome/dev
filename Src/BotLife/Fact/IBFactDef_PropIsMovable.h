@@ -11,11 +11,7 @@ class IBFactDef_PropIsMovable : public IBFactDef
 		IBFactDef_PropIsMovable(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_PropIsMovable();
 
-		virtual void			ResolveVariable(vector<IBObject*>& aUserData);
-
-		virtual IBF_Result		Test(const vector<IBObject*>& aUserData);
-
-	private:
+		virtual IBF_Result		Test(const class IBFact* pFact) const override;
 };
 
 

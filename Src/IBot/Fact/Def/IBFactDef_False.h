@@ -11,7 +11,8 @@ class IBFactDef_False : public IBFactDef
 		IBFactDef_False(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_False();
 
-		IBF_Result			Test(const vector<IBObject*>& aUserData) { return IBF_FAIL; }
+		//virtual string				GetVariableData(uint i) const override;
+		virtual IBF_Result			Test(const class IBFact* pFact) const override;
 };
 
 #endif

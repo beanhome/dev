@@ -1,7 +1,7 @@
 #include "SDL.h"
 #include "SDL_video.h"
-//#include "SDL_draw.h"
 #include "SDL_ttf.h"
+#include "SDL_FontCache.h"
 #include "SDL2_rotozoom.h"
 #include "FontResource_SDL.h"
 #include "ImageResource_SDL.h"
@@ -355,8 +355,9 @@ void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint
 #else
 	vsnprintf(str, ln, format, oArgs);
 #endif
-
-	TTF_SizeText(pFont->m_pFont, str, (int*)&w, (int*)&h);
+	
+	w = FC_GetWidth(pFont->m_pFont, str);
+	h = FC_GetHeight(pFont->m_pFont, str);
 
 	delete [] str;
 }
@@ -384,19 +385,13 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 	vsnprintf(str, ln, format, oArgs);
 #endif
 
-	SDL_Surface* texte = NULL;
 	SDL_Color color = { 0, 0, 0, 255 };
 	color.r = r;
 	color.g = g;
 	color.b = b;
-	texte = TTF_RenderText_Solid(pFont->m_pFont, str, color);
-	if (ln > bufferln)
-		delete [] str;
-	if (texte == NULL)
-		return;
 
-	uint16 w = (uint16)texte->w;
-	uint16 h = (uint16)texte->h;
+	uint16 w = (uint16)FC_GetWidth(pFont->m_pFont, str);
+	uint16 h = (uint16)FC_GetHeight(pFont->m_pFont, str);
 
 	SDL_Rect position;
 	position.x = (sint16)x;
@@ -405,10 +400,10 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 	switch (eAlign)
 	{
 		case LeftTop:		position.x = (sint16)x;				position.y = (sint16)y;				break;
-		case LeftCenter:	position.x = (sint16)x;				position.y = (sint16)(y - h / 2);	break;
-		case LeftBottom:	position.x = (sint16)x;				position.y = (sint16)(y - h);		break;
+		case LeftCenter:		position.x = (sint16)x;				position.y = (sint16)(y - h / 2);	break;
+		case LeftBottom:		position.x = (sint16)x;				position.y = (sint16)(y - h);		break;
 		case CenterTop:		position.x = (sint16)(x - w / 2);	position.y = (sint16)y;				break;
-		case Center:		position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h / 2);	break;
+		case Center:			position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h / 2);	break;
 		case CenterBottom:	position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h);		break;
 		case RightTop:		position.x = (sint16)(x - w);		position.y = (sint16)y;				break;
 		case RightCenter:	position.x = (sint16)(x - w);		position.y = (sint16)(y - h / 2);	break;
@@ -417,17 +412,11 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 
 	position.w = w;
 	position.h = h;
-	/*
-	SDL_FillRect(m_pScreen, &position, SDL_MapRGB(m_pScreen->format, 255, 0, 255));
-	*/
 
-	SDL_Texture * texture = SDL_CreateTextureFromSurface(m_pRenderer, texte);
-	SDL_RenderCopy(m_pRenderer, texture, NULL, &position);
+	FC_DrawColor(pFont->m_pFont, m_pRenderer, (float)position.x, (float)position.y, FC_MakeColor(r, g, b, 255), str);
 
-	//SDL_BlitSurface(texte, NULL, m_pScreen, &position); 
-
-	SDL_DestroyTexture(texture);
-	SDL_FreeSurface(texte);
+	if (ln > bufferln)
+		delete[] str;
 }
 
 void GEngine_SDL::ClampClear() const

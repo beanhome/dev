@@ -1,8 +1,8 @@
 #include "IBActionDef_FollowPath.h"
 #include "BLBot.h"
-#include "Path.h"
 #include "IBPlanner.h"
-#include "World/IBPath.h"
+#include "Action/BLAction.h"
+#include "World/BLPath.h"
 
 
 IBActionDef_FollowPath::IBActionDef_FollowPath(const string& name, IBPlanner* pPlanner)
@@ -17,73 +17,66 @@ IBActionDef_FollowPath::~IBActionDef_FollowPath()
 
 void IBActionDef_FollowPath::Define()
 {
-	AddVariable("Start");
 	AddVariable("Target");
-	AddVariable("Path");
 	AddVariable("Dist");
+	AddVariable("Path");
 
-	AddPreCondition("IBFactDef_HasValidPath", "Path", "Start", "Target", "Dist");
-	AddPreCondition("IBFactDef_BotAtPos", "Start");
-
-	//AddPostCondition("IBFactDef_BotAtPos", "Target");
-	AddPostCondition("IBFactDef_BotNearPos", "Target", "Dist");
+	AddPreCondition("IBFactDef_HasValidPath", true, "Path", "Path", "Target", "Target", "Dist", "Dist");
+	AddPostCondition("IBFactDef_BotNearPos", true, "Pos", "Target", "Dist", "Dist");
 }
 
-float IBActionDef_FollowPath::Evaluate(const IBAction* pAction) const
+float IBActionDef_FollowPath::GetCost(const IBAction* pAction) const
 {
-	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
-	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	BLVector2* pTarget = pAction->GetVariable<BLVector2>("Target");
+	ASSERT(pTarget != nullptr);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
 
-	if (pPath == NULL || pStart == NULL || pTarget == NULL)
+	if (pPath == nullptr || pTarget == nullptr)
 		return IBPlanner::s_fMaxActionDelay;
 
 	void* pOwner =  m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	const BLWorld& oWorld = pBot->GetWorld();
 
-	int dist = oWorld.GetGrid().Distance(*pStart, *pTarget);
+	int dist = oWorld.GetGrid().Distance(pBot->GetPos(), *pTarget);
 	int ln = pPath->GetLength();
 
 	return ((float)(std::max<int>(dist, ln)) * 0.5f);
 }
 
-bool IBActionDef_FollowPath::Init(IBAction* pAction)
+void	 IBActionDef_FollowPath::CreateOwnedVariables(IBAction* pAction) const
 {
-	IBVector2* pStart = static_cast<IBVector2*>(pAction->FindVariables("Start"));
-	IBVector2* pTarget = static_cast<IBVector2*>(pAction->FindVariables("Target"));
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
+	BLAction* pBLAction = dynamic_cast<BLAction*>(pAction);
+	ASSERT(pBLAction != nullptr);
 
-	if (pPath == NULL)
+	if (pAction->GetVariable("Path")->GetUserData() == nullptr)
 	{
-		pPath = new IBPath("MyPath", true);
-		pAction->SetVariable("Path", pPath);
+		BLPath* pPath = new BLPath("path");
+		pBLAction->AddOwnedObject(pPath);
+		pAction->SetVariable("Path", pPath->GetName(), (void*)pPath);
 	}
-
-	if (pStart == NULL)
-	{
-		void* pOwner =  m_pPlanner->GetOwner();
-		ASSERT(pOwner != NULL);
-		BLBot* pBot = static_cast<BLBot*>(pOwner);
-		pStart = pBot->GetIBPosAd();
-		pAction->SetVariable("Start", pStart);
-	}
-
-	return (pStart != NULL && pTarget != NULL && pPath != NULL);
 }
 
-bool IBActionDef_FollowPath::Start(IBAction* pAction)
+bool IBActionDef_FollowPath::Init(IBAction* pAction) const
+{
+	return true;
+}
+
+bool IBActionDef_FollowPath::Start(IBAction* pAction) const
 {
  	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
-	ASSERT(pPath != NULL);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
 
 	if (!pBot->HasFinishState())
 		return false;
+
+	pPath->ResetStep();
 
 	Vector2 vTarget = pPath->GetFirstStep();
 	//LOG("FollowPath::Start (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
@@ -94,42 +87,44 @@ bool IBActionDef_FollowPath::Start(IBAction* pAction)
 	return true;
 }
 
-bool IBActionDef_FollowPath::Execute(IBAction* pAction)
+bool IBActionDef_FollowPath::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
-	ASSERT(pPath != NULL);
+	ASSERT(pBot != nullptr);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
 
 	if (pBot->HasFinishState())
 	{
-		pPath->PopFront();
-
 		pBot->SetPos(pBot->GetTarget());
 
-		if (pPath->GetLength() == 0)
+		if (pPath->NextStep())
+		{
+			Vector2 vTarget = pPath->GetCurrentStep();
+			//LOG("FollowPath::Execute (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
+			BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
+
+			pBot->SetState(BLBot::Walk, eDir, 0.5f);
+		}
+		else
+		{
 			return true;
-
-		Vector2 vTarget = pPath->GetFirstStep();
-		//LOG("FollowPath::Execute (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
-		BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
-
-		pBot->SetState(BLBot::Walk, eDir, 0.5f);
+		}
 	}
 
 	return false;
 }
 
-bool IBActionDef_FollowPath::Abort(IBAction* pAction)
+bool IBActionDef_FollowPath::Abort(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	IBPath* pPath =  pAction->FindVariables<IBPath>("Path");
-	ASSERT(pPath != NULL);
+	ASSERT(pBot != nullptr);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
 
 	//LOG("FollowPath::Abort \n");
 
@@ -144,22 +139,18 @@ bool IBActionDef_FollowPath::Abort(IBAction* pAction)
 }
 
 
-bool IBActionDef_FollowPath::Finish(IBAction* pAction)
+bool IBActionDef_FollowPath::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
+	ASSERT(pBot != nullptr);
 	//pBot->SetPos(pBot->GetTarget());
 	//LOG("FollowPath::Finish \n");
 	pBot->SetState(BLBot::Idle, pBot->GetDir(), 0.5f);
 	return true;
 }
 
-void IBActionDef_FollowPath::Destroy(IBAction* pAction)
+void IBActionDef_FollowPath::Destroy(IBAction* pAction) const
 {
-	//IBPath* pPath = static_cast<IBPath*>(pAction->FindVariables("Path"));
-	//ASSERT(pPath != NULL);
-
-	//delete pPath;
 }

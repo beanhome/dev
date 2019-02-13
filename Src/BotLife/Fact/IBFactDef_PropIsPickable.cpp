@@ -1,7 +1,6 @@
 #include "IBFactDef_PropIsPickable.h"
 #include "Utils.h"
-#include "BLBot.h"
-#include "IBPlanner.h"
+#include "Fact/IBFact.h"
 #include "World/BLProp.h"
 
 IBFactDef_PropIsPickable::IBFactDef_PropIsPickable(const string& name, IBPlanner* pPlanner)
@@ -13,18 +12,12 @@ IBFactDef_PropIsPickable::~IBFactDef_PropIsPickable()
 {
 }
 
-IBF_Result IBFactDef_PropIsPickable::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_PropIsPickable::Test(const class IBFact* pFact) const
 {
-	ASSERT(aUserData.size() == GetDegree());
+	BLProp* pProp = pFact->GetVariable<BLProp>();
 
-	BLProp* pProp = reinterpret_cast<BLProp*>(aUserData[0]);
-	
-	if (pProp == NULL)
+	if (pProp == nullptr)
 		return IBF_UNKNOW;
 
 	return (pProp->IsPickable() ? IBF_OK : IBF_FAIL);
-}
-
-void IBFactDef_PropIsPickable::ResolveVariable(vector<IBObject*>& aUserData)
-{
 }

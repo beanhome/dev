@@ -1,18 +1,15 @@
 #include "IBActionDef_MoveCubeFromCubeToCube.h"
 #include "IBPlanner.h"
-#include "World\IBCubeWorld.h"
-#include "World\IBCube.h"
-
+#include "World/IBCubeWorld.h"
+#include "World/IBCube.h"
 
 IBActionDef_MoveCubeFromCubeToCube::IBActionDef_MoveCubeFromCubeToCube(const string& name, IBPlanner* pPlanner)
 	: IBActionDef(name, pPlanner)
 {
-
 }
 
 IBActionDef_MoveCubeFromCubeToCube::~IBActionDef_MoveCubeFromCubeToCube()
 {
-
 }
 
 void IBActionDef_MoveCubeFromCubeToCube::Define()
@@ -21,82 +18,73 @@ void IBActionDef_MoveCubeFromCubeToCube::Define()
 	AddVariable("DestCube");
 	AddVariable("SrcCube");
 
-	AddPreCondition("IBFactDef_IsTopOf", "Cube", "SrcCube");
-	AddPreCondition("IBFactDef_IsFree", "Cube");
-	AddPreCondition("IBFactDef_IsFree", "DestCube");
+	AddPreCondition("IBFactDef_IsTopOf", true, "Top", "Cube", "Bottom", "SrcCube");
+	AddPreCondition("IBFactDef_IsFree", true, "Cube");
+	AddPreCondition("IBFactDef_IsFree", true, "DestCube");
 
-	AddPostCondition("IBFactDef_IsTopOf", "Cube", "DestCube");
-	AddPostCondition("IBFactDef_IsFree", "SrcCube");
-
-	AddCounterPostCondition("IBFactDef_IsFree", "DestCube");
+	AddPostCondition("IBFactDef_IsTopOf", true, "Top", "Cube", "Bottom", "DestCube");
+	AddPostCondition("IBFactDef_IsFree", true, "SrcCube");
+	//AddPostCondition("IBFactDef_IsTopOf", false, "Top", "Cube", "Bottom", "SrcCube");
+	AddPostCondition("IBFactDef_IsFree", false, "DestCube");
 }
 
-bool IBActionDef_MoveCubeFromCubeToCube::Init(IBAction* pAction)
+void	 IBActionDef_MoveCubeFromCubeToCube::CompleteVariables(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(pOwner);
-	ASSERT(pWorld != NULL);
+	ASSERT(pWorld != nullptr);
 
-	IBCube* pCube = pAction->FindVariables<IBCube>("Cube");
-	IBCube* pDestCube = pAction->FindVariables<IBCube>("DestCube");
-	IBCube* pSrcCube = pAction->FindVariables<IBCube>("SrcCube");
+	IBCube* pCube = pAction->GetVariable<IBCube>("Cube");
+	IBCube* pDestCube = pAction->GetVariable<IBCube>("DestCube");
+	IBCube* pSrcCube = pAction->GetVariable<IBCube>("SrcCube");
 
- 	if (pCube != NULL && pSrcCube == NULL && pDestCube != NULL)
+	map<string, IBCube*> aCubes;
+	aCubes.insert(pair<string, IBCube*>("Cube", pCube));
+	aCubes.insert(pair<string, IBCube*>("DestCube", pDestCube));
+	aCubes.insert(pair<string, IBCube*>("SrcCube", pSrcCube));
+
+	vector<IBCube*> aUnusedCube;
+	for (IBCube* pOneCube : pWorld->GetCubes())
 	{
-		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
-		{
-			IBCube* pTmpCube = pWorld->GetCubes()[i];
-
-			if (pTmpCube != pCube && pTmpCube != pDestCube)
-			{
-				pSrcCube = pTmpCube;
-				break;
-			}
-		}
-
-		pAction->SetVariable("SrcCube", pSrcCube);
-	}
-	else if (pSrcCube != NULL && pCube == NULL)
-	{
-		pCube = (IBCube*) pSrcCube->GetTopCube();
-		pAction->SetVariable("Cube", pCube);
+		if (pOneCube != pCube && pOneCube != pDestCube && pOneCube != pSrcCube)
+			aUnusedCube.push_back(pOneCube);
 	}
 
-	if (pDestCube == NULL)
+	for (map<string, IBCube*>::iterator it = aCubes.begin(); it != aCubes.end(); ++it)
 	{
-		for (uint i=0 ; i<pWorld->GetCubes().size() ; ++i)
+		const string& name = it->first;
+		IBCube* cube = it->second;
+
+		if (cube == nullptr)
 		{
-			IBCube* pTmpCube = pWorld->GetCubes()[i];
-			if (pTmpCube != pCube && pTmpCube != pSrcCube && pTmpCube->IsFree())
+			for (IBCube* potential : aUnusedCube)
 			{
-				pDestCube = pTmpCube;
-				pAction->SetVariable("DestCube", pDestCube);
-				break;
+				pAction->AddPotentialVariable(name, potential->GetName(), potential);
 			}
 		}
 	}
-
-	ASSERT((pCube == NULL || pCube != pSrcCube) && (pCube == NULL || pCube != pDestCube) && (pSrcCube == NULL || pSrcCube != pDestCube));
-
-	return (pCube != NULL && pDestCube != NULL && pSrcCube != NULL);
 }
 
-bool IBActionDef_MoveCubeFromCubeToCube::Execute(IBAction* pAction)
+bool IBActionDef_MoveCubeFromCubeToCube::Init(IBAction* pAction) const
+{
+	return true;
+}
+
+bool IBActionDef_MoveCubeFromCubeToCube::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(pOwner);
-	ASSERT(pWorld != NULL);
+	ASSERT(pWorld != nullptr);
 
-	IBCube* pCube = pAction->FindVariables<IBCube>("Cube");
-	IBCube* pDestCube = pAction->FindVariables<IBCube>("DestCube");
-	IBCube* pSrcCube = pAction->FindVariables<IBCube>("SrcCube");
+	IBCube* pCube = pAction->GetVariable<IBCube>("Cube");
+	IBCube* pDestCube = pAction->GetVariable<IBCube>("DestCube");
+	IBCube* pSrcCube = pAction->GetVariable<IBCube>("SrcCube");
 
-	ASSERT(pCube != NULL && pDestCube != NULL && pSrcCube != NULL);
+	ASSERT(pCube != nullptr && pDestCube != nullptr && pSrcCube != nullptr);
 
 	pWorld->MoveCubeFromCubeToCube(pCube, pSrcCube, pDestCube);
 
 	return true;
 }
-

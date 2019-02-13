@@ -75,9 +75,10 @@ int GAppBase::Loop()
 		if (res != 0)
 			return res;
 
-		//m_pEngine->ClampClear();
-		//m_pEngine->Print(5, 5, m_pEngine->GetPrintFont(), 12, LeftTop, 255, 255, 255, "%f", dt);
-		//m_pEngine->Print(5, 20, m_pEngine->GetPrintFont(), 12, LeftTop, 255, 255, 255, "%f", fTime);
+		m_pEngine->ClampClear();
+		m_pEngine->Print(m_pEngine->GetWidth() - 5, 5, m_pEngine->GetPrintFont(), 12, RightTop, 255, 255, 255, "%.2f ms / %.2f fps", dt * 1000.f, (dt > 0.f ? 1.f / dt : 0.f));
+		m_pEngine->Print(m_pEngine->GetWidth() - 5, 20, m_pEngine->GetPrintFont(), 12, RightTop, 255, 255, 255, "%.2f", fTime);
+		m_pEngine->Print(m_pEngine->GetWidth() - 5, 35, m_pEngine->GetPrintFont(), 12, RightTop, 255, 255, 255, "%d %d", m_pEngine->GetMouseX(), m_pEngine->GetMouseY());
 
 		if (m_bPause)
 		{

@@ -1,742 +1,560 @@
 #include "IBAction.h"
+#include "World/IBObject.h"
 #include "IBActionDef.h"
 #include "IBPlanner.h"
 
 
-const char*	IBAction::s_sStateString[State_MAX] =
-{
-	"Init",
-	"Unresolved",
-	"resolved",
-	"Impossible",
-	"Counter",
-	"Start",
-	"Execute",
-	"Abort",
-	"End",
-	"Finish",
-	"Destroy",
-	"Destroyed",
-};
-
-
-IBAction::IBAction(IBActionDef* pDef, IBFact* pPostCond1)
+IBAction::IBAction(const IBActionDef* pDef, IBFact* pPostCond, IBPlanner* pPlanner)
 	: m_pDef(pDef)
+	, m_pPlanner(pPlanner)
 	, m_eState(IBA_Init)
-	, m_pUserData(NULL)
-	, m_bToDelete(false)
+	, m_pPostWorldChange(nullptr)
+	, m_pPreWorldChange(nullptr)
+	, m_pUserData(nullptr)
+{
+	// Set Post WorldChange
+	m_pPostWorldChange = pPostCond->m_pWorldChangeOwner;
+	m_aPostCond.push_back(pPostCond);
+
+	for (uint32 j = 0; j < m_aPostCond.size(); ++j)
+	{
+		IBFact* pPostCond = m_aPostCond[j];
+		pPostCond->AddCauseAction(this);
+	}
+}
+
+void IBAction::Create()
 {
 	// create action variable
-	for (uint i=0 ; i<pDef->GetVariables().size() ; ++i)
+	for (uint i = 0; i < m_pDef->GetVarNames().size(); ++i)
+		m_aVariables.insert(VarPair(m_pDef->GetVarNames()[i], IBObject()));
+
+	ResolveVariableFromPostCond(m_aPostCond.back());
+
+	m_pDef->CreateOwnedVariables(this);
+
+	m_eState = (IsResolved() ? IBA_State::IBA_Resolved : IBA_State::IBA_Unresolved);
+
+	if (m_eState == IBA_State::IBA_Resolved)
 	{
-		m_aVariables.insert(VarPair(pDef->GetVariables()[i], (IBObject*)NULL));
+		m_eState = IBA_State::IBA_Ready;
+		FinalizeCreation();
+	}
+	else if (m_eState == IBA_State::IBA_Unresolved)
+	{
+		for (VarMap::iterator it = m_aVariables.begin(); it != m_aVariables.end(); ++it)
+		{
+			const IBObject& Obj = it->second;
+			if (Obj.GetUserData() == nullptr)
+				m_aPotentialVariables.insert(PotentialVarPair(it->first, vector<IBObject>()));
+		}
+
+		m_pDef->CompleteVariables(this);
+	}
+}
+
+IBAction::IBAction(const class IBAction* pOrig)
+	: m_pDef(pOrig->m_pDef)
+	, m_pPlanner(pOrig->m_pPlanner)
+	, m_eState(IBA_Init)
+	, m_pPostWorldChange(pOrig->m_pPostWorldChange)
+	, m_pPreWorldChange(nullptr)
+	, m_aPostCond(pOrig->m_aPostCond)
+	, m_pUserData(nullptr)
+{
+	for (VarMap::const_iterator it = pOrig->m_aVariables.begin(); it != pOrig->m_aVariables.end(); ++it)
+	{
+		m_aVariables.insert(VarPair(it->first, it->second));
 	}
 
-	// create fact vector
-	m_aPreCond.resize(pDef->GetPreCondDef().size(), NULL);
-	m_aPostCond.resize(pDef->GetPostCondDef().size(), NULL);
-	m_aCounterPostCond.resize(pDef->GetCounterPostCondDef().size(), NULL);
-
-	// instantiate pre cond
-	for (uint i=0 ; i<pDef->GetPreCondDef().size() ; ++i)
+	for (IBFact* pFact : pOrig->m_aAdditionalPostCond)
 	{
-		const FactCondDef& oPreCondDef = pDef->GetPreCondDef()[i];
-		ASSERT(oPreCondDef.m_pFactDef->GetDegree() == oPreCondDef.m_aVarName.size());
+		m_aAdditionalPostCond.push_back(pFact->Clone());
+	}
+}
 
-		vector<IBObject*> aUserData;
-		aUserData.resize(oPreCondDef.m_pFactDef->GetDegree(), NULL);
-
-		IBFact* pPreCond = oPreCondDef.m_pFactDef->Instanciate(this, aUserData);
-
-		AddPreCond(i, pPreCond);
+bool IBAction::CheckVariables() const
+{
+	for (VarMap::const_iterator itA = m_aVariables.begin(); itA != m_aVariables.end(); ++itA)
+	{
+		VarMap::const_iterator itB = itA;
+		for (++itB; itB != m_aVariables.end(); ++itB)
+		{
+			if (itA->second == itB->second)
+				return false;
+		}
 	}
 
-	// instantiate counter post cond
-	for (uint i=0 ; i<pDef->GetCounterPostCondDef().size() ; ++i)
+	return true;
+}
+
+void IBAction::FinalizeCreation()
+{
+	// Fill m_aAdditionalPostCond with rest
+	for (uint32 i = 0; i < m_pDef->GetPostCondDef().size(); ++i)
 	{
-		const FactCondDef& oPostCondDef = pDef->GetCounterPostCondDef()[i];
-		ASSERT(oPostCondDef.m_pFactDef->GetDegree() == oPostCondDef.m_aVarName.size());
+		const IBFactCondDef& oPostCondDef = m_pDef->GetPostCondDef()[i];
+		ASSERT(oPostCondDef.m_pFactDef->GetDegree() == oPostCondDef.m_aLinkNames.size());
 
-		vector<IBObject*> aUserData;
-		aUserData.resize(oPostCondDef.m_pFactDef->GetDegree(), NULL);
+		IBFact* pAddPostCond = oPostCondDef.m_pFactDef->Instanciate(oPostCondDef.m_bInverted, nullptr);
+		pAddPostCond->ResolveVariableFromCond(this, oPostCondDef);
 
-		IBFact* pPostCond = oPostCondDef.m_pFactDef->Instanciate(this, aUserData);
+		bool found = false;
 
-		AddCounterPostCond(i, pPostCond);
+		// if pAddPostCond found in m_aPostCond -> delete and skip
+		for (uint32 j = 0; j < m_aPostCond.size(); ++j)
+		{
+			const IBFact* pPostCond = m_aPostCond[j];
+			if (pPostCond->IsEqual(pAddPostCond))
+			{
+				found = true;
+				break;
+			}
+		}
+
+		// if pAddPostCond found in m_aAdditionalPostCond -> delete and skip
+		for (uint32 j = 0; !found && j < m_aAdditionalPostCond.size(); ++j)
+		{
+			const IBFact* pPostCond = m_aAdditionalPostCond[j];
+			if (pPostCond->IsEqual(pAddPostCond))
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+		{
+			delete pAddPostCond;
+			continue;
+		}
+
+		// if pAddPostCond found opposite in m_pPostWorldChange
+		//  equal -> Add To m_aPostCond
+		for (FactSet::iterator it = m_pPostWorldChange->GetFacts().begin(); it != m_pPostWorldChange->GetFacts().end(); ++it)
+		{
+			IBFact* pPostCond = *it;
+			if (pPostCond->IsEqual(pAddPostCond))
+			{
+				m_aPostCond.push_back(pPostCond);
+				delete pAddPostCond;
+				pAddPostCond = nullptr;
+				break;
+			}
+		}
+
+		if (pAddPostCond != nullptr && m_pPostWorldChange->CheckCompatibility(pAddPostCond) == false)
+			m_eState = IBA_Impossible;
+
+		if (pAddPostCond != nullptr)
+			m_aAdditionalPostCond.push_back(pAddPostCond);
 	}
+
+	// create Pre WorldChange
+	m_pPreWorldChange = new IBWorldChange(m_pPlanner, this);
+
+	// Add pre cond in PreWorldChange
+	for (uint i = 0; i < m_pDef->GetPreCondDef().size(); ++i)
+	{
+		const IBFactCondDef& oPreCondDef = m_pDef->GetPreCondDef()[i];
+		ASSERT(oPreCondDef.m_pFactDef->GetDegree() == oPreCondDef.m_aLinkNames.size());
+
+		IBFact* pPreCond = oPreCondDef.m_pFactDef->Instanciate(oPreCondDef.m_bInverted, m_pPreWorldChange);
+
+		pPreCond->ResolveVariableFromCond(this, oPreCondDef);
+
+		// skip if already in PreWorldChange
+		for (FactSet::iterator it = m_pPreWorldChange->GetFacts().begin(); it != m_pPreWorldChange->GetFacts().end(); ++it)
+		{
+			IBFact* pPreFact = *it;
+			if (pPreFact->IsEqual(pPreCond))
+			{
+				delete pPreCond;
+				pPreCond = nullptr;
+				break;
+			}
+		}
+
+		if (pPreCond != nullptr)
+			m_pPreWorldChange->AddFact(pPreCond);
+	}
+
+	// Add PostWorldChange cond not resolved to PreWorldChange
+	for (FactSet::const_iterator it = m_pPostWorldChange->GetFacts().begin(); it != m_pPostWorldChange->GetFacts().end(); ++it)
+	{
+		IBFact* pFact = *it;
+
+		if (pFact->IsTrue())
+			continue;
+
+		bool found = false;
+
+		for (uint32 i = 0; i < m_aPostCond.size(); ++i)
+		{
+			if (m_aPostCond[i] == pFact)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			continue;
+
+		for (FactSet::iterator it = m_pPreWorldChange->GetFacts().begin(); it != m_pPreWorldChange->GetFacts().end(); ++it)
+		{
+			IBFact* pPreFact = *it;
+			
+			if (pPreFact->IsEqual(pFact))
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+			continue;
+
+		IBFact* copy = pFact->Clone();
+		copy->m_aCauseAction.clear();
+		copy->m_pWorldChangeOwner = m_pPreWorldChange;
+		m_pPreWorldChange->AddFact(copy);
+	}
+
+	if (m_pPreWorldChange->CheckInnerCompatibility() == false)
+		m_eState = IBA_State::IBA_Impossible;
 }
 
 IBAction::~IBAction()
 {
-	ASSERT(m_aPreCond.size() == 0);
-	ASSERT(m_aCounterPostCond.size() == 0);
+	if (m_pPreWorldChange != nullptr)
+		delete m_pPreWorldChange;
 
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		if (m_aPostCond[i] != NULL)
-			m_aPostCond[i]->RemoveCauseAction(this);
-	}
-
-	uint count = 0;
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		if (m_aPostCond[i] != NULL)
-			count++;
-	}
-	ASSERT(count == 1);
+	for (uint32 i = 0; i < m_aAdditionalPostCond.size() ; ++i)
+		delete m_aAdditionalPostCond[i];
 }
 
 void IBAction::Destroy()
 {
+	m_eState = IBA_State::IBA_Destroyed;
+
 	m_pDef->PreDestroy(m_aVariables);
 
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		m_aPreCond[i]->Destroy();
-		delete m_aPreCond[i];
-	}
-	m_aPreCond.clear();
+	for (uint32 i = 0; i < m_aAdditionalPostCond.size(); ++i)
+		m_aAdditionalPostCond[i]->Destroy();
 
-	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
-	{
-		delete m_aCounterPostCond[i];
-	}
-	m_aCounterPostCond.clear();
+	if (m_pPreWorldChange != nullptr)
+		m_pPreWorldChange->Destroy();
 }
 
-IBObject* IBAction::FindVariables(const string& name) const
+const IBObject* IBAction::GetVariable(const string& name) const
 {
 	VarMap::const_iterator it = m_aVariables.find(name);
-	return (it == m_aVariables.end() ? NULL : it->second);
+	return (it == m_aVariables.end() ? nullptr : &(it->second));
 }
 
-void IBAction::SetVariable(const string& name, IBObject* val)
+void IBAction::SetVariable(const string& var_name, const IBObject& obj)
 {
-	VarMap::iterator it = m_aVariables.find(name);
-	if (it != m_aVariables.end() && it->second != val)
+	VarMap::iterator it = m_aVariables.find(var_name);
+	if (it != m_aVariables.end())
 	{
-		it->second = val;
-
-		// Affecte data to pre cond
-		AffectPreCondVariable(name, val);
-		
-		// Affecte data to pre cond // TOCHECK
-		//AffectPostCondVariable(name, val);
-
-		AffectCounterPostCondVariable(name, val);
+		it->second = obj;
 	}
 }
 
-const IBFact* IBAction::GetFirstPostCond() const
+void IBAction::SetVariable(const string& var_name, const string& obj_name, void* user_data)
 {
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
+	VarMap::iterator it = m_aVariables.find(var_name);
+	if (it != m_aVariables.end())
 	{
-		if (m_aPostCond[i] != NULL)
-			return m_aPostCond[i];
-	}
-	
-	return NULL;
-}
-
-
-void IBAction::AddPostCond(uint i, IBFact* pPostCond)
-{
-	assert(i<m_aPostCond.size());
-	m_aPostCond[i] = pPostCond;
-	pPostCond->AddCauseAction(this);
-
-	// resolve name variable from post cond
-	ResolveVariableNameFromPostCond(i, pPostCond);
-}
-
-void IBAction::AddCounterPostCond(uint i, IBFact* pPostCond)
-{
-	assert(i<m_aCounterPostCond.size());
-	m_aCounterPostCond[i] = pPostCond;
-	pPostCond->AddCauseAction(this);
-}
-
-/*
-void IBAction::RemPostCond(IBFact* pPostCond)
-{
-	pPostCond->RemoveCauseAction(this);
-
-	for (vector<IBFact*>::iterator it = m_aPostCond.begin() ; it != m_aPostCond.end() ; ++it)
-	{
-		if (*it == pPostCond)
-		{
-			m_aPostCond.erase(it);
-			break;
-		}
-	}
-}*/
-
-
-void IBAction::AddPreCond(uint i, IBFact* pPreCond)
-{
-	ASSERT(i<m_aPreCond.size());
-	m_aPreCond[i] = pPreCond;
-	pPreCond->SetEffectAction(this);
-}
-
-void IBAction::AddPreCond(IBFact* pPreCond)
-{
-	m_aPreCond.push_back(pPreCond);
-	pPreCond->SetEffectAction(this);
-}
-
-const FactCondDef& IBAction::GetPostConfDefFromFact(IBFact* pPostCond) const
-{
-	ASSERT(false); // unused
-
-	static FactCondDef NullDef(NULL);
-
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		if (pPostCond == m_aPostCond[i])
-			return m_pDef->GetPostCondDef()[i];
-	}
-
-	ASSERT(false);
-	return NullDef;
-}
-
-const FactCondDef& IBAction::GetPreConfDefFromFact(IBFact* pPreCond) const
-{
-	ASSERT(false); // unused
-	
-	static FactCondDef NullDef(NULL);
-
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		if (pPreCond == m_aPreCond[i])
-			return m_pDef->GetPreCondDef()[i];
-	}
-
-	ASSERT(false);
-	return NullDef;
-}
-
-IBFact* IBAction::FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pInstigator) const
-{
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		IBFact* pFact = m_aPreCond[i];
-
-		if (pFact == pInstigator)
-			continue;
-
-		if (pFact != pModelFact && !pFact->m_bToDelete && *pFact == *pModelFact)
-			return pFact;
-		
-		const ActionSet& CauseAction = pFact->GetCauseAction();
-
-		for (ActionSet::const_iterator it = CauseAction.begin() ; it != CauseAction.end() ; ++it)
-		{
-			IBAction* pAction = *it;
-
-			pFact = pAction->FindEqualFact_TopBottom(pModelFact, pInstigator);
-			if (pFact != NULL)
-				return pFact;
-		}
-	}
-
-	return NULL;
-}
-
-const IBFact* IBAction::FindEqualFact_BottomTop(IBFact* pModelFact) const
-{
-	const IBFact* pFact = NULL;
-
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		if (m_aPostCond[i] != NULL)
-		{
-			pFact = m_aPostCond[i]->FindEqualFact_BottomTop(pModelFact);
-			if (pFact != NULL)
-				return pFact;
-		}
-	}
-
-	return NULL;
-}
-
-
-
-// Resolve Variable data of Action from the post cond
-void IBAction::ResolveVariableNameFromPostCond(uint i, IBFact* pPostCond)
-{
-	FactCondDef* pPostCondDef = &m_pDef->GetPostCondDef()[i];
-
-	ResolveVariableName(i, pPostCond, pPostCondDef);
-}
-
-// Resolve Variable data of Action from the counter post cond
-/*
-void IBAction::ResolveVariableNameFromCounterPostCond(uint i, IBFact* pPostCond)
-{
-	FactCondDef* pPostCondDef = &m_pDef->GetCounterPostCondDef()[i];
-
-	ResolveVariableName(i, pPostCond, pPostCondDef);
-}
-*/
-
-// Resolve Variable data of Action from a post cond
-void IBAction::ResolveVariableName(uint i, IBFact* pPostCond, FactCondDef* pPostCondDef)
-{
-	assert(pPostCondDef->m_aVarName.size() == pPostCond->GetUserData().size());
-
-	// for each post cond data
-	for (uint k=0 ; k<pPostCondDef->m_aVarName.size() ; ++k)
-	{
-		// get name from post cond def
-		const string& name = pPostCondDef->m_aVarName[k];
-
-		// get data from post cond
-		IBObject* pUserData = pPostCond->GetUserData()[k];
-
-		// set data to variable
-		SetVariable(name, pUserData);
+		it->second.SetName(obj_name);
+		it->second.SetUserData(user_data);
 	}
 }
 
-// Affect data to pre cond
-void IBAction::AffectPreCondVariable(const string& name, IBObject* data)
+void IBAction::AddPotentialVariable(const string& var_name, const string& obj_name, void* user_data)
 {
-	// for each pre cond
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	PotentialVarMap::iterator it = m_aPotentialVariables.find(var_name);
+
+	if (it == m_aPotentialVariables.end())
 	{
-		// get pre fact
-		IBFact* pPreFact = m_aPreCond[i];
-
-		// get def
-		const FactCondDef* pPreCondDef = &m_pDef->GetPreCondDef()[i];
-
-		// for each var of pre cond
-		for (uint j=0 ; j<pPreCondDef->m_aVarName.size() ; ++j)
-		{
-			// if correspond, set
-			if (pPreCondDef->m_aVarName[j] == name)
-			{
-				pPreFact->SetVariable(j, data);
-			}
-		}
+		vector<class IBObject> aObj;
+		aObj.push_back(IBObject(obj_name, user_data));
+		m_aPotentialVariables.insert(PotentialVarPair(var_name, aObj));
+	}
+	else
+	{
+		it->second.push_back(IBObject(obj_name, user_data));
 	}
 }
 
-void IBAction::AffectPostCondVariable(const string& name, IBObject* data)
+void IBAction::GetPotentialVariable(const string& var_name, vector<IBObject>& aObj) const
 {
-	ASSERT(false);
+	PotentialVarMap::const_iterator it = m_aPotentialVariables.find(var_name);
 
-	// for each post cond
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		// get post fact
-		IBFact* pPostFact = m_aPostCond[i];
-
-		// get def
-		const FactCondDef* pPostCondDef = &m_pDef->GetPostCondDef()[i];
-
-		// for each var of post cond
-		for (uint j=0 ; j<pPostCondDef->m_aVarName.size() ; ++j)
-		{
-			// if correspond, set
-			if (pPostCondDef->m_aVarName[j] == name)
-			{
-				pPostFact->SetVariable(j, data);
-			}
-		}
-	}
+	if (it == m_aPotentialVariables.end())
+		aObj = it->second;
 }
 
-void IBAction::AffectCounterPostCondVariable(const string& name, IBObject* data)
+uint32 IBAction::GetPotentialVariableCount(const string& var_name) const
 {
-	// for each post cond
-	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
-	{
-		// get post fact
-		IBFact* pPostFact = m_aCounterPostCond[i];
-
-		// get def
-		const FactCondDef* pPostCondDef = &m_pDef->GetCounterPostCondDef()[i];
-
-		// for each var of post cond
-		for (uint j=0 ; j<pPostCondDef->m_aVarName.size() ; ++j)
-		{
-			// if correspond, set
-			if (pPostCondDef->m_aVarName[j] == name)
-			{
-				pPostFact->SetVariable(j, data);
-			}
-		}
-	}
-}
-
-/*
-// Update Variable from post and pre condition
-void IBAction::ResolvePreCond()
-{
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		IBFact* pPreFact = m_aPreCond[i];
-		pPreFact->ResolveVariable();
-	}
-
-	SpreadPreCondVariable();
-}
-*/
-
-/*
-// Update Variable from post and pre condition
-void IBAction::SpreadVariable()
-{
-	ASSERT(false);
-
-	UpdateVariableFromPostCond();
-	SpreadPreCondVariable();
-}
-*/
-
-// Update Variable from post condition
-void IBAction::UpdateVariableFromPostCond()
-{
-	// for each post cond
-	for (uint i=0 ; i<m_aPostCond.size() ; ++i)
-	{
-		IBFact* pPostFact = m_aPostCond[i];
-		if (pPostFact == NULL) continue;
-
-		const FactCondDef* pPostCondDef = &m_pDef->GetPostCondDef()[i];
-
-		// for each post cond variable
-		for (uint j=0 ; j<pPostCondDef->m_aVarName.size() ; ++j)
-		{
-			const string& name = pPostCondDef->m_aVarName[j];
-
-			// find action variable correspondence
-			IBObject* pCurrentVar = FindVariables(name);
-			IBObject* pPostVar = pPostFact->GetVariable(j);
-
-			if (pCurrentVar != pPostVar)
-			{
-				SetVariable(name, pPostVar);
-			}
-		}
-	}
-}
-
-// Update Variable from pre condition
-void IBAction::SpreadPreCondVariable(IBFact* pPreCond)
-{
-	// for each pre cond
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		IBFact* pPreFact = m_aPreCond[i];
-
-		if (pPreCond != NULL && pPreCond != pPreFact)
-			continue;
-
-		const FactCondDef* pPreCondDef = &m_pDef->GetPreCondDef()[i];
-		// for each pre cond variable
-		for (uint j=0 ; j<pPreCondDef->m_aVarName.size() ; ++j)
-		{
-			const string& name = pPreCondDef->m_aVarName[j];
-
-			// find action variable correspondence
-			IBObject* pCurrentVar = FindVariables(name);
-			IBObject* pPreVar = pPreFact->GetVariable(j);
-
-			if (pCurrentVar == NULL && pPreVar != NULL)
-			{
-				SetVariable(name, pPreVar);
-			}
-			else if (pCurrentVar != NULL && pPreVar == NULL)
-			{
-				pPreFact->SetVariable(j, pCurrentVar);
-			}
-			else if (pCurrentVar != pPreVar)
-			{
-				ASSERT(false); // What to do ???
-			}
-		}
-	}
-}
-
-void IBAction::PrepareToDelete()
-{
-	m_bToDelete = true;
-
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		m_aPreCond[i]->PrepareToDelete();
-	}
+	PotentialVarMap::const_iterator it = m_aPotentialVariables.find(var_name);
+	return (it == m_aPotentialVariables.end() ? 0 : it->second.size());
 }
 
 
-bool IBAction::IsReadyToDestroy()
+void IBAction::ResolveVariableFromPostCond(const IBFact* pPostCond)
 {
-	if (!m_bToDelete)
-		return false;
+	const IBFactCondDef* pCond = m_pDef->FindPostCond(pPostCond->GetFactDef()->GetName());
 
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
+	for (uint i = 0; i < pCond->m_aLinkNames.size(); ++i)
 	{
-		if (!m_aPreCond[i]->IsReadyToDestroy())
-			return false;
+		const IBObject* pObj = pPostCond->GetVariable(pCond->m_aLinkNames[i].m_sCondVarName);
+		if (pObj)
+			SetVariable(pCond->m_aLinkNames[i].m_sActionVarName, pObj->GetName(), pObj->GetUserData());
 	}
-
-	return true;
-}
-
-bool IBAction::IsReadyToDelete()
-{
-	if (!m_bToDelete || GetState() != IBA_Destroyed)
-		return false;
-
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		if (!m_aPreCond[i]->IsReadyToDelete())
-			return false;
-	}
-
-	return true;
-}
-
-
-IBF_Result IBAction::ResolvePreCond(IBPlanner* pPlanner, bool bExecute)
-{
-	/*
-	map<float, IBFact*> pFactOrdered;
-
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-		pFactOrdered.insert(pair<float, IBFact*>(m_aPreCond[i]->Evaluate(), m_aPreCond[i]));
-
-	bool res = true;
-	for (map<float, IBFact*>::iterator it = pFactOrdered.begin() ; it != pFactOrdered.end() ; ++it)
-		res &= it->second->Resolve(pPlanner);
-	*/
-
-	int results[IBF_Result_MAX];
-
-	for (uint i=0 ; i<IBF_Result_MAX ; ++i)	results[i] = 0;
-	
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		IBF_Result preres = m_aPreCond[i]->Resolve(pPlanner, bExecute);
-
-		//if (preres == IBF_FAIL)
-		//	bExecute = false;
-
-		results[preres]++;
-	}
-
-	if (m_aPreCond.size() == 0)
-		return IBF_OK;
-
-	if (results[IBF_DELETE] == m_aPreCond.size())
-		return IBF_DELETE;
-
-	if (results[IBF_IMPOSSIBLE] > 0)
-		return IBF_IMPOSSIBLE;
-
-	if (results[IBF_FAIL] > 0)
-		return IBF_FAIL;
-
-	if (results[IBF_OK] == m_aPreCond.size())
-		return IBF_OK;
-
-	if (results[IBF_UNKNOW] == 0)
-		return IBF_RESOLVED;
-
-	return IBF_UNKNOW;
-}
-
-IBF_Result IBAction::ResolveCounterPostCond(IBPlanner* pPlanner)
-{
-	bool fail = false;
-
-	m_aCounterFact.resize(m_aCounterPostCond.size(), NULL);
-
-	for (uint i=0 ; i<m_aCounterPostCond.size() ; ++i)
-	{
-		IBFact* pFact = m_aCounterPostCond[i];
-
-		m_aCounterFact[i] = pPlanner->FindEqualFact_TopBottom(pFact, GetFirstPostCond());
-
-		fail |= (m_aCounterFact[i] != NULL);
-	}
-	
-	return (fail ? IBF_IMPOSSIBLE : IBF_OK);
-}
-
-
-IBAction::State IBAction::Resolve(IBPlanner* pPlanner, bool bExecute)
-{
-	IBF_Result res;
-
-	switch(m_eState)
-	{
-		case IBA_Init:
-			if (m_bToDelete)
-				SetState(IBA_Destroy);
-			else if (m_pDef->Init(this))
-				SetState(IBA_Unresolved);
-			else if (ResolvePreCond(pPlanner, bExecute) == IBF_IMPOSSIBLE)
-				SetState(IBA_Impossible);
-			break;
-
-		case IBA_Unresolved:
-		case IBA_Resolved:
-			if (pPlanner->GetCurrentAction() == this)
-				pPlanner->SetCurrentAction(NULL);
-			if (m_bToDelete)
-				SetState(IBA_Destroy);
-
-			if (ResolveCounterPostCond(pPlanner) == IBF_IMPOSSIBLE)
-			{
-				SetState(IBA_Counter);
-			}
-			else
-			{
-				res = ResolvePreCond(pPlanner, bExecute);
-
-				if (res == IBF_IMPOSSIBLE)
-				{
-					SetState(IBA_Impossible);
-					PrepareToDelete();
-				}
-				else if (res == IBF_OK && bExecute && pPlanner->GetCurrentAction() == NULL)
-				{
-					pPlanner->SetCurrentAction(this);
-					SetState(IBA_Start);
-				}
-				else if (res == IBF_OK || res == IBF_RESOLVED)
-				{
-					SetState(IBAction::IBA_Resolved);
-				}
-			}
-			break;
-
-		case IBA_Counter:
-			if (m_bToDelete)
-				SetState(IBA_Destroy);
-			if (ResolveCounterPostCond(pPlanner) == IBF_OK)
-				SetState(IBA_Unresolved);
-			break;
-
-		case IBA_Impossible:
-			if (m_bToDelete)
-				SetState(IBA_Destroy);
-			break;
-
-		case IBA_Start:
-			Start();
-			if (m_bToDelete)
-				SetState(IBA_Finish);
-			else if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
-				SetState(IBA_Unresolved);
-			else if (m_pDef->Start(this))
-				SetState(IBA_Execute);
-			break;
-
-		case IBA_Execute:
-			Execute();
-			if (m_bToDelete)
-				SetState(IBA_Abort);
-			else if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
-				SetState(IBA_Unresolved);
-			else if (m_pDef->Execute(this))
-				SetState(IBA_Finish);
-			break;
-
-		case IBA_Finish:
-			Finish();
-			if (m_pDef->Finish(this))
-				SetState(IBA_Destroy);
-			else if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
-				SetState(IBA_Unresolved);
-			break;
-
-		case IBA_Abort:
-			/*if (ResolvePreCond(pPlanner, bExecute) != IBF_OK)
-				SetState(IBA_Finish);
-			else */if (m_pDef->Abort(this))
-				SetState(IBA_Finish);
-			break;
-
-		case IBA_Destroy:
-			if (pPlanner->GetCurrentAction() == this)
-				pPlanner->SetCurrentAction(NULL);
-			if (IsReadyToDestroy())
-			{
-				m_pDef->Destroy(this);
-				Destroy();
-				SetState(IBA_Destroyed);
-			}
-			else
-			{
-				ResolvePreCond(pPlanner, bExecute);
-			}
-			break;
-
-		case IBA_Destroyed:
-			//LOG("IBA_Destroy\n");
-			if (IsReadyToDelete())
-			{
-				delete this;
-			}
-			else
-			{
-				ResolvePreCond(pPlanner, bExecute);
-			}
-			break;
-	}
-
-	return GetState();
 }
 
 bool IBAction::IsResolved() const
 {
-	switch (m_eState)
+	for (VarMap::const_iterator it = m_aVariables.begin(); it != m_aVariables.end(); ++it)
 	{
-		case IBA_Resolved:
-		case IBA_Start:
-		case IBA_Execute:
-		case IBA_Abort:
-		case IBA_End:
-		case IBA_Finish:
-			return true;
+		const IBObject& Obj = it->second;
+		if (Obj.GetUserData() == nullptr)
+			return false;
 	}
 
-	return false;
+	return true;
 }
 
-
-float IBAction::Evaluate() const
+float IBAction::GetCost() const
 {
-	float fValue = m_pDef->Evaluate(this);
+	if (m_eState == IBA_Impossible)
+		return FLT_MAX;
 
-	for (uint i=0 ; i<m_aPreCond.size() ; ++i)
-	{
-		fValue += m_aPreCond[i]->Evaluate();
-	}
+	float fValue = m_pDef->GetCost(this);
 
 	return fValue;
 }
 
-void IBAction::Start()
+float IBAction::GetTotalCost() const
 {
-	//LOG("Action %s Started\n", m_pDef->GetName().c_str());
-	m_iExecCount = 0;
+	float fTotal = GetCost();
+
+	if (m_pPostWorldChange != nullptr && m_pPostWorldChange->GetAction() != nullptr)
+		fTotal += m_pPostWorldChange->GetAction()->GetTotalCost();
+
+	return fTotal;
 }
 
-void IBAction::Execute()
+IBPlanner* IBAction::GetPlanner()
+{
+	return m_pPlanner;
+}
+
+bool IBAction::IsChildOf(const IBFact* pFact) const
+{
+	for (uint32 j = 0; j < m_aPostCond.size(); ++j)
+	{
+		IBFact* pPostCond = m_aPostCond[j];
+
+		if (pPostCond == pFact)
+			return true;
+	}
+
+	if (m_pPostWorldChange == nullptr)
+		return false;
+
+	if (m_pPostWorldChange->GetAction() == nullptr)
+		return false;
+
+	return m_pPostWorldChange->GetAction()->IsChildOf(pFact);
+}
+
+void	 IBAction::Update()
+{
+	if (m_eState == IBA_State::IBA_Unresolved)
+	{
+		if (m_aPotentialVariables.size() > 0)
+		{
+			PotentialVarMap::iterator it = m_aPotentialVariables.begin();
+			if (it->second.size() > 0)
+			{
+				const string& sVarName = it->first;
+				IBObject sVarObj = it->second.back();
+				it->second.pop_back();
+
+				PotentialVarMap NewPotentialVarMap(++it, m_aPotentialVariables.end());
+				CloneWithVar(sVarName, sVarObj, NewPotentialVarMap);
+			}
+			else
+			{
+				m_aPotentialVariables.erase(it);
+			}
+		}
+		else
+		{
+			Destroy();
+		}
+	}
+
+	if (m_pPreWorldChange != nullptr)
+		m_pPreWorldChange->Update();
+}
+
+/*
+void IBAction::Step()
+{
+	switch (m_eState)
+	{
+		case IBA_State::IBA_Init:
+			ASSERT(false);
+			break;
+
+		case IBA_State::IBA_Unresolved:
+			break;
+		
+		case IBA_State::IBA_Resolved:
+			break;
+
+		case IBA_State::IBA_Ready:
+			if (m_pPlanner->GetCurrentAction() == nullptr)
+			{
+				m_eState = Init() ? IBA_State::IBA_Start : IBA_State::IBA_Impossible;
+				if (m_eState == IBA_State::IBA_Start)
+					m_pPlanner->SetCurrentAction(this);
+			}
+			break;
+
+		case IBA_State::IBA_Start:
+			m_eState = Start() ? IBA_State::IBA_Execute: IBA_State::IBA_Impossible;
+			break;
+
+		case IBA_State::IBA_Execute:
+			m_eState = Execute() ? IBA_State::IBA_Finish : IBA_State::IBA_Execute;
+			break;
+
+		case IBA_State::IBA_Finish:
+			m_eState = Finish() ? IBA_State::IBA_Destroy : IBA_State::IBA_Impossible;
+			m_pPlanner->SetCurrentAction(nullptr);
+			break;
+
+		case IBA_State::IBA_Abort:
+			ASSERT(false);
+			break;
+
+		case IBA_State::IBA_Destroy:
+			m_eState = IBA_State::IBA_Destroyed;
+			Destroy();
+			delete this;
+			break;
+
+		case IBA_State::IBA_Destroyed:
+			break;
+
+		case IBA_State::IBA_Impossible:
+			if (m_pPlanner->GetCurrentAction() == this)
+				m_pPlanner->SetCurrentAction(nullptr);
+			break;
+	}
+}
+*/
+
+/*
+void	 IBAction::Resolve()
+{
+	if (m_eState == IBA_State::IBA_Unresolved)
+	{
+		if (m_aPotentialVariables.size() == 0)
+		{
+			Destroy();
+		}
+		else
+		{
+			PotentialVarMap::iterator it = m_aPotentialVariables.begin();
+			if (it->second.size() > 0)
+			{
+				const string& sVarName = it->first;
+				IBObject sVarObj = it->second.back();
+				it->second.pop_back();
+
+				PotentialVarMap NewPotentialVarMap(++it, m_aPotentialVariables.end());
+				CloneWithVar(sVarName, sVarObj, NewPotentialVarMap);
+			}
+			else
+			{
+				m_aPotentialVariables.erase(it);
+			}
+		}
+	}
+
+	//if (m_pPreWorldChange != nullptr)
+	//	m_pPreWorldChange->Resolve();
+}
+*/
+
+void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj)
+{
+	PotentialVarMap aPotentialVarMap;
+	CloneWithVar(sVarName, oVarObj, aPotentialVarMap);
+}
+
+void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, const PotentialVarMap& aPotentialVarMap)
+{
+	IBAction* pAction = new IBAction(this);
+
+	pAction->SetVariable(sVarName, oVarObj);
+	pAction->m_aPotentialVariables = aPotentialVarMap;
+
+	for (uint32 j = 0; j < m_aPostCond.size(); ++j)
+	{
+		IBFact* pPostCond = m_aPostCond[j];
+		pPostCond->AddCauseAction(pAction);
+	}
+
+	pAction->m_eState = (pAction->IsResolved() ? IBA_State::IBA_Resolved : IBA_State::IBA_Unresolved);
+
+	if (pAction->m_eState == IBA_State::IBA_Resolved)
+	{
+		if (pAction->CheckVariables() == false)
+		{
+			pAction->SetState(IBA_State::IBA_Impossible);
+		}
+		else
+		{
+			pAction->SetState(IBA_State::IBA_Ready);
+			pAction->FinalizeCreation();
+		}
+	}
+}
+
+bool IBAction::Init()
+{
+	return m_pDef->Init(this);
+}
+
+
+bool IBAction::Start()
+{
+	//LOG("Action %s Started\n", m_pDef->GetName().c_str());
+	
+	m_iExecCount = 0;
+
+	return m_pDef->Start(this);
+}
+
+bool IBAction::Execute()
 {
 	//LOG("Action %s Execute %d\n", m_pDef->GetName().c_str(), m_iExecCount);
 	m_iExecCount++;
+
+	return m_pDef->Execute(this);
 }
 
-void IBAction::Finish()
+bool IBAction::Stop(bool bInterrupt)
 {
 	//LOG("Action %s Finish %d\n", m_pDef->GetName().c_str(), m_iExecCount);
+	
+	return m_pDef->Finish(this);
 }
 

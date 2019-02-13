@@ -3,7 +3,9 @@
 
 #ifndef SKIP_ALLOC
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(TRACK_MEMLEAK)
+
+#error prout
 
 #include <exception>
 

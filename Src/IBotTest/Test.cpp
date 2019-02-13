@@ -1,14 +1,16 @@
 #include "Utils.h"
 
 #include "GEngine_SDL.h"
-#include "InputEvent_SDL.h"
+//#include "InputEvent_SDL.h"
 #include "Canvas.h"
 #include "Timer.h"
 
 #include "IBPlannerTest.h"
 #include "World/IBCubeWorld.h"
 #include "Display/IBPlannerDebug.h"
-#include "Input.h"
+//#include "Input.h"
+#include "Event.h"
+#include "EventManager.h"
 
 void DrawWorld(const IBCubeWorld& oWorld, CanvasBase& oWorldCanva);
 void DrawCube(const IBCube* pCube, CanvasBase& canva, int i, int j);
@@ -46,26 +48,31 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	while (!bQuit)
 	{
-		ge.UpdateInput();
+		ge.UpdateEvent(0.03f);
 
-		bQuit = (ge.GetInput()->IsQuit() || ge.GetInput()->GetVirtualKey(KEY_ESC) == KeyPressed);
+		//bQuit |= pEvent->IsQuit();
 
-		if (ge.GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
+		//if (pEvent->IsKeyboard())
+		{
+			bQuit |= (ge.GetEventManager()->GetVirtualKey(KEY_ESC) == KeyPressed);
+		}
+
+		if (ge.GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyPressed)
 		{
 			if (graph_canva.IsMouseInside())
 				oPlanner.StartDrag();
 		}
-		else if (ge.GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
+		else if (ge.GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
 		{
 			if (oPlanner.IsDraging())
 				oPlanner.UpdateDrag();
 		}
-		else if (ge.GetInput()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
+		else if (ge.GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyUp)
 		{
 			oPlanner.StopDrag();
 		}
 
-		if (ge.GetInput()->GetVirtualKey(KEY_SPACE) == KeyPressed
+		if (ge.GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyPressed
 		 || (bRealTime && Timer::Get() > fTime + 1.f))
 		{
 

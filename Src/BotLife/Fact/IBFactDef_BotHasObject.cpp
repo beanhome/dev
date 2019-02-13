@@ -15,31 +15,14 @@ IBFactDef_BotHasObject::~IBFactDef_BotHasObject()
 {
 }
 
-IBF_Result IBFactDef_BotHasObject::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_BotHasObject::Test(const class IBFact* pFact) const
 {
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
+	BLBot* pBot = static_cast<BLBot*>(m_pPlanner->GetOwner());
 
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	BLProp* pObj = reinterpret_cast<BLProp*>(aUserData[0]);
+	BLProp* pObj = pFact->GetVariable<BLProp>();
 	
 	if (pObj == NULL)
 		return IBF_UNKNOW;
 
 	return ((pBot->HasObject(pObj)) ? IBF_OK : IBF_FAIL);
 }
-
-void IBFactDef_BotHasObject::ResolveVariable(vector<IBObject*>& aUserData)
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == GetDegree());
-
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-
-	if (aUserData[0] == NULL)
-		aUserData[0] = pBot->GetFirstObject();
-}
-

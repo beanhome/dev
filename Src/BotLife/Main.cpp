@@ -70,12 +70,12 @@ extern "C" int SDL_main(int argc, char *argv[])
 	{
 		if (argv[i][0] == '-')
 		{
-			ASSERT(argc > i+1);
+			//ASSERT(argc > i+1);
 			switch (argv[i][1])
 			{
 				case 'a':		sApp = argv[i+1];			break;
-				case 'w':		w = atoi(argv[i+1]);		break;
-				case 'h':		h = atoi(argv[i+1]);		break;
+				case 'w':		w = atoi(argv[i+1]);			break;
+				case 'h':		h = atoi(argv[i+1]);			break;
 				case 't':		sTiles = argv[i+1];			break;
 				case 'r':		r = (float)atof(argv[i+1]);	break;
 				case 'x':		sx = atoi(argv[i+1]);		break;
@@ -108,9 +108,10 @@ extern "C" int SDL_main(int argc, char *argv[])
 	else if (strncmp(sApp, "SpriteViewApp", 14) == 0)
 		pApp = new SpriteViewApp(w, h, path);
 	
-
 	if (pApp == NULL)
 		return -1;
+
+	pApp->Init();
 
 	int res = pApp->Loop();
 

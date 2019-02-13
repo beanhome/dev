@@ -4,8 +4,6 @@
 #include "Utils.h"
 #include "FontResource.h"
 
-typedef struct _TTF_Font TTF_Font;
-
 class FontResource_SDL : public FontResource
 {
 	public:
@@ -17,7 +15,7 @@ class FontResource_SDL : public FontResource
 		uint16 GetLineSkip() const override;
 
 	public:
-		TTF_Font*		m_pFont;
+		struct FC_Font*	m_pFont;
 };
 
 

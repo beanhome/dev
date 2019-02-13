@@ -11,9 +11,10 @@ class IBActionDef_MoveCubeFromCubeToTable : public IBActionDef
 		virtual ~IBActionDef_MoveCubeFromCubeToTable();
 
 		virtual void		Define();
-		virtual float		Evaluate(const IBAction* pAction) const { return 1.f; }
-		virtual bool		Init(IBAction* pAction);
-		virtual bool		Execute(IBAction* pAction);
+		virtual void		CompleteVariables(IBAction* pAction) const;
+		virtual float	GetCost(const IBAction* pAction) const { return 1.f; }
+		virtual bool		Init(IBAction* pAction) const override;
+		virtual bool		Execute(IBAction* pAction) const override;
 
 	private:
 };

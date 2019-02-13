@@ -28,6 +28,8 @@ class Path
 		//deque<Vector2> GetListInverse() const;
 		//Path GetInverse() const;
 
+		bool InOnPath(const Vector2& pos) const;
+
 		Vector2 operator[](int i) const { ASSERT(i<(int)m_aPath.size()); return m_aPath[i]; }
 
 		virtual void Print() const;

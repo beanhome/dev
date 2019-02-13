@@ -21,6 +21,9 @@
 #include <set>
 #include <list>
 
+#undef min
+#undef max
+
 using std::string;
 using std::vector;
 using std::deque;
@@ -30,6 +33,8 @@ using std::set;
 using std::multiset;
 using std::pair;
 using std::list;
+using std::min;
+using std::max;
 
 typedef unsigned char byte;
 typedef unsigned char uint8;
@@ -44,7 +49,8 @@ typedef signed long sint32;
 
 typedef wchar_t wchar;
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(TRACK_MEMLEAK)
+#error prout
 #include "Alloc.h"
 #include "StlAllocator.h"
 #define string std::basic_string<char, std::char_traits<char>, StlAllocator<char> >

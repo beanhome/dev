@@ -12,19 +12,18 @@ IBFactDef_IsOnTable::~IBFactDef_IsOnTable()
 {
 }
 
-IBF_Result IBFactDef_IsOnTable::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_IsOnTable::Test(const class IBFact* pFact) const
 {
-	assert(aUserData.size() == 1);
-	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
-
-	IBCube* pCube = (IBCube*)aUserData[0];
+	IBCube* pCube = pFact->GetVariable<IBCube>();
 
 	if (pCube == NULL)
 		return IBF_UNKNOW;
 
+	IBCubeWorld* pWorld = static_cast<IBCubeWorld*>(m_pPlanner->GetOwner());
 	return (pWorld->IsCubeOnTable(pCube) ? IBF_OK : IBF_FAIL);
 }
 
+/*
 void IBFactDef_IsOnTable::ResolveVariable(vector<IBObject*>& aUserData)
 {
 	assert(aUserData.size() == 1);
@@ -44,4 +43,5 @@ void IBFactDef_IsOnTable::ResolveVariable(vector<IBObject*>& aUserData)
 
 	assert(aUserData[0] != NULL);
 }
+*/
 

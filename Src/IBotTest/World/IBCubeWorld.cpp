@@ -1,4 +1,5 @@
 #include "IBCubeWorld.h"
+#include "CanvasBase.h"
 
 
 IBCubeWorld::IBCubeWorld()
@@ -29,6 +30,13 @@ void IBCubeWorld::Init(int config)
 {
 	switch (config)
 	{
+		case 0:
+			CreateCube(3);
+			m_oTable.PutCube(GetCubeA());
+			m_oTable.PutCube(GetCubeB());
+			m_oTable.PutCube(GetCubeC());
+			break;
+
 		case 1:
 			CreateCube(3);
 			m_oTable.PutCube(GetCubeA());
@@ -51,7 +59,7 @@ void IBCubeWorld::Init(int config)
 			break;
 
 		default:
-			CreateCube(3);
+			CreateCube(4);
 			for (uint i=0 ; i<GetCubes().size() ; ++i)
 				m_oTable.PutCube(GetCubes()[i]);
 	}
@@ -106,3 +114,22 @@ bool IBCubeWorld::IsCubeOnCube(IBCube* pCube1, IBCube* pCube2)
 	return (pCube2->HasCube(pCube1));
 }
 
+void IBCubeWorld::Draw(class CanvasBase& oWorldCanva) const
+{
+	int size = 48;
+	int space = 32;
+	int line = oWorldCanva.GetHeight() - size;
+	int left_space = 32;
+
+	oWorldCanva.DrawLine(left_space, line, left_space + (size*GetCubes().size()) + ((size + 1)*GetCubes().size()), line, Color(192, 255, 255));
+
+	for (uint i = 0; i < GetCubes().size(); ++i)
+	{
+		const IBCube* pCube = GetCubes()[i];
+
+		if (GetTable().HasCube((IBCube*)pCube))
+		{
+			pCube->Draw(oWorldCanva, i, 0);
+		}
+	}
+}

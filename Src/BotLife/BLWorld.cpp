@@ -11,10 +11,9 @@
 #include "Map/BLMap.h"
 #include "Map/BLTiles.h"
 
-#include "Fact/IBFactVisitor.h"
 #include "Action/IBAction.h"
 #include "Action/IBActionDef.h"
-#include "World/IBPath.h"
+#include "World/BLPath.h"
 #include "BLApp.h"
 #include "Graph/IBGFact.h"
 #include "Graph/IBGAction.h"
@@ -45,6 +44,7 @@ BLWorld::BLWorld(BLApp& oBLApp, Canvas& canva, int w, int h, const char* tilesna
 	m_pBot = new BLBot(*canva.GetGEngine(), *this, oBLApp.GetPlannerCanvas());
 	m_pBot->SetLoc((float)i*m_iGrid + m_iGrid/2, (float)j*m_iGrid + m_iGrid/2);
 	m_pBot->SetPos(i, j);
+	m_pBot->FixLoc();
 	m_pBot->SetState(BLBot::Idle);
 	CenterMap((int)m_pBot->GetLocX(), (int)m_pBot->GetLocY());
 
@@ -111,10 +111,13 @@ void BLWorld::StartDrag()
 
 void BLWorld::UpdateDrag()
 {
-	sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_oCanva.GetGEngine()->GetMouseX(), 0, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_oCanva.GetWidth(), 0));
-	sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_oCanva.GetGEngine()->GetMouseY(), 0, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_oCanva.GetHeight(), 0));
-	m_oCanva.SetOrigX(x);
-	m_oCanva.SetOrigY(y);
+	if (m_bDraging)
+	{
+		sint16 x = Clamp<sint16>(m_iStartDragX - (sint16)m_oCanva.GetGEngine()->GetMouseX(), 0, std::max<sint16>(m_pMap->GetWidth() * m_pTiles->GetTilesWidth() - m_oCanva.GetWidth(), 0));
+		sint16 y = Clamp<sint16>(m_iStartDragY - (sint16)m_oCanva.GetGEngine()->GetMouseY(), 0, std::max<sint16>(m_pMap->GetHeight() * m_pTiles->GetTilesHeight() - m_oCanva.GetHeight(), 0));
+		m_oCanva.SetOrigX(x);
+		m_oCanva.SetOrigY(y);
+	}
 }
 
 void BLWorld::StopDrag()
@@ -148,20 +151,8 @@ void BLWorld::Draw() const
 
 void BLWorld::DrawDebug() const
 {
-	IBFactVisitor FactVisitor(m_pBot->GetPlanner());
-
-	// goals
 	/*
-	for (FactSet::const_iterator it = m_pBot->GetPlanner().GetGoals().begin() ; it != m_pBot->GetPlanner().GetGoals().end() ; ++it)
-	{
-		const IBGFact* pFact = static_cast<const IBGFact*>(*it);
-		for (uint i=0 ; i<pFact->GetVariables().size() ; ++i)
-		{
-			IBObject* pObj = pFact->GetVariable(i);
-			DrawDebugObject(pObj);
-		}
-	}
-	*/
+	IBFactVisitor FactVisitor(m_pBot->GetPlanner());
 
 	// mouse overlaping
 	for (const IBFact* fact = FactVisitor.Begin() ; fact != NULL ; fact = FactVisitor.Next())
@@ -193,10 +184,12 @@ void BLWorld::DrawDebug() const
 			}
 		}
 	}
+	*/
 }
 
-void BLWorld::DrawDebugObject(IBObject* _pObj) const
+void BLWorld::DrawDebugObject(BLObject* _pObj) const
 {
+	/*
 	IBPath* pPath = dynamic_cast<IBPath*>(_pObj);
 	if (pPath != NULL)
 		DrawDebugPath(*pPath);
@@ -208,9 +201,10 @@ void BLWorld::DrawDebugObject(IBObject* _pObj) const
 	BLObject* pObj = dynamic_cast<BLObject*>(_pObj);
 	if (pObj != NULL)
 		DrawDebugObj(*pObj);
+	*/
 }
 
-void BLWorld::DrawDebugPath(const IBPath& oPath) const
+void BLWorld::DrawDebugPath(const BLPath& oPath) const
 {
 	if (oPath.GetLength() > 0)
 	{
@@ -237,14 +231,16 @@ void BLWorld::DrawDebugObj(const BLObject& oObj) const
 {
 	if (!m_pBot->HasObject(dynamic_cast<BLProp*>((BLObject*)&oObj)))
 	{
+		/*
 		int x1 = oObj.GetPos().x * GetGridSize();
 		int y1 = oObj.GetPos().y * GetGridSize();
 		m_oCanva.DrawRect(x1, y1, GetGridSize()-1, GetGridSize()-1, 0, 255, 255);
 		m_oCanva.Print(x1+2, y1+1, m_oCanva.GetPrintFont(), 10, LeftTop, 0, 255, 255, "%s", oObj.GetName().c_str());
+		*/
 	}
 }
 
-void BLWorld::DrawDebugPos(const IBVector2& oPos) const
+void BLWorld::DrawDebugPos(const BLVector2& oPos) const
 {
 	int x1 = oPos.x * GetGridSize();
 	int y1 = oPos.y * GetGridSize();

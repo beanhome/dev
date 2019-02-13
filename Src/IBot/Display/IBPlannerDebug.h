@@ -3,23 +3,20 @@
 
 #include "IBPlannerDisplay.h"
 
-class IBPlanner;
-class IBAction;
-class IBFact;
-
 class IBPlannerDebug : public IBPlannerDisplay
 {
 	public:
-		IBPlannerDebug(const IBPlanner& oPlanner);
+		IBPlannerDebug(const class IBPlanner& oPlanner);
 		virtual ~IBPlannerDebug();
 
 	public:
 		virtual void DrawGraph();
 
 	private:
-		void PrintPlanner(const IBPlanner& oPlanner) const;
-		void PrintAction(const IBAction& oAction, int tab) const;
-		void PrintFact(const IBFact& oFact, int tab, bool counter=false) const;
+		void PrintPlanner(const class IBPlanner& oPlanner) const;
+		void	 PrintWorldChange(const class IBWorldChange& oWorldChange) const;
+		void PrintAction(const class IBAction& oAction, int tab) const;
+		void PrintFact(const class IBFact& oFact, int tab, bool counter=false) const;
 };
 
 #endif

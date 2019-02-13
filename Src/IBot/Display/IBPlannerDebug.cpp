@@ -23,28 +23,33 @@ void IBPlannerDebug::PrintPlanner(const IBPlanner& oPlanner) const
 {
 	LOG("\n");
 	LOG("Plan : \n");
-	for (FactSet::const_iterator it = oPlanner.GetGoals().begin() ; it != oPlanner.GetGoals().end() ; ++it)
+	PrintWorldChange(oPlanner.GetGoals());
+	LOG("\n");
+}
+
+void	 IBPlannerDebug::PrintWorldChange(const IBWorldChange& oWorldChange) const
+{
+	for (FactSet::const_iterator it = oWorldChange.GetFacts().begin(); it != oWorldChange.GetFacts().end(); ++it)
 	{
 		IBFact* pFact = *it;
-
 		PrintFact(*pFact, 0);
 	}
-	LOG("\n");
 }
 
 void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 {
 	for (int i=0 ; i<tab ; ++i) LOG("\t");
-	LOG("%s [%s]\n", oAction.GetDef()->GetName().c_str(), IBAction::s_sStateString[oAction.GetState()]);
+	LOG("%s [%s]\n", oAction.GetDef()->GetName().c_str(), IBA_StateString[oAction.GetState()]);
 
-	for (IBAction::VarMap::const_iterator it = oAction.GetVariables().begin() ; it != oAction.GetVariables().end() ; ++it)
+	for (VarMap::const_iterator it = oAction.GetVariables().begin() ; it != oAction.GetVariables().end() ; ++it)
 	{
 		for (int i=0 ; i<tab ; ++i)
 			LOG("\t");
 
-		LOG("  var %s %s\n", it->first.c_str(), ( it->second != NULL ? it->second->GetName().c_str() : "nil" ));
+		LOG("  var %s %s\n", it->first.c_str(), it->second.GetName().c_str());
 	}
 
+	/*
 	if (oAction.GetPreCond().size() > 0)
 	{
 		for (int i=0 ; i<tab ; ++i)	LOG("\t");
@@ -54,19 +59,7 @@ void IBPlannerDebug::PrintAction(const IBAction& oAction, int tab) const
 	{
 		PrintFact(*oAction.GetPreCond()[i], tab+1);
 	}
-
-	if (oAction.GetCounterPostCond().size() > 0)
-	{
-		for (int i=0 ; i<tab ; ++i)	LOG("\t");
-		LOG("  counter post cond :\n");
-	}
-	for (uint i=0 ; i<oAction.GetCounterPostCond().size() ; ++i)
-	{
-		IBFact* pFact = oAction.GetCounterPostCond()[i];
-		if (pFact != NULL)
-			PrintFact(*pFact, tab+1, true);
-	}
-
+	*/
 }
 
 
@@ -75,10 +68,12 @@ void IBPlannerDebug::PrintFact(const IBFact& oFact, int tab, bool counter) const
 	for (int i=0 ; i<tab ; ++i) LOG("\t");
 
 	LOG("%s (", oFact.GetFactDef()->GetName().c_str());
-	for (uint i=0 ; i<oFact.GetVariables().size() ; ++i)
+
+	VarMap::const_iterator last = --oFact.GetVariables().end();
+	for (VarMap::const_iterator it = oFact.GetVariables().begin(); it != oFact.GetVariables().end(); ++it)
 	{
-		LOG("%s", (oFact.GetVariable(i) != NULL ? oFact.GetVariable(i)->GetName().c_str() : "nil"));
-		if (i<oFact.GetVariables().size()-1)
+		LOG("%s: %s", it->first, it->second.GetName().c_str());
+		if (it != last)
 			LOG(", ");
 	}
 	LOG(")");

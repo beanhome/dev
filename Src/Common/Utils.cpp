@@ -82,7 +82,7 @@ string FormatString(const char* format, ...)
 
 	string output(buff);
 
-	free(buff);
+	delete buff;
 
 	return output;
 }

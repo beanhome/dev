@@ -2,160 +2,103 @@
 #define __IBACTION_H__
 
 #include "Utils.h"
+#include "Types.h"
 #include "Fact/IBFact.h"
-//#include "Fact/IBFactVisitor.h"
-
-class IBActionDef;
-struct FactCondDef;
-class IBObject;
+#include "World/IBObject.h"
+#include "IBCost.h"
 
 class IBAction
 {
 	public:
 		friend class IBPlanner;
 		friend class IBFact;
+		friend class IBWorldChange;
 		friend class IBActionLibrary;
 
 	protected:
-		IBAction(IBActionDef* pDef, IBFact* pPostCond1);
+		IBAction(const class IBActionDef* pDef, class IBFact* pPostCond, IBPlanner* pPlanner);
+		IBAction(const class IBAction* pOrig);
 		virtual ~IBAction();
 
 	public:
-		enum State
-		{
-			IBA_Init,
-			IBA_Unresolved,
-			IBA_Resolved,
-			IBA_Impossible,
-			IBA_Counter,
-			IBA_Start,
-			IBA_Execute,
-			IBA_Abort,
-			IBA_End,
-			IBA_Finish,
-			IBA_Destroy,
-			IBA_Destroyed,
-
-			State_MAX
-		};
-
-		typedef map<string, IBObject*> VarMap;
-		typedef pair<string, IBObject*> VarPair;
-
-	public:
-		void					Destroy();
-
-		State					GetState() const { return m_eState; }
-		void					SetState(State state) { m_eState = state; }
-
-		const VarMap&			GetVariables() const { return m_aVariables; }
-		IBObject*				FindVariables(const string& name) const;
-		void					SetVariable(const string& name, IBObject* val);
-
-		template <typename T>
-		T*						FindVariables(const string& name) const;
-
-		const IBActionDef*		GetDef() const { return m_pDef; }
-
-		const vector<IBFact*>&	GetPreCond() const { return m_aPreCond; }
-		const vector<IBFact*>&	GetPostCond() const { return m_aPostCond; }
-		const vector<IBFact*>&	GetCounterPostCond() const { return m_aCounterPostCond; }
-		const IBFact*			GetFirstPostCond() const;
-
-		void*					GetUserData() { return m_pUserData; }
-		void					SetUserData(void* pUserData) { m_pUserData = pUserData; }
-
-		void					Start();
-		void					Execute();
-		void					Finish();
-
-		void					AddPostCond(uint i, IBFact* pPostCond);
-		//void					RemPostCond(IBFact* pPostCond);
-		void					AddCounterPostCond(uint i, IBFact* pPostCond);
-
-		void					AddPreCond(uint i, IBFact* pPreCond);
-		void					AddPreCond(IBFact* pPreCond);
-
-		const FactCondDef&		GetPostConfDefFromFact(IBFact* pPostCond) const;
-		const FactCondDef&		GetPreConfDefFromFact(IBFact* pPreCond) const;
-		
-		IBFact*					FindEqualFact_TopBottom(IBFact* pModelFact, const IBFact* pInstigator) const;
-		const IBFact*			FindEqualFact_BottomTop(IBFact* pModelFact) const;
-
-		void					ResolveVariableName(uint i, IBFact* pPreCond, FactCondDef* pPostCondDef);
-		void					ResolveVariableNameFromPostCond(uint i, IBFact* pPreCond);
-		//void					ResolveVariableNameFromCounterPostCond(uint i, IBFact* pPreCond);
-		void					AffectPreCondVariable(const string& name, IBObject* data);
-		void					AffectPostCondVariable(const string& name, IBObject* data);
-		void					AffectCounterPostCondVariable(const string& name, IBObject* data);
-
-		void					SpreadPreCondVariable(IBFact* pPreCond = NULL);
-		void					UpdateVariableFromPostCond();
-		//void					SpreadVariable();
-		//void					ResolvePreCond();
-
-		State					Resolve(IBPlanner* pPlanner, bool bExecute);
-		IBF_Result				ResolvePreCond(IBPlanner* pPlanner, bool bExecute);
-		float					Evaluate() const;
-
-		IBF_Result				ResolveCounterPostCond(IBPlanner* pPlanner);
+		void							Create();
+		void							Destroy();
+		void							CloneWithVar(const string& sVarName, const IBObject& oVarObj);
+		void							CloneWithVar(const string& sVarName, const IBObject& oVarObj, const PotentialVarMap& aPotentialVarMap);
 
 
-		void					PrepareToDelete();
-		bool					IsReadyToDelete();
-		bool					IsReadyToDestroy();
-		bool					IsMarkToDelete() const { return m_bToDelete; }
+		IBA_State					GetState() const { return m_eState; }
+		void							SetState(IBA_State state) { m_eState = state; }
 
-		int						GetExecCounter() const { return m_iExecCount; }
+		const VarMap&				GetVariables() const { return m_aVariables; }
+		const IBObject*				GetVariable(const string& name) const;
+		void							SetVariable(const string& var_name, const IBObject& obj);
+		void							SetVariable(const string& var_name, const string& obj_name, void* user_data);
 
-		bool					IsResolved() const;
-		//friend class IBFactIterator;
-		/*
-		IBFactIterator			BeginFactIterator() const;
-		IBFactIterator			BackFactIterator() const;
-		IBFactIterator			EndFactIterator() const;
-		IBFactIterator			NextFactIterator(const IBFactIterator& it) const;
-		IBFactIterator			PrevFactIterator(const IBFactIterator& it) const;
-		*/
+		bool							IsResolved() const;
 
-	public:
-		//static bool	RemoveAndDelete(IBAction* pAction) { if (pAction->IsReadyToDelete()) { delete pAction; return true; } else { return false; } }
+		void							AddPotentialVariable(const string& var_name, const string& obj_name, void* user_data);
+		void							GetPotentialVariable(const string& var_name, vector<IBObject>& aObj) const;
+		uint32						GetPotentialVariableCount(const string& var_name) const;
 
+		template <class T>
+		T*							GetVariable(const string& name) const;
+
+		const class IBActionDef*		GetDef() const { return m_pDef; }
+
+		const vector<IBFact*>&		GetPostCond() const { return m_aPostCond; }
+		const vector<IBFact*>&		GetAdditionnalPostCond() const { return m_aAdditionalPostCond; }
+		IBWorldChange*				GetPreWorldChange() const { return m_pPreWorldChange;  }
+
+		void*						GetUserData() { return m_pUserData; }
+		void							SetUserData(void* pUserData) { m_pUserData = pUserData; }
+
+		IBPlanner*					GetPlanner();
+
+		void							Update();
+		//void							Step();
+		//void							Resolve();
+
+		void							ResolveVariableFromPostCond(const IBFact* pPostCond);
+		bool							CheckVariables() const;
+		void							FinalizeCreation();
+
+		bool							IsChildOf(const IBFact* pFact) const;
+
+		bool							Init();
+		bool							Start();
+		bool							Execute();
+		bool							Stop(bool bInterrupt);
+
+		float						GetCost() const;
+		float						GetTotalCost() const;
+
+		int							GetExecCounter() const { return m_iExecCount; }
 
 	protected:
-		IBActionDef*			m_pDef;
+		const class IBActionDef*		m_pDef;
+		class IBPlanner*				m_pPlanner;
 
-		State					m_eState;
-		int						m_iExecCount;
+		IBA_State					m_eState;
+		int							m_iExecCount;
 		
-		VarMap					m_aVariables;
-		vector<IBFact*>			m_aPreCond;
-		vector<IBFact*>			m_aPostCond;
-		vector<IBFact*>			m_aCounterPostCond;
+		VarMap						m_aVariables;
+		PotentialVarMap				m_aPotentialVariables;
 
-		vector<IBFact*>			m_aCounterFact; // ref to Fact that counter
-		
-		void*					m_pUserData;
+		IBWorldChange*				m_pPostWorldChange;
+		IBWorldChange*				m_pPreWorldChange;
+		vector<IBFact*>				m_aPostCond; // ref to WorldChange
+		vector<IBFact*>				m_aAdditionalPostCond;
 
-		bool					m_bToDelete;
-
-	public:
-		static const char*		s_sStateString[State_MAX];
+		void*						m_pUserData;
 };
 
-template <typename T>
-T* IBAction::FindVariables(const string& name) const
+template <class T>
+T* IBAction::GetVariable(const string& name) const
 {
-	IBObject* pObj = FindVariables(name);
-	if (pObj == NULL)
-		return NULL;
-
-	T* pTObj = dynamic_cast<T*>(pObj);
-	ASSERT(pTObj != NULL);
-
-	return pTObj;
+	const IBObject* Obj = GetVariable(name);
+	return (Obj != nullptr ? (T*)Obj->GetUserData() : nullptr);
 }
-
 
 
 #endif

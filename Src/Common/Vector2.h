@@ -11,6 +11,9 @@ struct Vector2
 	
 	Vector2& operator=(const Vector2& v);
 	Vector2& operator+=(const Vector2& v);
+
+	void Set(int _x, int _y);
+	void Set(const Vector2& pos);
 };
 
 bool operator==(const Vector2& a, const Vector2& b);

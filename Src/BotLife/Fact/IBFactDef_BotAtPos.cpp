@@ -13,34 +13,42 @@ IBFactDef_BotAtPos::~IBFactDef_BotAtPos()
 {
 }
 
-IBF_Result IBFactDef_BotAtPos::Test(const vector<IBObject*>& aUserData)
+IBF_Result IBFactDef_BotAtPos::Test(const class IBFact* pFact) const
 {
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 1);
+	BLBot* pBot = static_cast<BLBot*>(m_pPlanner->GetOwner());
 
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	Vector2* pPos = ((IBVector2*)aUserData[0]);
+	BLVector2* pPos = pFact->GetVariable<BLVector2>();
 
-	if (pPos == NULL)
+	if (pPos == nullptr)
 		return IBF_UNKNOW;
 
 	return ((pBot->GetPos() == *pPos) ? IBF_OK : IBF_FAIL);
 }
 
-void IBFactDef_BotAtPos::ResolveVariable(vector<IBObject*>& aUserData)
+/*
+bool IBFactDef_BotAtPos::AreCompatible(const IBFact* A, const IBFact* B) const
 {
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	ASSERT(aUserData.size() == 1);
+	ASSERT(A != nullptr);
+	ASSERT(B != nullptr);
 
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	if (A->GetFactDef() != this)
+		return true;
 
-	if (aUserData[0] == NULL)
-		aUserData[0] = pBot->GetIBPosAd();
+	if (B->GetFactDef() != this)
+		return true;
 
-	ASSERT(aUserData[0] != NULL);
+	ASSERT(A->GetVariables().size() == B->GetVariables().size());
+
+	BLVector2* pPosA = A->GetVariable<BLVector2>();
+
+	if (pPosA == nullptr)
+		return true;
+
+	BLVector2* pPosB = B->GetVariable<BLVector2>();
+
+	if (pPosB == nullptr)
+		return true;
+
+	return *pPosA == *pPosB;
 }
-
-
-
+*/

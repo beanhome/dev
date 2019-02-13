@@ -4,7 +4,7 @@
 
 #pragma warning( disable : 4290 )
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(TRACK_MEMLEAK)
 
 const char *del_FILE;
 unsigned long del_LINE;

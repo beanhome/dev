@@ -2,7 +2,10 @@
 #include "BLBot.h"
 #include "IBPlanner.h"
 #include "World/BLObject.h"
-#include "World/IBInt.h"
+#include "World/BLProp.h"
+#include "World/BLInt.h"
+#include "World/BLVector2.h"
+#include "Action/BLAction.h"
 
 
 IBActionDef_DropObject::IBActionDef_DropObject(const string& name, IBPlanner* pPlanner)
@@ -18,47 +21,53 @@ IBActionDef_DropObject::~IBActionDef_DropObject()
 
 void IBActionDef_DropObject::Define()
 {
-	AddVariable("Obj");    // BLObject
-	AddVariable("Pos"); // IBVector2
-	AddVariable("Dist");   // IBInt = 1
+	AddVariable("Obj");
+	AddVariable("Pos");
+	AddVariable("Dist");
 
-	AddPreCondition("IBFactDef_PosIsFree", "Pos");
-	AddPreCondition("IBFactDef_PropIsPickable", "Obj");
-	AddPreCondition("IBFactDef_BotHasObject", "Obj");
-	AddPreCondition("IBFactDef_BotNearPos", "Pos", "Dist");
+	AddPreCondition("IBFactDef_PosIsFree", true, "Pos");
+	AddPreCondition("IBFactDef_PropIsPickable", true, "Obj");
+	AddPreCondition("IBFactDef_BotHasObject", true, "Obj");
+	AddPreCondition("IBFactDef_BotNearPos", true, "Pos", "Pos", "Dist", "Dist");
 
-	AddPostCondition("IBFactDef_BotIsEmpty");
-	AddPostCondition("IBFactDef_ObjectAtPos", "Obj", "Pos");
-
-	AddCounterPostCondition("IBFactDef_PosIsFree", "Pos");
+	AddPostCondition("IBFactDef_BotIsEmpty", true);
+	AddPostCondition("IBFactDef_ObjectAtPos", true, "Obj", "Obj", "Pos", "Pos");
+	AddPostCondition("IBFactDef_PosIsFree", false, "Pos");
 }
 
-float IBActionDef_DropObject::Evaluate(const IBAction* pAction) const
+float IBActionDef_DropObject::GetCost(const IBAction* pAction) const
 {
 	return 1.f;
 }
 
-
-bool IBActionDef_DropObject::Init(IBAction* pAction)
+void	 IBActionDef_DropObject::CreateOwnedVariables(IBAction* pAction) const
 {
-	BLObject* pObj = reinterpret_cast<BLObject*>(pAction->FindVariables("Obj"));
-	IBInt* pDist = reinterpret_cast<IBInt*>(pAction->FindVariables("Dist"));
+	BLAction* pBLAction = dynamic_cast<BLAction*>(pAction);
+	ASSERT(pBLAction != nullptr);
 
-	if (pDist == NULL)
+	BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
+	if (pObj == nullptr)
+		return;
+
+	if (pAction->GetVariable("Dist")->GetUserData() == nullptr)
 	{
-		pDist = new IBInt("NearDist", 1);
-		pAction->SetVariable("Dist", pDist);
+		BLInt* pDist = new BLInt(0);
+		pBLAction->AddOwnedObject(pDist);
+		pAction->SetVariable("Dist", pDist->GetName(), (void*)pDist);
 	}
-
-	return (pObj != NULL && pDist != NULL);
 }
 
-bool IBActionDef_DropObject::Start(IBAction* pAction)
+bool IBActionDef_DropObject::Init(IBAction* pAction) const
+{
+	return true;
+}
+
+bool IBActionDef_DropObject::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	IBVector2* pPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("Pos"));
+	BLVector2* pPos = pAction->GetVariable<BLVector2>("Pos");
 	ASSERT(pPos != NULL);
 
 	if (pBot->GetState() != BLBot::Idle)
@@ -70,21 +79,21 @@ bool IBActionDef_DropObject::Start(IBAction* pAction)
 	return true;
 }
 
-bool IBActionDef_DropObject::Execute(IBAction* pAction)
+bool IBActionDef_DropObject::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
-	IBVector2* pPos = reinterpret_cast<IBVector2*>(pAction->FindVariables("Pos"));
+	BLVector2* pPos = pAction->GetVariable<BLVector2>("Pos");
 	ASSERT(pPos != NULL);
 
 	if (pBot->HasFinishState())
 	{
-		BLObject* pObj = static_cast<BLObject*>(pAction->FindVariables("Obj"));
+		BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
 		ASSERT(pObj != NULL);
 
-		pBot->DropObject(reinterpret_cast<BLProp*>(pObj), *pPos);
+		pBot->DropObject(pObj, *pPos);
 		return true;
 	}
 	else
@@ -93,7 +102,7 @@ bool IBActionDef_DropObject::Execute(IBAction* pAction)
 	}
 }
 
-bool IBActionDef_DropObject::Finish(IBAction* pAction)
+bool IBActionDef_DropObject::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -103,12 +112,6 @@ bool IBActionDef_DropObject::Finish(IBAction* pAction)
 	return true;
 }
 
-void IBActionDef_DropObject::Destroy(IBAction* pAction)
+void IBActionDef_DropObject::Destroy(IBAction* pAction) const
 {
-	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
-	if (pDist != NULL)
-	{
-		delete pDist;
-		pAction->SetVariable("Dist", NULL);
-	}
 }

@@ -11,11 +11,7 @@ class IBFactDef_IsTopOf : public IBFactDef
 		IBFactDef_IsTopOf(const string& name, IBPlanner* pPlanner);
 		virtual ~IBFactDef_IsTopOf();
 
-		IBF_Result			Test(const vector<IBObject*>& aUserData);
-
-		virtual void		ResolveVariable(vector<IBObject*>& aUserData);
-	
-	private:
+		virtual IBF_Result				Test(const class IBFact* pFact) const override;
 };
 
 #endif

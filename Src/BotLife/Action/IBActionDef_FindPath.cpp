@@ -1,10 +1,11 @@
 #include "IBActionDef_FindPath.h"
-#include "World/IBPath.h"
+#include "World/BLPath.h"
 #include "IBPlanner.h"
 #include "BLBot.h"
 #include "NavAStar.h"
 #include "Timer.h"
-#include "World/IBInt.h"
+#include "World/BLInt.h"
+#include "World/BLVector2.h"
 #include "World/BLProp.h"
 
 float IBActionDef_FindPath::s_fFindPathStepDelay = 0.001f;
@@ -12,12 +13,6 @@ float IBActionDef_FindPath::s_fFindPathStepDelay = 0.001f;
 IBActionDef_FindPath::IBActionDef_FindPath(const string& name, IBPlanner* pPlanner)
 	: IBActionDef(name, pPlanner)
 {
-	/*
-	void* pOwner = pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	const BLWorld& oWorld = pBot->GetWorld();
-	*/
 }
 
 IBActionDef_FindPath::~IBActionDef_FindPath()
@@ -26,72 +21,69 @@ IBActionDef_FindPath::~IBActionDef_FindPath()
 
 void IBActionDef_FindPath::Define()
 {
-	AddVariable("Start");
 	AddVariable("Target");
-	AddVariable("Path");
 	AddVariable("Dist");
+	AddVariable("Path");
 
-	AddPostCondition("IBFactDef_HasValidPath", "Path", "Start", "Target", "Dist");
+	AddPostCondition("IBFactDef_HasValidPath", true, "Target", "Target", "Path", "Path", "Dist", "Dist");
 }
 
 
-float IBActionDef_FindPath::Evaluate(const IBAction* pAction) const
-{
+float IBActionDef_FindPath::GetCost(const IBAction* pAction) const
+{	
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	const BLWorld& oWorld = pBot->GetWorld();
 
-	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
-	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
+	BLVector2* pTarget = pAction->GetVariable<BLVector2>("Target");
+	ASSERT(pTarget != nullptr);
 
-	if (pStart == NULL || pTarget == NULL)
+	if (pTarget == nullptr)
 		return IBPlanner::s_fMaxActionDelay;
 
 	// TODO: Improve this evaluation depands on the StepDelay of the planner and the findpathspeed
-	return (float)(oWorld.GetGrid().Distance(*pStart, *pTarget)) * s_fFindPathStepDelay;
+	return (float)(oWorld.GetGrid().Distance(pBot->GetPos(), *pTarget)) * s_fFindPathStepDelay;
 }
 
-bool IBActionDef_FindPath::Start(IBAction* pAction)
+bool IBActionDef_FindPath::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	const BLWorld& oWorld = pBot->GetWorld();
 
-	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
-	ASSERT(pStart != NULL);
-	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
-	ASSERT(pTarget != NULL);
-	IBPath* pPath = pAction->FindVariables<IBPath>("Path");
-	ASSERT(pPath != NULL);
-	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
-	ASSERT(pDist != NULL);
+	BLVector2* pTarget = pAction->GetVariable<BLVector2>("Target");
+	ASSERT(pTarget != nullptr);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
+	BLInt* pDist = pAction->GetVariable<BLInt>("Dist");
+	ASSERT(pDist != nullptr);
 
-	//if (oWorld.GetGrid().GetCase(*pTarget).IsBlock())
-	//	return false;
-
-	if (pAction->GetUserData() != NULL)
+	if (pAction->GetUserData() != nullptr)
 		delete (Navigation<BLSquare>*)pAction->GetUserData();
 
 	Navigation<BLSquare>* pNav = new NavAStar<BLSquare>(oWorld.GetGrid());
-	pNav->FindPathInit(*pStart, *pTarget, pDist->GetValue(), *pPath);
+	pNav->FindPathInit(pBot->GetPos(), *pTarget, pDist->GetValue(), *pPath);
 
 	pAction->SetUserData(pNav);
 
 	return true;
 }
 
-bool IBActionDef_FindPath::Execute(IBAction* pAction)
+bool IBActionDef_FindPath::Execute(IBAction* pAction) const
 {
-	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
-	ASSERT(pStart != NULL);
-	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
-	ASSERT(pTarget != NULL);
-	IBPath* pPath = pAction->FindVariables<IBPath>("Path");
-	ASSERT(pPath != NULL);
-	IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
-	ASSERT(pDist != NULL);
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != nullptr);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	const BLWorld& oWorld = pBot->GetWorld();
+
+	BLVector2* pTarget = pAction->GetVariable<BLVector2>("Target");
+	ASSERT(pTarget != nullptr);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
+	BLInt* pDist = pAction->GetVariable<BLInt>("Dist");
+	ASSERT(pDist != nullptr);
 
 	Navigation<BLSquare>* pNav = static_cast<Navigation<BLSquare>*>(pAction->GetUserData());
 	Navigation<BLSquare>::State state = Navigation<BLSquare>::FP_Find;
@@ -100,7 +92,7 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	double start = Timer::Get();
 	while (Timer::Get() < start + s_fFindPathStepDelay && state == Navigation<BLSquare>::FP_Find)
 	{
-		state = pNav->FindPathStep(*pStart, *pTarget, pDist->GetValue(), *pPath);
+		state = pNav->FindPathStep(pBot->GetPos(), *pTarget, pDist->GetValue(), *pPath);
 		LOG(" *");
 	}
 	LOG("\n");
@@ -108,40 +100,42 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction)
 	return (state != Navigation<BLSquare>::FP_Find);
 }
 
-bool IBActionDef_FindPath::Finish(IBAction* pAction)
+bool IBActionDef_FindPath::Finish(IBAction* pAction) const
 {
-	IBVector2* pStart = pAction->FindVariables<IBVector2>("Start");
-	ASSERT(pStart != NULL);
-	IBVector2* pTarget = pAction->FindVariables<IBVector2>("Target");
-	ASSERT(pTarget != NULL);
-	IBPath* pPath = pAction->FindVariables<IBPath>("Path");
-	ASSERT(pPath != NULL);
-	//IBInt* pDist = pAction->FindVariables<IBInt>("Dist");
-	//ASSERT(pDist != NULL);
+	BLVector2* pTarget = pAction->GetVariable<BLVector2>("Target");
+	ASSERT(pTarget != nullptr);
+	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
+	ASSERT(pPath != nullptr);
+	//BLInt* pDist = pAction->GetVariable<BLInt>("Dist");
+	//ASSERT(pDist != nullptr);
 
 	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
+	ASSERT(pOwner != nullptr);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	const BLWorld& oWorld = pBot->GetWorld();
 
+	/*
 	for (uint i=0 ; i<pPath->GetLength() ; ++i)
 	{
 		const BLSquare& sq = oWorld.GetGrid().GetCase((*pPath)[i]);
-		if (sq.GetProp() != NULL && sq.GetProp()->IsBlock())
+		if (sq.GetProp() != nullptr && sq.GetProp()->IsBlock())
 		{
 			m_pPlanner->AddPreCond(pAction, "IBFactDef_PropIsUnblock", (IBObject*)sq.GetProp());
 		}
 	}
+	*/
 
-	if (pAction->GetUserData() != NULL)
+	if (pAction->GetUserData() != nullptr)
 	{
 		delete (Navigation<BLSquare>*)pAction->GetUserData();
-		pAction->SetUserData(NULL);
+		pAction->SetUserData(nullptr);
 	}
+
+	pBot->SetState(BLBot::Idle);
 
 	return oWorld.TestPath(*pPath);
 }
 
-void IBActionDef_FindPath::Destroy(IBAction* pAction)
+void IBActionDef_FindPath::Destroy(IBAction* pAction) const
 {
 }
