@@ -14,6 +14,7 @@ class BLInt : public BLObject
 		virtual BLObject* Clone() const { return new BLInt(*this); }
 
 		BLInt& operator=(int v);
+		operator int() const { return m_iValue; }
 
 		int GetValue() const { return m_iValue; }
 

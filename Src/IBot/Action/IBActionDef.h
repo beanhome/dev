@@ -64,6 +64,7 @@ public:
 	virtual void						CreateOwnedVariables(IBAction* pAction) const { }
 	virtual void						CompleteVariables(IBAction* pAction) const { }
 	virtual bool						Init(IBAction* pAction) const;
+	virtual void						Update(IBAction* pAction) const { }
 	virtual bool						Start(IBAction* pAction) const { return true; };
 	virtual bool						Execute(IBAction* pAction) const { return false; };
 	virtual bool						Finish(IBAction* pAction) const { return true; };

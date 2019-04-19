@@ -30,7 +30,7 @@ void AFFGameSequence_Shuffle::Start()
 		Deck->Shuffle();
 
 		FTimerHandle DummyHandle;
-		GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &AFFGameSequence_Shuffle::OnEndTimer, 0.25f, false);
+		GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &AFFGameSequence_Shuffle::OnEndTimer, 0.15f, false);
 	}
 	else
 	{

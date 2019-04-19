@@ -31,18 +31,16 @@ class NavAStar : public Navigation<TCase>
 		typedef pair<CaseCoord, Case>	AStartPair;
 
 	public:
-		virtual void						FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
-		virtual typename Navigation<TCase>::State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
-		
-		virtual bool						GetPath(const Vector2& vTarget, Path& oPath) const;
+		virtual void							FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+		virtual void							FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+
+		virtual bool							GetPath(const Vector2& vTarget, Path& oPath) const;
 
 	private:
 		int									Cost(const Vector2& p1, const Vector2& p2) const;
 		CaseCoord							GetCheaperOpenCase(const Vector2& target) const;
 
-
 	private:
-								
 		CaseCoord							m_oCurrentCoord;
 		CaseCoord							m_oBestCoord;
 		AStartMap							m_aOpenList;
@@ -71,10 +69,12 @@ void NavAStar<TCase>::FindPathInit(const Vector2& start, const Vector2& target, 
 
 	m_oBestCoord = start;
 	m_oCurrentCoord = start;
+
+	m_eState = Navigation<TCase>::FP_Init;
 }
 
 template <typename TCase>
-typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
+typename void NavAStar<TCase>::FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath)
 {
 	const Case& oCurrentCase = m_aCloseList.find(m_oCurrentCoord)->second;
 	int iCurrentCost = oCurrentCase.iCost;
@@ -95,7 +95,8 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 		{
 			m_aCloseList.insert(AStartPair(oSideCoord, Case(iToCaseCost + 1 + Cost(oSideCoord, target), m_oCurrentCoord)));
 			GetPath(oSideCoord, aPath);
-			return Navigation<TCase>::FP_Succeed;
+			m_eState = Navigation<TCase>::FP_Succeed;
+			return;
 		}
 
 		if (Navigation<TCase>::m_pModelGrid->GetCase(oSideCoord).IsBlock())
@@ -122,7 +123,8 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 	if (m_aOpenList.size() == 0)
 	{
 		GetPath(m_oBestCoord, aPath);
-		return Navigation<TCase>::FP_Fail;
+		m_eState = Navigation<TCase>::FP_Fail;
+		return;
 	}
 
 	m_oCurrentCoord = GetCheaperOpenCase(target);
@@ -137,10 +139,12 @@ typename Navigation<TCase>::State NavAStar<TCase>::FindPathStep(const Vector2& s
 	if (m_aCloseList.size() <= 0)
 	{
 		GetPath(m_oBestCoord, aPath);
-		return Navigation<TCase>::FP_Fail;
+		m_eState = Navigation<TCase>::FP_Fail;
+		return;
 	}
 
-	return Navigation<TCase>::FP_Find;
+	m_eState = Navigation<TCase>::FP_Find;
+	return;
 }
 
 template <typename TCase>

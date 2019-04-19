@@ -283,10 +283,23 @@ void AFFShipBoard::RefreshCredits_Implementation(int32 Credits)
 }
 
 
+bool AFFShipBoard::AddStuff(TSubclassOf<AFFStuff> StuffClass, int32 count)
+{
+	check(IsServer());
+
+	for (int32 i = 0; i < count; ++i)
+	{
+		if (AddStuff(StuffClass) == false)
+			return false;
+	}
+
+	return true;
+}
+
 bool AFFShipBoard::AddStuff(TSubclassOf<AFFStuff> StuffClass)
 {
 	check(IsServer());
-	
+
 	AFFStuff* Stuff = GetWorld()->SpawnActor<AFFStuff>(StuffClass);
 
 	if (AddStuff(Stuff) == false)
@@ -302,15 +315,7 @@ bool AFFShipBoard::AddStuff(class AFFStuff* NewStuff)
 {
 	check(IsServer());
 	
-	Stuffs.Add(NewStuff);
-
-	if (CheckAndRefreshCargo() == false)
-	{
-		Stuffs.Remove(NewStuff);
-		return false;
-	}
-
-	return true;
+	return StockNewStuffs(NewStuff);
 }
 
 bool AFFShipBoard::RemStuff(TSubclassOf<AFFStuff> StuffClass)
@@ -330,7 +335,7 @@ bool AFFShipBoard::RemStuff(class AFFStuff* Stuff)
 
 	Stuff->Destroy();
 	
-	return CheckAndRefreshCargo();
+	return Stock();
 }
 
 bool AFFShipBoard::HasStuff(TSubclassOf<class AFFStuff> StuffClass, int32 nb)
@@ -383,30 +388,57 @@ void AFFShipBoard::OnRep_SetCrew()
 void AFFShipBoard::RefreshCargo_Implementation()
 {
 	if (IsClient())
-		CheckAndRefreshCargo();
+		Stock();
 }
 
 void AFFShipBoard::OnRep_RefreshCargo()
 {
 	if (IsClient())
-		CheckAndRefreshCargo();
+		Stock();
 }
 
-bool AFFShipBoard::CheckAndRefreshCargo()
+bool AFFShipBoard::TestCargo(const TArray<class AFFStuff*>& _Stuffs) const
 {
-	for (FFFCargo& slot : Cargo)
+	TArray<FFFCargo> _Cargo(Cargo);
+	TArray<FFFCargo> _Stash(Stash);
+
+	for (FFFCargo& slot : _Cargo)
 	{
 		slot.First = nullptr;
 		slot.Second = nullptr;
 	}
 
-	for (FFFCargo& slot : Stash)
+	for (FFFCargo& slot : _Stash)
 	{
 		slot.First = nullptr;
 		slot.Second = nullptr;
 	}
 
-	TArray<class AFFStuff*> CopyStuffs(Stuffs);
+	return Stock(_Cargo, _Stash, _Stuffs);
+}
+
+bool AFFShipBoard::TestAddCargo(class AFFStuff* _Stuff, int32 iCount) const
+{
+	TArray<class AFFStuff*> AllStuffs(Stuffs);
+
+	for (int32 i=0 ; i<iCount; ++i)
+		AllStuffs.Add(_Stuff);
+
+	return TestCargo(AllStuffs);
+}
+
+bool AFFShipBoard::TestAddCargo(const TArray<class AFFStuff*>& _Stuffs) const
+{
+	TArray<class AFFStuff*> AllStuffs(Stuffs);
+
+	AllStuffs.Append(_Stuffs);
+
+	return TestCargo(AllStuffs);
+}
+
+bool AFFShipBoard::Stock(TArray<FFFCargo>& _Cargo, TArray<FFFCargo>& _Stash, const TArray<class AFFStuff*>& _Stuffs) const
+{
+	TArray<class AFFStuff*> CopyStuffs(_Stuffs);
 
 	CopyStuffs.RemoveAll([&](AFFStuff* elem) { return (elem == nullptr); });
 	CopyStuffs.Sort([&](AFFStuff& Lhs, AFFStuff& Rhs) { return ((Lhs).IsSmall() == false && (Rhs).IsSmall()) || ((Lhs).GetName() < (Rhs).GetName()); });
@@ -415,8 +447,8 @@ bool AFFShipBoard::CheckAndRefreshCargo()
 	{
 		bool IsPlaced = false;
 
-		TArray<FFFCargo>& First = (Stuff->IsIllegal() ? Stash : Cargo);
-		TArray<FFFCargo>& Second = (Stuff->IsIllegal() ? Cargo : Stash);
+		TArray<FFFCargo>& First = (Stuff->IsIllegal() ? _Stash : _Cargo);
+		TArray<FFFCargo>& Second = (Stuff->IsIllegal() ? _Cargo : _Stash);
 
 		for (FFFCargo& slot : First)
 		{
@@ -446,6 +478,34 @@ bool AFFShipBoard::CheckAndRefreshCargo()
 	return true;
 }
 
+bool AFFShipBoard::Stock()
+{
+	return Stock(Cargo, Stash, Stuffs);
+}
+
+bool AFFShipBoard::StockNewStuffs(const TArray<class AFFStuff*>& _Stuffs)
+{
+	if (!TestAddCargo(_Stuffs))
+		return false;
+
+	Stuffs.Append(_Stuffs);
+	Stock();
+
+	return true;
+}
+
+bool AFFShipBoard::StockNewStuffs(class AFFStuff* _Stuff, int32 iCount)
+{
+	if (!TestAddCargo(_Stuff, iCount))
+		return false;
+
+	for (int32 i = 0; i<iCount; ++i)
+		Stuffs.Add(_Stuff);
+
+	Stock();
+
+	return true;
+}
 
 void AFFShipBoard::Tick(float DeltaSeconds)
 {

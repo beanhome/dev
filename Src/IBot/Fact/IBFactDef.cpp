@@ -69,3 +69,19 @@ IBFact* IBFactDef::Instanciate(bool bInverted, IBWorldChange* pWorldChange, cons
 	assert(aVariables.size() == m_iDegree);
 	return m_pPlanner->InstanciateFact(this, bInverted, aVariables, pWorldChange);
 }
+
+bool	 IBFactDef::HasSameVariables(const class IBFact* pA, const class IBFact* pB) const
+{
+	ASSERT(pA != nullptr && pB != nullptr);
+	ASSERT(pA->GetFactDef() == this && pB->GetFactDef() == this);
+	ASSERT(pA->GetVariables().size() == m_iDegree && pB->GetVariables().size() == m_iDegree);
+
+	for (VarMap::const_iterator itA = pA->GetVariables().begin(), itB = pB->GetVariables().begin(); itA != pA->GetVariables().end() && itB != pB->GetVariables().end(); ++itA, ++itB)
+	{
+		if (itA->second != itB->second)
+			return false;
+	}
+
+	return true;
+}
+

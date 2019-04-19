@@ -37,7 +37,7 @@ void AFFGameSequence_PrimeDiscard::Start()
 		}
 
 		FTimerHandle DummyHandle;
-		GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &AFFGameSequence_PrimeDiscard::OnEndTimer, 0.25f, false);
+		GetWorld()->GetTimerManager().SetTimer(DummyHandle, this, &AFFGameSequence_PrimeDiscard::OnEndTimer, 0.15f, false);
 	}
 	else
 	{

@@ -1,11 +1,8 @@
 #ifndef __IBFACTPACK_H__
 #define __IBFACTPACK_H__
 
-#include "Utils.h"
+#include "Types.h"
 #include "IBCost.h"
-
-typedef set<class IBFact*>		FactSet;
-typedef set<class IBAction*>		ActionSet;
 
 class IBWorldChange
 {
@@ -25,7 +22,6 @@ class IBWorldChange
 		void								Update();
 
 		void								Step(const class IBPlanner* pPlanner);
-		//void								Clean();
 
 		void								Destroy();
 
@@ -39,7 +35,19 @@ class IBWorldChange
 		class IBAction*					GetAction() const { return m_pAction; }
 
 		bool								IsTrue() const;
+		bool								IsEqual(const IBWorldChange* pOther) const;
 		IBCost							GetCost() const;
+		int								GetFactCost() const;
+		float							GetActionCost() const;
+
+		void								UpdateDuplicats();
+		IBWorldChange*					FindFirstDuplicat(const IBWorldChange* pModel) const;
+		IBWorldChange*					GetBestDuplicat();
+
+		WorldChangeSet&					GetDuplicats() { return m_aDuplicats; }
+		void								AddDuplicat(IBWorldChange* pDuplicat);
+		void								RemDuplicat(IBWorldChange* pDuplicat);
+		bool								IsDuplicat(const IBWorldChange* pDuplicat) const;
 
 		IBWorldChange*					GetBestWorldChange() const;
 		bool								CheckCompatibility(const IBFact* pFact) const;
@@ -50,6 +58,7 @@ class IBWorldChange
 		class IBPlanner*					m_pPlanner;
 		FactSet							m_aFacts;
 		class IBAction*					m_pAction;
+		WorldChangeSet					m_aDuplicats;
 };
 
 #endif

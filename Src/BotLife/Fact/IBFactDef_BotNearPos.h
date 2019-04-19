@@ -12,6 +12,7 @@ class IBFactDef_BotNearPos : public IBFactDef
 		virtual ~IBFactDef_BotNearPos();
 
 		virtual IBF_Result		Test(const class IBFact* pFact) const override;
+		virtual bool				HasSameVariables(const class IBFact* pA, const class IBFact* pB) const override;
 };
 
 #endif

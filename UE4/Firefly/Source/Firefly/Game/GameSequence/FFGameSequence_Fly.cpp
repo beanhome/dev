@@ -56,7 +56,7 @@ void AFFGameSequence_Fly::Start()
 	ShipSector = Ship->GetCurrentSector();
 	Engine = Player.ShipBoard->GetEngine();
 
-	bool bHasFuel = GetPlayingPlayer().ShipBoard->HasStuff(FuelBlueprint);
+	bool bHasFuel = Player.ShipBoard->HasStuff(FuelBlueprint);
 
 	MoveStep = (bHasFuel ? Engine->GetMoveCount() : 1);
 

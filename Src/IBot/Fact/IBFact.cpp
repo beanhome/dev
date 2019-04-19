@@ -118,15 +118,7 @@ bool IBFact::IsEqual(const IBFact* other) const
 	if (m_bInverted != other->m_bInverted)
 		return false;
 
-	ASSERT(m_aVariables.size() == other->m_aVariables.size());
-
-	for (VarMap::const_iterator itA = m_aVariables.begin(), itB = other->m_aVariables.begin(); itA != m_aVariables.end() && itB != other->m_aVariables.end(); ++itA, ++itB)
-	{
-		if (itA->second != itB->second)
-			return false;
-	}
-
-	return true;
+	return m_pDef->HasSameVariables(this, other);
 }
 
 bool IBFact::IsOpposite(const IBFact* other) const
@@ -136,13 +128,8 @@ bool IBFact::IsOpposite(const IBFact* other) const
 	if (m_pDef != other->m_pDef)
 		return false;
 
-	ASSERT(m_aVariables.size() == other->m_aVariables.size());
-
-	for (VarMap::const_iterator itA = m_aVariables.begin(), itB = other->m_aVariables.begin(); itA != m_aVariables.end() && itB != other->m_aVariables.end(); ++itA, ++itB)
-	{
-		if (itA->second != itB->second)
-			return false;
-	}
+	if (!m_pDef->HasSameVariables(this, other))
+		return false;
 
 	return (m_bInverted != other->m_bInverted);
 }
@@ -206,6 +193,7 @@ bool IBFact::IsResolvableBy(const class IBActionDef* pActionDef) const
 
 void IBFact::Update()
 {
+	/*
 	if (IsTrue())
 	{
 		IBAction* pCurrentAction = m_pPlanner->GetCurrentAction();
@@ -231,6 +219,7 @@ void IBFact::Update()
 	{
 
 	}
+	*/
 
 	for (ActionSet::iterator it = m_aCauseAction.begin(); it != m_aCauseAction.end(); /* blank */)
 	{

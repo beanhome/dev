@@ -154,6 +154,7 @@
     <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_DropObject.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_FindPath.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_FollowPath.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_MoveTo.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_PickObject.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_PushProp.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_DropObject.h" />
     <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_FindPath.h" />
     <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_FollowPath.h" />
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_MoveTo.h" />
     <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_PickObject.h" />
     <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_PushProp.h" />
     <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.h" />

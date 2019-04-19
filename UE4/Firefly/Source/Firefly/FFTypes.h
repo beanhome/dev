@@ -72,12 +72,15 @@ struct FFFPurchaseStuff
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AFFStuff> Stuff;
 
-	UPROPERTY(BlueprintReadWrite)
-	int32 Count;
+	UPROPERTY(EditAnywhere)
+	int32 Max;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	int32 Price;
+
+	UPROPERTY(EditAnywhere)
+	int32 Count;
 };

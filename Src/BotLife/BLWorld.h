@@ -47,6 +47,9 @@ class BLWorld
 		const BLBot& GetBot() const { return *m_pBot; }
 		BLBot& GetBot() { return *m_pBot; }
 
+		vector<BLProp*> GetProps();
+		void GetProps(vector<BLProp*>& Props);
+
 		void CenterMap(int x, int y);
 
 		void Update(float dt);

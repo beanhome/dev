@@ -14,6 +14,7 @@ class IBActionDef_DropObject : public IBActionDef
 
 		virtual float		GetCost(const IBAction* pAction) const override;
 		virtual void			CreateOwnedVariables(IBAction* pAction) const override;
+		virtual void			CompleteVariables(IBAction* pAction) const override;
 		virtual bool			Init(IBAction* pAction) const override;
 		virtual bool			Start(IBAction* pAction) const override;
 		virtual bool			Execute(IBAction* pAction) const override;

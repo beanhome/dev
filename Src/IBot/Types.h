@@ -3,12 +3,13 @@
 
 #include "Utils.h"
 
-typedef set<class IBFact*>	FactSet;
-typedef set<class IBAction*>	ActionSet;
-typedef map<string, class IBObject> VarMap;
-typedef pair<string, class IBObject> VarPair;
-typedef map<string, vector<class IBObject>> PotentialVarMap;
-typedef pair<string, vector<class IBObject>> PotentialVarPair;
+typedef set<class IBFact*>						FactSet;
+typedef set<class IBAction*> 					ActionSet;
+typedef set<class IBWorldChange*>				WorldChangeSet;
+typedef map<string, class IBObject> 				VarMap;
+typedef pair<string, class IBObject>				VarPair;
+typedef map<string, vector<class IBObject>>		PotentialVarMap;
+typedef pair<string, vector<class IBObject>>		PotentialVarPair;
 
 struct EvalSort
 {

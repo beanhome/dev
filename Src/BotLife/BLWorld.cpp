@@ -95,6 +95,24 @@ bool BLWorld::TestPath(const Path& oPath) const
 	return true;
 }
 
+vector<BLProp*> BLWorld::GetProps()
+{
+	vector<BLProp*> aProps;
+	GetProps(aProps);
+	return aProps;
+}
+
+void BLWorld::GetProps(vector<BLProp*>& Props)
+{
+	for (uint i = 0; i < GetGrid().GetSize(); ++i)
+	{
+		BLSquare& oSquare = GetGrid().GetCase(i);
+		BLProp* pProp = oSquare.GetProp();
+
+		if (pProp != nullptr)
+			Props.push_back(pProp);
+	}
+}
 
 void BLWorld::CenterMap(int x, int y)
 {

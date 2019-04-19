@@ -101,6 +101,9 @@ IBAction* IBActionDef::Instanciate(IBFact* pPostCond)
 	IBAction* pAction = m_pPlanner->InstanciateAction(this, pPostCond);
 	pAction->Create();
 
+	if (pAction->GetState() == IBA_State::IBA_Ready)
+		pAction->Init();
+
 	return pAction;
 }
 

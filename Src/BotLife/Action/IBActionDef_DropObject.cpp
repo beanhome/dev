@@ -45,10 +45,6 @@ void	 IBActionDef_DropObject::CreateOwnedVariables(IBAction* pAction) const
 	BLAction* pBLAction = dynamic_cast<BLAction*>(pAction);
 	ASSERT(pBLAction != nullptr);
 
-	BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
-	if (pObj == nullptr)
-		return;
-
 	if (pAction->GetVariable("Dist")->GetUserData() == nullptr)
 	{
 		BLInt* pDist = new BLInt(0);
@@ -56,6 +52,53 @@ void	 IBActionDef_DropObject::CreateOwnedVariables(IBAction* pAction) const
 		pAction->SetVariable("Dist", pDist->GetName(), (void*)pDist);
 	}
 }
+
+
+void	 IBActionDef_DropObject::CompleteVariables(IBAction* pAction) const
+{
+	void* pOwner = m_pPlanner->GetOwner();
+	ASSERT(pOwner != NULL);
+	BLBot* pBot = static_cast<BLBot*>(pOwner);
+	ASSERT(pBot != NULL);
+
+	BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
+	BLVector2* pPos = pAction->GetVariable<BLVector2>("Pos");
+
+	if (pObj == nullptr)
+	{
+		vector<BLProp*> aProps = pBot->GetWorld().GetProps();
+		for (uint i = 0; i < aProps.size(); ++i)
+		{
+			if (aProps[i]->IsPickable())
+				pAction->AddPotentialVariable("Obj", aProps[i]->GetName(), (void*)aProps[i]);
+		}
+	}
+	else if (pPos == nullptr)
+	{
+		const BLWorld::BLGrid& oGrid = pBot->GetWorld().GetGrid();
+
+		const Vector2& oObjPos = pObj->GetPos();
+		Vector2 oPos;
+		for (oPos.x = oObjPos.x-1 ; oPos.x <= oObjPos.x+1 ; ++oPos.x)
+		{
+			for (oPos.y = oObjPos.y - 1; oPos.y <= oObjPos.y + 1; ++oPos.y)
+			{
+				if (!oGrid.IsCoordValid(oPos))
+					continue;
+
+				if (oPos == oObjPos)
+					continue;
+				
+				const BLSquare& oSquare = pBot->GetWorld().GetGrid().GetCase(oPos);
+				if (oSquare.IsBlock())
+					continue;
+
+				pAction->AddPotentialVariable("Pos", oSquare.GetPos().GetName(), (void*)&oSquare.GetPos());
+			}
+		}
+	}
+}
+
 
 bool IBActionDef_DropObject::Init(IBAction* pAction) const
 {

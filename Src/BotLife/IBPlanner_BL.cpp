@@ -13,6 +13,7 @@
 #include "Fact/IBFactDef_PropIsMovable.h"
 #include "Fact/IBFactDef_PosIsFree.h"
 
+#include "Action/IBActionDef_MoveTo.h"
 #include "Action/IBActionDef_FollowPath.h"
 #include "Action/IBActionDef_FindPath.h"
 #include "Action/IBActionDef_PickObject.h"
@@ -39,13 +40,14 @@ IBPlanner_BL::IBPlanner_BL(void* pOwner)
 	REGISTER_FACT(IBFactDef_PropIsMovable);
 	REGISTER_FACT_NAMED(IBFactDef_PropIsBlock, "IBFactDef_DoorIsClose");
 
-	REGISTER_ACTION(IBActionDef_FollowPath);
-	REGISTER_ACTION(IBActionDef_FindPath);
+	REGISTER_ACTION(IBActionDef_MoveTo);
+	//REGISTER_ACTION(IBActionDef_FollowPath);
+	//REGISTER_ACTION(IBActionDef_FindPath);
 	REGISTER_ACTION(IBActionDef_PickObject);
 	REGISTER_ACTION(IBActionDef_DropObject);
-	REGISTER_ACTION(IBActionDef_UnblockProp);
-	REGISTER_ACTION(IBActionDef_PushProp);
-	REGISTER_ACTION_NAMED(IBActionDef_UnblockProp, "IBActionDef_OpenDoor");
+	//REGISTER_ACTION(IBActionDef_UnblockProp);
+	//REGISTER_ACTION(IBActionDef_PushProp);
+	//REGISTER_ACTION_NAMED(IBActionDef_UnblockProp, "IBActionDef_OpenDoor");
 }
 
 IBPlanner_BL::~IBPlanner_BL()

@@ -223,6 +223,8 @@ void IBAction::FinalizeCreation()
 
 	if (m_pPreWorldChange->CheckInnerCompatibility() == false)
 		m_eState = IBA_State::IBA_Impossible;
+
+	m_pPreWorldChange->UpdateDuplicats();
 }
 
 IBAction::~IBAction()
@@ -398,6 +400,9 @@ void	 IBAction::Update()
 		}
 	}
 
+	if (m_eState == IBA_State::IBA_Ready)
+		m_pDef->Update(this);
+
 	if (m_pPreWorldChange != nullptr)
 		m_pPreWorldChange->Update();
 }
@@ -525,6 +530,17 @@ void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, con
 			pAction->SetState(IBA_State::IBA_Ready);
 			pAction->FinalizeCreation();
 		}
+	}
+	else if (m_eState == IBA_State::IBA_Unresolved)
+	{
+		for (VarMap::iterator it = m_aVariables.begin(); it != m_aVariables.end(); ++it)
+		{
+			const IBObject& Obj = it->second;
+			if (Obj.GetUserData() == nullptr)
+				pAction->m_aPotentialVariables.insert(PotentialVarPair(it->first, vector<IBObject>()));
+		}
+
+		m_pDef->CompleteVariables(pAction);
 	}
 }
 

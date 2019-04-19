@@ -29,3 +29,24 @@ IBF_Result IBFactDef_BotNearPos::Test(const class IBFact* pFact) const
 	return ((pBot->GetWorld().GetGrid().Distance(pBot->GetPos(), *pPos) <= pDist->GetValue()) ? IBF_OK : IBF_FAIL);
 }
 
+bool	 IBFactDef_BotNearPos::HasSameVariables(const class IBFact* pA, const class IBFact* pB) const
+{
+	ASSERT(pA != nullptr && pB != nullptr);
+	ASSERT(pA->GetFactDef() == this && pB->GetFactDef() == this);
+	ASSERT(pA->GetVariables().size() == GetDegree() && pB->GetVariables().size() == GetDegree());
+
+	BLVector2* pAPos = pA->GetVariable<BLVector2>("Pos");
+	BLVector2* pBPos = pB->GetVariable<BLVector2>("Pos");
+
+	if (pAPos != pBPos && *pAPos != *pBPos)
+		return false;
+
+	BLInt* pADist = pA->GetVariable<BLInt>("Dist");
+	BLInt* pBDist = pB->GetVariable<BLInt>("Dist");
+
+	if (pADist != pBDist && *pADist != *pBDist)
+		return false;
+
+	return true;
+}
+

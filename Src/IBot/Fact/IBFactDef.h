@@ -22,10 +22,10 @@ class IBFactDef
 
 		// Must return state of the fact: true or false
 		virtual IBF_Result			Test(const class IBFact* pFact) const = 0;
+		virtual bool					HasSameVariables(const class IBFact* pA, const class IBFact* pB) const;
 
 	protected:
 		void							AddVariable(const string& name);
-
 
 	private:
 		string						m_sName;

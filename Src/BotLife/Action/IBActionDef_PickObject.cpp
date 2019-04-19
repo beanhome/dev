@@ -56,7 +56,7 @@ void	 IBActionDef_PickObject::CreateOwnedVariables(IBAction* pAction) const
 
 	if (pObj != nullptr && pObjPos == nullptr)
 	{
-		BLVector2* pObjPos = new BLVector2("ObjPos");
+		BLVector2* pObjPos = new BLVector2(pObj->GetName() + " Pos");
 		pObjPos->Set(pObj->GetPos());
 		pBLAction->AddOwnedObject(pObjPos);
 		pAction->SetVariable("ObjPos", pObjPos->GetName(), (void*)pObjPos);

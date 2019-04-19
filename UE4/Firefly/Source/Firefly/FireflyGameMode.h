@@ -4,7 +4,6 @@
 #include "FireflyGameMode.generated.h"
 
 class UFFPlayerInfo;
-class AFFGameSequence;
 class AFireflyPlayerController;
 
 UENUM()
@@ -45,15 +44,8 @@ public:
 	const UFFPlayerInfo* GetPlayerInfo(AFireflyPlayerController* PC) const;
 	UFFPlayerInfo* GetPlayerInfo(AFireflyPlayerController* PC);
 
-	void StartPlayerTurn();
-	void EndPlayerTurn();
-
 	UFFPlayerInfo* GetActivePlayer() const;
 	
-	AFFGameSequence* GetGurrentSequence() const;
-	
-	AFFGameSequence* GetGame() const;
-
 private:
 	EFFGamePhase GamePhase;
 

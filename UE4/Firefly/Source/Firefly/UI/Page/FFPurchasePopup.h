@@ -18,9 +18,15 @@ public:
 	void SetTitle(const FString& title);
 	void SetDesc(const FString& desc);
 	void SetPurchaseStuff(const TArray<struct FFFPurchaseStuff>& _Stuffs);
+	void SetCash(int32 iCash);
+
+	const TArray<struct FFFPurchaseStuff>& GetPurchaseStuff() const;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = Firefly)
 	void BPSetPurchaseStuff(const TArray<struct FFFPurchaseStuff>& _Stuffs);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = Firefly)
+	void BPSetCash(int32 iCash);
 
 	UFUNCTION(BlueprintCallable, Category = Firefly)
 	void OnItemChange();
@@ -35,4 +41,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<struct FFFPurchaseStuff> Stuffs;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Cash;
 };

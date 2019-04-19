@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{EEF46696-470A-716E-A36A-A2A57AA8B1E5}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "ShadowWar",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"GameSequence",
+				"UMG"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "GameSequence",
+			"Enabled": true
+		}
+	]
+}

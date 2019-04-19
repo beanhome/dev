@@ -15,6 +15,7 @@ class Navigation
 
 		enum State
 		{
+			FP_Create,
 			FP_Init,
 			FP_Find,
 			FP_Succeed,
@@ -22,23 +23,24 @@ class Navigation
 		};
 
 	public:
-		Navigation();
-		Navigation(const Grid& oGrid) : m_pModelGrid(&oGrid) {}
+		Navigation() : m_eState(FP_Create) {}
+		Navigation(const Grid& oGrid) : m_pModelGrid(&oGrid), m_eState(FP_Create) {}
 		virtual ~Navigation() {}
 
-		virtual void	Create(const Grid& oGrid) { m_pModelGrid = &oGrid; }
+		virtual void							Create(const Grid& oGrid) { m_pModelGrid = &oGrid; }
 
-		bool			FindPath(const Vector2& start, const Vector2& target, Path& aPath);
-		bool			FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
+		bool									FindPath(const Vector2& start, const Vector2& target, Path& aPath);
+		bool									FindPath(const Vector2& start, const Vector2& target, int iDist, Path& aPath);
 
-		virtual void	FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath) = 0;
-		virtual State	FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath) = 0;
+		virtual void							FindPathInit(const Vector2& start, const Vector2& target, int iDist, Path& aPath) = 0;
+		virtual void							FindPathStep(const Vector2& start, const Vector2& target, int iDist, Path& aPath) = 0;
+		typename Navigation<TCase>::State	GetState() const { return m_eState; }
 
-		virtual bool	GetPath(const Vector2& vTarget, Path& oPath) const = 0;
-
+		virtual bool							GetPath(const Vector2& vTarget, Path& oPath) const = 0;
 
 	protected:
 		const Grid* m_pModelGrid;
+		typename Navigation<TCase>::State	m_eState;
 };
 
 template <typename TCase>

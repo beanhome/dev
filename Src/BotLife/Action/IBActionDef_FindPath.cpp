@@ -92,7 +92,8 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction) const
 	double start = Timer::Get();
 	while (Timer::Get() < start + s_fFindPathStepDelay && state == Navigation<BLSquare>::FP_Find)
 	{
-		state = pNav->FindPathStep(pBot->GetPos(), *pTarget, pDist->GetValue(), *pPath);
+		pNav->FindPathStep(pBot->GetPos(), *pTarget, pDist->GetValue(), *pPath);
+		state = pNav->GetState();
 		LOG(" *");
 	}
 	LOG("\n");

@@ -50,6 +50,7 @@ public:
 
 	class AFFEngineCard* GetEngine() const;
 
+	bool AddStuff(TSubclassOf<class AFFStuff> stuff, int32 count);
 	bool AddStuff(TSubclassOf<class AFFStuff> stuff);
 	bool AddStuff(class AFFStuff* stuff);
 	bool RemStuff(TSubclassOf<class AFFStuff> stuff);
@@ -73,7 +74,15 @@ public:
 private:
 	void CreateMaterialInstance();
 
-	bool CheckAndRefreshCargo();
+	bool Stock(TArray<FFFCargo>& _Cargo, TArray<FFFCargo>& _Stash, const TArray<class AFFStuff*>& _Stuffs) const;
+
+	bool TestCargo(const TArray<class AFFStuff*>& _Stuffs) const;
+	bool TestAddCargo(class AFFStuff* _Stuff, int32 iCount = 1) const;
+	bool TestAddCargo(const TArray<class AFFStuff*>& _Stuffs) const;
+
+	bool Stock();
+	bool StockNewStuffs(const TArray<class AFFStuff*>& _Stuffs);
+	bool StockNewStuffs(class AFFStuff* _Stuff, int32 iCount = 1);
 
 	UFUNCTION(Reliable, NetMulticast)
 	void RefreshCargo();
