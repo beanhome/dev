@@ -1,5 +1,5 @@
-#ifndef __MAPVIEWAPP_H__
-#define __MAPVIEWAPP_H__
+#ifndef __IBOTTESTAPP_H__
+#define __IBOTTESTAPP_H__
 
 #include "Utils.h"
 #include "GApp.h"
@@ -27,5 +27,5 @@ class IBotTestApp : public GApp<GEngine_SDL>
 		class IBGraphPlannerDisplay* m_pPlannerDisplay;
 };
 
-#endif // __MAPVIEWAPP_H__
+#endif // __IBOTTESTAPP_H__
 

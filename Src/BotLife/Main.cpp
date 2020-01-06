@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include "BLApp.h"
+#include "IBotTestApp.h"
 #include "MapViewApp.h"
 #include "TilesViewApp.h"
 #include "SpriteViewApp.h"
@@ -107,7 +108,9 @@ extern "C" int SDL_main(int argc, char *argv[])
 		pApp = new TilesViewApp(w, h, path, sTiles);
 	else if (strncmp(sApp, "SpriteViewApp", 14) == 0)
 		pApp = new SpriteViewApp(w, h, path);
-	
+	else if (strncmp(sApp, "IBotTestApp", 14) == 0)
+		pApp = new IBotTestApp(w, h, sx, sy, r, path);
+
 	if (pApp == NULL)
 		return -1;
 
