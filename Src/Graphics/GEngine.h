@@ -24,8 +24,11 @@ class GEngine : public CanvasBase
 		GEngine(GAppBase* pApp, uint16 width, uint16 height, uint16 depth, const char* rootpath);
 		virtual ~GEngine();
 
-		GEngine*						GetGEngine() { return this; }
-		const GEngine*					GetGEngine() const { return this; }
+		void							SetApp(GAppBase* pApp) {m_pApp = pApp; }
+
+
+		virtual GEngine*				GetGEngine() { return this; }
+		virtual const GEngine*			GetGEngine() const { return this; }
 
 		virtual void					Clear() = 0;
 		virtual void					Flip() = 0;

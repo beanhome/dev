@@ -8,10 +8,12 @@
 class BLTiles;
 class BLMap;
 
-class MapViewApp : public GApp<GEngine_SDL>
+class MapViewApp : public GAppBase
 {
+	DECLARE_APP(MapViewApp)
+
 	public:
-		MapViewApp(int w, int h, const char* rootpath, int sx, int sy, const char* name);
+		MapViewApp(GEngine* pEngine, int argc, char *argv[]);
 		~MapViewApp();
 
 		virtual int Update(float dt);

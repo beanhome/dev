@@ -21,8 +21,8 @@ class Canvas : public CanvasBase
 		void							SetPosX(sint32 x) { m_iPosX = x; }
 		void							SetPosY(sint32 y) { m_iPosY = y; }
 
-		GEngine*						GetGEngine() { return m_oParent.GetGEngine(); }
-		const GEngine*					GetGEngine() const { return m_oParent.GetGEngine(); }
+		virtual GEngine*				GetGEngine() { return m_oParent.GetGEngine(); }
+		virtual const GEngine*			GetGEngine() const { return m_oParent.GetGEngine(); }
 
 		virtual void					DrawImage(const ImageResource& image, sint32 x, sint32 y) const;
 		virtual void 					DrawImage(const ImageResource& image, sint32 x, sint32 y, float fAngle, float fZoom) const;

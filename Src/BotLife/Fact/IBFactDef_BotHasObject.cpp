@@ -7,8 +7,9 @@
 #include "World/BLProp.h"
 
 IBFactDef_BotHasObject::IBFactDef_BotHasObject(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 1, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
+	AddVariable("Var");
 }
 
 IBFactDef_BotHasObject::~IBFactDef_BotHasObject()

@@ -4,8 +4,9 @@
 #include "World/BLProp.h"
 
 IBFactDef_PropIsPickable::IBFactDef_PropIsPickable(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 1, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
+	AddVariable("Var");
 }
 
 IBFactDef_PropIsPickable::~IBFactDef_PropIsPickable()

@@ -9,9 +9,18 @@
 #include "Event.h"
 #include "EventManager.h"
 
-IBotTestApp::IBotTestApp(int w, int h, int sx, int sy, float r, const char* rootpath)
-	: GApp<GEngine_SDL>(w, h, rootpath)
+DEFINE_APP(IBotTestApp)
+
+int IBotTestApp::s_iDummy = 42;
+
+IBotTestApp::IBotTestApp(GEngine* pEngine, int argc, char *argv[])
+	: GAppBase(pEngine, argc, argv)
 {
+	int w = m_pEngine->GetWidth();
+	int h = m_pEngine->GetHeight();
+
+	float r = GetArgAsFloat('r', 0.3f, argc, argv);
+
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
 	m_pWorldCanva = new Canvas(*m_pEngine, 0, 0, w, (uint16)(r*(float)h));
@@ -34,21 +43,41 @@ IBotTestApp::~IBotTestApp()
 	delete m_pWorldCanva;
 }
 
-void IBotTestApp::Init()
+void IBotTestApp::Init(int argc, char *argv[])
 {
-	m_pWorld->Init(0);
+	const char* sInit = GAppBase::GetArgAsString('i', "a b c", argc, argv);
+	const char* sGoal = GAppBase::GetArgAsString('g', "abc", argc, argv);
+
+	m_pWorld->Init(sInit);
 	m_pWorld->Print();
 
-	m_pPlanner->AddGoal("IBFactDef_IsTopOf", true, m_pWorld->GetCubeB(), m_pWorld->GetCubeC());
-	m_pPlanner->AddGoal("IBFactDef_IsTopOf", true, m_pWorld->GetCubeA(), m_pWorld->GetCubeB());
-	//m_pPlanner->AddGoal("IBFactDef_IsTopOf", true, m_pWorld->GetCubeC(), m_pWorld->GetCubeD());
+	for (uint i = 0; i < strlen(sGoal); ++i)
+	{
+		if (isalpha(sGoal[i]) && i + 1 < strlen(sGoal))
+		{
+			string sName = FormatString("Cube_%c", toupper(sGoal[i]));
+			IBCube* pCube = m_pWorld->GetCube(sName);
 
-	/* Test
-	m_pPlanner->AddGoal("IBFactDef_IsOnTable", true, m_pWorld->GetCubeB());
-	m_pPlanner->AddGoal("IBFactDef_IsFree", true, m_pWorld->GetCubeB());
-	m_pPlanner->AddGoal("IBFactDef_IsFree", true, m_pWorld->GetCubeC());
-	m_pPlanner->AddGoal("IBFactDef_IsTopOf", true, m_pWorld->GetCubeA(), m_pWorld->GetCubeB());
-	*/
+			if (pCube == nullptr)
+				continue;
+
+			if (isalpha(sGoal[i + 1]))
+			{
+				string sTarget = FormatString("Cube_%c", toupper(sGoal[i+1]));
+				IBCube* pTarget = m_pWorld->GetCube(sTarget);
+				if (pTarget)
+					m_pPlanner->AddGoal("IBFactDef_IsTopOf", true, pCube, pTarget);
+			}
+			else if (sGoal[i+1] == '_')
+			{
+				m_pPlanner->AddGoal("IBFactDef_IsOnTable", true, pCube);
+			}
+			else if (sGoal[i + 1] == '!')
+			{
+				m_pPlanner->AddGoal("IBFactDef_IsFree", true, pCube);
+			}
+		}
+	}
 }
 
 int IBotTestApp::Update(float dt)

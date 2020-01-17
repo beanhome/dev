@@ -5,7 +5,7 @@
 
 
 IBFactDef_IsTopOf::IBFactDef_IsTopOf(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 2, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
 	AddVariable("Top");
 	AddVariable("Bottom");

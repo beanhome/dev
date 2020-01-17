@@ -78,3 +78,6 @@ Binaries
 Intermediate
 Saved
 *.db
+*.opendb
+*.db-shm
+*.db-wal

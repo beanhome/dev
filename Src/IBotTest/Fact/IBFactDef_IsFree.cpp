@@ -4,8 +4,9 @@
 #include "IBPlanner.h"
 
 IBFactDef_IsFree::IBFactDef_IsFree(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 1, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
+	AddVariable("Var");
 }
 
 IBFactDef_IsFree::~IBFactDef_IsFree()

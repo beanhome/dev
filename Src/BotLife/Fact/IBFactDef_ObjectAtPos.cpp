@@ -6,7 +6,7 @@
 #include "World/BLProp.h"
 
 IBFactDef_ObjectAtPos::IBFactDef_ObjectAtPos(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 2, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
 	AddVariable("Obj");
 	AddVariable("Pos");

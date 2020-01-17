@@ -4,8 +4,9 @@
 
 
 IBFactDef_Bool::IBFactDef_Bool(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 1, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
+	AddVariable("Var");
 }
 
 IBFactDef_Bool::~IBFactDef_Bool()

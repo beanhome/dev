@@ -7,11 +7,11 @@
 class IBFactDef
 {
 	public:
-		IBFactDef(const string& name, uint iDegree, class IBPlanner* pPlanner);
+		IBFactDef(const string& name, class IBPlanner* pPlanner);
 		virtual ~IBFactDef();
 
 		const string&				GetName() const;
-		uint							GetDegree() const;
+		uint						GetDegree() const;
 
 		const string&				GetVariableName(uint i) const;
 		//virtual string				GetVariableData(uint i) const = 0;
@@ -22,18 +22,17 @@ class IBFactDef
 
 		// Must return state of the fact: true or false
 		virtual IBF_Result			Test(const class IBFact* pFact) const = 0;
-		virtual bool					HasSameVariables(const class IBFact* pA, const class IBFact* pB) const;
+		virtual bool				HasSameVariables(const class IBFact* pA, const class IBFact* pB) const;
 
 	protected:
-		void							AddVariable(const string& name);
+		void						AddVariable(const string& name);
 
 	private:
 		string						m_sName;
-		uint							m_iDegree;
 		vector<string>				m_aVarNames;
 	
 	protected:
-		class IBPlanner*				m_pPlanner;
+		class IBPlanner*			m_pPlanner;
 };
 
 #endif

@@ -45,17 +45,17 @@ const IBFactDef* IBFact::GetFactDef() const
 	return m_pDef;
 }
 
-bool	 IBFact::HasCauseAction() const
+bool IBFact::HasCauseAction() const
 {
 	return (m_aCauseAction.size() > 0);
 }
 
-void	 IBFact::RemoveCauseAction(class IBAction* pAction)
+void IBFact::RemoveCauseAction(class IBAction* pAction)
 {
 	m_aCauseAction.erase(pAction);
 }
 
-void	 IBFact::AddCauseAction(class IBAction* pAction)
+void IBFact::AddCauseAction(class IBAction* pAction)
 {
 	if (m_aCauseAction.find(pAction) == m_aCauseAction.end())
 		m_aCauseAction.insert(pAction);
@@ -80,7 +80,7 @@ const IBObject* IBFact::GetVariable(const char* varname) const
 	return (it == m_aVariables.end() ? nullptr : &it->second);
 }
 
-void	 IBFact::SetVariable(const string& varname, const IBObject& obj)
+void IBFact::SetVariable(const string& varname, const IBObject& obj)
 {
 	VarMap::iterator it = m_aVariables.find(varname);
 	ASSERT(it != m_aVariables.end());
@@ -88,7 +88,7 @@ void	 IBFact::SetVariable(const string& varname, const IBObject& obj)
 		it->second = obj;
 }
 
-void	 IBFact::SetVariable(const IBObject& obj)
+void IBFact::SetVariable(const IBObject& obj)
 {
 	ASSERT(m_pDef->GetDegree() == 1);
 	ASSERT(m_aVariables.size() == 1);
@@ -97,7 +97,7 @@ void	 IBFact::SetVariable(const IBObject& obj)
 }
 
 
-void	 IBFact::ResolveVariableFromCond(const class IBAction* pAction, const IBFactCondDef& oCondDef)
+void IBFact::ResolveVariableFromCond(const class IBAction* pAction, const IBFactCondDef& oCondDef)
 {
 	for (uint i = 0; i < oCondDef.m_aLinkNames.size(); ++i)
 	{
@@ -105,7 +105,6 @@ void	 IBFact::ResolveVariableFromCond(const class IBAction* pAction, const IBFac
 		if (pObj)
 			SetVariable(oCondDef.m_aLinkNames[i].m_sCondVarName, *pObj);
 	}
-
 }
 
 bool IBFact::IsEqual(const IBFact* other) const
@@ -144,18 +143,7 @@ bool IBFact::operator!=(const IBFact& other) const
 	return !IsEqual(&other);
 }
 
-
-SortedActionSet IBFact::GetActionOrdered() const
-{
-	SortedActionSet pActionOrdered;
-
-	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
-		pActionOrdered.insert(*it);
-
-	return pActionOrdered;
-}
-
-void	 IBFact::Resolve(const IBPlanner* pPlanner)
+void IBFact::Resolve(const IBPlanner* pPlanner)
 {
 	const ActionDefSet& AllActionDef = pPlanner->GetActionLibrary().GetAllActionDef();
 
@@ -255,34 +243,6 @@ bool IBFact::IsImpossible() const
 
 	return bImpossible;
 }
-
-
-/*
-IBAction* IBFact::GetBestCauseAction(float& fMinEval) const
-{
-	IBAction* pBestAction = nullptr;
-	fMinEval = 0.f;
-	for (ActionSet::const_iterator it = m_aCauseAction.begin() ; it != m_aCauseAction.end() ; ++it)
-	{
-		IBAction* pAction = *it;
-
-		float fEval = pAction->GetCost();
-		if (pBestAction == nullptr || fMinEval > fEval)
-		{
-			pBestAction = pAction;
-			fMinEval = fEval;
-		}
-	}
-
-	return pBestAction;
-}
-
-class IBAction* IBFact::GetBestCauseAction() const
-{
-	float fEval;
-	return GetBestCauseAction(fEval);
-}
-*/
 
 IBF_Result IBFact::Test() const
 {

@@ -12,11 +12,11 @@
         },
         {
           "Id": "e7c3c535-040e-4e10-a707-5e5ae416c905",
-          "Command": "-a IBotTestApp -r 0.3"
+          "Command": "-a IBotTestApp -r 0.3 -i \"a b\" -g \"ab\""
         },
         {
           "Id": "811f61a9-24be-4b1f-a32b-2d53ef448055",
-          "Command": "-a MapViewApp"
+          "Command": "-a MapViewApp -w 1400 -h 900 -x 64 -y 64"
         },
         {
           "Id": "acb56ce9-d269-47a0-8a31-338dfdb7a606",
@@ -35,10 +35,6 @@
         {
           "Id": "79044ed3-f98e-40bb-8bf0-3a2d5281618f",
           "Command": "-t summertiles"
-        },
-        {
-          "Id": "7e347c10-bf43-4640-aafd-3080ebf788d0",
-          "Command": "-t wastelandtiles"
         },
         {
           "Id": "0a013be1-7b7c-4bd2-8ace-e26010cf6c90",

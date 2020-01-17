@@ -1,5 +1,5 @@
-#ifndef __IBFACTPACK_H__
-#define __IBFACTPACK_H__
+#ifndef __IBWORLDCHANGE_H__
+#define __IBWORLDCHANGE_H__
 
 #include "Types.h"
 #include "IBCost.h"
@@ -19,43 +19,41 @@ class IBWorldChange
 	public:
 		bool operator==(const IBWorldChange& other) const;
 
-		void								Update();
-
-		void								Step(const class IBPlanner* pPlanner);
-
-		void								Destroy();
+		void							Update();
+		void							Step(const class IBPlanner* pPlanner);
+		void							Destroy();
 
 		const FactSet&					GetFacts() const;
-		uint								Size() const;
-		void								AddFact(class IBFact* pFact);
-		void								RemFact(class IBFact* pFact);
+		uint							Size() const;
+		void							AddFact(class IBFact* pFact);
+		void							RemFact(class IBFact* pFact);
 		
-		bool								FactIsResolvableBy(const class IBFact* pFact, const class IBActionDef* pActionDef) const;
+		//bool							FactIsResolvableBy(const class IBFact* pFact, const class IBActionDef* pActionDef) const;
 
 		class IBAction*					GetAction() const { return m_pAction; }
 
-		bool								IsTrue() const;
-		bool								IsEqual(const IBWorldChange* pOther) const;
+		bool							IsTrue() const;
+		bool							IsEqual(const IBWorldChange* pOther) const;
+
 		IBCost							GetCost() const;
 		int								GetFactCost() const;
 		float							GetActionCost() const;
 
-		void								UpdateDuplicats();
+		void							UpdateDuplicats();
 		IBWorldChange*					FindFirstDuplicat(const IBWorldChange* pModel) const;
 		IBWorldChange*					GetBestDuplicat();
 
 		WorldChangeSet&					GetDuplicats() { return m_aDuplicats; }
-		void								AddDuplicat(IBWorldChange* pDuplicat);
-		void								RemDuplicat(IBWorldChange* pDuplicat);
-		bool								IsDuplicat(const IBWorldChange* pDuplicat) const;
+		void							AddDuplicat(IBWorldChange* pDuplicat);
+		void							RemDuplicat(IBWorldChange* pDuplicat);
+		bool							IsDuplicat(const IBWorldChange* pDuplicat) const;
 
 		IBWorldChange*					GetBestWorldChange() const;
-		bool								CheckCompatibility(const IBFact* pFact) const;
-		bool								CheckInnerCompatibility() const;
-
+		bool							CheckCompatibility(const IBFact* pFact) const;
+		bool							CheckInnerCompatibility() const;
 
 	protected:
-		class IBPlanner*					m_pPlanner;
+		class IBPlanner*				m_pPlanner;
 		FactSet							m_aFacts;
 		class IBAction*					m_pAction;
 		WorldChangeSet					m_aDuplicats;

@@ -16,11 +16,7 @@ IBAction::IBAction(const IBActionDef* pDef, IBFact* pPostCond, IBPlanner* pPlann
 	m_pPostWorldChange = pPostCond->m_pWorldChangeOwner;
 	m_aPostCond.push_back(pPostCond);
 
-	for (uint32 j = 0; j < m_aPostCond.size(); ++j)
-	{
-		IBFact* pPostCond = m_aPostCond[j];
-		pPostCond->AddCauseAction(this);
-	}
+	pPostCond->AddCauseAction(this);
 }
 
 void IBAction::Create()
@@ -33,15 +29,15 @@ void IBAction::Create()
 
 	m_pDef->CreateOwnedVariables(this);
 
-	m_eState = (IsResolved() ? IBA_State::IBA_Resolved : IBA_State::IBA_Unresolved);
-
-	if (m_eState == IBA_State::IBA_Resolved)
+	if (IsResolved())
 	{
-		m_eState = IBA_State::IBA_Ready;
+		m_eState = IBA_State::IBA_Resolved;
 		FinalizeCreation();
 	}
-	else if (m_eState == IBA_State::IBA_Unresolved)
+	else
 	{
+		m_eState = IBA_State::IBA_Unresolved;
+
 		for (VarMap::iterator it = m_aVariables.begin(); it != m_aVariables.end(); ++it)
 		{
 			const IBObject& Obj = it->second;
@@ -240,8 +236,6 @@ void IBAction::Destroy()
 {
 	m_eState = IBA_State::IBA_Destroyed;
 
-	m_pDef->PreDestroy(m_aVariables);
-
 	for (uint32 i = 0; i < m_aAdditionalPostCond.size(); ++i)
 		m_aAdditionalPostCond[i]->Destroy();
 
@@ -373,7 +367,7 @@ bool IBAction::IsChildOf(const IBFact* pFact) const
 	return m_pPostWorldChange->GetAction()->IsChildOf(pFact);
 }
 
-void	 IBAction::Update()
+void IBAction::Update()
 {
 	if (m_eState == IBA_State::IBA_Unresolved)
 	{
@@ -400,103 +394,12 @@ void	 IBAction::Update()
 		}
 	}
 
-	if (m_eState == IBA_State::IBA_Ready)
+	if (m_eState == IBA_State::IBA_Resolved)
 		m_pDef->Update(this);
 
 	if (m_pPreWorldChange != nullptr)
 		m_pPreWorldChange->Update();
 }
-
-/*
-void IBAction::Step()
-{
-	switch (m_eState)
-	{
-		case IBA_State::IBA_Init:
-			ASSERT(false);
-			break;
-
-		case IBA_State::IBA_Unresolved:
-			break;
-		
-		case IBA_State::IBA_Resolved:
-			break;
-
-		case IBA_State::IBA_Ready:
-			if (m_pPlanner->GetCurrentAction() == nullptr)
-			{
-				m_eState = Init() ? IBA_State::IBA_Start : IBA_State::IBA_Impossible;
-				if (m_eState == IBA_State::IBA_Start)
-					m_pPlanner->SetCurrentAction(this);
-			}
-			break;
-
-		case IBA_State::IBA_Start:
-			m_eState = Start() ? IBA_State::IBA_Execute: IBA_State::IBA_Impossible;
-			break;
-
-		case IBA_State::IBA_Execute:
-			m_eState = Execute() ? IBA_State::IBA_Finish : IBA_State::IBA_Execute;
-			break;
-
-		case IBA_State::IBA_Finish:
-			m_eState = Finish() ? IBA_State::IBA_Destroy : IBA_State::IBA_Impossible;
-			m_pPlanner->SetCurrentAction(nullptr);
-			break;
-
-		case IBA_State::IBA_Abort:
-			ASSERT(false);
-			break;
-
-		case IBA_State::IBA_Destroy:
-			m_eState = IBA_State::IBA_Destroyed;
-			Destroy();
-			delete this;
-			break;
-
-		case IBA_State::IBA_Destroyed:
-			break;
-
-		case IBA_State::IBA_Impossible:
-			if (m_pPlanner->GetCurrentAction() == this)
-				m_pPlanner->SetCurrentAction(nullptr);
-			break;
-	}
-}
-*/
-
-/*
-void	 IBAction::Resolve()
-{
-	if (m_eState == IBA_State::IBA_Unresolved)
-	{
-		if (m_aPotentialVariables.size() == 0)
-		{
-			Destroy();
-		}
-		else
-		{
-			PotentialVarMap::iterator it = m_aPotentialVariables.begin();
-			if (it->second.size() > 0)
-			{
-				const string& sVarName = it->first;
-				IBObject sVarObj = it->second.back();
-				it->second.pop_back();
-
-				PotentialVarMap NewPotentialVarMap(++it, m_aPotentialVariables.end());
-				CloneWithVar(sVarName, sVarObj, NewPotentialVarMap);
-			}
-			else
-			{
-				m_aPotentialVariables.erase(it);
-			}
-		}
-	}
-
-	//if (m_pPreWorldChange != nullptr)
-	//	m_pPreWorldChange->Resolve();
-}
-*/
 
 void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj)
 {
@@ -517,22 +420,22 @@ void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, con
 		pPostCond->AddCauseAction(pAction);
 	}
 
-	pAction->m_eState = (pAction->IsResolved() ? IBA_State::IBA_Resolved : IBA_State::IBA_Unresolved);
-
-	if (pAction->m_eState == IBA_State::IBA_Resolved)
+	if (pAction->IsResolved())
 	{
-		if (pAction->CheckVariables() == false)
+		if (pAction->CheckVariables())
 		{
-			pAction->SetState(IBA_State::IBA_Impossible);
+			pAction->m_eState == IBA_State::IBA_Resolved;
+			pAction->FinalizeCreation();
 		}
 		else
 		{
-			pAction->SetState(IBA_State::IBA_Ready);
-			pAction->FinalizeCreation();
+			pAction->SetState(IBA_State::IBA_Impossible);
 		}
 	}
-	else if (m_eState == IBA_State::IBA_Unresolved)
+	else
 	{
+		pAction->m_eState == IBA_State::IBA_Unresolved;
+
 		for (VarMap::iterator it = m_aVariables.begin(); it != m_aVariables.end(); ++it)
 		{
 			const IBObject& Obj = it->second;

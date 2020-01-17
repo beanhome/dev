@@ -6,7 +6,7 @@
 #include "World/BLInt.h"
 
 IBFactDef_BotNearPos::IBFactDef_BotNearPos(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 2, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
 	AddVariable("Pos");
 	AddVariable("Dist");

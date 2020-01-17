@@ -11,18 +11,9 @@ class IBCubeWorld
 		IBCubeWorld();
 		virtual ~IBCubeWorld();
 
-		void Init(int config);
-		void CreateCube(int nb);
-
-		IBCube* GetCubeA() { return m_oCubes[0]; }
-		IBCube* GetCubeB() { return m_oCubes[1]; }
-		IBCube* GetCubeC() { return m_oCubes[2]; }
-		IBCube* GetCubeD() { return m_oCubes[3]; }
-
-		const IBCube* GetCubeA() const { return m_oCubes[0]; }
-		const IBCube* GetCubeB() const { return m_oCubes[1]; }
-		const IBCube* GetCubeC() const { return m_oCubes[2]; }
-		const IBCube* GetCubeD() const { return m_oCubes[3]; }
+		void Init(const char* sInit);
+		IBCube* CreateCube(const string& name);
+		IBCube* GetCube(const string& name);
 
 		const vector<IBCube*>& GetCubes() const { return m_oCubes; }
 		vector<IBCube*>& GetCubes() { return m_oCubes; }

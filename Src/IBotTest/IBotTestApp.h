@@ -5,13 +5,15 @@
 #include "GApp.h"
 #include "GEngine_SDL.h"
 
-class IBotTestApp : public GApp<GEngine_SDL>
+class IBotTestApp : public GAppBase
 {
+	DECLARE_APP(IBotTestApp)
+
 	public:
-		IBotTestApp(int w, int h, int sx, int sy, float r, const char* rootpath);
+		IBotTestApp(GEngine* pEngine, int argc, char *argv[]);
 		~IBotTestApp();
 
-		virtual void Init() override;
+		virtual void Init(int argc, char *argv[]) override;
 		virtual int Update(float dt);
 		virtual int UpdatePause();
 		virtual int Draw();
@@ -25,6 +27,9 @@ class IBotTestApp : public GApp<GEngine_SDL>
 		class IBPlannerTest* m_pPlanner;
 
 		class IBGraphPlannerDisplay* m_pPlannerDisplay;
+
+	public:
+		static int s_iDummy;
 };
 
 #endif // __IBOTTESTAPP_H__

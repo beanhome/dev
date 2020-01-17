@@ -5,10 +5,12 @@
 #include "GApp.h"
 #include "GEngine_SDL.h"
 
-class BLApp : public GApp<GEngine_SDL>
+class BLApp : public GAppBase
 {
+	DECLARE_APP(BLApp)
+
 	public:
-		BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname);
+		BLApp(GEngine* pEngine, int argc, char *argv[]);
 		~BLApp();
 
 		virtual int Update(float dt);

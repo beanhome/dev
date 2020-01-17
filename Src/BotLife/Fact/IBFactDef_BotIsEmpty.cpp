@@ -4,7 +4,7 @@
 #include "IBPlanner.h"
 
 IBFactDef_BotIsEmpty::IBFactDef_BotIsEmpty(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 0, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
 }
 

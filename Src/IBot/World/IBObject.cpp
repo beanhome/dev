@@ -38,7 +38,7 @@ const string& IBObject::GetName() const
 	return m_sName;
 }
 
-void	 IBObject::SetName(const string& name)
+void IBObject::SetName(const string& name)
 {
 	m_sName = name;
 }

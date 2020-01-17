@@ -41,7 +41,7 @@ void IBActionDef::AddPreCondition(const char* name, bool bTrue, ...)
 		if (n == 1)
 		{
 			char* arg = va_arg(vl, char*);
-			oCond.AddVariable(arg);
+			oCond.AddLink(arg);
 		}
 		else
 		{
@@ -49,7 +49,7 @@ void IBActionDef::AddPreCondition(const char* name, bool bTrue, ...)
 			{
 				char* fact_var_name = va_arg(vl, char*);
 				char* action_var_name = va_arg(vl, char*);
-				oCond.AddVariable(fact_var_name, action_var_name);
+				oCond.AddLink(fact_var_name, action_var_name);
 			}
 		}
 
@@ -77,7 +77,7 @@ void IBActionDef::AddPostCondition(const char* name, bool bTrue, ...)
 		if (n == 1)
 		{
 			char* arg = va_arg(vl, char*);
-			oCond.AddVariable(arg);
+			oCond.AddLink(arg);
 		}
 		else
 		{
@@ -85,7 +85,7 @@ void IBActionDef::AddPostCondition(const char* name, bool bTrue, ...)
 			{
 				char* fact_var_name = va_arg(vl, char*);
 				char* action_var_name = va_arg(vl, char*);
-				oCond.AddVariable(fact_var_name, action_var_name);
+				oCond.AddLink(fact_var_name, action_var_name);
 			}
 		}
 
@@ -101,7 +101,7 @@ IBAction* IBActionDef::Instanciate(IBFact* pPostCond)
 	IBAction* pAction = m_pPlanner->InstanciateAction(this, pPostCond);
 	pAction->Create();
 
-	if (pAction->GetState() == IBA_State::IBA_Ready)
+	if (pAction->GetState() == IBA_State::IBA_Resolved)
 		pAction->Init();
 
 	return pAction;

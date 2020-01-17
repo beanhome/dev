@@ -6,10 +6,23 @@
 class GEngine;
 class Event;
 
+typedef class GAppBase* (*CreateAppFct)(GEngine* pEngine, int argc, char *argv[]);
+typedef std::map<string, CreateAppFct> AppMap;
+
+#define DEFINE_APP(App) \
+AppMap::iterator App::AppMapIterator = GAppBase::RegisterApp(#App, &App::InstanciateApp);
+
+#define DECLARE_APP(App) \
+	public: \
+static GAppBase* InstanciateApp(GEngine* pEngine, int argc, char *argv[]) { return new App(pEngine, argc, argv); } \
+	private: \
+		static AppMap::iterator AppMapIterator;
+
+
 class GAppBase
 {
 	public:
-		GAppBase();
+		GAppBase(GEngine* pEngine, int argc, char *argv[]);
 		virtual ~GAppBase();
 
 		//void SetNoClearScreen(bool bNoClearScreen) { m_bNoClearScreen = bNoClearScreen; }
@@ -25,31 +38,27 @@ class GAppBase
 		virtual int UpdatePause() { return 0; };
 		virtual int Draw() = 0;
 
-		virtual void Init() {}
+		virtual void Init(int argc, char *argv[]) {}
 		virtual int Loop();
 		virtual void Close() {}
 
 		virtual void CatchEvent(Event* pEvent);
+
+		static AppMap::iterator RegisterApp(const char* AppName, CreateAppFct Fct);
+		static GAppBase* InstanciateApp(const char* AppName, GEngine* pEngine, int argc, char *argv[]);
+		static AppMap& GetAppMap();
+
+		static char* GetArg(char arg, int argc, char *argv[]);
+		static float GetArgAsFloat(char arg, float fDefault, int argc, char *argv[]);
+		static int GetArgAsInt(char arg, int iDefault, int argc, char *argv[]);
+		static const char* GetArgAsString(char arg, const char* sDefault, int argc, char *argv[]);
+
 	protected:
 		GEngine* m_pEngine;
 		bool m_bNoClearScreen;
 		bool m_bPause;
 		float m_fSlomo;
 		bool m_bQuit;
-};
-
-template <typename ENGINE>
-class GApp : public GAppBase
-{
-	public:
-		GApp(int w, int h, const char* rootpath)
-		{
-			m_pEngine = new ENGINE(this, w, h, 32, rootpath);
-		}
-
-		virtual void Init()
-		{
-		}
 };
 
 

@@ -28,44 +28,43 @@ class IBFact
 		//bool IsCompatible(const IBFact* other) const;
 
 		IBFact*							Clone() const;
-		void								Destroy();
+		void							Destroy();
 
-		const IBFactDef*					GetFactDef() const;
+		const IBFactDef*				GetFactDef() const;
 
-		bool								HasCauseAction() const;
-		void								RemoveCauseAction(class IBAction* pAction);
-		void								AddCauseAction(class IBAction* pAction);
-		const ActionSet&					GetCauseAction() const;
-		SortedActionSet					GetActionOrdered() const;
+		bool							HasCauseAction() const;
+		void							RemoveCauseAction(class IBAction* pAction);
+		void							AddCauseAction(class IBAction* pAction);
+		const ActionSet&				GetCauseAction() const;
 
 		const VarMap&					GetVariables() const;
 		const IBObject*					GetVariable(const string& str) const { return GetVariable(str.c_str()); }
 		const IBObject*					GetVariable(const char* varname = nullptr) const;
-		void								SetVariable(const IBObject& obj);
-		void								SetVariable(const string& varname, const IBObject& obj);
+		void							SetVariable(const IBObject& obj);
+		void							SetVariable(const string& varname, const IBObject& obj);
 		template<class T>
 		T*								GetVariable(const char* varname = nullptr) const;
 
-		bool								IsInverted() const { return m_bInverted;  }
-		bool								IsTrue() const;
+		bool							IsInverted() const { return m_bInverted;  }
+		bool							IsTrue() const;
 		int								GetCost() const;
-		bool								IsImpossible() const;
+		bool							IsImpossible() const;
 
-		bool								IsResolvableBy(const class IBActionDef* pActionDef) const;
-		void								Resolve(const IBPlanner* pPlanner);
-		void								Update();
-		void								ResolveVariableFromCond(const class IBAction* pAction, const struct IBFactCondDef& oCondDef);
+		bool							IsResolvableBy(const class IBActionDef* pActionDef) const;
+		void							Resolve(const IBPlanner* pPlanner);
+		void							Update();
+		void							ResolveVariableFromCond(const class IBAction* pAction, const struct IBFactCondDef& oCondDef);
 
 	public:
 		enum IBF_Result					Test() const;
 
 	protected:
-		class IBPlanner*					m_pPlanner;
+		class IBPlanner*				m_pPlanner;
 		const class IBFactDef*			m_pDef;
-		bool								m_bInverted;
+		bool							m_bInverted;
 		VarMap							m_aVariables;
 		ActionSet						m_aCauseAction;
-		class IBWorldChange*				m_pWorldChangeOwner;
+		class IBWorldChange*			m_pWorldChangeOwner;
 };
 
 

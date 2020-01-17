@@ -3,8 +3,10 @@
 #include "Event.h"
 #include "ImageFlipBook.h"
 
-SpriteViewApp::SpriteViewApp(int w, int h, const char* rootpath)
-	: GApp<GEngine_SDL>(w, h, rootpath)
+DEFINE_APP(SpriteViewApp)
+
+SpriteViewApp::SpriteViewApp(GEngine* pEngine, int argc, char *argv[])
+	: GAppBase(pEngine, argc, argv)
 	, m_bLeft(false)
 	, m_bRight(false)
 	, m_bUp(false)

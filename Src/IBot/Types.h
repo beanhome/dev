@@ -6,17 +6,10 @@
 typedef set<class IBFact*>						FactSet;
 typedef set<class IBAction*> 					ActionSet;
 typedef set<class IBWorldChange*>				WorldChangeSet;
-typedef map<string, class IBObject> 				VarMap;
-typedef pair<string, class IBObject>				VarPair;
+typedef map<string, class IBObject> 			VarMap;
+typedef pair<string, class IBObject>			VarPair;
 typedef map<string, vector<class IBObject>>		PotentialVarMap;
-typedef pair<string, vector<class IBObject>>		PotentialVarPair;
-
-struct EvalSort
-{
-	bool operator()(const class IBAction* a1, const class IBAction* a2) const;
-};
-
-typedef multiset<class IBAction*, EvalSort>	SortedActionSet;
+typedef pair<string, vector<class IBObject>>	PotentialVarPair;
 
 
 enum IBF_Result
@@ -40,7 +33,6 @@ enum IBA_State
 	IBA_Unresolved,
 	IBA_Resolved,
 	IBA_Impossible,
-	IBA_Ready,
 	IBA_Start,
 	IBA_Execute,
 	IBA_Finish,

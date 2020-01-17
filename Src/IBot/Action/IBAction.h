@@ -21,30 +21,30 @@ class IBAction
 		virtual ~IBAction();
 
 	public:
-		void							Create();
-		void							Destroy();
-		void							CloneWithVar(const string& sVarName, const IBObject& oVarObj);
-		void							CloneWithVar(const string& sVarName, const IBObject& oVarObj, const PotentialVarMap& aPotentialVarMap);
+		void						Create();
+		void						Destroy();
+		void						CloneWithVar(const string& sVarName, const IBObject& oVarObj);
+		void						CloneWithVar(const string& sVarName, const IBObject& oVarObj, const PotentialVarMap& aPotentialVarMap);
 
 
 		IBA_State					GetState() const { return m_eState; }
-		void							SetState(IBA_State state) { m_eState = state; }
+		void						SetState(IBA_State state) { m_eState = state; }
 
 		const VarMap&				GetVariables() const { return m_aVariables; }
 		const IBObject*				GetVariable(const string& name) const;
-		void							SetVariable(const string& var_name, const IBObject& obj);
-		void							SetVariable(const string& var_name, const string& obj_name, void* user_data);
+		void						SetVariable(const string& var_name, const IBObject& obj);
+		void						SetVariable(const string& var_name, const string& obj_name, void* user_data);
 
-		bool							IsResolved() const;
+		bool						IsResolved() const;
 
-		void							AddPotentialVariable(const string& var_name, const string& obj_name, void* user_data);
-		void							GetPotentialVariable(const string& var_name, vector<IBObject>& aObj) const;
+		void						AddPotentialVariable(const string& var_name, const string& obj_name, void* user_data);
+		void						GetPotentialVariable(const string& var_name, vector<IBObject>& aObj) const;
 		uint32						GetPotentialVariableCount(const string& var_name) const;
 
 		template <class T>
 		T*							GetVariable(const string& name) const;
 
-		const class IBActionDef*		GetDef() const { return m_pDef; }
+		const class IBActionDef*	GetDef() const { return m_pDef; }
 
 		const vector<IBFact*>&		GetPostCond() const { return m_aPostCond; }
 		const vector<IBFact*>&		GetAdditionnalPostCond() const { return m_aAdditionalPostCond; }
@@ -55,20 +55,20 @@ class IBAction
 
 		IBPlanner*					GetPlanner();
 
-		void							Update();
+		void						Update();
 		//void							Step();
 		//void							Resolve();
 
-		void							ResolveVariableFromPostCond(const IBFact* pPostCond);
-		bool							CheckVariables() const;
-		void							FinalizeCreation();
+		void						ResolveVariableFromPostCond(const IBFact* pPostCond);
+		bool						CheckVariables() const;
+		void						FinalizeCreation();
 
-		bool							IsChildOf(const IBFact* pFact) const;
+		bool						IsChildOf(const IBFact* pFact) const;
 
-		bool							Init();
-		bool							Start();
-		bool							Execute();
-		bool							Stop(bool bInterrupt);
+		bool						Init();
+		bool						Start();
+		bool						Execute();
+		bool						Stop(bool bInterrupt);
 
 		float						GetCost() const;
 		float						GetTotalCost() const;
@@ -76,8 +76,8 @@ class IBAction
 		int							GetExecCounter() const { return m_iExecCount; }
 
 	protected:
-		const class IBActionDef*		m_pDef;
-		class IBPlanner*				m_pPlanner;
+		const class IBActionDef*	m_pDef;
+		class IBPlanner*			m_pPlanner;
 
 		IBA_State					m_eState;
 		int							m_iExecCount;

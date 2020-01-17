@@ -7,10 +7,12 @@
 
 class ImageFlipBook;
 
-class SpriteViewApp : public GApp<GEngine_SDL>
+class SpriteViewApp : public GAppBase
 {
+	DECLARE_APP(SpriteViewApp)
+
 	public:
-		SpriteViewApp(int w, int h, const char* rootpath);
+		SpriteViewApp(GEngine* pEngine, int argc, char *argv[]);
 		~SpriteViewApp();
 
 		virtual int Update(float dt);

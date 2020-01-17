@@ -4,8 +4,9 @@
 #include "World/BLProp.h"
 
 IBFactDef_PropIsMovable::IBFactDef_PropIsMovable(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 1, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
+	AddVariable("Var");
 }
 
 IBFactDef_PropIsMovable::~IBFactDef_PropIsMovable()

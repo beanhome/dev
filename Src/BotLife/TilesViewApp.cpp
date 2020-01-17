@@ -2,16 +2,19 @@
 #include "Timer.h"
 #include "Map/BLTiles.h"
 #include "Map/BLMap.h"
-//#include "InputEvent.h"
+#include "GEngine.h"
 
-TilesViewApp::TilesViewApp(int w, int h, const char* rootpath, const char* name)
-	: GApp<GEngine_SDL>(w, h, rootpath)
+DEFINE_APP(TilesViewApp)
+
+TilesViewApp::TilesViewApp(GEngine* pEngine, int argc, char *argv[])
+	: GAppBase(pEngine, argc, argv)
 	, m_pTiles(NULL)
 	, mode(Explore)
 	, lastmode(Explore)
 {
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
+	const char* name = GetArg('t', argc, argv);
 	m_pTiles = new BLTiles(*m_pEngine, name);
 
 	id = 200;

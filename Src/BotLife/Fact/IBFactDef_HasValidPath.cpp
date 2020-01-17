@@ -7,7 +7,7 @@
 #include "World/BLVector2.h"
 
 IBFactDef_HasValidPath::IBFactDef_HasValidPath(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 3, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
 	AddVariable("Target");
 	AddVariable("Dist");

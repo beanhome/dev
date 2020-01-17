@@ -4,8 +4,9 @@
 #include "IBPlanner.h"
 
 IBFactDef_IsOnTable::IBFactDef_IsOnTable(const string& name, IBPlanner* pPlanner)
-	: IBFactDef(name, 1, pPlanner)
+	: IBFactDef(name, pPlanner)
 {
+	AddVariable("Var");
 }
 
 IBFactDef_IsOnTable::~IBFactDef_IsOnTable()

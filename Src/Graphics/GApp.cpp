@@ -5,8 +5,8 @@
 //#include <complex>
 #include "EventManager.h"
 
-GAppBase::GAppBase()
-	: m_pEngine(NULL)
+GAppBase::GAppBase(GEngine* pEngine, int argc, char *argv[])
+	: m_pEngine(pEngine)
 	, m_bNoClearScreen(false)
 	, m_bPause(false)
 	, m_fSlomo(1.f)
@@ -16,8 +16,80 @@ GAppBase::GAppBase()
 
 GAppBase::~GAppBase()
 {
-	delete m_pEngine;
 }
+
+//static
+AppMap::iterator GAppBase::RegisterApp(const char* AppName, CreateAppFct Fct)
+{
+	AppMap& s_Map = GAppBase::GetAppMap();
+	return s_Map.insert_or_assign(AppName, Fct).first;
+}
+
+//static
+GAppBase* GAppBase::InstanciateApp(const char* sAppName, GEngine* pEngine, int argc, char *argv[])
+{
+	GAppBase* pApp = nullptr;
+
+	AppMap& s_Map = GAppBase::GetAppMap();
+	AppMap::iterator it = s_Map.find(sAppName);
+	if (it != GAppBase::GetAppMap().end())
+	{
+		pApp = it->second(pEngine, argc, argv);
+		pEngine->SetApp(pApp);
+	}
+
+	return pApp;
+}
+
+//static
+AppMap& GAppBase::GetAppMap()
+{
+	static AppMap s_Map; return s_Map;
+}
+
+
+//static
+char* GAppBase::GetArg(char arg, int argc, char *argv[])
+{
+	for (int i = 1; i < argc; ++i)
+	{
+		if (argv[i][0] == '-' && argv[i][1] == arg && i + 1 < argc)
+			return argv[i + 1];
+	}
+
+	return nullptr;
+}
+
+//static
+float GAppBase::GetArgAsFloat(char arg, float fDefault, int argc, char *argv[])
+{
+	char* sValue = GetArg(arg, argc, argv);
+	if (sValue == nullptr)
+		return fDefault;
+
+	return (float)atof(sValue);
+}
+
+//static
+int GAppBase::GetArgAsInt(char arg, int iDefault, int argc, char *argv[])
+{
+	char* sValue = GetArg(arg, argc, argv);
+	if (sValue == nullptr)
+		return iDefault;
+
+	return atoi(sValue);
+}
+
+//static
+const char* GAppBase::GetArgAsString(char arg, const char* sDefault, int argc, char *argv[])
+{
+	char* sValue = GetArg(arg, argc, argv);
+	if (sValue == nullptr)
+		return sDefault;
+
+	return sValue;
+}
+
 
 void GAppBase::CatchEvent(Event* pEvent)
 {

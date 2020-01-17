@@ -11,11 +11,20 @@
 #include "Event.h"
 #include "EventManager.h"
 
-BLApp::BLApp(int w, int h, const char* rootpath, float r, int sx, int sy, const char* tilesname)
-	: GApp<GEngine_SDL>(w, h, rootpath)
+DEFINE_APP(BLApp)
+
+BLApp::BLApp(GEngine* pEngine, int argc, char *argv[])
+	: GAppBase(pEngine, argc, argv)
 	, m_pGoalMenu(nullptr)
 	, m_pSelectSquare(nullptr)
 {
+	int sx = GetArgAsInt('x', 32, argc, argv);
+	int sy = GetArgAsInt('y', 32, argc, argv);
+	const char* tilesname = GetArg('t', argc, argv);
+	float r = GetArgAsFloat('r', 0.3f, argc, argv);
+	int w = m_pEngine->GetWidth();
+	int h = m_pEngine->GetHeight();
+
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
 	m_pWorldCanva = new Canvas(*m_pEngine, 0, 0, w, (uint16)(r*(float)h));

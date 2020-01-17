@@ -3,16 +3,17 @@
 
 #include "Utils.h"
 #include "GApp.h"
-#include "GEngine_SDL.h"
 #include "Map/BLTiles.h"
 
 class BLTiles;
 class BLMap;
 
-class TilesViewApp : public GApp<GEngine_SDL>
+class TilesViewApp : public GAppBase
 {
+	DECLARE_APP(TilesViewApp)
+	
 	public:
-		TilesViewApp(int w, int h, const char* rootpath, const char* name);
+		TilesViewApp(GEngine* pEngine, int argc, char *argv[]);
 		~TilesViewApp();
 
 		virtual int Update(float dt);
@@ -37,7 +38,6 @@ class TilesViewApp : public GApp<GEngine_SDL>
 
 		TileKey oKey;
 		int id;
-
 };
 
 #endif // __TILESVIEWAPP_H__

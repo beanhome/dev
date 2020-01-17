@@ -341,9 +341,9 @@ void IBWorldChange::Step(const IBPlanner* pPlanner)
 	if (IsTrue())
 		return;
 
-	if (GetFacts().size() > 0)
+	//if (GetFacts().size() > 0)
 	{
-		const ActionDefSet& AllActionDef = pPlanner->GetActionLibrary().GetAllActionDef();
+		//const ActionDefSet& AllActionDef = pPlanner->GetActionLibrary().GetAllActionDef();
 
 		for (FactSet::iterator it_fact = GetFacts().begin(); it_fact != GetFacts().end(); ++it_fact)
 		{
@@ -362,6 +362,7 @@ void IBWorldChange::Step(const IBPlanner* pPlanner)
 	}
 }
 
+/*
 bool IBWorldChange::FactIsResolvableBy(const class IBFact* pFact, const class IBActionDef* pActionDef) const
 {
 	// pFact come from this
@@ -385,3 +386,4 @@ bool IBWorldChange::FactIsResolvableBy(const class IBFact* pFact, const class IB
 
 	return true;
 }
+*/

@@ -7,19 +7,21 @@
 #include "Event.h"
 #include "EventManager.h"
 
-MapViewApp::MapViewApp(int w, int h, const char* rootpath, int sx, int sy, const char* name)
-	: GApp<GEngine_SDL>(w, h, rootpath)
+DEFINE_APP(MapViewApp)
+
+MapViewApp::MapViewApp(GEngine* pEngine, int argc, char *argv[])
+	: GAppBase(pEngine, argc, argv)
 	, m_bDrag(false)
 	, m_iStartDragX(0)
 	, m_iStartDragY(0)
 {
+	int sx = GetArgAsInt('x', 32, argc, argv);
+	int sy = GetArgAsInt('y', 32, argc, argv);
+	const char* name = GetArg('t', argc, argv);
+
 	m_pEngine->SetPrintFont(FONT_PATH, 14);
 
 	m_pCanvas = new Canvas(*m_pEngine, 0, 0, m_pEngine->GetWidth(), m_pEngine->GetHeight());
-
-	int seed = (int)GetClock();
-	LOG("Seed : %d\n", seed);
-	srand(seed);
 
 	m_pTiles = new BLTiles(*m_pEngine, name);
 	//m_pMap = new BLMap(canvas.GetWidth()/m_pTiles->GetTilesWidth(), canvas.GetHeight()/m_pTiles->GetTilesHeight(), *m_pTiles);
