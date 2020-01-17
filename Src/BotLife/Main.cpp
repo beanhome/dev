@@ -4,6 +4,7 @@
 #include "Alloc.h"
 #include "GEngine_SDL.h"
 #include "GApp.h"
+#include "Delegate.h"
 
 // -a MapViewApp -t summertiles -w 1400 -h 1000 -x 64 -y 48
 
@@ -15,6 +16,22 @@ extern "C" int SDL_main(int argc, char *argv[])
 	int iDummy = IBotTestApp::s_iDummy;
 
 	InitLog(argc, argv);
+
+	class B
+	{
+	public:
+		void func()
+		{
+			LOG("Hello World");
+		}
+	};
+
+	Delegate Del;
+
+	B b;
+
+	Del.Bind(&b, &B::func);
+	Del.Exec();
 
 	int w = GAppBase::GetArgAsInt('w', 920, argc, argv);
 	int h = GAppBase::GetArgAsInt('h', 800, argc, argv);

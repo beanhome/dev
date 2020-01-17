@@ -3,6 +3,10 @@
   "Id": "b443b1ee-5a50-45a2-8f4e-774116be6128",
   "Items": [
     {
+      "Id": "c0f74690-06a8-4995-b907-8dea65a566ec",
+      "Command": "-v"
+    },
+    {
       "Id": "3e9ec897-774c-4b7b-b4d8-2e036cc2fd1a",
       "Command": "App",
       "Items": [
