@@ -62,7 +62,7 @@ void	 IBActionDef_MoveTo::CreateOwnedVariables(IBAction* pAction) const
 	}
 }
 
-bool IBActionDef_MoveTo::Init(IBAction* pAction) const
+void IBActionDef_MoveTo::PostCreated(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != nullptr);
@@ -72,8 +72,6 @@ bool IBActionDef_MoveTo::Init(IBAction* pAction) const
 	ASSERT(pAction->GetUserData() == nullptr);
 	Navigation<BLSquare>* pNav = new NavAStar<BLSquare>(oWorld.GetGrid());
 	pAction->SetUserData(pNav);
-
-	return true;
 }
 
 void IBActionDef_MoveTo::Update(IBAction* pAction) const

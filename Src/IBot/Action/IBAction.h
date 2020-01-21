@@ -65,7 +65,6 @@ class IBAction
 
 		bool						IsChildOf(const IBFact* pFact) const;
 
-		bool						Init();
 		bool						Start();
 		bool						Execute();
 		bool						Stop(bool bInterrupt);

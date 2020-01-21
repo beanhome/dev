@@ -7,7 +7,7 @@
 IBAction::IBAction(const IBActionDef* pDef, IBFact* pPostCond, IBPlanner* pPlanner)
 	: m_pDef(pDef)
 	, m_pPlanner(pPlanner)
-	, m_eState(IBA_Init)
+	, m_eState(IBA_Created)
 	, m_pPostWorldChange(nullptr)
 	, m_pPreWorldChange(nullptr)
 	, m_pUserData(nullptr)
@@ -47,12 +47,14 @@ void IBAction::Create()
 
 		m_pDef->CompleteVariables(this);
 	}
+
+	m_pDef->PostCreated(this);
 }
 
 IBAction::IBAction(const class IBAction* pOrig)
 	: m_pDef(pOrig->m_pDef)
 	, m_pPlanner(pOrig->m_pPlanner)
-	, m_eState(IBA_Init)
+	, m_eState(IBA_Created)
 	, m_pPostWorldChange(pOrig->m_pPostWorldChange)
 	, m_pPreWorldChange(nullptr)
 	, m_aPostCond(pOrig->m_aPostCond)
@@ -445,13 +447,9 @@ void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, con
 
 		m_pDef->CompleteVariables(pAction);
 	}
-}
 
-bool IBAction::Init()
-{
-	return m_pDef->Init(this);
+	m_pDef->PostCreated(this);
 }
-
 
 bool IBAction::Start()
 {

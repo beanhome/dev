@@ -76,17 +76,6 @@ void	 IBActionDef_PickObject::CreateOwnedVariables(IBAction* pAction) const
 	}
 }
 
-bool IBActionDef_PickObject::Init(IBAction* pAction) const
-{
-	/*
-	BLObject* pObj = pAction->GetVariable<BLObject>("Obj");
-	BLVector2* pObjPos = pAction->GetVariable<BLVector2>("ObjPos");
-	BLInt* pDist = pAction->GetVariable<BLInt>("Dist");
-	*/
-
-	return true;
-}
-
 bool IBActionDef_PickObject::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();

@@ -99,12 +99,6 @@ void	 IBActionDef_DropObject::CompleteVariables(IBAction* pAction) const
 	}
 }
 
-
-bool IBActionDef_DropObject::Init(IBAction* pAction) const
-{
-	return true;
-}
-
 bool IBActionDef_DropObject::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();

@@ -12,10 +12,10 @@ class IBActionDef_MoveTo : public IBActionDef
 
 		virtual void			Define();
 		
-		virtual float		GetCost(const IBAction* pAction) const;
+		virtual float			GetCost(const IBAction* pAction) const;
 
 		virtual void			CreateOwnedVariables(IBAction* pAction) const override;
-		virtual bool			Init(IBAction* pAction) const override;
+		virtual void			PostCreated(IBAction* pAction) const override;
 		virtual void			Update(IBAction* pAction) const override;
 		virtual bool			Start(IBAction* pAction) const override;
 		virtual bool			Execute(IBAction* pAction) const override;

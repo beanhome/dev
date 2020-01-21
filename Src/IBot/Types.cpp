@@ -15,7 +15,7 @@ const char* IBF_ResultString[IBF_Result_MAX] =
 
 const char*	IBA_StateString[IBA_State_MAX] =
 {
-	"Init",
+	"Created",
 	"Unresolved",
 	"Resolved",
 	"Impossible",

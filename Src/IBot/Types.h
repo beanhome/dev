@@ -29,7 +29,7 @@ extern const char* IBF_ResultString[IBF_Result_MAX];
 
 enum IBA_State
 {
-	IBA_Init,
+	IBA_Created,
 	IBA_Unresolved,
 	IBA_Resolved,
 	IBA_Impossible,

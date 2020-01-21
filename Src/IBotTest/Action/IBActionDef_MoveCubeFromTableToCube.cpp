@@ -62,11 +62,6 @@ void	 IBActionDef_MoveCubeFromTableToCube::CompleteVariables(IBAction* pAction) 
 	}
 }
 
-bool IBActionDef_MoveCubeFromTableToCube::Init(IBAction* pAction) const
-{
-	return true;
-}
-
 bool IBActionDef_MoveCubeFromTableToCube::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();

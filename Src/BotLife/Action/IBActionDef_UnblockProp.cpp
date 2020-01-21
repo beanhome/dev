@@ -34,11 +34,6 @@ float IBActionDef_UnblockProp::GetCost(const IBAction* pAction) const
 	return 1.f;
 }
 
-bool IBActionDef_UnblockProp::Init(IBAction* pAction) const
-{
-	return true;
-}
-
 bool IBActionDef_UnblockProp::Start(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();

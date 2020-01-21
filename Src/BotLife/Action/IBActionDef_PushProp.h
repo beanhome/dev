@@ -16,7 +16,6 @@ class IBActionDef_PushProp : public IBActionDef
 
 		virtual void			CreateOwnedVariables(IBAction* pAction) const override;
 		virtual void			CompleteVariables(IBAction* pAction) const override;
-		virtual bool			Init(IBAction* pAction) const override;
 		virtual bool			Start(IBAction* pAction) const override;
 		virtual bool			Execute(IBAction* pAction) const override;
 		//virtual bool			Abort(IBAction* pAction) const override;

@@ -101,13 +101,10 @@ IBAction* IBActionDef::Instanciate(IBFact* pPostCond)
 	IBAction* pAction = m_pPlanner->InstanciateAction(this, pPostCond);
 	pAction->Create();
 
-	if (pAction->GetState() == IBA_State::IBA_Resolved)
-		pAction->Init();
-
 	return pAction;
 }
 
-const IBFactCondDef*	 IBActionDef::FindPostCond(const string& sPostCondName) const
+const IBFactCondDef* IBActionDef::FindPostCond(const string& sPostCondName) const
 {
 	for (uint i = 0; i < m_aPostCondDef.size(); ++i)
 	{
@@ -118,13 +115,3 @@ const IBFactCondDef*	 IBActionDef::FindPostCond(const string& sPostCondName) con
 	return nullptr;
 }
 
-bool IBActionDef::Init(IBAction* pAction) const
-{
-	for (VarMap::const_iterator it = pAction->GetVariables().begin(); it != pAction->GetVariables().end(); ++it)
-	{
-		if (it->second.GetUserData() == nullptr)
-			return false;
-	}
-
-	return true;
-};

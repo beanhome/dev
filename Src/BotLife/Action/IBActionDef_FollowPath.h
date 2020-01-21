@@ -15,7 +15,6 @@ class IBActionDef_FollowPath : public IBActionDef
 		virtual float		GetCost(const IBAction* pAction) const;
 
 		virtual void			CreateOwnedVariables(IBAction* pAction) const override;
-		virtual bool			Init(IBAction* pAction) const override;
 		virtual bool			Start(IBAction* pAction) const override;
 		virtual bool			Execute(IBAction* pAction) const override;
 		virtual bool			Abort(IBAction* pAction) const override;

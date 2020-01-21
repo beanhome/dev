@@ -59,11 +59,6 @@ void	 IBActionDef_FollowPath::CreateOwnedVariables(IBAction* pAction) const
 	}
 }
 
-bool IBActionDef_FollowPath::Init(IBAction* pAction) const
-{
-	return true;
-}
-
 bool IBActionDef_FollowPath::Start(IBAction* pAction) const
 {
  	void* pOwner = m_pPlanner->GetOwner();
