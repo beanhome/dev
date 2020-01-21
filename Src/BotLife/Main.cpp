@@ -10,6 +10,8 @@
 
 #if 1
 
+extern void TestDelegate();
+
 extern "C" int SDL_main(int argc, char *argv[])
 {
 	// Force include IBotTestApp to AppList because is an external lib
@@ -17,21 +19,7 @@ extern "C" int SDL_main(int argc, char *argv[])
 
 	InitLog(argc, argv);
 
-	class B
-	{
-	public:
-		void func()
-		{
-			LOG("Hello World");
-		}
-	};
-
-	Delegate Del;
-
-	B b;
-
-	Del.Bind(&b, &B::func);
-	Del.Exec();
+	TestDelegate();
 
 	int w = GAppBase::GetArgAsInt('w', 920, argc, argv);
 	int h = GAppBase::GetArgAsInt('h', 800, argc, argv);
