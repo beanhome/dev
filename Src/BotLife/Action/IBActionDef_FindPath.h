@@ -16,11 +16,10 @@ class IBActionDef_FindPath : public IBActionDef
 
 		virtual void			Define();
 
-		virtual float		GetCost(const IBAction* pAction) const;
+		virtual float			GetCost(const IBAction* pAction) const;
 
 		virtual bool			Start(IBAction* pAction) const override;
-		virtual bool			Execute(IBAction* pAction) const override;
-		virtual bool			Finish(IBAction* pAction) const override;
+		virtual void			Finish(IBAction* pAction, bool bInterrupted) const override;
 		virtual void			Destroy(IBAction* pAction) const override;
 
 	private:

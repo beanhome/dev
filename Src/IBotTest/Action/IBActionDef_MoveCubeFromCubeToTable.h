@@ -13,7 +13,7 @@ class IBActionDef_MoveCubeFromCubeToTable : public IBActionDef
 		virtual void		Define();
 		virtual void		CompleteVariables(IBAction* pAction) const;
 		virtual float		GetCost(const IBAction* pAction) const { return 1.f; }
-		virtual bool		Execute(IBAction* pAction) const override;
+		virtual bool		Start(IBAction* pAction) const override;
 
 	private:
 };

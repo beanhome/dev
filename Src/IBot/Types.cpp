@@ -19,10 +19,8 @@ const char*	IBA_StateString[IBA_State_MAX] =
 	"Unresolved",
 	"Resolved",
 	"Impossible",
-	"Start",
-	"Execute",
+	"Active",
 	"Finish",
-	"Abort",
 	"Destroy",
 	"Destroyed",
 };

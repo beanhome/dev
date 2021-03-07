@@ -46,12 +46,13 @@ bool IBActionDef_UnblockProp::Start(IBAction* pAction) const
 	BLDoor* pObj = pAction->GetVariable<BLDoor>("Obj");
 	ASSERT(pObj != nullptr);
 
-	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), pObj->GetPos());
+	BLBot::BotDir eDir = pBot->ComputeDir(pObj->GetPos());
 
 	pBot->SetState(BLBot::Action, eDir, 1.f);
 	return true;
 }
 
+/*
 bool IBActionDef_UnblockProp::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -73,7 +74,10 @@ bool IBActionDef_UnblockProp::Execute(IBAction* pAction) const
 		return false;
 	}
 }
+*/
 
+
+/*
 bool IBActionDef_UnblockProp::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -83,6 +87,7 @@ bool IBActionDef_UnblockProp::Finish(IBAction* pAction) const
 	pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
 	return true;
 }
+*/
 
 
 void IBActionDef_UnblockProp::Destroy(IBAction* pAction) const

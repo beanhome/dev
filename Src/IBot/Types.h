@@ -33,10 +33,8 @@ enum IBA_State
 	IBA_Unresolved,
 	IBA_Resolved,
 	IBA_Impossible,
-	IBA_Start,
-	IBA_Execute,
+	IBA_Active,
 	IBA_Finish,
-	IBA_Abort,
 	IBA_Destroy,
 	IBA_Destroyed,
 

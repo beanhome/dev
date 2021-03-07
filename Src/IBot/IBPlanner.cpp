@@ -133,25 +133,22 @@ int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 	// current action pre condition all false
 	else if (m_pCurrentAction != nullptr && m_pCurrentAction->GetPreWorldChange()->IsTrue() == false)
 	{
-		m_pCurrentAction->Stop(true);
+		m_pCurrentAction->Interrupt();
 		m_pCurrentAction = nullptr;
 	}
 
 	// best node action is not current action -> Cancel
 	else if (m_pCurrentAction != nullptr && m_pBestNode != nullptr && m_pBestNode->GetAction() != nullptr && m_pCurrentAction != m_pBestNode->GetAction())
 	{
-		m_pCurrentAction->Stop(true);
+		m_pCurrentAction->Interrupt();
 		m_pCurrentAction = nullptr;
 	}
 
 	// best node action is current action -> update
 	else if (m_pCurrentAction != nullptr)
 	{
-		if (m_pCurrentAction->Execute())
-		{
-			m_pCurrentAction->Stop(false);
+		if (m_pCurrentAction->GetState() == IBA_Finish)
 			m_pCurrentAction = nullptr;
-		}
 	}
 
 	m_iStepCount++;

@@ -426,7 +426,7 @@ void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, con
 	{
 		if (pAction->CheckVariables())
 		{
-			pAction->m_eState == IBA_State::IBA_Resolved;
+			pAction->m_eState = IBA_State::IBA_Resolved;
 			pAction->FinalizeCreation();
 		}
 		else
@@ -436,7 +436,7 @@ void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, con
 	}
 	else
 	{
-		pAction->m_eState == IBA_State::IBA_Unresolved;
+		pAction->m_eState = IBA_State::IBA_Unresolved;
 
 		for (VarMap::iterator it = m_aVariables.begin(); it != m_aVariables.end(); ++it)
 		{
@@ -451,27 +451,18 @@ void IBAction::CloneWithVar(const string& sVarName, const IBObject& oVarObj, con
 	m_pDef->PostCreated(this);
 }
 
-bool IBAction::Start()
+void IBAction::Start()
 {
 	//LOG("Action %s Started\n", m_pDef->GetName().c_str());
 	
-	m_iExecCount = 0;
-
-	return m_pDef->Start(this);
+	if (m_pDef->Start(this))
+		m_eState = IBA_Active;
 }
 
-bool IBAction::Execute()
+void IBAction::Interrupt()
 {
-	//LOG("Action %s Execute %d\n", m_pDef->GetName().c_str(), m_iExecCount);
-	m_iExecCount++;
-
-	return m_pDef->Execute(this);
+	if (m_eState == IBA_Active)
+		m_pDef->Interrupt(this);
 }
 
-bool IBAction::Stop(bool bInterrupt)
-{
-	//LOG("Action %s Finish %d\n", m_pDef->GetName().c_str(), m_iExecCount);
-	
-	return m_pDef->Finish(this);
-}
 

@@ -43,33 +43,36 @@ class BLBot : public BLActor
 
 	public:
 		void					GetLoc(float& x, float& y) const { x = m_fLocX, y = m_fLocY; }
-		float				GetLocX() const { return m_fLocX; }
-		float				GetLocY() const { return m_fLocY; }
+		float					GetLocX() const { return m_fLocX; }
+		float					GetLocY() const { return m_fLocY; }
 		void					SetLoc(float x, float y);
 		void					FixLoc();
 		void					SetPos(int i, int j);
 		void					SetPos(const Vector2& p);
 
-		const Vector2&		GetTarget() const { return m_vTarget; }
-
 		void					SetState(BotState state, BotDir dir=Down, float delay=-1.f, BLProp* pObj=NULL);
 		BotState				GetState() const { return m_eState; }
-		bool					HasFinishState() const { return m_fStateDelay <= 0.f || m_fStateTime > m_fStateDelay; }
 					
 		void					Update(float dt);
 		void					Draw() const;
 
-		BotDir				GetDir() const { return m_eDir; }
-		BotDir				ComputeDir(const Vector2& Start, const Vector2& Target) const;
+		BotDir					GetDir() const { return m_eDir; }
+		BotDir					ComputeDir(const Vector2& Target) const;
+		BotDir					ComputeDir(const Vector2& Start, const Vector2& Target) const;
+		void					SetDir(BLBot::BotDir eDir);
+		void					SetDir(const Vector2& vTarget);
+
 
 		const IBPlanner&		GetPlanner() const { return *m_pPlanner; }
-		IBPlanner&			GetPlanner() { return *m_pPlanner; }
-		const BLWorld&		GetWorld() const { return m_oWorld; }
+		IBPlanner&				GetPlanner() { return *m_pPlanner; }
+		const BLWorld&			GetWorld() const { return m_oWorld; }
 		BLWorld&				GetWorld() { return m_oWorld; }
+
+		bool					StartAction(class BotAction* pAction);
 
 		void					PickProp(BLProp* pProp);
 		bool					HasObject(BLProp* pObj) const { return (pObj != NULL && pObj == m_pCarryObject); }
-		BLProp*				GetFirstObject() const { return m_pCarryObject; }
+		BLProp*					GetFirstObject() const { return m_pCarryObject; }
 		void					DropObject(BLProp* pProp, const Vector2& pos);
 
 		void					AddGoal(const class BLGoal& oGoal);
@@ -82,35 +85,35 @@ class BLBot : public BLActor
 	private:
 		BLWorld&				m_oWorld;
 
-		ImageFlipBook*		m_pIdleImage;
-		ImageFlipBook*		m_pWalkImage;
-		ImageFlipBook*		m_pWorkImage;
+		ImageFlipBook*			m_pIdleImage;
+		ImageFlipBook*			m_pWalkImage;
+		ImageFlipBook*			m_pWorkImage;
 
-		float				m_fLocX; // pixel
-		float				m_fLocY; // pixel
+		float					m_fLocX; // pixel
+		float					m_fLocY; // pixel
 
-		vector<BLGoal>		m_aGoals;
+		vector<BLGoal>			m_aGoals;
 
 		BotState				m_eState;
-		BotDir 				m_eDir;
-		Vector2				m_vTarget;
-		float 				m_fStateTime;
-		float 				m_fStateDelay;
+		BotDir 					m_eDir;
 
-		float				m_fStepTime;
-		float				m_fStepDelay;
+		class BotAction*		m_pCurrentAction;
+		class BotAction*		m_pPendingAction;
 
-		IBPlanner*			m_pPlanner;
+		float					m_fStepTime;
+		float					m_fStepDelay;
 
-		BLProp*				m_pCarryObject;
-		BLProp*				m_pPushObject;
+		IBPlanner*				m_pPlanner;
+
+		BLProp*					m_pCarryObject;
+		BLProp*					m_pPushObject;
 
 	private:
-		static const char*	s_sStateString[BotState_MAX];
-		static const char*	s_sDirString[8];
+		static const char*		s_sStateString[BotState_MAX];
+		static const char*		s_sDirString[8];
 		static float			s_fDirArrayX[8];
 		static float			s_fDirArrayY[8];
-		static Vector2		s_vDirArray[8];
+		static Vector2			s_vDirArray[8];
 };
 
 #endif

@@ -179,6 +179,9 @@ public:
 			if (pInstance == nullptr)
 				continue;
 
+			if (!pInstance->IsBoundTo(pObj))
+				continue;
+
 			MemberFunctionDelegateInstance<TClass, void, Args...>* pMemberInstance = static_cast<MemberFunctionDelegateInstance<TClass, void, Args...>*>(pInstance);
 			if (pMemberInstance != nullptr && pMemberInstance->GetObj() == pObj && pMemberInstance->GetFunction() == pFunction)
 			{

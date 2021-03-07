@@ -124,13 +124,14 @@ bool IBActionDef_PushProp::Start(IBAction* pAction) const
 	BLDoor* pObj = pAction->GetVariable<BLDoor>("Obj");
 	ASSERT(pObj != NULL);
 
-	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), pObj->GetPos());
+	BLBot::BotDir eDir = pBot->ComputeDir(pObj->GetPos());
 
 	pBot->SetState(BLBot::Push, eDir, 1.f, pObj);
 	
 	return true;
 }
 
+/*
 bool IBActionDef_PushProp::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -160,7 +161,9 @@ bool IBActionDef_PushProp::Execute(IBAction* pAction) const
 		return false;
 	}
 }
+*/
 
+/*
 bool IBActionDef_PushProp::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -170,6 +173,7 @@ bool IBActionDef_PushProp::Finish(IBAction* pAction) const
 	pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
 	return true;
 }
+*/
 
 
 void IBActionDef_PushProp::Destroy(IBAction* pAction) const

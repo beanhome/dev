@@ -71,6 +71,7 @@ bool IBActionDef_FindPath::Start(IBAction* pAction) const
 	return true;
 }
 
+/*
 bool IBActionDef_FindPath::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -100,8 +101,9 @@ bool IBActionDef_FindPath::Execute(IBAction* pAction) const
 
 	return (state != Navigation<BLSquare>::FP_Find);
 }
+*/
 
-bool IBActionDef_FindPath::Finish(IBAction* pAction) const
+void IBActionDef_FindPath::Finish(IBAction* pAction, bool bInterrupted) const
 {
 	BLVector2* pTarget = pAction->GetVariable<BLVector2>("Target");
 	ASSERT(pTarget != nullptr);
@@ -134,7 +136,7 @@ bool IBActionDef_FindPath::Finish(IBAction* pAction) const
 
 	pBot->SetState(BLBot::Idle);
 
-	return oWorld.TestPath(*pPath);
+	//return oWorld.TestPath(*pPath);
 }
 
 void IBActionDef_FindPath::Destroy(IBAction* pAction) const

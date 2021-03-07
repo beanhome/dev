@@ -75,7 +75,7 @@ sint16 IBGActionBox::GetActionMidHeight() const
 
 void IBGActionBox::Draw() const
 {
-	Color oColor = (m_pAction->GetState() == IBA_State::IBA_Execute && (m_pAction->GetExecCounter() / 4) % 2 == 0 ? IBGraphPlannerDisplay::s_oActionWorkColor : IBGraphPlannerDisplay::s_oActionColor);
+	Color oColor = (m_pAction->GetState() == IBA_State::IBA_Active ? IBGraphPlannerDisplay::s_oActionWorkColor : IBGraphPlannerDisplay::s_oActionColor);
 
 	sint32 ha = 0;
 	for (uint32 i = 0; i < m_aAdditionalPostCondBox.size(); ++i)
@@ -96,9 +96,6 @@ void IBGActionBox::Draw() const
 
 	m_oCanvas.CanvasBase::DrawLine(x, y, x+w, y, oColor);
 	m_oCanvas.CanvasBase::Print(x+w/2, y-IBGraphPlannerDisplay::s_iActionTitleHeight/2, m_oCanvas.GetPrintFont(), IBGraphPlannerDisplay::s_iActionTitleSize, Center, IBGraphPlannerDisplay::s_oActionColor, "%s", m_pAction->GetDef()->GetName().c_str());
-
-	if (m_pAction->GetState() == IBA_State::IBA_Execute)
-		m_oCanvas.CanvasBase::Print(w, 0, m_oCanvas.GetPrintFont(), 10, RightBottom, IBGraphPlannerDisplay::s_oActionColor, "%d", m_pAction->GetExecCounter());
 
 	if (m_pAction->GetState() != IBA_State::IBA_Destroyed)
 	{

@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Src\BotLife\BLApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLBot.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLGoal.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLGoalMenu.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BLWorld.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\IBPlanner_BL.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\Main.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\MapViewApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\SpriteViewApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\TilesViewApp.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\BLAction.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_DropObject.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_FindPath.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_FollowPath.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_MoveTo.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_PickObject.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_PushProp.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.cpp">
+      <Filter>Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotNearPos.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_ObjectAtPos.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsBlock.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsMovable.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsPickable.cpp">
+      <Filter>Fact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Map\BLMap.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Map\BLSquare.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\Map\BLTiles.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLActor.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLDoor.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLHeavyProp.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLInt.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLLightProp.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLObject.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLPath.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLProp.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLProp_FB.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLProp_SI.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\World\BLVector2.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Idle.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Move.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Work.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Push.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Drop.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Pick.cpp">
+      <Filter>BotAction</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Src\BotLife\BLApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLBot.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLGoal.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLGoalMenu.h" />
+    <ClInclude Include="..\..\Src\BotLife\BLWorld.h" />
+    <ClInclude Include="..\..\Src\BotLife\IBPlanner_BL.h" />
+    <ClInclude Include="..\..\Src\BotLife\MapViewApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\SpriteViewApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\TilesViewApp.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\BLAction.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_DropObject.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_FindPath.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_FollowPath.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_MoveTo.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_PickObject.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_PushProp.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Action\IBActionDef_UnblockProp.h">
+      <Filter>Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotNearPos.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_HasValidPath.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_ObjectAtPos.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PosIsFree.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsBlock.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsMovable.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_PropIsPickable.h">
+      <Filter>Fact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Map\BLMap.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Map\BLSquare.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\Map\BLTiles.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLActor.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLDoor.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLHeavyProp.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLInt.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLLightProp.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLObject.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLPath.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLProp.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLProp_FB.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLProp_SI.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\World\BLVector2.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Idle.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Move.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Work.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Push.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Drop.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Pick.h">
+      <Filter>BotAction</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="BotAction">
+      <UniqueIdentifier>{e8f373d2-00e2-4df1-b1bf-e94b2bfcb3c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Action">
+      <UniqueIdentifier>{0c087d1c-a10c-496c-aa02-2bf52ed7aa92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fact">
+      <UniqueIdentifier>{51bd3357-eaf0-4b14-9e64-8b0f0171e3fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{70e9eb86-44e2-420b-bdda-9a48637ad6e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{fb3d0b42-eba9-4f6b-b795-8b8b19e4b30c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

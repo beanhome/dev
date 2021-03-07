@@ -6,6 +6,7 @@
 #include "World/BLInt.h"
 #include "World/BLVector2.h"
 #include "Action/BLAction.h"
+#include "BotAction/BotAction_Pick.h"
 
 
 IBActionDef_PickObject::IBActionDef_PickObject(const string& name, IBPlanner* pPlanner)
@@ -81,47 +82,14 @@ bool IBActionDef_PickObject::Start(IBAction* pAction) const
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
-
-	BLVector2* pObjPos = pAction->GetVariable<BLVector2>("ObjPos");
-
-	if (pBot->GetState() != BLBot::Idle)
-		return false;
-
-	BLBot::BotDir eDir = (pBot->GetWorld().GetGrid().Distance(pBot->GetPos(), *pObjPos) > 0 ? pBot->ComputeDir(pBot->GetPos(), *pObjPos) : pBot->GetDir()) ;
-
-	pBot->SetState(BLBot::Action, eDir, 1.f);
-	return true;
-}
-
-bool IBActionDef_PickObject::Execute(IBAction* pAction) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	ASSERT(pBot != NULL);
+	BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
+	ASSERT(pObj != NULL);
 
-	if (pBot->HasFinishState())
-	{
-		BLObject* pObj = pAction->GetVariable<BLObject>("Obj");
-		ASSERT(pObj != NULL);
+	BotAction* pBotAction = new BotAction_Pick(pBot, pObj, 1.f);
+	pBotAction->m_dOnFinish.AddLambda([this, pAction](bool bInterrupted) { Finish(pAction, bInterrupted); });
 
-		pBot->PickProp(reinterpret_cast<BLProp*>(pObj));
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool IBActionDef_PickObject::Finish(IBAction* pAction) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
-	return true;
+	return pBot->StartAction(pBotAction);
 }
 
 void IBActionDef_PickObject::Destroy(IBAction* pAction) const

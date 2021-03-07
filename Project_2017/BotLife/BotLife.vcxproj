@@ -163,6 +163,13 @@
     <ClCompile Include="..\..\Src\BotLife\BLGoal.cpp" />
     <ClCompile Include="..\..\Src\BotLife\BLGoalMenu.cpp" />
     <ClCompile Include="..\..\Src\BotLife\BLWorld.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Drop.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Idle.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Move.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Pick.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Push.cpp" />
+    <ClCompile Include="..\..\Src\BotLife\BotAction\BotAction_Work.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.cpp" />
     <ClCompile Include="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.cpp" />
@@ -207,6 +214,13 @@
     <ClInclude Include="..\..\Src\BotLife\BLGoal.h" />
     <ClInclude Include="..\..\Src\BotLife\BLGoalMenu.h" />
     <ClInclude Include="..\..\Src\BotLife\BLWorld.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Drop.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Idle.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Move.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Pick.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Push.h" />
+    <ClInclude Include="..\..\Src\BotLife\BotAction\BotAction_Work.h" />
     <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotAtPos.h" />
     <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotHasObject.h" />
     <ClInclude Include="..\..\Src\BotLife\Fact\IBFactDef_BotIsEmpty.h" />

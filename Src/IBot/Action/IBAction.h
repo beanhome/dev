@@ -51,7 +51,7 @@ class IBAction
 		IBWorldChange*				GetPreWorldChange() const { return m_pPreWorldChange;  }
 
 		void*						GetUserData() { return m_pUserData; }
-		void							SetUserData(void* pUserData) { m_pUserData = pUserData; }
+		void						SetUserData(void* pUserData) { m_pUserData = pUserData; }
 
 		IBPlanner*					GetPlanner();
 
@@ -65,21 +65,17 @@ class IBAction
 
 		bool						IsChildOf(const IBFact* pFact) const;
 
-		bool						Start();
-		bool						Execute();
-		bool						Stop(bool bInterrupt);
+		void						Start();
+		void						Interrupt();
 
 		float						GetCost() const;
 		float						GetTotalCost() const;
-
-		int							GetExecCounter() const { return m_iExecCount; }
 
 	protected:
 		const class IBActionDef*	m_pDef;
 		class IBPlanner*			m_pPlanner;
 
 		IBA_State					m_eState;
-		int							m_iExecCount;
 		
 		VarMap						m_aVariables;
 		PotentialVarMap				m_aPotentialVariables;

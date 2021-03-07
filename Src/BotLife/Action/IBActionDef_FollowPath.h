@@ -16,9 +16,7 @@ class IBActionDef_FollowPath : public IBActionDef
 
 		virtual void			CreateOwnedVariables(IBAction* pAction) const override;
 		virtual bool			Start(IBAction* pAction) const override;
-		virtual bool			Execute(IBAction* pAction) const override;
-		virtual bool			Abort(IBAction* pAction) const override;
-		virtual bool			Finish(IBAction* pAction) const override;
+		virtual void			Interrupt(IBAction* pAction) const override;
 		virtual void			Destroy(IBAction* pAction) const override;
 
 	private:

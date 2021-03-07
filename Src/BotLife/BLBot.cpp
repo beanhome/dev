@@ -11,17 +11,7 @@
 #include "Vector2.h"
 #include "World/BLProp.h"
 #include "Canvas.h"
-
-/*
-Down,
-DownRight,
-Right,
-UpRight,
-Up,
-UpLeft,
-Left,
-DownLeft
-*/
+#include "BotAction/BotAction.h"
 
 const char* BLBot::s_sStateString[BotState_MAX] =
 {
@@ -55,8 +45,9 @@ BLBot::BLBot(GEngine& ge, BLWorld& oWorld, CanvasBase& oPlannerCanvas)
 	, m_pWalkImage(nullptr)
 	, m_pWorkImage(nullptr)
 	, m_eState(Idle)
-	, m_fStateTime(0.f)
-	, m_fStateDelay(0.2f)
+	, m_eDir(BotDir::Down)
+	, m_pCurrentAction(nullptr)
+	, m_pPendingAction(nullptr)
 	, m_fStepTime(0.f)
 	, m_fStepDelay(0.1f)
 	, m_pCarryObject(nullptr)
@@ -130,6 +121,15 @@ void BLBot::AddGoal(const string& name, IBObject* pUserData) { ASSERT(m_pPlanner
 void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2) { ASSERT(m_pPlanner != nullptr); m_pPlanner->AddGoal(name, true, pUserData1, pUserData2); }
 void BLBot::AddGoal(const string& name, IBObject* pUserData1, IBObject* pUserData2, IBObject* pUserData3) { ASSERT(m_pPlanner != nullptr); m_pPlanner->AddGoal(name, true, pUserData1, pUserData2, pUserData3); }
 
+bool BLBot::StartAction(BotAction* pAction)
+{
+	if (m_pPendingAction != nullptr)
+		return false;
+
+	m_pPendingAction = pAction;
+	return true;
+}
+
 void BLBot::PickProp(BLProp* pProp)
 {
 	ASSERT(m_pCarryObject == nullptr);
@@ -159,24 +159,35 @@ void BLBot::DropObject(BLProp* pProp, const Vector2& pos)
 
 void BLBot::SetState(BotState state, BotDir dir, float delay, BLProp* pObj)
 {
-	if (m_eState == state)
-	{
-		if (m_fStateDelay > 0.f)
-			m_fStateTime -= m_fStateDelay;
-		else
-			m_fStateTime = 0.f;
-		m_fStateDelay = delay;
-	}
-	else
-	{
-		m_fStateTime = 0.f;
-		m_fStateDelay = delay;
-	}
-
 	m_eState = state;
 	m_eDir = dir;
-	m_vTarget = m_vPos + s_vDirArray[dir];
 	m_pPushObject = pObj;
+}
+
+
+void BLBot::SetDir(BotDir eDir)
+{
+	m_eDir = eDir;
+}
+
+void BLBot::SetDir(const Vector2& vTarget)
+{
+	SetDir(ComputeDir(m_vPos, vTarget));
+}
+
+BLBot::BotDir BLBot::ComputeDir(const Vector2& Target) const
+{
+	const Vector2& Start = GetPos();
+
+	ASSERT(Start != Target);
+	ASSERT(abs(Start.x - Target.x) <= 1);
+	ASSERT(abs(Start.y - Target.y) <= 1);
+
+	for (uint i = 0; i < 8; ++i)
+		if (Target - Start == s_vDirArray[i])
+			return (BLBot::BotDir)i;
+
+	return Down;
 }
 
 BLBot::BotDir BLBot::ComputeDir(const Vector2& Start, const Vector2& Target) const
@@ -195,57 +206,29 @@ BLBot::BotDir BLBot::ComputeDir(const Vector2& Start, const Vector2& Target) con
 
 void BLBot::Update(float dt)
 {
-	if (m_fStateDelay > 0.f)
-		m_fStateTime += dt;
-
-	if (m_fStateTime > m_fStateDelay)
+	if (m_pCurrentAction == nullptr)
 	{
-		m_pPlanner->Step();
-		m_fStepTime = 0.f;
-
-		//if (m_pPlanner->GetBestNode() != nullptr && m_pPlanner->GetBestNode()->IsTrue() && m_pPlanner->GetCurrentAction() == nullptr)
+		if (m_pPendingAction != nullptr)
 		{
-			GetWorld().GetApp().SetPause(true);
+			m_pCurrentAction = m_pPendingAction;
+			m_pPendingAction = nullptr;
+
+			m_pCurrentAction->m_dOnFinish.AddLambda([this](bool bInterrupted) { m_pCurrentAction = nullptr; });
+			m_pCurrentAction->Start();
 		}
 	}
-	else
+
+	if (m_pCurrentAction != nullptr)
 	{
-		float t = std::min<float>(m_fStateTime / m_fStateDelay, 0.999999f);
-		float fGrid = (float)m_oWorld.GetGridSize();
-		float fSpeed = fGrid / m_fStateDelay;
-		float s = (float)m_oWorld.GetGridSize();
-		const Vector2& st = m_vTarget;
-		Vector2 tgt;
-
-		switch (m_eState)
-		{
-			case Idle:
-				m_pIdleImage->SetCurrent(m_eDir);
-				FixLoc();
-				break;
-
-			case Walk:
-				m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
-				SetLoc(/*s/2 +*/ s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), /*s/2 + */s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
-				break;
-
-			case Action:
-				m_pWorkImage->SetCurrent(((m_eDir)*m_pWorkImage->GetColCount()) + (int)((float) m_pWorkImage->GetColCount() * t));
-				FixLoc();
-				break;
-
-			case Push:
-				m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float) m_pWalkImage->GetColCount() * t));
-				SetLoc(/*s/2 +*/ s*Lerp((float)m_vPos.x, (float)m_vTarget.x, t), /*s/2 +*/ s*Lerp((float)m_vPos.y, (float)m_vTarget.y, t));
-				tgt = st + s_vDirArray[GetDir()];
-				m_pPushObject->SetLoc((s/2 + s*Lerp((float)st.x, (float)tgt.x, t)), (s/2 + s*Lerp((float)st.y, (float)tgt.y, t)));
-				//LOG("Push : %f\n", t);
-				break;
-
-		default:
-				ASSERT(false);
-		}
+		m_pCurrentAction->Update(dt);
 	}
+
+
+	float t = (m_pCurrentAction != nullptr ? m_pCurrentAction->GetProgression() : 0.f);
+
+	m_pIdleImage->SetCurrent(m_eDir);
+	m_pWalkImage->SetCurrent((m_eDir*m_pWalkImage->GetColCount()) + (int)((float)m_pWalkImage->GetColCount() * t));
+	m_pWorkImage->SetCurrent(((m_eDir)*m_pWorkImage->GetColCount()) + (int)((float)m_pWorkImage->GetColCount() * t));
 
 	m_fStepTime += dt;
 	if (m_fStepTime > m_fStepDelay)
@@ -291,6 +274,4 @@ void BLBot::Draw() const
 	m_oWorld.GetCanvas().GetGEngine()->Print("Dir : %s", s_sDirString[m_eDir]);
 	m_oWorld.GetCanvas().GetGEngine()->Print("Pos X : %8.3f (%8.3f)", m_fLocX, m_fLocX - (float)m_vPos.x * (float)m_oWorld.GetGridSize());
 	m_oWorld.GetCanvas().GetGEngine()->Print("Pos Y : %8.3f (%8.3f)", m_fLocY, m_fLocY - (float)m_vPos.y * (float)m_oWorld.GetGridSize());
-
-
 }

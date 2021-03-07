@@ -66,10 +66,9 @@ public:
 
 	virtual void					Update(IBAction* pAction) const { }
 	virtual bool					Start(IBAction* pAction) const { return true; };
-	virtual bool					Execute(IBAction* pAction) const { return false; };
-	virtual bool					Finish(IBAction* pAction) const { return true; };
+	virtual void					Finish(IBAction* pAction, bool bInterrupted) const { pAction->SetState(IBA_Finish); };
 	virtual void					Destroy(IBAction* pAction) const { };
-	virtual bool					Abort(IBAction* pAction) const { return true; };
+	virtual void					Interrupt(IBAction* pAction) const { Finish(pAction, true); };
 
 protected:
 	string							m_sName;

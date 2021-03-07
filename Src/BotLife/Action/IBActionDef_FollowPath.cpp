@@ -68,20 +68,21 @@ bool IBActionDef_FollowPath::Start(IBAction* pAction) const
 	BLPath* pPath = pAction->GetVariable<BLPath>("Path");
 	ASSERT(pPath != nullptr);
 
-	if (!pBot->HasFinishState())
-		return false;
+	//if (!pBot->HasFinishState())
+	//	return false;
 
 	pPath->ResetStep();
 
 	Vector2 vTarget = pPath->GetFirstStep();
 	//LOG("FollowPath::Start (%d %d) -> (%d %d)\n", pBot->GetPos().x, pBot->GetPos().y, vTarget.x, vTarget.y);
-	BLBot::BotDir eDir = pBot->ComputeDir(pBot->GetPos(), vTarget);
+	BLBot::BotDir eDir = pBot->ComputeDir(vTarget);
 
 	pBot->SetState(BLBot::Walk, eDir, 0.5f);
 
 	return true;
 }
 
+/*
 bool IBActionDef_FollowPath::Execute(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -111,8 +112,9 @@ bool IBActionDef_FollowPath::Execute(IBAction* pAction) const
 
 	return false;
 }
+*/
 
-bool IBActionDef_FollowPath::Abort(IBAction* pAction) const
+void IBActionDef_FollowPath::Interrupt(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != nullptr);
@@ -123,17 +125,17 @@ bool IBActionDef_FollowPath::Abort(IBAction* pAction) const
 
 	//LOG("FollowPath::Abort \n");
 
+	/*
 	if (pBot->HasFinishState())
 	{
 		pPath->PopFront();
 		pBot->SetPos(pBot->GetTarget());
 		return true;
 	}
-
-	return false;
+	*/
 }
 
-
+/*
 bool IBActionDef_FollowPath::Finish(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
@@ -145,6 +147,7 @@ bool IBActionDef_FollowPath::Finish(IBAction* pAction) const
 	pBot->SetState(BLBot::Idle, pBot->GetDir(), 0.5f);
 	return true;
 }
+*/
 
 void IBActionDef_FollowPath::Destroy(IBAction* pAction) const
 {

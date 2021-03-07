@@ -6,6 +6,7 @@
 #include "World/BLInt.h"
 #include "World/BLVector2.h"
 #include "Action/BLAction.h"
+#include "BotAction/BotAction_Drop.h"
 
 
 IBActionDef_DropObject::IBActionDef_DropObject(const string& name, IBPlanner* pPlanner)
@@ -40,7 +41,7 @@ float IBActionDef_DropObject::GetCost(const IBAction* pAction) const
 	return 1.f;
 }
 
-void	 IBActionDef_DropObject::CreateOwnedVariables(IBAction* pAction) const
+void IBActionDef_DropObject::CreateOwnedVariables(IBAction* pAction) const
 {
 	BLAction* pBLAction = dynamic_cast<BLAction*>(pAction);
 	ASSERT(pBLAction != nullptr);
@@ -54,7 +55,7 @@ void	 IBActionDef_DropObject::CreateOwnedVariables(IBAction* pAction) const
 }
 
 
-void	 IBActionDef_DropObject::CompleteVariables(IBAction* pAction) const
+void IBActionDef_DropObject::CompleteVariables(IBAction* pAction) const
 {
 	void* pOwner = m_pPlanner->GetOwner();
 	ASSERT(pOwner != NULL);
@@ -106,47 +107,13 @@ bool IBActionDef_DropObject::Start(IBAction* pAction) const
 	BLBot* pBot = static_cast<BLBot*>(pOwner);
 	BLVector2* pPos = pAction->GetVariable<BLVector2>("Pos");
 	ASSERT(pPos != NULL);
+	BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
+	ASSERT(pObj != NULL);
 
-	if (pBot->GetState() != BLBot::Idle)
-		return false;
+	BotAction* pBotAction = new BotAction_Drop(pBot, pObj, *pPos, 1.f);
+	pBotAction->m_dOnFinish.AddLambda([this, pAction](bool bInterrupted) { Finish(pAction, bInterrupted); });
 
-	BLBot::BotDir eDir = (pBot->GetWorld().GetGrid().Distance(pBot->GetPos(), *pPos) > 0 ? pBot->ComputeDir(pBot->GetPos(), *pPos) : pBot->GetDir()) ;
-
-	pBot->SetState(BLBot::Action, eDir, 1.f);
-	return true;
-}
-
-bool IBActionDef_DropObject::Execute(IBAction* pAction) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	BLVector2* pPos = pAction->GetVariable<BLVector2>("Pos");
-	ASSERT(pPos != NULL);
-
-	if (pBot->HasFinishState())
-	{
-		BLProp* pObj = pAction->GetVariable<BLProp>("Obj");
-		ASSERT(pObj != NULL);
-
-		pBot->DropObject(pObj, *pPos);
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool IBActionDef_DropObject::Finish(IBAction* pAction) const
-{
-	void* pOwner = m_pPlanner->GetOwner();
-	ASSERT(pOwner != NULL);
-	BLBot* pBot = static_cast<BLBot*>(pOwner);
-	ASSERT(pBot != NULL);
-	pBot->SetState(BLBot::Idle, BLBot::Down, 1.f);
-	return true;
+	return pBot->StartAction(pBotAction);
 }
 
 void IBActionDef_DropObject::Destroy(IBAction* pAction) const
