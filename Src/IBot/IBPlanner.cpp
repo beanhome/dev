@@ -41,15 +41,15 @@ IBAction* IBPlanner::InstanciateAction(const IBActionDef* pDef, IBFact* pPostCon
 	return new IBAction(pDef, pPostCond, this);
 }
 
-IBFact* IBPlanner::InstanciateFact(const string& sFactName, bool bInverted, const vector<IBObject>& aVariables, IBWorldChange* pWorldChange)
+IBFact* IBPlanner::InstanciateFact(const string& sFactName, bool bInverted, const vector<IBObject>& aVariables, IBNode* pNode)
 {
 	IBFactDef* pFactDef = m_oFactLibrary.GetFactDef(sFactName);
-	return (pFactDef != nullptr ? InstanciateFact(pFactDef, bInverted, aVariables, pWorldChange) : nullptr);
+	return (pFactDef != nullptr ? InstanciateFact(pFactDef, bInverted, aVariables, pNode) : nullptr);
 }
 
-IBFact* IBPlanner::InstanciateFact(const IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, IBWorldChange* pWorldChange)
+IBFact* IBPlanner::InstanciateFact(const IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, IBNode* pNode)
 {
-	return new IBFact(pDef, bInverted, aVariables, pWorldChange, this);
+	return new IBFact(pDef, bInverted, aVariables, pNode, this);
 }
 
 void IBPlanner::AddGoal(const string& name, bool bTrue)
@@ -118,9 +118,9 @@ int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 		CleanGoal();
 
 	m_oGoals.Update();
-	m_pBestNode = m_oGoals.GetBestWorldChange();
+	m_pBestNode = m_oGoals.GetBestNode();
 	m_pBestNode->Step(this);
-	m_pBestNode = m_oGoals.GetBestWorldChange();
+	m_pBestNode = m_oGoals.GetBestNode();
 
 	// no current action -> take best node action
 	if (m_pCurrentAction == nullptr && m_pBestNode != nullptr && m_pBestNode->IsTrue())
@@ -131,7 +131,7 @@ int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 	}
 
 	// current action pre condition all false
-	else if (m_pCurrentAction != nullptr && m_pCurrentAction->GetPreWorldChange()->IsTrue() == false)
+	else if (m_pCurrentAction != nullptr && m_pCurrentAction->GetPreNode()->IsTrue() == false)
 	{
 		m_pCurrentAction->Interrupt();
 		m_pCurrentAction = nullptr;

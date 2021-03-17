@@ -3,7 +3,7 @@
 #include "World/IBCubeWorld.h"
 #include "Graph/IBGraphPlannerDisplay.h"
 #include "Graph/IBGPlanBox.h"
-#include "Graph/IBGWorldChangeBox.h"
+#include "Graph/IBGNodeBox.h"
 #include "Canvas.h"
 #include "GEngine.h"
 #include "Event.h"
@@ -111,10 +111,10 @@ int IBotTestApp::Update(float dt)
 
 	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_MIDDLE) == KeyPressed)
 	{
-		const IBWorldChange* pBestNode = m_pPlanner->GetBestNode();
+		const IBNode* pBestNode = m_pPlanner->GetBestNode();
 		if (pBestNode != nullptr)
 		{
-			const IBGWorldChangeBox* pBestNodeBox = m_pPlannerDisplay->GetPlan()->GetWorldChangeBox(pBestNode);
+			const IBGNodeBox* pBestNodeBox = m_pPlannerDisplay->GetPlan()->GetNodeBox(pBestNode);
 			if (pBestNodeBox != nullptr)
 			{
 				sint32 x = pBestNodeBox->GetScreenX() - m_pPlannerDisplay->GetCanvas().GetScreenPosX() + pBestNodeBox->GetW() / 2;

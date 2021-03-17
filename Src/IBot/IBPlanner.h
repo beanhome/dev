@@ -4,7 +4,7 @@
 #include "Utils.h"
 #include "Fact/IBFactLibrary.h"
 #include "Fact/IBFact.h"
-#include "Fact/IBWorldChange.h"
+#include "Fact/IBNode.h"
 #include "Action/IBActionLibrary.h"
 
 class IBPlanner
@@ -15,10 +15,10 @@ class IBPlanner
 
 	public:
 		IBAction*				InstanciateAction(const string& sActionName, IBFact* pPostCond);
-		IBFact*					InstanciateFact(const string& sFactName, bool bInverted, const vector<IBObject>& aVariables, IBWorldChange* pWorldChange);
+		IBFact*					InstanciateFact(const string& sFactName, bool bInverted, const vector<IBObject>& aVariables, IBNode* pNode);
 		
 		virtual IBAction*		InstanciateAction(const class IBActionDef* pDef, IBFact* pPostCond);
-		virtual IBFact*			InstanciateFact(const class IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, IBWorldChange* pWorldChange);
+		virtual IBFact*			InstanciateFact(const class IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, IBNode* pNode);
 
 		virtual bool				AreCompatible(const class IBFact* A, const class IBFact* B) const { return true; }
 
@@ -49,10 +49,10 @@ class IBPlanner
 
 		class IBAction*			GetCurrentAction() const { return m_pCurrentAction; }
 		void						SetCurrentAction(IBAction* pAction) { m_pCurrentAction = pAction; m_pBestNode = nullptr; }
-		const class IBWorldChange*	GetBestNode() const { return m_pBestNode; }
+		const class IBNode*	GetBestNode() const { return m_pBestNode; }
 
 		void*					GetOwner() const { return m_pOwner; }
-		const class IBWorldChange&	GetGoals() const { return m_oGoals; }
+		const class IBNode&	GetGoals() const { return m_oGoals; }
 
 	protected:
 		void CleanGoal();
@@ -65,10 +65,10 @@ class IBPlanner
 		void*					m_pOwner;
 		
 	protected:
-		class IBWorldChange		m_oGoals;
+		class IBNode		m_oGoals;
 		
 		class IBAction*			m_pCurrentAction;
-		class IBWorldChange*		m_pBestNode;
+		class IBNode*		m_pBestNode;
 
 		sint32					m_iStepCount;
 

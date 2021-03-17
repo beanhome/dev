@@ -6,11 +6,11 @@
 #include "Utils.h"
 #include "World/IBObject.h"
 
-IBFact::IBFact(const IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, class IBWorldChange* pWorldChangeOwner, IBPlanner* pPlanner)
+IBFact::IBFact(const IBFactDef* pDef, bool bInverted, const vector<IBObject>& aVariables, class IBNode* pNodeOwner, IBPlanner* pPlanner)
 	: m_pPlanner(pPlanner)
 	, m_pDef(pDef)
 	, m_bInverted(bInverted)
-	, m_pWorldChangeOwner(pWorldChangeOwner)
+	, m_pNodeOwner(pNodeOwner)
 {
 	ASSERT(aVariables.size() == pDef->GetDegree());
 

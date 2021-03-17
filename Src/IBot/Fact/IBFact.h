@@ -12,10 +12,10 @@ class IBFact
 	public:
 		friend class IBPlanner;
 		friend class IBAction;
-		friend class IBWorldChange;
+		friend class IBNode;
 
 	protected:
-		IBFact(const class IBFactDef* pDef, bool bInverted, const vector<class IBObject>& aVariables, class IBWorldChange* pWorldChangeOwner, IBPlanner* pPlanner);
+		IBFact(const class IBFactDef* pDef, bool bInverted, const vector<class IBObject>& aVariables, class IBNode* pNodeOwner, IBPlanner* pPlanner);
 
 	public:
 		virtual ~IBFact();
@@ -64,7 +64,7 @@ class IBFact
 		bool							m_bInverted;
 		VarMap							m_aVariables;
 		ActionSet						m_aCauseAction;
-		class IBWorldChange*			m_pWorldChangeOwner;
+		class IBNode*			m_pNodeOwner;
 };
 
 

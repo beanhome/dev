@@ -23,13 +23,13 @@ void IBPlannerDebug::PrintPlanner(const IBPlanner& oPlanner) const
 {
 	LOG("\n");
 	LOG("Plan : \n");
-	PrintWorldChange(oPlanner.GetGoals());
+	PrintNode(oPlanner.GetGoals());
 	LOG("\n");
 }
 
-void	 IBPlannerDebug::PrintWorldChange(const IBWorldChange& oWorldChange) const
+void	 IBPlannerDebug::PrintNode(const IBNode& oNode) const
 {
-	for (FactSet::const_iterator it = oWorldChange.GetFacts().begin(); it != oWorldChange.GetFacts().end(); ++it)
+	for (FactSet::const_iterator it = oNode.GetFacts().begin(); it != oNode.GetFacts().end(); ++it)
 	{
 		IBFact* pFact = *it;
 		PrintFact(*pFact, 0);

@@ -14,7 +14,7 @@ class IBPlannerDebug : public IBPlannerDisplay
 
 	private:
 		void PrintPlanner(const class IBPlanner& oPlanner) const;
-		void	 PrintWorldChange(const class IBWorldChange& oWorldChange) const;
+		void	 PrintNode(const class IBNode& oNode) const;
 		void PrintAction(const class IBAction& oAction, int tab) const;
 		void PrintFact(const class IBFact& oFact, int tab, bool counter=false) const;
 };

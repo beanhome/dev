@@ -5,7 +5,7 @@
 
 typedef set<class IBFact*>						FactSet;
 typedef set<class IBAction*> 					ActionSet;
-typedef set<class IBWorldChange*>				WorldChangeSet;
+typedef set<class IBNode*>				NodeSet;
 typedef map<string, class IBObject> 			VarMap;
 typedef pair<string, class IBObject>			VarPair;
 typedef map<string, vector<class IBObject>>		PotentialVarMap;

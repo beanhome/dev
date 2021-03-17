@@ -18,7 +18,7 @@ public:
 	const class IBGPlanBox* GetGPreCondBox() const { return m_pPreCondBox; }
 
 private:
-	void					DrawWorldChange	() const;
+	void					DrawNode	() const;
 
 private:
 	const class IBAction* m_pAction;

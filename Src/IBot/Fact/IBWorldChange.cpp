@@ -1,35 +1,35 @@
-#include "IBWorldChange.h"
+#include "IBNode.h"
 #include "Action/IBActionDef.h"
 #include "IBPlanner.h"
 
 #include "Utils.h"
 #include "World/IBObject.h"
 
-IBWorldChange::IBWorldChange(class IBPlanner* pPlanner, IBAction* pEffectAction)
+IBNode::IBNode(class IBPlanner* pPlanner, IBAction* pEffectAction)
 	: m_pPlanner(pPlanner)
 	, m_pAction(pEffectAction)
 {
 }
 
 
-IBWorldChange::IBWorldChange(class IBPlanner* pPlanner, const vector<class IBFact*>& WorldChange)
+IBNode::IBNode(class IBPlanner* pPlanner, const vector<class IBFact*>& Node)
 	: m_pPlanner(pPlanner)
 	, m_pAction(nullptr)
 {
-	for (uint i = 0; i < WorldChange.size(); ++i)
-		m_aFacts.insert(WorldChange[i]->Clone());
+	for (uint i = 0; i < Node.size(); ++i)
+		m_aFacts.insert(Node[i]->Clone());
 }
 
-IBWorldChange::~IBWorldChange()
+IBNode::~IBNode()
 {
 	ASSERT(m_aFacts.size() == 0);
 }
 
-void IBWorldChange::Destroy()
+void IBNode::Destroy()
 {
-	for (WorldChangeSet::iterator it = m_aDuplicats.begin(); it != m_aDuplicats.end(); ++it)
+	for (NodeSet::iterator it = m_aDuplicats.begin(); it != m_aDuplicats.end(); ++it)
 	{
-		IBWorldChange* pDuplicat = *it;
+		IBNode* pDuplicat = *it;
 		pDuplicat->RemDuplicat(this);
 	}
 	m_aDuplicats.clear();
@@ -43,39 +43,39 @@ void IBWorldChange::Destroy()
 	m_aFacts.clear();
 }
 
-bool IBWorldChange::operator==(const IBWorldChange& other) const
+bool IBNode::operator==(const IBNode& other) const
 {
 	ASSERT(false); // TODO
 
 	return false;
 }
 
-const FactSet& IBWorldChange::GetFacts() const
+const FactSet& IBNode::GetFacts() const
 {
 	return m_aFacts;
 }
 
-uint	 IBWorldChange::Size() const
+uint	 IBNode::Size() const
 {
 	return m_aFacts.size();
 }
 
-void IBWorldChange::AddFact(class IBFact* pFact)
+void IBNode::AddFact(class IBFact* pFact)
 {
 	m_aFacts.insert(pFact);
 
-	if (pFact->m_pWorldChangeOwner == nullptr)
-		pFact->m_pWorldChangeOwner = this;
+	if (pFact->m_pNodeOwner == nullptr)
+		pFact->m_pNodeOwner = this;
 
-	ASSERT(pFact->m_pWorldChangeOwner == this);
+	ASSERT(pFact->m_pNodeOwner == this);
 }
 
-void IBWorldChange::RemFact(class IBFact* pFact)
+void IBNode::RemFact(class IBFact* pFact)
 {
 	m_aFacts.erase(pFact);
 }
 
-bool IBWorldChange::IsTrue() const
+bool IBNode::IsTrue() const
 {
 	for (FactSet::iterator it = m_aFacts.begin(); it != m_aFacts.end(); ++it)
 	{
@@ -87,7 +87,7 @@ bool IBWorldChange::IsTrue() const
 	return true;
 }
 
-int IBWorldChange::GetFactCost() const
+int IBNode::GetFactCost() const
 {
 	int iFactCost = 0;
 
@@ -106,17 +106,17 @@ int IBWorldChange::GetFactCost() const
 	return iFactCost;
 }
 
-float IBWorldChange::GetActionCost() const
+float IBNode::GetActionCost() const
 {
 	return (m_pAction != nullptr ? m_pAction->GetTotalCost() : 0.f);
 }
 
-IBCost IBWorldChange::GetCost() const
+IBCost IBNode::GetCost() const
 {
 	return IBCost(GetActionCost(), GetFactCost());
 }
 
-void	 IBWorldChange::Update()
+void	 IBNode::Update()
 {
 	for (FactSet::iterator it_fact = GetFacts().begin(); it_fact != GetFacts().end(); ++it_fact)
 	{
@@ -126,10 +126,10 @@ void	 IBWorldChange::Update()
 	}
 }
 
-IBWorldChange* IBWorldChange::GetBestWorldChange() const
+IBNode* IBNode::GetBestNode() const
 {
 	IBCost oBestCost = IBCost::MaxCost;
-	IBWorldChange* pBestWorldChange = (IBWorldChange*)this;
+	IBNode* pBestNode = (IBNode*)this;
 
 	for (FactSet::iterator it_fact = GetFacts().begin(); it_fact != GetFacts().end(); ++it_fact)
 	{
@@ -142,11 +142,11 @@ IBWorldChange* IBWorldChange::GetBestWorldChange() const
 			if (pAction->GetState() == IBA_State::IBA_Impossible)
 				continue;
 
-			IBWorldChange* pPreWC = pAction->GetPreWorldChange();
+			IBNode* pPreWC = pAction->GetPreNode();
 			if (pPreWC == nullptr)
 				continue;
 
-			pPreWC = pPreWC->GetBestWorldChange();
+			pPreWC = pPreWC->GetBestNode();
 
 			if (pPreWC->GetBestDuplicat() != pPreWC)
 				continue;
@@ -155,17 +155,17 @@ IBWorldChange* IBWorldChange::GetBestWorldChange() const
 
 			if (oPreWCCost < oBestCost)
 			{
-				pBestWorldChange = pPreWC;
+				pBestNode = pPreWC;
 				oBestCost = oPreWCCost;
 			}
 		}
 	}
 
-	//return (oBestCost < GetCost() ? pBestWorldChange : (IBWorldChange*)this);
-	return pBestWorldChange;
+	//return (oBestCost < GetCost() ? pBestNode : (IBNode*)this);
+	return pBestNode;
 }
 
-bool IBWorldChange::CheckCompatibility(const IBFact* pCond) const
+bool IBNode::CheckCompatibility(const IBFact* pCond) const
 {
 	for (FactSet::iterator it = GetFacts().begin(); it != GetFacts().end(); ++it)
 	{
@@ -177,12 +177,12 @@ bool IBWorldChange::CheckCompatibility(const IBFact* pCond) const
 	if (m_pAction == nullptr)
 		return true;
 
-	ASSERT(m_pAction->m_pPostWorldChange != nullptr);
+	ASSERT(m_pAction->m_pPostNode != nullptr);
 
-	return m_pAction->m_pPostWorldChange->CheckCompatibility(pCond);
+	return m_pAction->m_pPostNode->CheckCompatibility(pCond);
 }
 
-bool IBWorldChange::CheckInnerCompatibility() const
+bool IBNode::CheckInnerCompatibility() const
 {
 	for (FactSet::iterator a = GetFacts().begin(); a != GetFacts().end(); ++a)
 	{
@@ -209,31 +209,31 @@ bool IBWorldChange::CheckInnerCompatibility() const
 	return true;
 }
 
-void	 IBWorldChange::AddDuplicat(IBWorldChange* pDuplicat)
+void	 IBNode::AddDuplicat(IBNode* pDuplicat)
 {
 	ASSERT(pDuplicat != this);
 	m_aDuplicats.insert(pDuplicat);
 }
 
-void	 IBWorldChange::RemDuplicat(IBWorldChange* pDuplicat)
+void	 IBNode::RemDuplicat(IBNode* pDuplicat)
 {
 	m_aDuplicats.erase(pDuplicat);
 }
 
-bool	 IBWorldChange::IsDuplicat(const IBWorldChange* pDuplicat) const
+bool	 IBNode::IsDuplicat(const IBNode* pDuplicat) const
 {
-	return m_aDuplicats.find((IBWorldChange*)pDuplicat) != m_aDuplicats.end();
+	return m_aDuplicats.find((IBNode*)pDuplicat) != m_aDuplicats.end();
 }
 
-void IBWorldChange::UpdateDuplicats()
+void IBNode::UpdateDuplicats()
 {
-	IBWorldChange* pFirstDuplicat = m_pPlanner->GetGoals().FindFirstDuplicat(this);
+	IBNode* pFirstDuplicat = m_pPlanner->GetGoals().FindFirstDuplicat(this);
 	if (pFirstDuplicat == nullptr)
 		return;
 
-	for (WorldChangeSet::iterator it = pFirstDuplicat->GetDuplicats().begin(); it != pFirstDuplicat->GetDuplicats().end(); ++it)
+	for (NodeSet::iterator it = pFirstDuplicat->GetDuplicats().begin(); it != pFirstDuplicat->GetDuplicats().end(); ++it)
 	{
-		IBWorldChange* pDuplicat = *it;
+		IBNode* pDuplicat = *it;
 		AddDuplicat(pDuplicat);
 		pDuplicat->AddDuplicat(this);
 	}
@@ -242,7 +242,7 @@ void IBWorldChange::UpdateDuplicats()
 	AddDuplicat(pFirstDuplicat);
 }
 
-bool IBWorldChange::IsEqual(const IBWorldChange* pOther) const
+bool IBNode::IsEqual(const IBNode* pOther) const
 {
 	if (pOther == this)
 		return true;
@@ -272,10 +272,10 @@ bool IBWorldChange::IsEqual(const IBWorldChange* pOther) const
 	return bFound;
 }
 
-IBWorldChange* IBWorldChange::FindFirstDuplicat(const IBWorldChange* pModel) const
+IBNode* IBNode::FindFirstDuplicat(const IBNode* pModel) const
 {
 	if (pModel != this && IsEqual(pModel))
-		return (IBWorldChange*)this;
+		return (IBNode*)this;
 
 	for (FactSet::const_iterator it_fact = GetFacts().begin(); it_fact != GetFacts().end(); ++it_fact)
 	{
@@ -287,7 +287,7 @@ IBWorldChange* IBWorldChange::FindFirstDuplicat(const IBWorldChange* pModel) con
 			if (pAction == nullptr)
 				continue;
 
-			IBWorldChange* pPreChange = pAction->GetPreWorldChange();
+			IBNode* pPreChange = pAction->GetPreNode();
 			if (pPreChange == nullptr)
 				continue;
 
@@ -306,11 +306,11 @@ IBWorldChange* IBWorldChange::FindFirstDuplicat(const IBWorldChange* pModel) con
 			if (pAction == nullptr)
 				continue;
 
-			const IBWorldChange* pPreChange = pAction->GetPreWorldChange();
+			const IBNode* pPreChange = pAction->GetPreNode();
 			if (pPreChange == nullptr)
 				continue;
 
-			IBWorldChange* pDuplicat = pPreChange->FindFirstDuplicat(pModel);
+			IBNode* pDuplicat = pPreChange->FindFirstDuplicat(pModel);
 			if (pDuplicat != nullptr)
 				return pDuplicat;
 		}
@@ -319,24 +319,24 @@ IBWorldChange* IBWorldChange::FindFirstDuplicat(const IBWorldChange* pModel) con
 	return nullptr;
 }
 
-IBWorldChange* IBWorldChange::GetBestDuplicat()
+IBNode* IBNode::GetBestDuplicat()
 {
-	IBWorldChange* pBestWorldChange = this;
+	IBNode* pBestNode = this;
 
-	for (WorldChangeSet::iterator it = m_aDuplicats.begin(); it != m_aDuplicats.end(); ++it)
+	for (NodeSet::iterator it = m_aDuplicats.begin(); it != m_aDuplicats.end(); ++it)
 	{
-		IBWorldChange* pDuplicat = *it;
+		IBNode* pDuplicat = *it;
 
-		if (pDuplicat->GetActionCost() < pBestWorldChange->GetActionCost())
+		if (pDuplicat->GetActionCost() < pBestNode->GetActionCost())
 		{
-			pBestWorldChange = pDuplicat;
+			pBestNode = pDuplicat;
 		}
 	}
 
-	return pBestWorldChange;
+	return pBestNode;
 }
 
-void IBWorldChange::Step(const IBPlanner* pPlanner)
+void IBNode::Step(const IBPlanner* pPlanner)
 {
 	if (IsTrue())
 		return;
@@ -349,7 +349,7 @@ void IBWorldChange::Step(const IBPlanner* pPlanner)
 		{
 			IBFact* pFact = *it_fact;
 
-			ASSERT(pFact->m_pWorldChangeOwner == this);
+			ASSERT(pFact->m_pNodeOwner == this);
 
 			//if (pFact->IsTrue())
 			//	continue;
@@ -363,7 +363,7 @@ void IBWorldChange::Step(const IBPlanner* pPlanner)
 }
 
 /*
-bool IBWorldChange::FactIsResolvableBy(const class IBFact* pFact, const class IBActionDef* pActionDef) const
+bool IBNode::FactIsResolvableBy(const class IBFact* pFact, const class IBActionDef* pActionDef) const
 {
 	// pFact come from this
 	ASSERT(m_aFacts.find((IBFact*)pFact) != m_aFacts.end());

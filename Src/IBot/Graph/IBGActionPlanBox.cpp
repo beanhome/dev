@@ -1,12 +1,12 @@
 #include "IBGActionPlanBox.h"
 
 #include "CanvasBase.h"
-#include "IBGWorldChangeBox.h"
+#include "IBGNodeBox.h"
 #include "IBGPlanBox.h"
 #include "IBGActionBox.h"
 #include "Action/IBAction.h"
 #include "Fact/IBFact.h"
-#include "Fact/IBWorldChange.h"
+#include "Fact/IBNode.h"
 #include "IBGraphPlannerDisplay.h"
 
 IBGActionPlanBox::IBGActionPlanBox(Canvas& parent, const class IBAction* pAction)
@@ -16,8 +16,8 @@ IBGActionPlanBox::IBGActionPlanBox(Canvas& parent, const class IBAction* pAction
 	, m_pPreCondBox(nullptr)
 {
 	m_pActionBox = new IBGActionBox(m_oCanvas, m_pAction);
-	if (m_pAction->GetPreWorldChange() != nullptr)
-		m_pPreCondBox = new IBGPlanBox(m_oCanvas, m_pAction->GetPreWorldChange());
+	if (m_pAction->GetPreNode() != nullptr)
+		m_pPreCondBox = new IBGPlanBox(m_oCanvas, m_pAction->GetPreNode());
 }
 
 IBGActionPlanBox::~IBGActionPlanBox()
@@ -33,7 +33,7 @@ void IBGActionPlanBox::Resize()
 
 	sint16 pcw = 0;
 	sint16 pch = 0;
-	if (m_pPreCondBox != nullptr && m_pAction->GetState() != IBA_State::IBA_Impossible && m_pPreCondBox->GetWorldChange()->GetFacts().size() > 0)
+	if (m_pPreCondBox != nullptr && m_pAction->GetState() != IBA_State::IBA_Impossible && m_pPreCondBox->GetNode()->GetFacts().size() > 0)
 	{
 		m_pPreCondBox->Resize();
 		pcw = m_pPreCondBox->GetW();
@@ -60,7 +60,7 @@ void IBGActionPlanBox::Draw() const
 
 	//m_oCanvas.DrawRect(m_pActionBox->GetX(), m_pActionBox->GetY(), m_pActionBox->GetW(), m_pActionBox->GetH(), 255, 255, 0);
 
-	if (m_pPreCondBox != nullptr && m_pAction->GetState() != IBA_State::IBA_Impossible && m_pPreCondBox->GetWorldChange()->GetFacts().size() > 0)
+	if (m_pPreCondBox != nullptr && m_pAction->GetState() != IBA_State::IBA_Impossible && m_pPreCondBox->GetNode()->GetFacts().size() > 0)
 	{
 		x -= IBGraphPlannerDisplay::s_iActionLinkSpace;
 		x -= m_pPreCondBox->GetW();

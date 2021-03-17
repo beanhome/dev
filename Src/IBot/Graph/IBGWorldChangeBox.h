@@ -4,22 +4,22 @@
 #include "IBGBoxBase.h"
 #include "Types.h"
 
-class IBGWorldChangeBox : public IBGBoxBase
+class IBGNodeBox : public IBGBoxBase
 {
 public:
-	IBGWorldChangeBox(class Canvas& parent, const class IBWorldChange* pWorldChange);
-	~IBGWorldChangeBox();
+	IBGNodeBox(class Canvas& parent, const class IBNode* pNode);
+	~IBGNodeBox();
 
 	void					Init();
 	virtual void			Resize();
 	virtual void			Draw() const;
 
-	const class IBWorldChange* GetWorldChange() const { return m_pWorldChange; }
+	const class IBNode* GetNode() const { return m_pNode; }
 
 	const class IBGFactBox* GetFactBox(const class IBFact* pFact) const;
 	
 private:
-	const class IBWorldChange* m_pWorldChange;
+	const class IBNode* m_pNode;
 
 	vector<class IBGFactBox*> m_aFactBox;
 };

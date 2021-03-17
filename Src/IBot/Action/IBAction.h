@@ -12,7 +12,7 @@ class IBAction
 	public:
 		friend class IBPlanner;
 		friend class IBFact;
-		friend class IBWorldChange;
+		friend class IBNode;
 		friend class IBActionLibrary;
 
 	protected:
@@ -48,7 +48,7 @@ class IBAction
 
 		const vector<IBFact*>&		GetPostCond() const { return m_aPostCond; }
 		const vector<IBFact*>&		GetAdditionnalPostCond() const { return m_aAdditionalPostCond; }
-		IBWorldChange*				GetPreWorldChange() const { return m_pPreWorldChange;  }
+		IBNode*				GetPreNode() const { return m_pPreNode;  }
 
 		void*						GetUserData() { return m_pUserData; }
 		void						SetUserData(void* pUserData) { m_pUserData = pUserData; }
@@ -76,13 +76,13 @@ class IBAction
 		class IBPlanner*			m_pPlanner;
 
 		IBA_State					m_eState;
-		
+
 		VarMap						m_aVariables;
 		PotentialVarMap				m_aPotentialVariables;
 
-		IBWorldChange*				m_pPostWorldChange;
-		IBWorldChange*				m_pPreWorldChange;
-		vector<IBFact*>				m_aPostCond; // ref to WorldChange
+		IBNode*				m_pPostNode;
+		IBNode*				m_pPreNode;
+		vector<IBFact*>				m_aPostCond; // ref to Node
 		vector<IBFact*>				m_aAdditionalPostCond;
 
 		void*						m_pUserData;

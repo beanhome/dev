@@ -1,9 +1,9 @@
-#include "IBGWorldChangeBox.h"
+#include "IBGNodeBox.h"
 
 #include "CanvasBase.h"
 #include "IBGFactBox.h"
 #include "Fact/IBFact.h"
-#include "Fact/IBWorldChange.h"
+#include "Fact/IBNode.h"
 
 #include "Action/IBAction.h"
 #include "IBPlanner.h"
@@ -12,14 +12,14 @@
 
 #define DEBUG_POINTER 1
 
-IBGWorldChangeBox::IBGWorldChangeBox(Canvas& parent, const class IBWorldChange* pWorldChange)
+IBGNodeBox::IBGNodeBox(Canvas& parent, const class IBNode* pNode)
 	: IBGBoxBase(parent)
-	, m_pWorldChange(pWorldChange)
+	, m_pNode(pNode)
 {
 	Init();
 }
 
-IBGWorldChangeBox::~IBGWorldChangeBox()
+IBGNodeBox::~IBGNodeBox()
 {
 	for (uint i=0; i < m_aFactBox.size(); ++i)
 	{
@@ -27,24 +27,24 @@ IBGWorldChangeBox::~IBGWorldChangeBox()
 	}
 }
 
-void	 IBGWorldChangeBox::Init()
+void	 IBGNodeBox::Init()
 {
 	for (uint i = 0; i < m_aFactBox.size(); ++i)
 	{
 		delete m_aFactBox[i];
 	}
 
-	m_aFactBox.resize(m_pWorldChange->Size());
+	m_aFactBox.resize(m_pNode->Size());
 
 	uint i = 0;
-	for (FactSet::iterator it = m_pWorldChange->GetFacts().begin(); it != m_pWorldChange->GetFacts().end(); ++it, ++i)
+	for (FactSet::iterator it = m_pNode->GetFacts().begin(); it != m_pNode->GetFacts().end(); ++it, ++i)
 	{
 		IBFact* pFact = *it;
 		m_aFactBox[i] = new IBGFactBox(m_oCanvas, pFact);
 	}
 }
 
-void IBGWorldChangeBox::Resize()
+void IBGNodeBox::Resize()
 {
 	sint16 pw = IBGraphPlannerDisplay::s_iFactMinWidth;
 	sint16 ph = IBGraphPlannerDisplay::s_iMargin;
@@ -66,28 +66,28 @@ void IBGWorldChangeBox::Resize()
 }
 
 
-void IBGWorldChangeBox::Draw() const
+void IBGNodeBox::Draw() const
 {
 	Color oColor = Color(128, 255, 255);
 
-	if (m_pWorldChange->GetAction() != nullptr)
+	if (m_pNode->GetAction() != nullptr)
 	{
-		IBPlanner* pPlanner = m_pWorldChange->GetAction()->GetPlanner();
-		if (pPlanner->GetBestNode() == m_pWorldChange)
+		IBPlanner* pPlanner = m_pNode->GetAction()->GetPlanner();
+		if (pPlanner->GetBestNode() == m_pNode)
 			oColor = Color(64, 255, 64);
 	}
 
 	m_oCanvas.CanvasBase::DrawRect(0, IBGraphPlannerDisplay::s_iFactEvalHeight, m_oCanvas.GetWidth(), m_oCanvas.GetHeight() - IBGraphPlannerDisplay::s_iFactEvalHeight, oColor);
 
 #if DEBUG_POINTER
-	m_oCanvas.CanvasBase::Print(m_oCanvas.GetWidth()-2, 2, m_oCanvas.GetPrintFont(), 10, RightTop, Color(125, 240, 195), "0x%x", m_pWorldChange);
+	m_oCanvas.CanvasBase::Print(m_oCanvas.GetWidth()-2, 2, m_oCanvas.GetPrintFont(), 10, RightTop, Color(125, 240, 195), "0x%x", m_pNode);
 #endif
 
 	sint16 x = IBGraphPlannerDisplay::s_iMargin;
 	sint16 y = IBGraphPlannerDisplay::s_iMargin;
 	uint16 w = GetW() - IBGraphPlannerDisplay::s_iMargin * 2;
 
-	IBCost oCost = m_pWorldChange->GetCost();
+	IBCost oCost = m_pNode->GetCost();
 	m_oCanvas.Print(x, IBGraphPlannerDisplay::s_iFactEvalHeight / 2, m_oCanvas.GetPrintFont(), IBGraphPlannerDisplay::s_iFactEvalSize, LeftCenter, 42, 255, 255, "%s", oCost.GetText().c_str());
 
 	y += IBGraphPlannerDisplay::s_iFactEvalHeight;
@@ -103,7 +103,7 @@ void IBGWorldChangeBox::Draw() const
 	}
 }
 
-const IBGFactBox* IBGWorldChangeBox::GetFactBox(const IBFact* pFact) const
+const IBGFactBox* IBGNodeBox::GetFactBox(const IBFact* pFact) const
 {
 	for (uint i = 0; i < m_aFactBox.size(); ++i)
 	{

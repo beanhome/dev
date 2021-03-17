@@ -52,15 +52,15 @@ class IBFact* IBFactDef::Instanciate(bool bInverted) const
 	return Instanciate(bInverted, nullptr);
 }
 
-class IBFact* IBFactDef::Instanciate(bool bInverted, class IBWorldChange* pWorldChange) const
+class IBFact* IBFactDef::Instanciate(bool bInverted, class IBNode* pNode) const
 {
 	vector<IBObject> aVariables(GetDegree(), IBObject());
-	return Instanciate(bInverted, pWorldChange, aVariables);
+	return Instanciate(bInverted, pNode, aVariables);
 }
 
-IBFact* IBFactDef::Instanciate(bool bInverted, IBWorldChange* pWorldChange, const vector<IBObject>& aVariables) const
+IBFact* IBFactDef::Instanciate(bool bInverted, IBNode* pNode, const vector<IBObject>& aVariables) const
 {
-	return m_pPlanner->InstanciateFact(this, bInverted, aVariables, pWorldChange);
+	return m_pPlanner->InstanciateFact(this, bInverted, aVariables, pNode);
 }
 
 bool IBFactDef::HasSameVariables(const class IBFact* pA, const class IBFact* pB) const

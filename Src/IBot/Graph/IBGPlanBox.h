@@ -7,21 +7,21 @@
 class IBGPlanBox : public IBGBoxBase
 {
 public:
-	IBGPlanBox(class Canvas& parent, const class IBWorldChange* pWorldChange);
+	IBGPlanBox(class Canvas& parent, const class IBNode* pNode);
 	~IBGPlanBox();
 
 	void					Init();
 
-	const class IBWorldChange* GetWorldChange() const { return m_pWorldChange; }
-	const class IBGWorldChangeBox* GetWorldChangeBox(const class IBWorldChange* pWorldChange) const;
+	const class IBNode* GetNode() const { return m_pNode; }
+	const class IBGNodeBox* GetNodeBox(const class IBNode* pNode) const;
 
 	virtual void			Resize();
 	virtual void			Draw() const;
 	
 private:
-	const class IBWorldChange* m_pWorldChange;
+	const class IBNode* m_pNode;
 
-	class IBGWorldChangeBox* m_pWorldChangeBox;
+	class IBGNodeBox* m_pNodeBox;
 	vector<class IBGActionPlanBox*> m_aActionPlanBox;
 };
 

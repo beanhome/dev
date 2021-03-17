@@ -2,24 +2,24 @@
 
 #include "CanvasBase.h"
 #include "IBGFactBox.h"
-#include "IBGWorldChangeBox.h"
+#include "IBGNodeBox.h"
 #include "IBGActionPlanBox.h"
 #include "IBGActionBox.h"
 #include "Action/IBAction.h"
 #include "Fact/IBFact.h"
-#include "Fact/IBWorldChange.h"
+#include "Fact/IBNode.h"
 #include "IBGraphPlannerDisplay.h"
 
-IBGPlanBox::IBGPlanBox(Canvas& parent, const class IBWorldChange* pWorldChange)
+IBGPlanBox::IBGPlanBox(Canvas& parent, const class IBNode* pNode)
 	: IBGBoxBase(parent)
-	, m_pWorldChange(pWorldChange)
-	, m_pWorldChangeBox(nullptr)
+	, m_pNode(pNode)
+	, m_pNodeBox(nullptr)
 {
-	ASSERT(m_pWorldChange != nullptr);
+	ASSERT(m_pNode != nullptr);
 
-	m_pWorldChangeBox = new IBGWorldChangeBox(m_oCanvas, m_pWorldChange);
+	m_pNodeBox = new IBGNodeBox(m_oCanvas, m_pNode);
 
-	for (FactSet::const_iterator fact_it = m_pWorldChange->GetFacts().begin(); fact_it != m_pWorldChange->GetFacts().end(); ++fact_it)
+	for (FactSet::const_iterator fact_it = m_pNode->GetFacts().begin(); fact_it != m_pNode->GetFacts().end(); ++fact_it)
 	{
 		const IBFact* pFact = *fact_it;
 
@@ -36,14 +36,14 @@ IBGPlanBox::~IBGPlanBox()
 	for (uint i = 0; i < m_aActionPlanBox.size(); ++i)
 		delete m_aActionPlanBox[i];
 
-	if (m_pWorldChangeBox != nullptr)
-		delete m_pWorldChangeBox;
+	if (m_pNodeBox != nullptr)
+		delete m_pNodeBox;
 }
 
-const class IBGWorldChangeBox* IBGPlanBox::GetWorldChangeBox(const class IBWorldChange* pWorldChange) const
+const class IBGNodeBox* IBGPlanBox::GetNodeBox(const class IBNode* pNode) const
 {
-	if (m_pWorldChange == pWorldChange)
-		return m_pWorldChangeBox;
+	if (m_pNode == pNode)
+		return m_pNodeBox;
 
 	for (uint i = 0; i < m_aActionPlanBox.size(); ++i)
 	{
@@ -53,7 +53,7 @@ const class IBGWorldChangeBox* IBGPlanBox::GetWorldChangeBox(const class IBWorld
 		if (pPreCondBox == nullptr)
 			continue;
 
-		const IBGWorldChangeBox* pFound = pPreCondBox->GetWorldChangeBox(pWorldChange);
+		const IBGNodeBox* pFound = pPreCondBox->GetNodeBox(pNode);
 		if (pFound != nullptr)
 			return pFound;
 	}
@@ -63,15 +63,15 @@ const class IBGWorldChangeBox* IBGPlanBox::GetWorldChangeBox(const class IBWorld
 
 void IBGPlanBox::Init()
 {
-	if (m_pWorldChangeBox != nullptr)
-		m_pWorldChangeBox->Init();
+	if (m_pNodeBox != nullptr)
+		m_pNodeBox->Init();
 
 	for (uint i = 0; i < m_aActionPlanBox.size(); ++i)
 		delete m_aActionPlanBox[i];
 
 	m_aActionPlanBox.clear();
 
-	for (FactSet::const_iterator fact_it = m_pWorldChange->GetFacts().begin(); fact_it != m_pWorldChange->GetFacts().end(); ++fact_it)
+	for (FactSet::const_iterator fact_it = m_pNode->GetFacts().begin(); fact_it != m_pNode->GetFacts().end(); ++fact_it)
 	{
 		const IBFact* pFact = *fact_it;
 
@@ -87,11 +87,11 @@ void IBGPlanBox::Init()
 void IBGPlanBox::Resize()
 {
 	sint16 pw = 0, ph = 0;
-	if (m_pWorldChangeBox != nullptr)
+	if (m_pNodeBox != nullptr)
 	{
-		m_pWorldChangeBox->Resize();
-		pw = m_pWorldChangeBox->GetW();
-		ph = m_pWorldChangeBox->GetH();
+		m_pNodeBox->Resize();
+		pw = m_pNodeBox->GetW();
+		ph = m_pNodeBox->GetH();
 	}
 
 	sint16 aw = 0;
@@ -114,12 +114,12 @@ void IBGPlanBox::Resize()
 
 void IBGPlanBox::Draw() const
 {
-	sint16 x = GetW() - m_pWorldChangeBox->GetW();
-	sint16 y = (GetH() - m_pWorldChangeBox->GetH()) / 2;
+	sint16 x = GetW() - m_pNodeBox->GetW();
+	sint16 y = (GetH() - m_pNodeBox->GetH()) / 2;
 
-	m_pWorldChangeBox->SetX(x);
-	m_pWorldChangeBox->SetY(y);
-	m_pWorldChangeBox->Draw();
+	m_pNodeBox->SetX(x);
+	m_pNodeBox->SetY(y);
+	m_pNodeBox->Draw();
 
 	x -= IBGraphPlannerDisplay::s_iActionLinkSpace;
 	y = IBGraphPlannerDisplay::s_iActionMinSpace;
@@ -135,10 +135,10 @@ void IBGPlanBox::Draw() const
 		{
 			const IBFact* pPostCond = m_aActionPlanBox[i]->GetAction()->GetPostCond()[j];
 
-			const IBGFactBox* pFactBox = m_pWorldChangeBox->GetFactBox(pPostCond);
+			const IBGFactBox* pFactBox = m_pNodeBox->GetFactBox(pPostCond);
 
 			// TODO: Get pin out of action and pin in of fact
-			m_oCanvas.DrawLine(m_aActionPlanBox[i]->GetRight() + 1, m_aActionPlanBox[i]->GetY() + m_aActionPlanBox[i]->GetGActionBox()->GetActionMidHeight(), m_pWorldChangeBox->GetX() + pFactBox->GetLeft() - 1, m_pWorldChangeBox->GetY() + pFactBox->GetMidH(), 100, 100, 100);
+			m_oCanvas.DrawLine(m_aActionPlanBox[i]->GetRight() + 1, m_aActionPlanBox[i]->GetY() + m_aActionPlanBox[i]->GetGActionBox()->GetActionMidHeight(), m_pNodeBox->GetX() + pFactBox->GetLeft() - 1, m_pNodeBox->GetY() + pFactBox->GetMidH(), 100, 100, 100);
 
 			// TODO: if action IBA_Impossible -> for each add post cond, find invalid and print line
 

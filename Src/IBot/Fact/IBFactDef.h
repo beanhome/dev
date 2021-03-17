@@ -17,8 +17,8 @@ class IBFactDef
 		//virtual string				GetVariableData(uint i) const = 0;
 
 		class IBFact*				Instanciate(bool bInverted) const;
-		class IBFact*				Instanciate(bool bInverted, class IBWorldChange* pWorldChange) const;
-		class IBFact*				Instanciate(bool bInverted, class IBWorldChange* pWorldChange, const vector<IBObject>& aUserData) const;
+		class IBFact*				Instanciate(bool bInverted, class IBNode* pNode) const;
+		class IBFact*				Instanciate(bool bInverted, class IBNode* pNode, const vector<IBObject>& aUserData) const;
 
 		// Must return state of the fact: true or false
 		virtual IBF_Result			Test(const class IBFact* pFact) const = 0;

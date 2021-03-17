@@ -5,7 +5,7 @@
 #include "IBGFactBox.h"
 #include "IBGActionBox.h"
 #include "IBGPlanBox.h"
-#include "IBGWorldChangeBox.h"
+#include "IBGNodeBox.h"
 #include "IBGFact.h"
 #include "IBGAction.h"
 #include "GEngine.h"
