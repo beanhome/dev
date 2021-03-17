@@ -4,6 +4,7 @@
 #include "Event.h"
 //#include <complex>
 #include "EventManager.h"
+#include <cmath>
 
 GAppBase::GAppBase(GEngine* pEngine, int argc, char *argv[])
 	: m_pEngine(pEngine)
@@ -155,7 +156,7 @@ int GAppBase::Loop()
 		if (m_bPause)
 		{
 			m_pEngine->ClampClear();
-			m_pEngine->CanvasBase::Print(m_pEngine->GetWidth()/2, 100, m_pEngine->GetPrintFont(), 50, Center, (int)(std::sin(fTime*4.f)*0.5f * 254.f) + 127, 0, 0, "PAUSE");
+			m_pEngine->CanvasBase::Print(m_pEngine->GetWidth()/2, 100, m_pEngine->GetPrintFont(), 50, Center, (int)(sin(fTime*4.f)*0.5f * 254.f) + 127, 0, 0, "PAUSE");
 		}
 
 		m_pEngine->Flip();
