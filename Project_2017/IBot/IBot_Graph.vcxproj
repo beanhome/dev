@@ -73,7 +73,7 @@
     <ClCompile Include="..\..\Src\IBot\Graph\IBGFactBox.cpp" />
     <ClCompile Include="..\..\Src\IBot\Graph\IBGPlanBox.cpp" />
     <ClCompile Include="..\..\Src\IBot\Graph\IBGraphPlannerDisplay.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Graph\IBGWorldChangeBox.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Graph\IBGNodeBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Src\IBot\Graph\IBGActionBox.h" />
@@ -82,7 +82,7 @@
     <ClInclude Include="..\..\Src\IBot\Graph\IBGFactBox.h" />
     <ClInclude Include="..\..\Src\IBot\Graph\IBGPlanBox.h" />
     <ClInclude Include="..\..\Src\IBot\Graph\IBGraphPlannerDisplay.h" />
-    <ClInclude Include="..\..\Src\IBot\Graph\IBGWorldChangeBox.h" />
+    <ClInclude Include="..\..\Src\IBot\Graph\IBGNodeBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

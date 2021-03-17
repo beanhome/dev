@@ -1,5 +1,5 @@
-#ifndef __IBNode_H__
-#define __IBNode_H__
+#ifndef __IBNODE_H__
+#define __IBNODE_H__
 
 #include "Types.h"
 #include "IBCost.h"

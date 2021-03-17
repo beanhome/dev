@@ -1,5 +1,5 @@
-#ifndef __IBGFACTPACKBOX_H__
-#define __IBGFACTPACKBOX_H__
+#ifndef __IBGNODEBOX_H__
+#define __IBGNODEBOX_H__
 
 #include "IBGBoxBase.h"
 #include "Types.h"
@@ -17,7 +17,7 @@ public:
 	const class IBNode* GetNode() const { return m_pNode; }
 
 	const class IBGFactBox* GetFactBox(const class IBFact* pFact) const;
-	
+
 private:
 	const class IBNode* m_pNode;
 
