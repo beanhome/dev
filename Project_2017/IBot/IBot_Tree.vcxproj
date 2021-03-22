@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{32fde2b7-01ef-4ee7-9298-f4a86d127843}</ProjectGuid>
-    <RootNamespace>IBotLog</RootNamespace>
+    <RootNamespace>IBotTree</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>IBot_Tree</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -93,7 +94,7 @@
       </SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\Src\Common;..\..\Src\IBot;..\..\Src\Graphics;..\..\Src\IBot\Log;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Common;..\..\Src\IBot;..\..\Src\Graphics;..\..\Src\IBot\Tree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -110,7 +111,7 @@
       </SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\Src\Common;..\..\Src\IBot;..\..\Src\Graphics;..\..\Src\IBot\Log;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Src\Common;..\..\Src\IBot;..\..\Src\Graphics;..\..\Src\IBot\Tree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,16 +149,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Src\IBot\Log\IBLogBox.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Log\IBLogFact.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Log\IBLogNode.cpp" />
-    <ClCompile Include="..\..\Src\IBot\Log\IBLogPlannerDisplay.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Tree\IBTreeBox.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Tree\IBTreeFact.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Tree\IBTreeNode.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Tree\IBTreePlannerDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Src\IBot\Log\IBLogBox.h" />
-    <ClInclude Include="..\..\Src\IBot\Log\IBLogFact.h" />
-    <ClInclude Include="..\..\Src\IBot\Log\IBLogNode.h" />
-    <ClInclude Include="..\..\Src\IBot\Log\IBLogPlannerDisplay.h" />
+    <ClInclude Include="..\..\Src\IBot\Tree\IBTreeBox.h" />
+    <ClInclude Include="..\..\Src\IBot\Tree\IBTreeFact.h" />
+    <ClInclude Include="..\..\Src\IBot\Tree\IBTreeNode.h" />
+    <ClInclude Include="..\..\Src\IBot\Tree\IBTreePlannerDisplay.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

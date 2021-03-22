@@ -1,17 +1,17 @@
-#ifndef __IBLOGNODE_H__
-#define __IBLOGNODE_H__
+#ifndef __IBTreeNODE_H__
+#define __IBTreeNODE_H__
 
-#include "IBLogBox.h"
+#include "IBTreeBox.h"
 #include "Utils.h"
 #include "Display/IBPlannerDisplay.h"
 #include "Color.h"
 #include "Canvas.h"
 
-class IBLogNode : public IBLogBox
+class IBTreeNode : public IBTreeBox
 {
 	public:
-		IBLogNode(const class IBNode* pNode);
-		virtual ~IBLogNode();
+		IBTreeNode(const class IBNode* pNode);
+		virtual ~IBTreeNode();
 
 	public:
 		virtual void		Refresh(Canvas& oCanvas) override;
@@ -23,7 +23,7 @@ class IBLogNode : public IBLogBox
 	private:
 		const class IBNode* m_pNode;
 
-		vector<class IBLogFact*> m_aLogFacts;
+		vector<class IBTreeFact*> m_aLogFacts;
 };
 
 #endif

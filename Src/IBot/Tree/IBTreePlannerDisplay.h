@@ -1,5 +1,5 @@
-#ifndef __IBLOGPLANNERDISPLAY_H__
-#define __IBLOGPLANNERDISPLAY_H__
+#ifndef __IBTreePLANNERDISPLAY_H__
+#define __IBTreePLANNERDISPLAY_H__
 
 #include "Utils.h"
 #include "Display/IBPlannerDisplay.h"
@@ -8,11 +8,11 @@
 
 class CanvasBase;
 
-class IBLogPlannerDisplay : public IBPlannerDisplay
+class IBTreePlannerDisplay : public IBPlannerDisplay
 {
 	public:
-		IBLogPlannerDisplay(Canvas& oGraphCanva, const class IBPlanner& oPlanner);
-		virtual ~IBLogPlannerDisplay();
+		IBTreePlannerDisplay(Canvas& oGraphCanva, const class IBPlanner& oPlanner);
+		virtual ~IBTreePlannerDisplay();
 
 	public:
 		virtual void				Refresh() override;
@@ -33,7 +33,7 @@ class IBLogPlannerDisplay : public IBPlannerDisplay
 	private:
 		Canvas&					m_oCanvas;
 
-		class IBLogNode*		m_pStartNode;
+		class IBTreeNode*		m_pStartNode;
 
 		uint16					m_iMaxWidth;
 		uint16					m_iMaxHeight;

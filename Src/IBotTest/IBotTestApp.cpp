@@ -2,7 +2,7 @@
 #include "IBPlannerTest.h"
 #include "World/IBCubeWorld.h"
 #include "Graph/IBGraphPlannerDisplay.h"
-#include "Log/IBLogPlannerDisplay.h"
+#include "Tree/IBTreePlannerDisplay.h"
 #include "Graph/IBGPlanBox.h"
 #include "Graph/IBGNodeBox.h"
 #include "Canvas.h"
@@ -32,7 +32,7 @@ IBotTestApp::IBotTestApp(GEngine* pEngine, int argc, char *argv[])
 	m_pPlanner = new IBPlannerTest(m_pWorld);
 
 	//m_pPlannerDisplay = new IBGraphPlannerDisplay(*m_pGraphCanva, *m_pPlanner);
-	m_pPlannerDisplay = new IBLogPlannerDisplay(*m_pGraphCanva, *m_pPlanner);
+	m_pPlannerDisplay = new IBTreePlannerDisplay(*m_pGraphCanva, *m_pPlanner);
 
 }
 

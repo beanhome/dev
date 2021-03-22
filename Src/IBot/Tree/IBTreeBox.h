@@ -1,15 +1,15 @@
-#ifndef __IBLOGBOX_H__
-#define __IBLOGBOX_H__
+#ifndef __IBTreeBOX_H__
+#define __IBTreeBOX_H__
 
 #include "Utils.h"
 #include "Color.h"
 #include "Canvas.h"
 
-class IBLogBox
+class IBTreeBox
 {
 	public:
-		IBLogBox();
-		virtual ~IBLogBox();
+		IBTreeBox();
+		virtual ~IBTreeBox();
 
 	public:
 		virtual void		Refresh(Canvas& oCanvas);

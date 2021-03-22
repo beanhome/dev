@@ -1,4 +1,4 @@
-#include "IBLogFact.h"
+#include "IBTreeFact.h"
 
 #include "IBPlanner.h"
 #include "GEngine.h"
@@ -13,16 +13,16 @@ sint32 FactTitleLeftMarging = 3;
 sint32 FactVarLeftMarging = 8;
 sint32 FactRightMarging = 3;
 
-IBLogFact::IBLogFact(const class IBFact* m_pFact)
+IBTreeFact::IBTreeFact(const class IBFact* m_pFact)
 	: m_pFact(m_pFact)
 {
 }
 
-IBLogFact::~IBLogFact()
+IBTreeFact::~IBTreeFact()
 {
 }
 
-void IBLogFact::Size(Canvas& oCanvas, sint32& Width, sint32& Height)
+void IBTreeFact::Size(Canvas& oCanvas, sint32& Width, sint32& Height)
 {
 	Width = 0;
 	Height = 0;
@@ -51,7 +51,7 @@ void IBLogFact::Size(Canvas& oCanvas, sint32& Width, sint32& Height)
 }
 
 
-void IBLogFact::Draw(Canvas& oCanvas, sint32 x, sint32 y)
+void IBTreeFact::Draw(Canvas& oCanvas, sint32 x, sint32 y)
 {
 	//oCanvas.DrawRect(x, y, w, h, FrameColor);
 	oCanvas.Print(x + FactTitleLeftMarging, y + FactTitleTextSize / 2, oCanvas.GetPrintFont(), FactTitleTextSize, ETextAlign::LeftCenter, Color::Black, m_pFact->GetFactDef()->GetName().c_str());

@@ -1,11 +1,11 @@
-#include "IBLogBox.h"
+#include "IBTreeBox.h"
 
 #include "Canvas.h"
 #include "Color.h"
 #include "Utils.h"
 
 
-IBLogBox::IBLogBox()
+IBTreeBox::IBTreeBox()
 	: m_bExtended(false)
 	, m_bFolded(false)
 	, m_iWidth(0)
@@ -14,12 +14,12 @@ IBLogBox::IBLogBox()
 
 }
 
-IBLogBox::~IBLogBox()
+IBTreeBox::~IBTreeBox()
 {
 
 }
 
-void IBLogBox::Refresh(Canvas& oCanvas)
+void IBTreeBox::Refresh(Canvas& oCanvas)
 {
 	Size(oCanvas, m_iWidth, m_iHeight);
 }

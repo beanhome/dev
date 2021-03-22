@@ -1,16 +1,16 @@
-#ifndef __IBLOGFACT_H__
-#define __IBLOGFACT_H__
+#ifndef __IBTreeFACT_H__
+#define __IBTreeFACT_H__
 
-#include "IBLogBox.h"
+#include "IBTreeBox.h"
 #include "Utils.h"
 #include "Color.h"
 #include "Canvas.h"
 
-class IBLogFact : public IBLogBox
+class IBTreeFact : public IBTreeBox
 {
 	public:
-		IBLogFact(const class IBFact* pFact);
-		virtual ~IBLogFact();
+		IBTreeFact(const class IBFact* pFact);
+		virtual ~IBTreeFact();
 
 	public:
 		virtual void		Draw(Canvas& oCanvas, sint32 x, sint32 y) override;

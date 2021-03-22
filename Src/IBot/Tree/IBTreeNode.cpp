@@ -1,5 +1,5 @@
-#include "IBLogNode.h"
-#include "IBLogFact.h"
+#include "IBTreeNode.h"
+#include "IBTreeFact.h"
 
 #include "IBPlanner.h"
 #include "GEngine.h"
@@ -10,7 +10,7 @@
 Color FillColor = Color(0, 255, 255);
 Color FrameColor = Color(0, 0, 255);
 
-IBLogNode::IBLogNode(const class IBNode* pNode)
+IBTreeNode::IBTreeNode(const class IBNode* pNode)
 	: m_pNode(pNode)
 {
 	//Refresh();
@@ -20,21 +20,21 @@ IBLogNode::IBLogNode(const class IBNode* pNode)
 	for (FactSet::iterator it = m_pNode->GetFacts().begin(); it != m_pNode->GetFacts().end(); ++it)
 	{
 		IBFact* pFact = *it;
-		m_aLogFacts.push_back(new IBLogFact(pFact));
+		m_aLogFacts.push_back(new IBTreeFact(pFact));
 	}
 	*/
 }
 
-IBLogNode::~IBLogNode()
+IBTreeNode::~IBTreeNode()
 {
-	for (vector<IBLogFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
+	for (vector<IBTreeFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
 	{
-		IBLogFact* pFact = *it;
+		IBTreeFact* pFact = *it;
 		delete pFact;
 	}
 }
 
-void IBLogNode::Refresh(Canvas& oCanvas)
+void IBTreeNode::Refresh(Canvas& oCanvas)
 {
 	if (m_aLogFacts.size() != m_pNode->GetFacts().size())
 	{
@@ -45,27 +45,27 @@ void IBLogNode::Refresh(Canvas& oCanvas)
 		for (FactSet::iterator it = m_pNode->GetFacts().begin(); it != m_pNode->GetFacts().end(); ++it)
 		{
 			IBFact* pFact = *it;
-			m_aLogFacts.push_back(new IBLogFact(pFact));
+			m_aLogFacts.push_back(new IBTreeFact(pFact));
 		}
 	}
 
-	for (vector<IBLogFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
+	for (vector<IBTreeFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
 	{
-		IBLogFact* pFact = *it;
+		IBTreeFact* pFact = *it;
 		pFact->Refresh(oCanvas);
 	}
 
-	IBLogBox::Refresh(oCanvas);
+	IBTreeBox::Refresh(oCanvas);
 }
 
-void IBLogNode::Size(Canvas& oCanvas, sint32& w, sint32& h)
+void IBTreeNode::Size(Canvas& oCanvas, sint32& w, sint32& h)
 {
 	w = 0;
 	h = 0;
 
-	for (vector<IBLogFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
+	for (vector<IBTreeFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
 	{
-		IBLogFact* pFact = *it;
+		IBTreeFact* pFact = *it;
 
 		sint32 fw, fh;
 		pFact->GetSize(fw, fh);
@@ -75,7 +75,7 @@ void IBLogNode::Size(Canvas& oCanvas, sint32& w, sint32& h)
 	}
 }
 
-void IBLogNode::Draw(Canvas& oCanvas, sint32 x, sint32 y)
+void IBTreeNode::Draw(Canvas& oCanvas, sint32 x, sint32 y)
 {
 	sint32 Width;
 	sint32 Height;
@@ -85,9 +85,9 @@ void IBLogNode::Draw(Canvas& oCanvas, sint32 x, sint32 y)
 	oCanvas.DrawFillRect(x, y, Width, Height, FillColor);
 	oCanvas.DrawRect(x, y, Width, Height, FrameColor);
 
-	for (vector<IBLogFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
+	for (vector<IBTreeFact*>::iterator it = m_aLogFacts.begin(); it != m_aLogFacts.end(); ++it)
 	{
-		IBLogFact* pFact = *it;
+		IBTreeFact* pFact = *it;
 
 		pFact->Draw(oCanvas, x, y);
 
