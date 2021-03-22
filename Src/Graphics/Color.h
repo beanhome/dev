@@ -13,6 +13,17 @@ class Color
 
 	public:
 		uint8 r, g, b;
+
+	public:
+		static Color White;
+		static Color Black;
+		static Color Red;
+		static Color Green;
+		static Color Blue;
+		static Color Cyan;
+		static Color Magenta;
+		static Color Yellow;
+
 };
 
 

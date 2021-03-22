@@ -1,5 +1,5 @@
-#ifndef __IBGPlanner_H__
-#define __IBGPlanner_H__
+#ifndef __IBLOGPLANNERDISPLAY_H__
+#define __IBLOGPLANNERDISPLAY_H__
 
 #include "Utils.h"
 #include "Display/IBPlannerDisplay.h"
@@ -11,10 +11,12 @@ class CanvasBase;
 class IBLogPlannerDisplay : public IBPlannerDisplay
 {
 	public:
-		IBLogPlannerDisplay(CanvasBase& oGraphCanva, const class IBPlanner& oPlanner);
+		IBLogPlannerDisplay(Canvas& oGraphCanva, const class IBPlanner& oPlanner);
 		virtual ~IBLogPlannerDisplay();
 
 	public:
+		virtual void				Refresh() override;
+		virtual void				Update(float dt) override;
 		virtual void				DrawGraph() override;
 
 		bool						IsDraging() const { return m_bDraging; }
@@ -29,9 +31,9 @@ class IBLogPlannerDisplay : public IBPlannerDisplay
 		void						ClampOrig(sint32& x, sint32& y);
 
 	private:
-		Canvas					m_oCanvas;
+		Canvas&					m_oCanvas;
 
-		//class IBGPlanBox*		m_pPlan;
+		class IBLogNode*		m_pStartNode;
 
 		uint16					m_iMaxWidth;
 		uint16					m_iMaxHeight;
@@ -55,7 +57,7 @@ class IBLogPlannerDisplay : public IBPlannerDisplay
 		static const uint		s_iFactMinSpace;
 
 		static const uint		s_iLinkWidth;
-		
+
 		static const uint		s_iActionMinWidth;
 		static const uint		s_iActionMinHeight;
 		static const uint		s_iActionTitleHeight;

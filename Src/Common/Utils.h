@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <array>
 #include <deque>
 #include <map>
 #include <set>
@@ -25,6 +26,7 @@
 #undef max
 
 using std::string;
+using std::array;
 using std::vector;
 using std::deque;
 using std::map;

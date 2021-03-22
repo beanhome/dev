@@ -8,6 +8,8 @@ class IBPlannerDisplay
 		virtual ~IBPlannerDisplay();
 
 	public:
+		virtual void Refresh() {}
+		virtual void Update(float dt) = 0;
 		virtual void DrawGraph() = 0;
 
 	protected:

@@ -148,9 +148,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Src\IBot\Log\IBLogBox.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Log\IBLogFact.cpp" />
+    <ClCompile Include="..\..\Src\IBot\Log\IBLogNode.cpp" />
     <ClCompile Include="..\..\Src\IBot\Log\IBLogPlannerDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Src\IBot\Log\IBLogBox.h" />
+    <ClInclude Include="..\..\Src\IBot\Log\IBLogFact.h" />
+    <ClInclude Include="..\..\Src\IBot\Log\IBLogNode.h" />
     <ClInclude Include="..\..\Src\IBot\Log\IBLogPlannerDisplay.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

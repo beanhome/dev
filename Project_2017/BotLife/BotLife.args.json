@@ -16,7 +16,7 @@
         },
         {
           "Id": "e7c3c535-040e-4e10-a707-5e5ae416c905",
-          "Command": "-a IBotTestApp -r 0.3 -i \"a b\" -g \"ab\""
+          "Command": "-a IBotTestApp -r 0.3 -i \"a b c\" -g \"ab bc\""
         },
         {
           "Id": "811f61a9-24be-4b1f-a32b-2d53ef448055",

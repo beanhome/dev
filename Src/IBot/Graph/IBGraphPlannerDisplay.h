@@ -1,5 +1,5 @@
-#ifndef __IBGPlanner_H__
-#define __IBGPlanner_H__
+#ifndef __IBGRAPHPLANNERDISPLAY_H__
+#define __IBGRAPHPLANNERDISPLAY_H__
 
 #include "Utils.h"
 #include "Display/IBPlannerDisplay.h"
@@ -11,10 +11,11 @@ class CanvasBase;
 class IBGraphPlannerDisplay : public IBPlannerDisplay
 {
 	public:
-		IBGraphPlannerDisplay(CanvasBase& oGraphCanva, const class IBPlanner& oPlanner);
+		IBGraphPlannerDisplay(Canvas& oGraphCanva, const class IBPlanner& oPlanner);
 		virtual ~IBGraphPlannerDisplay();
 
 	public:
+		virtual void				Update(float dt) override;
 		virtual void				DrawGraph() override;
 
 		bool						IsDraging() const { return m_bDraging; }
@@ -26,8 +27,8 @@ class IBGraphPlannerDisplay : public IBPlannerDisplay
 		void						StartSnap(int iSnapX, int iSnapY);
 		void						UpdateSnap(float dt);
 		void						StopSnap();
-		
-		void						RePanPlan(IBPlanner* pPlanner);
+
+		void						RePanPlan();
 
 		const Canvas&			GetCanvas() const { return m_oCanvas; }
 		const class IBGPlanBox*	GetPlan() const { return m_pPlan; }
@@ -36,7 +37,7 @@ class IBGraphPlannerDisplay : public IBPlannerDisplay
 		void						ClampOrig(sint32& x, sint32& y);
 
 	private:
-		Canvas					m_oCanvas;
+		Canvas&					m_oCanvas;
 
 		class IBGPlanBox*		m_pPlan;
 
@@ -67,7 +68,7 @@ class IBGraphPlannerDisplay : public IBPlannerDisplay
 		static const uint		s_iFactMinSpace;
 
 		static const uint		s_iLinkWidth;
-		
+
 		static const uint		s_iActionMinWidth;
 		static const uint		s_iActionMinHeight;
 		static const uint		s_iActionTitleHeight;

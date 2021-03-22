@@ -313,7 +313,7 @@ void GEngine_SDL::DrawRect(sint32 x, sint32 y, sint32 width, sint32 height, uint
 
 void GEngine_SDL::DrawFillRect(sint32 x, sint32 y, sint32 width, sint32 height, uint8 r, uint8 g, uint8 b) const
 {
-	boxRGBA(m_pRenderer, (sint16)x, (sint16)y, (sint16)(x+width), (sint16)(y+height), r, g, b, 255);
+	boxRGBA(m_pRenderer, (sint16)x, (sint16)y, (sint16)(x+width-1), (sint16)(y+height-1), r, g, b, 255);
 }
 
 void GEngine_SDL::DrawCircle(sint32 x, sint32 y, sint32 radius, uint8 r, uint8 g, uint8 b) const

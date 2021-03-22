@@ -9,6 +9,7 @@
 #include "IBGFact.h"
 #include "IBGAction.h"
 #include "GEngine.h"
+#include "EventManager.h"
 
 const uint	IBGraphPlannerDisplay::s_iMargin = 12;
 const uint	IBGraphPlannerDisplay::s_iFactMinWidth = 92;
@@ -44,7 +45,7 @@ const Color	IBGraphPlannerDisplay::s_oBoxColor = Color(256, 128, 128);
 
 
 
-IBGraphPlannerDisplay::IBGraphPlannerDisplay(CanvasBase& oGraphCanva, const class IBPlanner& oPlanner)
+IBGraphPlannerDisplay::IBGraphPlannerDisplay(Canvas& oGraphCanva, const class IBPlanner& oPlanner)
 	: IBPlannerDisplay(oPlanner)
 	, m_oCanvas(oGraphCanva)
 	, m_iMaxWidth(0)
@@ -82,6 +83,54 @@ void IBGraphPlannerDisplay::DrawGraph()
 
 	m_pPlan->Draw();
 }
+
+void IBGraphPlannerDisplay::Update(float dt)
+{
+	if (m_oCanvas.GetGEngine()->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
+	{
+		StartDrag();
+	}
+	else if (m_oCanvas.GetGEngine()->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyDown
+		|| m_oCanvas.GetGEngine()->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyRepeat)
+	{
+		UpdateDrag();
+	}
+	else
+	{
+		StopDrag();
+	}
+
+	if (m_oCanvas.GetGEngine()->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyReleased)
+	{
+		RePanPlan();
+	}
+
+	if (m_oCanvas.GetGEngine()->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
+	{
+		sint32 x = m_oCanvas.GetGEngine()->GetMouseX() - GetCanvas().GetScreenPosX();
+		sint32 y = m_oCanvas.GetGEngine()->GetMouseY() - GetCanvas().GetScreenPosY();
+		StartSnap(x, y);
+	}
+
+	if (m_oCanvas.GetGEngine()->GetEventManager()->GetVirtualKey(MOUSE_MIDDLE) == KeyPressed)
+	{
+		const IBNode* pBestNode = m_oPlanner.GetBestNode();
+		if (pBestNode != nullptr)
+		{
+			const IBGNodeBox* pBestNodeBox = GetPlan()->GetNodeBox(pBestNode);
+			if (pBestNodeBox != nullptr)
+			{
+				sint32 x = pBestNodeBox->GetScreenX() - GetCanvas().GetScreenPosX() + pBestNodeBox->GetW() / 2;
+				sint32 y = pBestNodeBox->GetScreenY() - GetCanvas().GetScreenPosY() + pBestNodeBox->GetH() / 2;
+				StartSnap(x, y);
+			}
+		}
+	}
+
+	if (IsSnaping())
+		UpdateSnap(dt);
+}
+
 
 void IBGraphPlannerDisplay::StartDrag()
 {
@@ -165,7 +214,7 @@ void	 IBGraphPlannerDisplay::StopSnap()
 	m_bSnaping = false;
 }
 
-void IBGraphPlannerDisplay::RePanPlan(IBPlanner* pPlanner)
+void IBGraphPlannerDisplay::RePanPlan()
 {
 	sint32 x = m_oCanvas.GetOrigX();
 	sint32 y = m_oCanvas.GetOrigY();

@@ -2,6 +2,7 @@
 #include "IBPlannerTest.h"
 #include "World/IBCubeWorld.h"
 #include "Graph/IBGraphPlannerDisplay.h"
+#include "Log/IBLogPlannerDisplay.h"
 #include "Graph/IBGPlanBox.h"
 #include "Graph/IBGNodeBox.h"
 #include "Canvas.h"
@@ -30,7 +31,8 @@ IBotTestApp::IBotTestApp(GEngine* pEngine, int argc, char *argv[])
 
 	m_pPlanner = new IBPlannerTest(m_pWorld);
 
-	m_pPlannerDisplay = new IBGraphPlannerDisplay(*m_pGraphCanva, *m_pPlanner);
+	//m_pPlannerDisplay = new IBGraphPlannerDisplay(*m_pGraphCanva, *m_pPlanner);
+	m_pPlannerDisplay = new IBLogPlannerDisplay(*m_pGraphCanva, *m_pPlanner);
 
 }
 
@@ -78,54 +80,19 @@ void IBotTestApp::Init(int argc, char *argv[])
 			}
 		}
 	}
+
+	m_pPlannerDisplay->Refresh();
 }
 
 int IBotTestApp::Update(float dt)
 {
-	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyPressed)
-	{
-		m_pPlannerDisplay->StartDrag();
-	}
-	else if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyDown
-		|| m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyRepeat)
-	{
-		m_pPlannerDisplay->UpdateDrag();
-	}
-	else
-	{
-		m_pPlannerDisplay->StopDrag();
-	}
-
 	if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyReleased)
 	{
 		m_pPlanner->Step(true, false);
-		m_pPlannerDisplay->RePanPlan(m_pPlanner);
+		m_pPlannerDisplay->Refresh();
 	}
 
-	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_RIGHT) == KeyDown)
-	{
-		sint32 x = m_pEngine->GetMouseX() - m_pPlannerDisplay->GetCanvas().GetScreenPosX();
-		sint32 y = m_pEngine->GetMouseY() - m_pPlannerDisplay->GetCanvas().GetScreenPosY();
-		m_pPlannerDisplay->StartSnap(x, y);
-	}
-
-	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_MIDDLE) == KeyPressed)
-	{
-		const IBNode* pBestNode = m_pPlanner->GetBestNode();
-		if (pBestNode != nullptr)
-		{
-			const IBGNodeBox* pBestNodeBox = m_pPlannerDisplay->GetPlan()->GetNodeBox(pBestNode);
-			if (pBestNodeBox != nullptr)
-			{
-				sint32 x = pBestNodeBox->GetScreenX() - m_pPlannerDisplay->GetCanvas().GetScreenPosX() + pBestNodeBox->GetW() / 2;
-				sint32 y = pBestNodeBox->GetScreenY() - m_pPlannerDisplay->GetCanvas().GetScreenPosY() + pBestNodeBox->GetH() / 2;
-				m_pPlannerDisplay->StartSnap(x, y);
-			}
-		}
-	}
-
-	if (m_pPlannerDisplay->IsSnaping())
-		m_pPlannerDisplay->UpdateSnap(dt);
+	m_pPlannerDisplay->Update(dt);
 
 	return 0;
 }
@@ -143,10 +110,8 @@ int IBotTestApp::Draw()
 
 	//m_pEngine->Print(m_pEngine->GetWidth(), 5, m_pEngine->GetPrintFont(), 20, ETextAlign::RightTop, Color(255, 255, 255), "Step Count : %d", m_pPlanner->GetStepCount());
 	m_pEngine->Print(5, 5, m_pEngine->GetPrintFont(), 20, ETextAlign::LeftTop, Color(255, 255, 255), "Step Count : %d", m_pPlanner->GetStepCount());
-	
-	m_pEngine->Print(5, 30, m_pEngine->GetPrintFont(), 10, ETextAlign::LeftTop, Color(255, 255, 255), "%d %d", m_pPlannerDisplay->GetCanvas().GetOrigX(), m_pPlannerDisplay->GetCanvas().GetOrigY());
 
-	
+	m_pEngine->Print(5, 45, m_pEngine->GetPrintFont(), 10, ETextAlign::LeftTop, Color(255, 255, 255), "%d %d", m_pGraphCanva->GetOrigX(), m_pGraphCanva->GetOrigY());
 
 	return 0;
 }

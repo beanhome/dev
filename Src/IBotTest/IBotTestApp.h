@@ -26,7 +26,7 @@ class IBotTestApp : public GAppBase
 
 		class IBPlannerTest* m_pPlanner;
 
-		class IBGraphPlannerDisplay* m_pPlannerDisplay;
+		class IBPlannerDisplay* m_pPlannerDisplay;
 
 	public:
 		static int s_iDummy;

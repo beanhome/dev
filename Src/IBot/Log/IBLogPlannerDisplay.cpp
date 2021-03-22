@@ -3,6 +3,7 @@
 #include "CanvasBase.h"
 #include "IBPlanner.h"
 #include "GEngine.h"
+#include "IBLogNode.h"
 
 /*
 const uint	IBLogPlannerDisplay::s_iMargin = 12;
@@ -39,7 +40,7 @@ const Color	IBLogPlannerDisplay::s_oBoxColor = Color(256, 128, 128);
 */
 
 
-IBLogPlannerDisplay::IBLogPlannerDisplay(CanvasBase& oGraphCanva, const class IBPlanner& oPlanner)
+IBLogPlannerDisplay::IBLogPlannerDisplay(Canvas& oGraphCanva, const class IBPlanner& oPlanner)
 	: IBPlannerDisplay(oPlanner)
 	, m_oCanvas(oGraphCanva)
 	, m_iMaxWidth(0)
@@ -48,7 +49,7 @@ IBLogPlannerDisplay::IBLogPlannerDisplay(CanvasBase& oGraphCanva, const class IB
 	, m_iStartDragX(0)
 	, m_iStartDragY(0)
 {
-	//m_pPlan = new IBGPlanBox(m_oCanvas, &m_oPlanner.GetGoals());
+	m_pStartNode = new IBLogNode(&m_oPlanner.GetGoals());
 
 	m_oCanvas.SetOrigX(-10);
 	m_oCanvas.SetOrigY(-10);
@@ -56,11 +57,25 @@ IBLogPlannerDisplay::IBLogPlannerDisplay(CanvasBase& oGraphCanva, const class IB
 
 IBLogPlannerDisplay::~IBLogPlannerDisplay()
 {
-	//delete m_pPlan;
+	delete m_pStartNode;
 }
+
+void IBLogPlannerDisplay::Refresh()
+{
+	m_pStartNode->Refresh(m_oCanvas);
+}
+
+void IBLogPlannerDisplay::Update(float dt)
+{
+
+}
+
 
 void IBLogPlannerDisplay::DrawGraph()
 {
+	sint32 x = 0;
+	sint32 y = 0;
+	m_pStartNode->Draw(m_oCanvas, x, y);
 	/*
 	m_pPlan->Init();
 

@@ -96,7 +96,7 @@
       </SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\Build\Win32\lib\SDL_gfx\Debug\SDL_gfx.lib;..\..\Build\Win32\lib\SDL_Draw\Debug\SDL_Draw.lib;..\..\Build\Win32\lib\SDL_FontCache\Debug\SDL_FontCache.lib;..\..\Build\Win32\lib\IBot\Debug\IBot.lib;..\..\Build\Win32\lib\IBot_Graph\Debug\IBot_Graph.lib;..\..\Build\Win32\lib\Common\Debug\Common.lib;..\..\Build\Win32\lib\Navigation\Debug\Navigation.lib;..\..\Build\Win32\lib\Graphics\Debug\Graphics.lib;..\..\Build\Win32\lib\Graphics_SDL\Debug\Graphics_SDL.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Build\Win32\lib\SDL_gfx\Debug\SDL_gfx.lib;..\..\Build\Win32\lib\SDL_Draw\Debug\SDL_Draw.lib;..\..\Build\Win32\lib\SDL_FontCache\Debug\SDL_FontCache.lib;..\..\Build\Win32\lib\IBot\Debug\IBot.lib;..\..\Build\Win32\lib\IBot_Graph\Debug\IBot_Graph.lib;..\..\Build\Win32\lib\IBot_Log\Debug\IBot_Log.lib;..\..\Build\Win32\lib\Common\Debug\Common.lib;..\..\Build\Win32\lib\Navigation\Debug\Navigation.lib;..\..\Build\Win32\lib\Graphics\Debug\Graphics.lib;..\..\Build\Win32\lib\Graphics_SDL\Debug\Graphics_SDL.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
@@ -129,7 +129,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\..\Build\Win32\lib\SDL_gfx\Release\SDL_gfx.lib;..\..\Build\Win32\lib\SDL_Draw\Release\SDL_Draw.lib;..\..\Build\Win32\lib\SDL_FontCache\Release\SDL_FontCache.lib;..\..\Build\Win32\lib\IBot\Release\IBot.lib;..\..\Build\Win32\lib\IBot_Graph\Release\IBot_Graph.lib;..\..\Build\Win32\lib\Common\Release\Common.lib;..\..\Build\Win32\lib\Navigation\Release\Navigation.lib;..\..\Build\Win32\lib\Graphics\Release\Graphics.lib;..\..\Build\Win32\lib\Graphics_SDL\Release\Graphics_SDL.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Build\Win32\lib\SDL_gfx\Release\SDL_gfx.lib;..\..\Build\Win32\lib\SDL_Draw\Release\SDL_Draw.lib;..\..\Build\Win32\lib\SDL_FontCache\Release\SDL_FontCache.lib;..\..\Build\Win32\lib\IBot\Release\IBot.lib;..\..\Build\Win32\lib\IBot_Graph\Release\IBot_Graph.lib;..\..\Build\Win32\lib\IBot_Log\Release\IBot_Log.lib;..\..\Build\Win32\lib\Common\Release\Common.lib;..\..\Build\Win32\lib\Navigation\Release\Navigation.lib;..\..\Build\Win32\lib\Graphics\Release\Graphics.lib;..\..\Build\Win32\lib\Graphics_SDL\Release\Graphics_SDL.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
