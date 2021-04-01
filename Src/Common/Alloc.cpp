@@ -37,7 +37,7 @@ void _Free(void *block, const char* file_name, unsigned int line_num)
 }
 
 
-void* operator new (size_t size) throw (std::bad_alloc)
+void* operator new (size_t size)
 {
 	void* ptr = Allocator::Malloc(size, del_FILE, del_LINE);
 	del_FILE = NULL;
@@ -49,7 +49,7 @@ void* operator new (size_t size) throw (std::bad_alloc)
 	return ptr;
 }
 
-void* operator new[] (size_t size) throw (std::bad_alloc)
+void* operator new[] (size_t size)
 {
 	void* ptr = Allocator::Malloc(size, del_FILE, del_LINE);
 	del_FILE = NULL;

@@ -21,8 +21,8 @@ class FontResource : public Resource
 		//FontResource(GEngine* pGEngine, uint32 crc, const Desc& oDesc);
 		~FontResource();
 
-		virtual uint16 GetSize() const = 0; /* { return m_iSize; }*/
-		virtual uint16 GetLineSkip() const = 0; /* { return m_iSize; }*/
+		virtual uint16 GetSize() const = 0;
+		virtual uint16 GetLineSkip() const = 0;
 
 	public:
 		//string			m_sPath;

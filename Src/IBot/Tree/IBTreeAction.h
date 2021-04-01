@@ -1,17 +1,18 @@
-#ifndef __IBTREEFACT_H__
-#define __IBTREEFACT_H__
+#ifndef __IBTREEACTION_H__
+#define __IBTREEACTION_H__
 
 #include "IBTreeBox_Horiz.h"
 #include "Utils.h"
 #include "Canvas.h"
 
-class IBTreeFact : public IBTreeBox_Horiz
+class IBTreeAction : public IBTreeBox_Horiz
 {
 	public:
+		friend class IBTreeFact;
 		friend class IBTreeNode;
 
-		IBTreeFact(Canvas& oCanvas, IBTreeBox* pParent, const class IBFact* pFact);
-		virtual ~IBTreeFact();
+		IBTreeAction(Canvas& oCanvas, IBTreeBox* pParent, const class IBAction* pAction);
+		virtual ~IBTreeAction();
 
 	public:
 		void				RefreshTree();
@@ -25,19 +26,14 @@ class IBTreeFact : public IBTreeBox_Horiz
 		string				GetFullName() const;
 
 	private:
-		const class IBFact* m_pFact;
+		const class IBAction* m_pAction;
 
 		class IBTreeBox_Image* m_pExtendArrow;
-		class IBTreeBox_Image* m_pFoldArrow;
 
 		bool m_bExtended;
-		bool m_bFolded;
 
-		list<class IBTreeActionNode*> m_aTreeActionNodes; // used by IBTreeNode
-
-
-		class FontResource* m_pFactTitleFont;
-		class FontResource* m_pFactVarFont;
+		FontResource* m_pActionTitleFont;
+		FontResource* m_pActionVarFont;
 		class ImageResource* m_pRightArrowImage;
 		class ImageResource* m_pDownArrowImage;
 };

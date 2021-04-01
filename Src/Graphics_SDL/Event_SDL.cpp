@@ -3,7 +3,7 @@
 #include "Utils.h"
 #include "Event_SDL.h"
 
-const EKeyboardKey Event_SDL::s_eSDLKeyToKeyboardKey[/*SDLK_LAST*/] = 
+const EKeyboardKey Event_SDL::s_eSDLKeyToKeyboardKey[/*SDLK_LAST*/] =
 {
 #include "Event_SDLKeyToKeyboardKey.h"
 };
@@ -43,6 +43,7 @@ bool Event_SDL::IsMouse() const
 		case SDL_MOUSEMOTION:
 		case SDL_MOUSEBUTTONDOWN:
 		case SDL_MOUSEBUTTONUP:
+		case SDL_MOUSEWHEEL:
 			return true;
 
 		default:
@@ -91,7 +92,6 @@ EMouseEvent Event_SDL::GetMouseEvent() const
 				case SDL_BUTTON_LEFT:		return LeftDown;
 				case SDL_BUTTON_MIDDLE:		return MiddleDown;
 				case SDL_BUTTON_RIGHT:		return RightDown;
-				case SDL_MOUSEWHEEL:		return m_pSDLEvent->wheel.y > 0 ? WheelUpDown : WheelDownDown;
 				default: return EMouseEvent_Error;
 			}
 		}
@@ -103,9 +103,13 @@ EMouseEvent Event_SDL::GetMouseEvent() const
 				case SDL_BUTTON_LEFT:		return LeftUp;
 				case SDL_BUTTON_MIDDLE:		return MiddleUp;
 				case SDL_BUTTON_RIGHT:		return RightUp;
-				case SDL_MOUSEWHEEL:		return m_pSDLEvent->wheel.y > 0 ? WheelUpUp : WheelDownUp;
 				default: return EMouseEvent_Error;
 			}
+		}
+
+		case SDL_MOUSEWHEEL:
+		{
+			return m_pSDLEvent->wheel.y > 0 ? WheelUpDown : WheelDownDown;
 		}
 
 		default:

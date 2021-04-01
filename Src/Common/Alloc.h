@@ -5,13 +5,11 @@
 
 #if defined(_DEBUG) && defined(TRACK_MEMLEAK)
 
-#error prout
-
 #include <exception>
 
 #pragma warning( disable : 4290 )
-void* operator new (size_t size) throw (std::bad_alloc);
-void* operator new[] (size_t size) throw (std::bad_alloc);
+void* operator new (size_t size);
+void* operator new[] (size_t size);
 //void* operator new (size_t size, const char* file_name, unsigned int line_num) throw (std::bad_alloc);
 //void* operator new[] (size_t size, const char* file_name, unsigned int line_num) throw (std::bad_alloc);
 void operator delete (void *ptr) throw ();
@@ -30,7 +28,7 @@ void _Free(void *block, const char* file_name, unsigned int line_num);
 #define malloc(size) _Malloc(size, __FILE__, __LINE__)
 #define realloc(ptr,new_size) _Realloc(ptr, new_size, __FILE__, __LINE__)
 #define calloc(n,size) _Calloc(n, size, __FILE__, __LINE__)
-#define free(ptr) _Free(ptr, __FILE__, __LINE__) 
+#define free(ptr) _Free(ptr, __FILE__, __LINE__)
 
 int SetAllocContext(const char* file, unsigned long line);
 

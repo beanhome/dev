@@ -2,8 +2,13 @@
 #define __STLALLOCATOR_H__
 
 #include <limits>
+
+#if defined delete
+#error "Can not Compile iostream and typeinfo with keyword delete redefined"
+#endif
 #include <iostream>
 #include <typeinfo>
+
 
 #include "Utils.h"
 #include "Alloc.h"

@@ -2,6 +2,7 @@
 
 #include "CanvasBase.h"
 #include "GUtils.h"
+#include "GEngine.h"
 
 
 CanvasBase::CanvasBase(uint16 width, uint16 height)
@@ -29,7 +30,19 @@ void CanvasBase::TextSize(sint32& w, sint32& h, const char* sFontPath, uint16 si
 	va_list oArgs;
 	va_start(oArgs, format);
 
-	TextSizeArgs(w, h, sFontPath, size, format, oArgs);
+	FontResource* pFont = GetGEngine()->GetFontResource(sFontPath, size);
+	if (pFont)
+		TextSizeArgs(w, h, pFont, format, oArgs);
+
+	va_end(oArgs);
+}
+
+void CanvasBase::TextSize(sint32& w, sint32& h, class FontResource* pFont, const char* format, ...) const
+{
+	va_list oArgs;
+	va_start(oArgs, format);
+
+	TextSizeArgs(w, h, pFont, format, oArgs);
 
 	va_end(oArgs);
 }
@@ -40,7 +53,9 @@ void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint16 size, E
 	va_list oArgs;
 	va_start(oArgs, format);
 
-	PrintArgs(x, y, sFontPath, size, eAlign, r, g, b, format, oArgs);
+	FontResource* pFont = GetGEngine()->GetFontResource(sFontPath, size);
+	if (pFont)
+		PrintArgs(x, y, pFont, eAlign, r, g, b, format, oArgs);
 
 	va_end(oArgs);
 }
@@ -50,10 +65,33 @@ void CanvasBase::Print(sint32 x, sint32 y, const char* sFontPath, uint16 size, E
 	va_list oArgs;
 	va_start(oArgs, format);
 
-	PrintArgs(x, y, sFontPath, size, eAlign, oColor.r, oColor.g, oColor.b, format, oArgs);
+	FontResource* pFont = GetGEngine()->GetFontResource(sFontPath, size);
+	if (pFont)
+		PrintArgs(x, y, pFont, eAlign, oColor.r, oColor.g, oColor.b, format, oArgs);
 
 	va_end(oArgs);
 }
+
+void CanvasBase::Print(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ...) const
+{
+	va_list oArgs;
+	va_start(oArgs, format);
+
+	PrintArgs(x, y, pFont, eAlign, r, g, b, format, oArgs);
+
+	va_end(oArgs);
+}
+
+void CanvasBase::Print(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, const Color& oColor, const char* format, ...) const
+{
+	va_list oArgs;
+	va_start(oArgs, format);
+
+	PrintArgs(x, y, pFont, eAlign, oColor.r, oColor.g, oColor.b, format, oArgs);
+
+	va_end(oArgs);
+}
+
 
 void CanvasBase::SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, const Color& oColor)
 {
@@ -109,7 +147,11 @@ void CanvasBase::Print(const char* format, ... ) const
 	va_list oArgs;
 	va_start(oArgs, format);
 
-	PrintArgs(m_oPrintParam.x, m_oPrintParam.y, m_oPrintParam.sFontPath, m_oPrintParam.size, m_oPrintParam.eAlign, m_oPrintParam.oColor.r, m_oPrintParam.oColor.g, m_oPrintParam.oColor.b, format, oArgs);
+	FontResource* pFont = GetGEngine()->GetFontResource(m_oPrintParam.sFontPath, m_oPrintParam.size);
+	if (pFont == nullptr)
+		return;
+
+	PrintArgs(m_oPrintParam.x, m_oPrintParam.y, pFont, m_oPrintParam.eAlign, m_oPrintParam.oColor.r, m_oPrintParam.oColor.g, m_oPrintParam.oColor.b, format, oArgs);
 
 	switch (m_oPrintParam.eAlign)
 	{

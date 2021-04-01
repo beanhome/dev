@@ -51,8 +51,8 @@ class GEngine : public CanvasBase
 		template<typename T>
 		T* const						GetResource(const typename T::Desc& oDesc) const;
 
-		virtual ImageResource* const	GetImageResource(const ImageResource::Desc& oDesc) const = 0;
-		virtual FontResource* const		GetFontResource(const FontResource::Desc& oDesc) const = 0;
+		virtual ImageResource* const	GetImageResource(const char* path) const = 0;
+		virtual FontResource* const		GetFontResource(const char* path, uint16 size) const = 0;
 
 		bool							AddResource(uint32 crc, Resource* pRes);
 		bool							RemResource(uint32 crc);

@@ -15,8 +15,9 @@ class IBTreePlannerDisplay : public IBPlannerDisplay
 		virtual ~IBTreePlannerDisplay();
 
 	public:
-		virtual void				Refresh() override;
+		virtual void				RefreshTree() override;
 		virtual void				Update(float dt) override;
+		virtual void				OnClick() override;
 		virtual void				DrawGraph() override;
 
 		bool						IsDraging() const { return m_bDraging; }

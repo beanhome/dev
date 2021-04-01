@@ -81,7 +81,7 @@ void IBotTestApp::Init(int argc, char *argv[])
 		}
 	}
 
-	m_pPlannerDisplay->Refresh();
+	m_pPlannerDisplay->RefreshTree();
 }
 
 int IBotTestApp::Update(float dt)
@@ -89,10 +89,16 @@ int IBotTestApp::Update(float dt)
 	if (m_pEngine->GetEventManager()->GetVirtualKey(KEY_SPACE) == KeyReleased)
 	{
 		m_pPlanner->Step(true, false);
-		m_pPlannerDisplay->Refresh();
+		m_pPlannerDisplay->RefreshTree();
 	}
 
 	m_pPlannerDisplay->Update(dt);
+
+	if (m_pEngine->GetEventManager()->GetVirtualKey(MOUSE_LEFT) == KeyReleased)
+	{
+		m_pPlannerDisplay->OnClick();
+	}
+
 
 	return 0;
 }

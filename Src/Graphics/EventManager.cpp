@@ -3,7 +3,7 @@
 #include "EventManager.h"
 #include "GEngine.h"
 
-EKeyboardKey EventManager::s_eMouseToKey[EMouseEvent_MAX] = 
+EKeyboardKey EventManager::s_eMouseToKey[EMouseEvent_MAX] =
 {
 	EKeyboardKey_Error,  /* MouseMove */
 	MOUSE_LEFT,   /* LeftUp */
@@ -18,7 +18,7 @@ EKeyboardKey EventManager::s_eMouseToKey[EMouseEvent_MAX] =
 	MOUSE_WHEELDOWN,  /* WheelDownDown */
 };
 
-EKeyboardEvent EventManager::s_eMouseToEvent[EMouseEvent_MAX] = 
+EKeyboardEvent EventManager::s_eMouseToEvent[EMouseEvent_MAX] =
 {
 	EKeyboardEvent_Error,  /* MouseMove */
 	KeyUp,    /* LeftUp */
@@ -78,7 +78,7 @@ void EventManager::Update(float dt)
 		{
 			EKeyboardKey eKey = pEvent->GetKeyboardKey();
 			EKeyboardEvent eEvent = pEvent->GetKeyboardEvent();
-			
+
 			if (eKey == EKeyboardKey_Error)
 				continue;
 
@@ -104,15 +104,18 @@ void EventManager::Update(float dt)
 			pEvent->GetMouseMove(m_iMouseX, m_iMouseY);
 
 			VirtualKey& oKey = m_aVirtualKey[s_eMouseToKey[pEvent->GetMouseEvent()]];
-			EKeyboardEvent& oEvent = s_eMouseToEvent[pEvent->GetMouseEvent()];
+			EKeyboardEvent& eEvent = s_eMouseToEvent[pEvent->GetMouseEvent()];
+
+			if (eEvent == EKeyboardEvent_Error)
+				continue;
 
 			switch (oKey.m_eState)
 			{
-				case KeyUp:			oKey.m_eState = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
-				case KeyDown:		oKey.m_eState = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
-				case KeyPressed:	oKey.m_eState = (oEvent == KeyDown ? KeyDown	: KeyReleased);		break;
-				case KeyReleased:	oKey.m_eState = (oEvent == KeyDown ? KeyPressed	: KeyUp);			break;
-				case KeyRepeat:		oKey.m_eState = (oEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyUp:			oKey.m_eState = (eEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyDown:		oKey.m_eState = (eEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
+				case KeyPressed:	oKey.m_eState = (eEvent == KeyDown ? KeyDown	: KeyReleased);		break;
+				case KeyReleased:	oKey.m_eState = (eEvent == KeyDown ? KeyPressed	: KeyUp);			break;
+				case KeyRepeat:		oKey.m_eState = (eEvent == KeyDown ? KeyRepeat	: KeyReleased);		break;
 			}
 		}
 

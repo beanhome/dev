@@ -52,11 +52,10 @@ typedef signed long sint32;
 typedef wchar_t wchar;
 
 #if defined(_DEBUG) && defined(TRACK_MEMLEAK)
-#error prout
-#include "Alloc.h"
 #include "StlAllocator.h"
 #define string std::basic_string<char, std::char_traits<char>, StlAllocator<char> >
 //typedef std::basic_string<char, std::char_traits<char>, StlAllocator<char> > string;
+#include "Alloc.h"
 #endif
 
 void InitLog(int argc, char *argv[]);

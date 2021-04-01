@@ -89,15 +89,15 @@ void Canvas::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8
 	GetGEngine()->ClampClear();
 }
 
-void Canvas::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, va_list oArgs) const
+void Canvas::TextSizeArgs(sint32& w, sint32& h, FontResource* pFont, const char* format, va_list oArgs) const
 {
-	GetGEngine()->TextSizeArgs(w, h, sFontPath, size, format, oArgs);
+	GetGEngine()->TextSizeArgs(w, h, pFont, format, oArgs);
 }
 
-void Canvas::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
+void Canvas::PrintArgs(sint32 x, sint32 y, FontResource* pFont, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
 	GetGEngine()->ClampCanvas(*this);
-	GetGEngine()->PrintArgs(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, sFontPath, size, eAlign, r, g, b, format, oArgs);
+	GetGEngine()->PrintArgs(GetScreenPosX() - GetOrigX() + x, GetScreenPosY() - GetOrigY() + y, pFont, eAlign, r, g, b, format, oArgs);
 	GetGEngine()->ClampClear();
 }
 

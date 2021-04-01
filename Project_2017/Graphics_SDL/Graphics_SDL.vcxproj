@@ -59,6 +59,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <PreprocessorDefinitions>$(GlobalPreprocessor)</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>../../External/SDL/lib/$(Platform)/SDL2.lib;../../External/SDL/lib/$(Platform)/SDL2main.lib;../../External/SDL_ttf/lib/$(PlatformTarget)/SDL2_ttf.lib;../../External/SDL2_image-2.0.1/lib/$(PlatformTarget)/SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>

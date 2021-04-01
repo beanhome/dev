@@ -49,7 +49,7 @@ void Log(const char* format, ...)
 #else
 	vsnprintf(output, 1024, format, arglist);
 #endif
-	
+
 #ifdef _WIN32
 	if (g_bVisualOutput)
 		OutputDebugStringA(output);

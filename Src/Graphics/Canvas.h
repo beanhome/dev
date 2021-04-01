@@ -39,8 +39,8 @@ class Canvas : public CanvasBase
 		virtual void 					DrawFillCircle(sint32 x, sint32 y, sint32 radius, const Color& oColor) const { DrawFillCircle(x, y, radius, oColor.r, oColor.g, oColor.b); }
 		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const;
 		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, const Color& oColor) const { DrawLine(x1, y1, x2, y2, oColor.r, oColor.g, oColor.b); }
-		virtual void					TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, va_list oArgs) const;
-		virtual void 					PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
+		virtual void					TextSizeArgs(sint32& w, sint32& h, class FontResource* pFont, const char* format, va_list oArgs) const;
+		virtual void 					PrintArgs(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const;
 
 		virtual const char*				GetPrintFont() const;
 

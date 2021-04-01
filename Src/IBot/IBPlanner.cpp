@@ -123,7 +123,7 @@ int IBPlanner::Step(bool bExecute, bool bCleanGoal)
 	m_pBestNode = m_oGoals.GetBestNode();
 
 	// no current action -> take best node action
-	if (m_pCurrentAction == nullptr && m_pBestNode != nullptr && m_pBestNode->IsTrue())
+	if (false && m_pCurrentAction == nullptr && m_pBestNode != nullptr && m_pBestNode->IsTrue())
 	{
 		m_pCurrentAction = m_pBestNode->GetAction();
 		if (m_pCurrentAction != nullptr)

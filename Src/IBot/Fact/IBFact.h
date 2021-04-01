@@ -64,7 +64,7 @@ class IBFact
 		bool							m_bInverted;
 		VarMap							m_aVariables;
 		ActionSet						m_aCauseAction;
-		class IBNode*			m_pNodeOwner;
+		class IBNode*					m_pNodeOwner;
 };
 
 

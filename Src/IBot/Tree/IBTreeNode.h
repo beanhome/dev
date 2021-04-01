@@ -1,29 +1,33 @@
-#ifndef __IBTreeNODE_H__
-#define __IBTreeNODE_H__
+#ifndef __IBTREENODE_H__
+#define __IBTREENODE_H__
 
 #include "IBTreeBox.h"
 #include "Utils.h"
-#include "Display/IBPlannerDisplay.h"
-#include "Color.h"
 #include "Canvas.h"
 
 class IBTreeNode : public IBTreeBox
 {
 	public:
-		IBTreeNode(const class IBNode* pNode);
+		friend class IBTreeAction;
+
+		IBTreeNode(Canvas& oCanvas, IBTreeBox* pParent, const class IBNode* pNode);
 		virtual ~IBTreeNode();
 
 	public:
-		virtual void		Refresh(Canvas& oCanvas) override;
-		virtual void		Draw(Canvas& oCanvas, sint32 x, sint32 y) override;
+		void				RefreshTree();
+		virtual void		ComputeSize() override;
+		virtual void		Draw() const override;
+		virtual void		SetPos(sint32 x, sint32 y);
+		virtual void		Update(float dt, sint32 iMouseX, sint32 iMouseY) override;
 
 	protected:
-		virtual void		Size(Canvas& oCanvas, sint32& Width, sint32& Height) override;
+		virtual void		UpdatePos() override;
+		virtual void		OnMouseClick(sint32 iMouseX, sint32 iMouseY) override;
 
 	private:
 		const class IBNode* m_pNode;
 
-		vector<class IBTreeFact*> m_aLogFacts;
+		list<class IBTreeFact*> m_aTreeFacts;
 };
 
 #endif

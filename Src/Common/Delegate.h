@@ -228,7 +228,7 @@ public:
 		{
 			if (pInstance != nullptr && pInstance->IsBoundTo(pObj))
 			{
-				delete pMemberInstance;
+				delete pInstance;
 				pInstance = nullptr;
 			}
 		}

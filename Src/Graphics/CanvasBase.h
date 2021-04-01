@@ -65,12 +65,15 @@ class CanvasBase
 		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, uint8 g, uint8 b) const = 0;
 		virtual void 					DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, const Color& oColor) const { DrawLine(x1, y1, x2, y2, oColor.r, oColor.g, oColor.b); }
 
-		virtual void					TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, va_list oArgs) const = 0;
+		virtual void					TextSizeArgs(sint32& w, sint32& h, class FontResource* pFont, const char* format, va_list oArgs) const = 0;
+		void							TextSize(sint32& w, sint32& h, class FontResource* pFont, const char* format, ...) const;
 		void							TextSize(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, ...) const;
 
-		virtual void 					PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const = 0;
+		virtual void 					PrintArgs(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const = 0;
 		void 							Print(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ... ) const;
 		void 							Print(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, const Color& oColor, const char* format, ... ) const;
+		void 							Print(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, ...) const;
+		void 							Print(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, const Color& oColor, const char* format, ...) const;
 
 		void 							SetPrintParameter(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, const Color& oColor);
 		void 							SetPrintParameter(sint32 x, sint32 y, const char* sFontPath = NULL, uint16 size = 0, ETextAlign eAlign = Undefined);

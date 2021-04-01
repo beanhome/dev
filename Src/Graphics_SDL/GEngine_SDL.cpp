@@ -147,7 +147,7 @@ uint GEngine_SDL::Init()
 {
 	LOG("Initializing SDL.\n");
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
-	{ 
+	{
 		LOG("Could not initialize SDL: %s.\n", SDL_GetError());
 		return 1;
 	}
@@ -331,13 +331,11 @@ void GEngine_SDL::DrawLine(sint32 x1, sint32 y1, sint32 x2, sint32 y2, uint8 r, 
 	lineRGBA(m_pRenderer, (sint16)x1, (sint16)y1, (sint16)x2, (sint16)y2, r, g, b, 255);
 }
 
-void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint16 size, const char* format, va_list oArgs) const
+void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, class FontResource* pFont, const char* format, va_list oArgs) const
 {
-	ASSERT(sFontPath != NULL);
+	FontResource_SDL* pFontSDL = (FontResource_SDL*)pFont;
 
-	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
-
-	if (pFont->m_pFont == NULL)
+	if (pFontSDL == NULL || pFontSDL->m_pFont == NULL)
 	{
 		w = h = 0;
 		return;
@@ -355,20 +353,18 @@ void GEngine_SDL::TextSizeArgs(sint32& w, sint32& h, const char* sFontPath, uint
 #else
 	vsnprintf(str, ln, format, oArgs);
 #endif
-	
-	w = FC_GetWidth(pFont->m_pFont, str);
-	h = FC_GetHeight(pFont->m_pFont, str);
+
+	w = FC_GetWidth(pFontSDL->m_pFont, str);
+	h = FC_GetHeight(pFontSDL->m_pFont, str);
 
 	delete [] str;
 }
 
-void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 size, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
+void GEngine_SDL::PrintArgs(sint32 x, sint32 y, class FontResource* pFont, ETextAlign eAlign, uint8 r, uint8 g, uint8 b, const char* format, va_list oArgs) const
 {
-	ASSERT(sFontPath != NULL);
+	FontResource_SDL* pFontSDL = (FontResource_SDL*)pFont;
 
-	FontResource_SDL* pFont = GetResource<FontResource_SDL>(FontResource_SDL::Desc(sFontPath, size));
-
-	if (pFont->m_pFont == NULL)
+	if (pFontSDL == NULL || pFontSDL->m_pFont == NULL)
 		return;
 
 #ifdef _WIN32
@@ -390,8 +386,8 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 	color.g = g;
 	color.b = b;
 
-	uint16 w = (uint16)FC_GetWidth(pFont->m_pFont, str);
-	uint16 h = (uint16)FC_GetHeight(pFont->m_pFont, str);
+	uint16 w = (uint16)FC_GetWidth(pFontSDL->m_pFont, str);
+	uint16 h = (uint16)FC_GetHeight(pFontSDL->m_pFont, str);
 
 	SDL_Rect position;
 	position.x = (sint16)x;
@@ -400,10 +396,10 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 	switch (eAlign)
 	{
 		case LeftTop:		position.x = (sint16)x;				position.y = (sint16)y;				break;
-		case LeftCenter:		position.x = (sint16)x;				position.y = (sint16)(y - h / 2);	break;
-		case LeftBottom:		position.x = (sint16)x;				position.y = (sint16)(y - h);		break;
+		case LeftCenter:	position.x = (sint16)x;				position.y = (sint16)(y - h / 2);	break;
+		case LeftBottom:	position.x = (sint16)x;				position.y = (sint16)(y - h);		break;
 		case CenterTop:		position.x = (sint16)(x - w / 2);	position.y = (sint16)y;				break;
-		case Center:			position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h / 2);	break;
+		case Center:		position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h / 2);	break;
 		case CenterBottom:	position.x = (sint16)(x - w / 2);	position.y = (sint16)(y - h);		break;
 		case RightTop:		position.x = (sint16)(x - w);		position.y = (sint16)y;				break;
 		case RightCenter:	position.x = (sint16)(x - w);		position.y = (sint16)(y - h / 2);	break;
@@ -413,7 +409,7 @@ void GEngine_SDL::PrintArgs(sint32 x, sint32 y, const char* sFontPath, uint16 si
 	position.w = w;
 	position.h = h;
 
-	FC_DrawColor(pFont->m_pFont, m_pRenderer, (float)position.x, (float)position.y, FC_MakeColor(r, g, b, 255), str);
+	FC_DrawColor(pFontSDL->m_pFont, m_pRenderer, (float)position.x, (float)position.y, FC_MakeColor(r, g, b, 255), str);
 
 	if (ln > bufferln)
 		delete[] str;
